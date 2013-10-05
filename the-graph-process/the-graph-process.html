@@ -9,8 +9,32 @@
     </div>
   </template>
   <script>
+
+    var translate = function (el, x, y) {
+      //var move = "translate3d("+x+"px,"+y+"px,0px)";
+      var move = "translate("+x+"px,"+y+"px)";
+      el.style.webkitTransform = move;
+      el.style.MozTransform = move;
+      el.style.msTransform = move;
+      el.style.OTransform = move;
+      el.style.transform = move;
+      console.log(el);
+      return el;
+    };
+
     Polymer('the-graph-process', {
-      label: ''
+      created: function () {
+        this.style.position = 'absolute';
+        this.positionChanged();
+      },
+      label: '',
+      x: 0,
+      y: 0,
+      xChanged: this.positionChanged,
+      yChanged: this.positionChanged,
+      positionChanged: function () {
+        translate(this, this.x, this.y);
+      }
     });
   </script>
 </polymer-element>
