@@ -1,0 +1,20 @@
+{
+  "name": "the-graph",
+  "keywords": [
+    "graph", "flow", "noflo"
+  ],
+  "description": "Polymer elements for graph editing",
+  "dependencies": {
+    "polymer": ">=0.0.20131003"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+  "node_modules",
+  "bower_components",
+  "test",
+  "tests",
+  "docs",
+  "tools"
+  ]
+}
