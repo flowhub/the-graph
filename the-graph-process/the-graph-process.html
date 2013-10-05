@@ -37,6 +37,10 @@
       },
       positionChanged: function () {
         translate(this, this.x, this.y);
+        this.fire('moved', {
+          x: this.x,
+          y: this.y
+        });
       }
     });
   </script>
