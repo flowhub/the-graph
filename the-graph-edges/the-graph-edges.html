@@ -2,8 +2,15 @@
 
 <polymer-element name="the-graph-edges">
 
+  <template>
+    <svg id="edges" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000"></svg>
+  </template>
+
   <script>
-    Polymer('the-graph-edges', {});
+    Polymer('the-graph-edges', {
+      created: function () {
+      }
+    });
   </script>
   
 </polymer-element>

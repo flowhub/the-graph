@@ -1,6 +1,7 @@
 body {
   margin: none;
   padding: none;
+  font-family: verdana;
 }
 
 the-graph-editor {
@@ -8,6 +9,28 @@ the-graph-editor {
   width: 100%;
   height: 100%;
   background-color: #2a2b31;
+}
+
+the-graph {
+  color: white;
+
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+
+  overflow: hidden;
+
+  background-color: #333;
+
+  background-image:
+    -moz-linear-gradient(left, #444 1px, transparent 1px),
+    -moz-linear-gradient(top, #444 1px, transparent 1px);
+  background-image:
+    -webkit-linear-gradient(left, #444 1px, transparent 1px),
+    -webkit-linear-gradient(top, #444 1px, transparent 1px);
+  background-image:
+    linear-gradient(left, #444 1px, transparent 1px),
+    linear-gradient(top, #444 1px, transparent 1px);
+  background-size: 80px 80px;
 }
 
 the-graph-process, the-graph-subgraph {
@@ -23,3 +46,11 @@ the-graph-process h1, the-graph-subgraph h1 {
   font-size: 12px;
   text-align: center;
 }
+
+path.edge {
+  fill: none;
+  stroke-linejoin: round;
+  stroke: #cecece;
+  stroke-width: 4px;
+}
+

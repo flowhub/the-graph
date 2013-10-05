@@ -1,7 +1,71 @@
 <polymer-element name="the-graph-edge" attributes="source target route">
 
+  <template>
+  </template>
+
   <script>
-    Polymer('the-graph-edge', {});
+    Polymer('the-graph-edge', {
+      created: function () {
+        setTimeout(this.checkParent.bind(this), 0);
+      },
+      checkParent: function () {
+        var rootSVG = this.parentNode.$.edges;
+        this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.routeChanged();
+        rootSVG.appendChild(this.path);
+        this.drawEdge();
+      },
+      route: 0,
+      routeChanged: function () {
+        if (!this.path) { return; }
+        this.path.setAttributeNS(null, "class", "edge route"+this.route );
+      },
+      drawEdge: function () {
+        if (!this.path || !this.from || !this.to) { return; }
+        var d = ["M", this.from.x, this.from.y, "L", this.to.x, this.to.y].join(" ");
+        this.path.setAttributeNS(null, "d", d );
+      },
+      sourceChanged: function () {
+        var split = this.source.split(".");
+        // if (split.length <=0 || split.length > 2) { 
+        //   throw new Error("Incorrect format pointing to source node: "+this.source);
+        // }
+        var sourceNode = document.getElementsByName( split[0] );
+        // if (sourceNode.length <=0) { 
+        //   throw new Error("Didn't find source node: "+this.source);
+        // }
+        // if (sourceNode.length > 1) { 
+        //   throw new Error("More than one source node with name: "+this.source);
+        // }
+        this.sourceNode = sourceNode[0];
+
+        this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
+
+        this.sourceMoved();
+      },
+      sourceMoved: function () {
+        this.from = {
+          x: parseFloat( this.sourceNode.getAttribute("x") ) + 75,
+          y: this.sourceNode.getAttribute("y")
+        };
+        this.drawEdge();
+      },
+      targetChanged: function () {
+        var split = this.target.split(".");
+        var targetNode = document.getElementsByName( split[0] );
+        this.targetNode = targetNode[0];
+        this.targetNode.addEventListener("moved", this.targetMoved.bind(this));
+        this.targetMoved();
+      },
+      targetMoved: function () {
+        this.to = {
+          x: this.targetNode.getAttribute("x"),
+          y: this.targetNode.getAttribute("y")
+        };
+        this.drawEdge();
+      }      
+
+    });
   </script>
   
 </polymer-element>

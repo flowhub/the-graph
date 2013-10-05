@@ -3,7 +3,7 @@
 <polymer-element name="the-graph-process" attributes="label x y component">
   <template>
     <div class="the-graph-process">
-      <h1>{{label}}</h1>
+      <h1 title="{{component}}">{{label}}</h1>
       <content select="the-graph-inports"></content>
       <content select="the-graph-outports"></content>
     </div>
@@ -24,7 +24,6 @@
     Polymer('the-graph-process', {
       created: function () {
         this.style.position = 'absolute';
-        this.positionChanged();
       },
       label: '',
       x: 0,
