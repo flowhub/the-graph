@@ -9,15 +9,15 @@
   <body>
     <the-graph-editor>
       <the-graph-cards>
-        <the-behavior type="swipe" direction="left" action="remove" />
-        <the-behavior type="swipe" direction="right" target=".fixed" action="remove" />
-        <the-behavior type="swipe" direction="right" action="addclass" param="fixed"  />
+        <the-behavior type="swipe" direction="left" action="remove"></the-behavior>
+        <the-behavior type="swipe" direction="right" target=".fixed" action="remove"></the-behavior>
+        <the-behavior type="swipe" direction="right" action="addclass" param="fixed" ></the-behavior>
         <the-graph-search-card query="foo" class="fixed" />
         <the-graph-node-card target="Read_123" />
       </the-graph-cards>
       <the-graph name="Hello world">
-        <the-behavior type="drag" direction="up down" target="the-graph-node" action="move" />
-        <the-behavior type="drag" direction="left" target="the-graph-node" action="addclass" />
+      <the-behavior type="drag" direction="up down" target="the-graph-node" action="move"></the-behavior>
+      <the-behavior type="drag" direction="left" target="the-graph-node" action="addclass"></the-behavior>
         <the-graph-nodes>
           <!-- Exports -->
           <the-graph-exports>
