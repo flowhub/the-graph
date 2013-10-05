@@ -37,20 +37,23 @@ the-graph-process, the-graph-subgraph {
   display: block;
   width: 75px;
   height: 75px;
-  background-color: #c0c0c0;
+  background-color: rgba(0,0,0, 0.5);
   color: #000000;
-  border-radius: 10px;
+  border-radius: 3px;
+  border: 1px magenta solid;
 }
 
 the-graph-process h1, the-graph-subgraph h1 {
   font-size: 12px;
   text-align: center;
+  margin-top: -20px;
+  color: white;
 }
 
 path.edge {
   fill: none;
   stroke-linejoin: round;
-  stroke: #cecece;
-  stroke-width: 4px;
+  stroke: #66FF00;
+  stroke-width: 1px;
 }
 
