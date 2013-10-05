@@ -1,0 +1,17 @@
+<link rel="import" href="../the-graph-inports/the-graph-inports.html">
+<link rel="import" href="../the-graph-outports/the-graph-outports.html">
+<polymer-element name="the-graph-process" attributes="label x y component">
+  <template>
+    <div class="the-graph-process">
+      <h1>{{label}}</h1>
+      <content select="the-graph-inports"></content>
+      <content select="the-graph-outports"></content>
+    </div>
+  </template>
+  <script>
+    Polymer('the-graph-process', {
+      label: ''
+    });
+  </script>
+</polymer-element>
+
