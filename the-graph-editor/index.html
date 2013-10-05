@@ -24,21 +24,21 @@
             <the-graph-export private="Read_123.in" public="filename" />
           </the-graph-exports>
           <!-- Nodes -->
-          <the-graph-subgraph id="Read_123" label="Read" component="filesystem/ReadFile">
+          <the-graph-subgraph name="Read_123" label="Read" component="filesystem/ReadFile">
             <the-graph-inports>
-              <the-graph-port id="in" type="string" />
+              <the-graph-port name="in" type="string" />
             </the-graph-inports>
             <the-graph-outports>
-              <the-graph-port id="out" type="string" />
-              <the-graph-port id="error" type="object" />
+              <the-graph-port name="out" type="string" />
+              <the-graph-port name="error" type="object" />
             </the-graph-outports>
           </the-graph-subgraph>
-          <the-graph-process id="Show_321" label="Show" component="core/Output">
+          <the-graph-process name="Show_321" label="Show" component="core/Output">
             <the-graph-inports>
-              <the-graph-port id="in" type="all" />
+              <the-graph-port name="in" type="all" />
             </the-graph-inports>
             <the-graph-outports>
-              <the-graph-port id="out" type="all" />
+              <the-graph-port name="out" type="all" />
             </the-graph-outports>
           </the-graph-process>
         </the-graph-nodes>
