@@ -3,10 +3,69 @@
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 
-<polymer-element name="the-graph">
+<polymer-element name="the-graph" lightdom>
+
+  <template>
+    <the-graph-initials></the-graph-initials>
+    <the-graph-nodes></the-graph-nodes>
+    <the-graph-edges></the-graph-edges>
+    <the-graph-exports></the-graph-exports>
+  </template>
 
   <script>
-    Polymer('the-graph', {});
+    Polymer('the-graph', {
+      created: function () {
+      },
+      graphChanged: function () {
+
+        var nodes = document.querySelector("the-graph-nodes");
+        var edges = document.querySelector("the-graph-edges");
+        var initials = document.querySelector("the-graph-initials");
+        var exports = document.querySelector("the-graph-exports");
+
+        // Make process elements
+        for (var index in this.graph.processes) {
+          var p = this.graph.processes[index];
+          var process = document.createElement("the-graph-process");
+          process.setAttribute("name", index);
+          process.setAttribute("component", p.component);
+          process.setAttribute("label", (p.metadata.label ? p.metadata.label : p.component) );
+          process.setAttribute("x", p.metadata.x);
+          process.setAttribute("y", p.metadata.y);
+          nodes.appendChild(process);
+        }
+
+        // Make connection elements
+        var length = this.graph.connections.length;
+        for (var i=0; i<length; i++) {
+          var c = this.graph.connections[i];
+          if (c.src !== undefined) {
+            // Edge
+            var edge = document.createElement("the-graph-edge");
+            edge.setAttribute("source", c.src.process+"."+c.src.port );
+            edge.setAttribute("target", c.tgt.process+"."+c.tgt.port );
+            edge.setAttribute("route", (c.metadata && c.metadata.route ? c.metadata.route : 0) );
+            edges.appendChild(edge);
+          } else {
+            // Initial
+            var initial = document.createElement("the-graph-initial");
+          }
+        }
+
+
+
+        // this.processes = [];
+        // for (var index in this.graph.processes) {
+        //   var p = this.graph.processes[index];
+        //   p.id = index;
+        //   p.width = this.nodewidth;
+        //   p.height = this.nodeheight;
+        //   this.processes.push(p);
+        // }
+        // this.exports = this.graph.exports;
+
+      }
+    });
   </script>
   
 </polymer-element>

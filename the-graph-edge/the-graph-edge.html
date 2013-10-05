@@ -1,11 +1,10 @@
 <polymer-element name="the-graph-edge" attributes="source target route">
 
-  <template>
-  </template>
-
   <script>
     Polymer('the-graph-edge', {
       created: function () {
+      },
+      enteredView: function () {
         setTimeout(this.checkParent.bind(this), 0);
       },
       checkParent: function () {
@@ -39,8 +38,8 @@
         // }
         this.sourceNode = sourceNode[0];
 
+        if (!this.sourceNode) { return; }
         this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
-
         this.sourceMoved();
       },
       sourceMoved: function () {
@@ -54,6 +53,7 @@
         var split = this.target.split(".");
         var targetNode = document.getElementsByName( split[0] );
         this.targetNode = targetNode[0];
+        if (!this.targetNode) { return; }
         this.targetNode.addEventListener("moved", this.targetMoved.bind(this));
         this.targetMoved();
       },

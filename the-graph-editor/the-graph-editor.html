@@ -2,6 +2,19 @@
 
 <polymer-element name="the-graph-editor">
   <script>
-    Polymer('the-graph-editor', {});
+    Polymer('the-graph-editor', {
+      graphChanged: function () {
+
+        var g  = this.querySelector("the-graph");
+        if (g) {
+          g.parentNode.removeChild(g);
+        }
+
+        var newGraph = document.createElement("the-graph");
+        this.appendChild( newGraph );
+        newGraph.graph = this.graph;
+
+      }
+    });
   </script>
 </polymer-element>
