@@ -15,12 +15,14 @@
         <the-graph-search-card query="foo" class="fixed" />
         <the-graph-node-card target="Read_123" />
       </the-graph-cards>
-      <the-graph-graph name="Hello world">
+      <the-graph name="Hello world">
         <the-behavior type="drag" direction="up down" target="the-graph-node" action="move" />
         <the-behavior type="drag" direction="left" target="the-graph-node" action="addclass" />
         <the-graph-nodes>
           <!-- Exports -->
-          <the-graph-export private="Read_123.in" public="filename" />
+          <the-graph-exports>
+            <the-graph-export private="Read_123.in" public="filename" />
+          </the-graph-exports>
           <!-- Nodes -->
           <the-graph-subgraph id="Read_123" label="Read" component="filesystem/ReadFile">
             <the-graph-inports>
@@ -31,14 +33,14 @@
               <the-graph-port id="error" type="object" />
             </the-graph-outports>
           </the-graph-subgraph>
-          <the-graph-component id="Show_321" label="Show" component="core/Output">
+          <the-graph-process id="Show_321" label="Show" component="core/Output">
             <the-graph-inports>
               <the-graph-port id="in" type="all" />
             </the-graph-inports>
             <the-graph-outports>
               <the-graph-port id="out" type="all" />
             </the-graph-outports>
-          </the-graph-component>
+          </the-graph-process>
         </the-graph-nodes>
         <!-- Edges -->
         <the-graph-edges>
@@ -50,7 +52,7 @@
             package.json
           </the-graph-initial>
         </the-graph-initializers>
-      </the-graph-graph>
+      </the-graph>
     </the-graph-editor>
   </body>
 </html>
