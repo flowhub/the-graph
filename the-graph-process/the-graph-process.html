@@ -30,8 +30,12 @@
       label: '',
       x: 0,
       y: 0,
-      xChanged: this.positionChanged,
-      yChanged: this.positionChanged,
+      xChanged: function () {
+        this.positionChanged();
+      },
+      yChanged: function () {
+        this.positionChanged();
+      },
       positionChanged: function () {
         translate(this, this.x, this.y);
       }
