@@ -1,0 +1,38 @@
+<link rel="import" href="../the-graph-exports/the-graph-exports.html">
+<link rel="import" href="../the-graph-nodes/the-graph-nodes.html">
+<link rel="import" href="../the-graph-edges/the-graph-edges.html">
+<link rel="import" href="../the-graph-initializers/the-graph-initializers.html">
+
+<polymer-element name="the-graph">
+
+  <style>
+    #connections, #initials { display: none; }
+
+    dataflow-graph {
+      color: white;
+
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+
+      overflow: hidden;
+
+      background-color: #333;
+
+      background-image:
+        -moz-linear-gradient(left, #444 1px, transparent 1px),
+        -moz-linear-gradient(top, #444 1px, transparent 1px);
+      background-image:
+        -webkit-linear-gradient(left, #444 1px, transparent 1px),
+        -webkit-linear-gradient(top, #444 1px, transparent 1px);
+      background-image:
+        linear-gradient(left, #444 1px, transparent 1px),
+        linear-gradient(top, #444 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+  </style>
+
+  <script>
+    Polymer('the-graph', {});
+  </script>
+  
+</polymer-element>
