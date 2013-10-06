@@ -5,7 +5,8 @@
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
-    "polymer": ">=0.0.20131003"
+    "polymer": ">=0.0.20131003",
+    "the-behavior": "*"
   },
   "license": "MIT",
   "ignore": [
