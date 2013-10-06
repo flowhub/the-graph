@@ -2,6 +2,8 @@ body {
   margin: none;
   padding: none;
   font-family: verdana;
+  color: white;
+  background-color: black;
 }
 
 the-graph-editor {
@@ -19,17 +21,17 @@ the-graph {
 
   overflow: hidden;
 
-  background-color: #333;
+  background-color: #1d1d1d;
 
   background-image:
-    -moz-linear-gradient(left, #444 1px, transparent 1px),
-    -moz-linear-gradient(top, #444 1px, transparent 1px);
+    -moz-linear-gradient(left, #2c2c2c 1px, transparent 1px),
+    -moz-linear-gradient(top, #2c2c2c 1px, transparent 1px);
   background-image:
-    -webkit-linear-gradient(left, #444 1px, transparent 1px),
-    -webkit-linear-gradient(top, #444 1px, transparent 1px);
+    -webkit-linear-gradient(left, #2c2c2c 1px, transparent 1px),
+    -webkit-linear-gradient(top, #2c2c2c 1px, transparent 1px);
   background-image:
-    linear-gradient(left, #444 1px, transparent 1px),
-    linear-gradient(top, #444 1px, transparent 1px);
+    linear-gradient(left, #2c2c2c 1px, transparent 1px),
+    linear-gradient(top, #2c2c2c 1px, transparent 1px);
   background-size: 80px 80px;
 }
 
@@ -48,12 +50,13 @@ the-graph-process h1, the-graph-subgraph h1 {
   text-align: center;
   margin-top: -20px;
   color: white;
+  font-weight: lighter;
 }
 
 path.edge {
   fill: none;
   stroke-linejoin: round;
   stroke: #66FF00;
-  stroke-width: 1px;
+  stroke-width: 1.1px;
 }
 
