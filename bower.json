@@ -6,6 +6,7 @@
   "description": "Polymer elements for graph editing",
   "dependencies": {
     "polymer": ">=0.0.20131003",
+    "font-awesome": "3.2.x",
     "the-behavior": "*"
   },
   "license": "MIT",
