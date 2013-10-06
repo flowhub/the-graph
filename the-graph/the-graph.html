@@ -3,7 +3,7 @@
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 
-<polymer-element name="the-graph" lightdom>
+<polymer-element name="the-graph" attributes="panx pany zoom" lightdom>
 
   <template>
     <the-graph-initials></the-graph-initials>
@@ -12,16 +12,47 @@
     <the-graph-exports></the-graph-exports>
   </template>
 
+  <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
+
   <script>
     Polymer('the-graph', {
+      panx: 0,
+      pany: 0,
+      zoom: 1,
       created: function () {
       },
+      panxChanged: function () {
+        this.panChanged();
+      },
+      panyChanged: function () {
+        this.panChanged();
+      },
+      panDebounce: null,
+      panChanged: function () {
+        var self = this;
+        var later = function(){
+          self.panDebounce = null;
+          theGraph.transform(self, self.panx, self.pany, self.zoom);
+          self.fire('panned', {
+            x: self.panx,
+            y: self.pany
+          });
+        }
+        clearTimeout(this.panDebounce);
+        this.panDebounce = setTimeout(later, 16);
+      },
+      zoomChanged: function () {
+        theGraph.transform(this, this.panx, this.pany, this.zoom);
+      },
       graphChanged: function () {
-
-        var nodes = document.querySelector("the-graph-nodes");
-        var edges = document.querySelector("the-graph-edges");
-        var initials = document.querySelector("the-graph-initials");
-        var exports = document.querySelector("the-graph-exports");
+        // var nodes = document.querySelector("the-graph-nodes");
+        // var edges = document.querySelector("the-graph-edges");
+        // var initials = document.querySelector("the-graph-initials");
+        // var exports = document.querySelector("the-graph-exports");
+        var nodes = this.querySelector("the-graph-nodes");
+        var edges = this.querySelector("the-graph-edges");
+        var initials = this.querySelector("the-graph-initials");
+        var exports = this.querySelector("the-graph-exports");
 
         // Make process elements
         for (var index in this.graph.processes) {
@@ -51,19 +82,6 @@
             var initial = document.createElement("the-graph-initial");
           }
         }
-
-
-
-        // this.processes = [];
-        // for (var index in this.graph.processes) {
-        //   var p = this.graph.processes[index];
-        //   p.id = index;
-        //   p.width = this.nodewidth;
-        //   p.height = this.nodeheight;
-        //   this.processes.push(p);
-        // }
-        // this.exports = this.graph.exports;
-
       }
     });
   </script>

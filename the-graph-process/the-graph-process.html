@@ -10,67 +10,53 @@
     </div>
   </template>
 
+  <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
+
   <script>
-
-    var translate = function (el, x, y) {
-      var move = "translate3d("+x+"px,"+y+"px,0px)";
-      // var move = "translate("+x+"px,"+y+"px)";
-      el.style.webkitTransform = move;
-      el.style.MozTransform = move;
-      el.style.msTransform = move;
-      el.style.OTransform = move;
-      el.style.transform = move;
-      return el;
-    };
-
-    var debounce = function(func, wait, immediate) {
-      var timeout;
-      return function() {
-        var context = this, args = arguments;
-        var later = function() {
-          timeout = null;
-          if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-      };
-    };
+  (function() {
 
     Polymer('the-graph-process', {
       created: function () {
         this.style.position = 'absolute';
-//        translate(this, this.x, this.y);
+        theGraph.transform(this, this.x, this.y);
       },
       label: '',
       x: 0,
       y: 0,
       xChanged: function () {
-        console.log("x");
         this.positionChanged();
       },
       yChanged: function () {
-        console.log("y");
         this.positionChanged();
       },
-      debounceTimeout: null,
+      positionDebounce: null,
       positionChanged: function () {
-        var context = this;
+        var self = this;
         var later = function(){
-          context.debounceTimeout = null;
-          console.log(Date.now(), context.x, context.y);
-          translate(context, context.x, context.y);
-          context.fire('moved', {
-            x: context.x,
-            y: context.y
+          self.positionDebounce = null;
+          theGraph.transform(self, self.x, self.y);
+          self.fire('moved', {
+            x: self.x,
+            y: self.y
           });
         }
-        clearTimeout(this.debounceTimeout);
-        this.debounceTimeout = setTimeout(later, 16);
+        clearTimeout(this.positionDebounce);
+        this.positionDebounce = setTimeout(later, 16);
       }
+      // positionChanged: theGraph.debounce(
+      //   function () {
+      //     theGraph.transform(this, this.x, this.y);
+      //     this.fire('moved', {
+      //       x: this.x,
+      //       y: this.y
+      //     });
+      //   },
+      //   16
+      // )
 
     });
+
+  })();
   </script>
 </polymer-element>
 
