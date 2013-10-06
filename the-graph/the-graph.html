@@ -3,7 +3,7 @@
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 
-<polymer-element name="the-graph" attributes="panx pany zoom" lightdom>
+<polymer-element name="the-graph" attributes="panx pany scale" lightdom>
 
   <template>
     <the-graph-initials></the-graph-initials>
@@ -32,7 +32,7 @@
         var self = this;
         var later = function(){
           self.panDebounce = null;
-          theGraph.transform(self, self.panx, self.pany, self.zoom);
+          theGraph.transform(self, self.panx, self.pany, self.scale);
           self.fire('panned', {
             x: self.panx,
             y: self.pany
@@ -41,14 +41,27 @@
         clearTimeout(this.panDebounce);
         this.panDebounce = setTimeout(later, 16);
       },
-      zoomChanged: function () {
-        theGraph.transform(this, this.panx, this.pany, this.zoom);
+      scale: 1,
+      scaleChanged: function () {
+        // Scale happens fast
+        theGraph.transform(this, this.panx, this.pany, this.scale/this.zoom);
+        this.zoomDone();
+      },
+      zoomDebounce: null,
+      zoomDone: function () {
+        // Zoom causes a rerendering of graph elements
+        var self = this;
+        var later = function(){
+          self.zoomDebounce = null;
+          self.zoom = self.scale;
+          self.fire("zoomed", self.zoom);
+          theGraph.transform(self, self.panx, self.pany, 1);
+          self.style.backgroundSize = (70*self.zoom)+"px "+(70*self.zoom)+"px";
+        }
+        clearTimeout(this.zoomDebounce);
+        this.zoomDebounce = setTimeout(later, 750);
       },
       graphChanged: function () {
-        // var nodes = document.querySelector("the-graph-nodes");
-        // var edges = document.querySelector("the-graph-edges");
-        // var initials = document.querySelector("the-graph-initials");
-        // var exports = document.querySelector("the-graph-exports");
         var nodes = this.querySelector("the-graph-nodes");
         var edges = this.querySelector("the-graph-edges");
         var initials = this.querySelector("the-graph-initials");
