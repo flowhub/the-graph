@@ -4,6 +4,9 @@ body {
   font-family: verdana;
   color: white;
   background-color: black;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 the-graph-editor {
@@ -11,6 +14,10 @@ the-graph-editor {
   width: 100%;
   height: 100%;
   background-color: #2a2b31;
+}
+
+the-graph-process {
+  z-index: 10;
 }
 
 the-graph {
