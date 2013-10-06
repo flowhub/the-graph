@@ -13,8 +13,8 @@
   <script>
 
     var translate = function (el, x, y) {
-      //var move = "translate3d("+x+"px,"+y+"px,0px)";
-      var move = "translate("+x+"px,"+y+"px)";
+      var move = "translate3d("+x+"px,"+y+"px,0px)";
+      // var move = "translate("+x+"px,"+y+"px)";
       el.style.webkitTransform = move;
       el.style.MozTransform = move;
       el.style.msTransform = move;
@@ -23,26 +23,53 @@
       return el;
     };
 
+    var debounce = function(func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+
     Polymer('the-graph-process', {
       created: function () {
         this.style.position = 'absolute';
+//        translate(this, this.x, this.y);
       },
       label: '',
       x: 0,
       y: 0,
       xChanged: function () {
+        console.log("x");
         this.positionChanged();
       },
       yChanged: function () {
+        console.log("y");
         this.positionChanged();
       },
+      debounceTimeout: null,
       positionChanged: function () {
-        translate(this, this.x, this.y);
-        this.fire('moved', {
-          x: this.x,
-          y: this.y
-        });
+        var context = this;
+        var later = function(){
+          context.debounceTimeout = null;
+          console.log(Date.now(), context.x, context.y);
+          translate(context, context.x, context.y);
+          context.fire('moved', {
+            x: context.x,
+            y: context.y
+          });
+        }
+        clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = setTimeout(later, 16);
       }
+
     });
   </script>
 </polymer-element>
