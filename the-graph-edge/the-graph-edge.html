@@ -21,7 +21,16 @@
       },
       drawEdge: function () {
         if (!this.path || !this.from || !this.to) { return; }
-        var d = ["M", this.from.x, this.from.y, "L", this.to.x, this.to.y].join(" ");
+        var outL = 3;
+        var curveL = 50;
+        var d = [
+          "M", this.from.x, this.from.y, 
+          "L", this.from.x+outL, this.from.y,
+          "C", this.from.x+outL+curveL, this.from.y,
+               this.to.x-outL-curveL, this.to.y,
+               this.to.x-outL, this.to.y,
+          "L", this.to.x, this.to.y
+        ].join(" ");
         this.path.setAttributeNS(null, "d", d );
       },
       sourceChanged: function () {
@@ -44,8 +53,8 @@
       },
       sourceMoved: function () {
         this.from = {
-          x: parseFloat( this.sourceNode.getAttribute("x") ) + 75,
-          y: this.sourceNode.getAttribute("y")
+          x: parseFloat( this.sourceNode.getAttribute("x") ) + 60,
+          y: parseFloat( this.sourceNode.getAttribute("y") ) + 30
         };
         this.drawEdge();
       },
@@ -60,7 +69,7 @@
       targetMoved: function () {
         this.to = {
           x: this.targetNode.getAttribute("x"),
-          y: this.targetNode.getAttribute("y")
+          y: parseFloat( this.targetNode.getAttribute("y") ) + 30
         };
         this.drawEdge();
       }      

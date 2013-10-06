@@ -39,13 +39,13 @@ the-graph {
   background-image:
     linear-gradient(left, #2c2c2c 1px, transparent 1px),
     linear-gradient(top, #2c2c2c 1px, transparent 1px);
-  background-size: 80px 80px;
+  background-size: 70px 70px;
 }
 
 the-graph-process, the-graph-subgraph {
   display: block;
-  width: 75px;
-  height: 75px;
+  width: 58px;
+  height: 58px;
   background-color: rgba(0,0,0, 0.5);
   color: #000000;
   border-radius: 3px;
@@ -56,8 +56,11 @@ the-graph-process h1, the-graph-subgraph h1 {
   font-size: 12px;
   text-align: center;
   margin-top: -20px;
+  margin-left: -40px;
+  width: 140px;
   color: white;
   font-weight: lighter;
+  overflow: ellipsis;
 }
 
 path.edge {
