@@ -67,34 +67,24 @@
         var initials = this.querySelector("the-graph-initials");
         var exports = this.querySelector("the-graph-exports");
 
-        // Make process elements
+        // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
-          var process = document.createElement("the-graph-process");
-          process.setAttribute("name", index);
-          process.setAttribute("component", p.component);
-          process.setAttribute("label", (p.metadata.label ? p.metadata.label : p.component) );
-          process.setAttribute("x", p.metadata.x);
-          process.setAttribute("y", p.metadata.y);
-          nodes.appendChild(process);
+          p.name = index;
+          nodes.processes.push(p);
         }
 
+        setTimeout(function () {
         // Make connection elements
-        var length = this.graph.connections.length;
-        for (var i=0; i<length; i++) {
-          var c = this.graph.connections[i];
-          if (c.src !== undefined) {
-            // Edge
-            var edge = document.createElement("the-graph-edge");
-            edge.setAttribute("source", c.src.process+"."+c.src.port );
-            edge.setAttribute("target", c.tgt.process+"."+c.tgt.port );
-            edge.setAttribute("route", (c.metadata && c.metadata.route ? c.metadata.route : 0) );
-            edges.appendChild(edge);
-          } else {
-            // Initial
-            var initial = document.createElement("the-graph-initial");
+        this.graph.connections.forEach(function (connection) {
+          if (connection.src) {
+            edges.connections.push(connection);
+            return;
           }
-        }
+          initials.iips.push(connection);
+        });
+        }.bind(this), 0);
+
       }
     });
   </script>

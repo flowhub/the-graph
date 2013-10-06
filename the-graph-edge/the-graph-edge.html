@@ -1,5 +1,4 @@
-<polymer-element name="the-graph-edge" attributes="source target route">
-
+<polymer-element name="the-graph-edge" attributes="source target route connection">
   <script>
     Polymer('the-graph-edge', {
       route: 0,
@@ -20,6 +19,17 @@
         this.routeChanged();
         rootSVG.appendChild(this.path);
         this.drawEdge();
+      },
+      connectionChanged: function () {
+        // Reference to the actual node list
+        this.nodes = this.connection.nodes;
+
+        // Other connection attributes
+        this.source = this.connection.src.process + '.' + this.connection.src.port;
+        this.target = this.connection.tgt.process + '.' + this.connection.tgt.port;
+        if (this.connection.metadata) {
+          this.route = this.connection.metadata.route;
+        }
       },
       routeChanged: function () {
         if (!this.path) { return; }
