@@ -32,7 +32,10 @@
       drawEdge: function () {
         if (!this.path || !this.from || !this.to) { return; }
         var outL = 3;
-        var curveL = 50;
+        var curveL = 20;
+        if (this.to.x > this.from.x) {
+          curveL = (this.to.x-this.from.x)/2;
+        }
         var d = [
           "M", this.from.x, this.from.y, 
           "L", this.from.x+outL, this.from.y,
@@ -55,9 +58,9 @@
         // if (sourceNode.length > 1) { 
         //   throw new Error("More than one source node with name: "+this.source);
         // }
-        this.sourceNode = sourceNode[0];
 
-        if (!this.sourceNode) { return; }
+        if (sourceNode.length !== 1) { return; }
+        this.sourceNode = sourceNode[0];
         this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
         this.sourceMoved();
       },
@@ -71,8 +74,8 @@
       targetChanged: function () {
         var split = this.target.split(".");
         var targetNode = document.getElementsByName( split[0] );
+        if (targetNode.length !== 1) { return; }
         this.targetNode = targetNode[0];
-        if (!this.targetNode) { return; }
         this.targetNode.addEventListener("moved", this.targetMoved.bind(this));
         this.targetMoved();
       },
