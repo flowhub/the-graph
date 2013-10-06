@@ -1,20 +1,16 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label x y component">
+<polymer-element name="the-graph-process" attributes="name label x y component process">
 
   <template>
-    <div class="the-graph-process">
-      <h1 title="{{component}}">{{label}}</h1>
-      <content select="the-graph-inports"></content>
-      <content select="the-graph-outports"></content>
-    </div>
+    <h1>{{label}}</h1>
+    <content select="the-graph-inports"></content>
+    <content select="the-graph-outports"></content>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
-  (function() {
-
     Polymer('the-graph-process', {
       created: function () {
         this.style.position = 'absolute';
@@ -23,11 +19,25 @@
       label: '',
       x: 0,
       y: 0,
+      processChanged: function () {
+        this.component = this.process.component;
+        this.name = this.process.name;
+        if (this.process.metadata) {
+          this.x = this.process.metadata.x;
+          this.y = this.process.metadata.y;
+        }
+        if (!this.label) {
+          this.label = this.name;
+        }
+      },
       xChanged: function () {
         this.positionChanged();
       },
       yChanged: function () {
         this.positionChanged();
+      },
+      nameChanged: function () {
+        this.setAttribute('name', this.name);
       },
       positionDebounce: null,
       positionChanged: function () {
@@ -55,8 +65,6 @@
       // )
 
     });
-
-  })();
   </script>
 </polymer-element>
 

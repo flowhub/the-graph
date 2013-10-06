@@ -2,9 +2,14 @@
 <link rel="import" href="../the-graph-process/the-graph-process.html">
 
 <polymer-element name="the-graph-nodes">
-
+  <template>
+    <template repeat="{{processes}}">
+      <the-graph-process process="{{}}"></the-graph-process>
+    </template>
+  </template>
   <script>
-    Polymer('the-graph-nodes', {});
+    Polymer('the-graph-nodes', {
+      processes: []
+    });
   </script>
-  
 </polymer-element>

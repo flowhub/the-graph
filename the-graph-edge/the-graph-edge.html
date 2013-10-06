@@ -1,5 +1,4 @@
-<polymer-element name="the-graph-edge" attributes="source target route">
-
+<polymer-element name="the-graph-edge" attributes="source target route connection">
   <script>
     Polymer('the-graph-edge', {
       created: function () {
@@ -15,6 +14,17 @@
         this.drawEdge();
       },
       route: 0,
+      connectionChanged: function () {
+        // Reference to the actual node list
+        this.nodes = this.connection.nodes;
+
+        // Other connection attributes
+        this.source = this.connection.src.process + '.' + this.connection.src.port;
+        this.target = this.connection.tgt.process + '.' + this.connection.tgt.port;
+        if (this.connection.metadata) {
+          this.route = this.connection.metadata.route;
+        }
+      },
       routeChanged: function () {
         if (!this.path) { return; }
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
@@ -38,7 +48,7 @@
         // if (split.length <=0 || split.length > 2) { 
         //   throw new Error("Incorrect format pointing to source node: "+this.source);
         // }
-        var sourceNode = document.getElementsByName( split[0] );
+      var sourceNode = document.getElementsByName( split[0] );
         // if (sourceNode.length <=0) { 
         //   throw new Error("Didn't find source node: "+this.source);
         // }

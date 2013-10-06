@@ -1,19 +1,28 @@
 <link rel="import" href="../the-graph/the-graph.html">
+<link rel="import" href="../the-library/the-library.html">
 
 <polymer-element name="the-graph-editor">
+  <template>
+    <the-graph></the-graph>
+  </template>
   <script>
     Polymer('the-graph-editor', {
-      graphChanged: function () {
-
-        var g  = this.querySelector("the-graph");
-        if (g) {
-          g.parentNode.removeChild(g);
+      graph: {},
+      created: function () {
+      },
+      clearGraph: function () {
+        var g  = this.querySelectorAll("the-graph");
+        if (g && g.length) {
+          for (var i = 0; i < g.length; ++i) {
+            g[i].parentNode.removeChild(g[i]);
+          }
         }
-
+      },
+      graphChanged: function () {
+        this.clearGraph();
         var newGraph = document.createElement("the-graph");
-        this.appendChild( newGraph );
+        this.appendChild(newGraph);
         newGraph.graph = this.graph;
-
       }
     });
   </script>
