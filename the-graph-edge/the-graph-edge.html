@@ -7,7 +7,7 @@
         setTimeout(this.checkParent.bind(this), 0);
       },
       checkParent: function () {
-        var rootSVG = this.parentNode.$.edges;
+        var rootSVG = this.parentNode.getElementsByTagName('svg')[0];
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         this.routeChanged();
         rootSVG.appendChild(this.path);

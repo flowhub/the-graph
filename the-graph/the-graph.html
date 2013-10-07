@@ -6,9 +6,10 @@
 <polymer-element name="the-graph" attributes="panx pany zoom" lightdom>
 
   <template>
+    <content select="the-behavior"></content>
+    <the-graph-nodes id="nodes"></the-graph-nodes>
+    <the-graph-edges id="edges"></the-graph-edges>
     <the-graph-initials></the-graph-initials>
-    <the-graph-nodes></the-graph-nodes>
-    <the-graph-edges></the-graph-edges>
     <the-graph-exports></the-graph-exports>
   </template>
 
@@ -45,8 +46,8 @@
         theGraph.transform(this, this.panx, this.pany, this.zoom);
       },
       graphChanged: function () {
-        var nodes = this.querySelector("the-graph-nodes");
-        var edges = this.querySelector("the-graph-edges");
+        var nodes = this.$.nodes;
+        var edges = this.$.edges;
         var initials = this.querySelector("the-graph-initials");
         var exports = this.querySelector("the-graph-exports");
 
@@ -57,16 +58,14 @@
           nodes.processes.push(p);
         }
 
-        setTimeout(function () {
         // Make connection elements
         this.graph.connections.forEach(function (connection) {
           if (connection.src) {
             edges.connections.push(connection);
-            return;
           }
+          return;
           initials.iips.push(connection);
         });
-        }.bind(this), 0);
 
       }
     });
