@@ -16,9 +16,21 @@
         this.style.position = 'absolute';
         theGraph.transform(this, this.x, this.y);
       },
+      enteredView: function () {
+        var graph = this.parentNode.parentNode;
+        var self = this;
+        graph.addEventListener("zoomed", function(event){
+          self.zoom = graph.zoom;
+        });
+      },
       label: '',
       x: 0,
+      scaledx: 0,
       y: 0,
+      scaledy: 0,
+      zoom: 1,
+      width: 60,
+      height: 60,
       processChanged: function () {
         this.component = this.process.component;
         this.name = this.process.name;
@@ -31,9 +43,11 @@
         }
       },
       xChanged: function () {
+        this.scaledx = Math.round(this.x * this.zoom);
         this.positionChanged();
       },
       yChanged: function () {
+        this.scaledy = Math.round(this.y * this.zoom);
         this.positionChanged();
       },
       nameChanged: function () {
@@ -44,7 +58,7 @@
         var self = this;
         var later = function(){
           self.positionDebounce = null;
-          theGraph.transform(self, self.x, self.y);
+          theGraph.transform(self, self.scaledx, self.scaledy);
           self.fire('moved', {
             x: self.x,
             y: self.y
@@ -52,17 +66,14 @@
         }
         clearTimeout(this.positionDebounce);
         this.positionDebounce = setTimeout(later, 16);
+      },
+      zoomChanged: function () {
+        this.style.width = Math.round(this.width*this.zoom) + "px";
+        this.style.height = Math.round(this.height*this.zoom) + "px";
+        this.scaledx = Math.round(this.x * this.zoom);
+        this.scaledy = Math.round(this.y * this.zoom);
+        theGraph.transform(this, this.scaledx, this.scaledy);
       }
-      // positionChanged: theGraph.debounce(
-      //   function () {
-      //     theGraph.transform(this, this.x, this.y);
-      //     this.fire('moved', {
-      //       x: this.x,
-      //       y: this.y
-      //     });
-      //   },
-      //   16
-      // )
 
     });
   </script>
