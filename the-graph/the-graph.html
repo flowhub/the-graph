@@ -63,8 +63,8 @@
         this.zoomDebounce = setTimeout(later, 750);
       },
       graphChanged: function () {
-        var nodes = this.$.nodes;
-        var edges = this.$.edges;
+        var nodes = this.querySelector("the-graph-nodes");
+        var edges = this.querySelector("the-graph-edges");
         var initials = this.querySelector("the-graph-initials");
         var exports = this.querySelector("the-graph-exports");
 
