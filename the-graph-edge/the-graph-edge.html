@@ -138,10 +138,6 @@
         this.sourceMoved();
       },
       sourceMoved: function () {
-        this.from = {
-          x: Math.round( (parseFloat( this.sourceNode.getAttribute("x") ) + 60) * this.zoom ),
-          y: Math.round( (parseFloat( this.sourceNode.getAttribute("y") ) + 30) * this.zoom )
-        };
         this.drawEdge();
       },
       targetChanged: function () {
@@ -153,21 +149,9 @@
         this.targetMoved();
       },
       targetMoved: function () {
-        this.to = {
-          x: Math.round( parseFloat( this.targetNode.getAttribute("x") ) * this.zoom ),
-          y: Math.round( (parseFloat( this.targetNode.getAttribute("y") ) + 30) * this.zoom )
-        };
         this.drawEdge();
       },
       zoomChanged: function () {
-        this.from = {
-          x: Math.round( (parseFloat( this.sourceNode.getAttribute("x") ) + 60) * this.zoom ),
-          y: Math.round( (parseFloat( this.sourceNode.getAttribute("y") ) + 30) * this.zoom )
-        };
-        this.to = {
-          x: Math.round( parseFloat( this.targetNode.getAttribute("x") ) * this.zoom ),
-          y: Math.round( (parseFloat( this.targetNode.getAttribute("y") ) + 30) * this.zoom )
-        };
         this.drawEdge();
       }
     });
