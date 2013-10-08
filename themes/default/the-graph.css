@@ -1,4 +1,4 @@
-body {
+the-graph-editor {
   margin: none;
   padding: none;
   font-family: verdana;
@@ -61,8 +61,6 @@ the-graph {
 
 the-graph-process, the-graph-subgraph {
   display: block;
-  width: 58px;
-  height: 58px;
   background-color: rgba(0,0,0, 0.5);
   color: #000000;
   border-radius: 3px;

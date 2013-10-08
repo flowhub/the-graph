@@ -1,29 +1,22 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <link rel="import" href="../the-library/the-library.html">
 
-<polymer-element name="the-graph-editor">
+<polymer-element name="the-graph-editor" lightdom>
   <template>
-    <the-graph></the-graph>
+    <link rel="stylesheet" href="../themes/default/the-graph.css">
+    <the-graph id="graph" name="{{ graph.properties.name }}">
+      <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attributes" distance="20"></the-behavior>
+      <the-behavior type="drag" direction="north south east west" accept="nodeName=svg" action="log" distance="20"></the-behavior>
+    </the-graph>
   </template>
   <script>
+  (function () {
     Polymer('the-graph-editor', {
       graph: {},
-      created: function () {
-      },
-      clearGraph: function () {
-        var g  = this.querySelectorAll("the-graph");
-        if (g && g.length) {
-          for (var i = 0; i < g.length; ++i) {
-            g[i].parentNode.removeChild(g[i]);
-          }
-        }
-      },
       graphChanged: function () {
-        this.clearGraph();
-        var newGraph = document.createElement("the-graph");
-        this.appendChild(newGraph);
-        newGraph.graph = this.graph;
+        this.$.graph.graph = this.graph;
       }
     });
+  })();
   </script>
 </polymer-element>

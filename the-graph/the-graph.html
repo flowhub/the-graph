@@ -6,9 +6,10 @@
 <polymer-element name="the-graph" attributes="panx pany scale" lightdom>
 
   <template>
+    <content select="the-behavior"></content>
+    <the-graph-nodes id="nodes"></the-graph-nodes>
+    <the-graph-edges id="edges"></the-graph-edges>
     <the-graph-initials></the-graph-initials>
-    <the-graph-nodes></the-graph-nodes>
-    <the-graph-edges></the-graph-edges>
     <the-graph-exports></the-graph-exports>
   </template>
 
@@ -74,16 +75,14 @@
           nodes.processes.push(p);
         }
 
-        setTimeout(function () {
         // Make connection elements
         this.graph.connections.forEach(function (connection) {
           if (connection.src) {
             edges.connections.push(connection);
-            return;
           }
+          return;
           initials.iips.push(connection);
         });
-        }.bind(this), 0);
 
       }
     });

@@ -1,22 +1,25 @@
 {
   "name": "the-graph",
   "keywords": [
-    "graph", "flow", "noflo"
+    "graph",
+    "flow",
+    "noflo"
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
     "polymer": ">=0.0.20131003",
     "font-awesome": "3.2.x",
-    "the-behavior": "*"
+    "the-behavior": "*",
+    "gss": "git://github.com/the-gss/gss.git#gh-pages"
   },
   "license": "MIT",
   "ignore": [
     "**/.*",
-  "node_modules",
-  "bower_components",
-  "test",
-  "tests",
-  "docs",
-  "tools"
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "docs",
+    "tools"
   ]
 }
