@@ -1,5 +1,87 @@
 <polymer-element name="the-graph-edge" attributes="source target route connection">
   <script>
+  (function(){
+
+    var quarterPi = Math.PI/4;
+    var sw = 0-3*quarterPi;
+    var se = 0-1*quarterPi;
+    var ne = quarterPi;
+    var nw = 3*quarterPi;
+
+    function makePath(sourceX, sourceY, targetX, targetY, scale){
+      var nodeW = 60;
+      var nodeW2 = 60 / 2;
+      var nodeH = 60;
+      var nodeH2 = 60 / 2;
+
+      var angle = Math.atan2(sourceY-targetY, targetX-sourceX);
+      var startX, startY, endX, endY;
+      var c1X, c1Y, c2X, c2Y;
+
+      if (sw <= angle && angle < se) {
+        // S: bottom to top
+        startX = sourceX + nodeW2;
+        startY = sourceY + nodeH;
+        endX = targetX + nodeW2;
+        endY = targetY;
+        c1X = startX;
+        c1Y = startY + (endY - startY)/2;
+        c2X = endX;
+        c2Y = c1Y;
+      } else if (se <= angle && angle < ne) {
+        // E: left to right
+        startX = sourceX + nodeW;
+        startY = sourceY + nodeH2;
+        endX = targetX;
+        endY = targetY + nodeH2;
+        c1X = startX + (endX - startX)/2;
+        c1Y = startY;
+        c2X = c1X;
+        c2Y = endY;
+      } else if (ne <= angle && angle < nw) {
+        // N bottom to right
+        startX = sourceX + nodeW2;
+        startY = sourceY + nodeH;
+        endX = targetX;
+        endY = targetY + nodeH2;
+        c1X = startX;
+        c1Y = startY + nodeH;
+        c2X = endX - nodeW;
+        c2Y = endY;
+      } else {
+        // W right to top
+        startX = sourceX + nodeW;
+        startY = sourceY + nodeH2;
+        endX = targetX + nodeW2;
+        endY = targetY;
+        c1X = startX + nodeW;
+        c1Y = startY;
+        c2X = endX;
+        c2Y = endY - nodeH;
+      }
+
+      // Scale edge
+      startX = Math.round(startX*scale);
+      startY = Math.round(startY*scale);
+      endX = Math.round(endX*scale);
+      endY = Math.round(endY*scale);
+      c1X = Math.round(c1X*scale);
+      c1Y = Math.round(c1Y*scale);
+      c2X = Math.round(c2X*scale);
+      c2Y = Math.round(c2Y*scale);
+
+      var d = [
+        "M", startX, startY, 
+        // "L", startX+outL, startY,
+        "C", c1X, c1Y,
+             c2X, c2Y,
+             endX, endY
+        // "L", endX, endY
+      ];
+
+      return d.join(" ");
+    }
+
     Polymer('the-graph-edge', {
       route: 0,
       zoom: 1,
@@ -36,21 +118,16 @@
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
       },
       drawEdge: function () {
-        if (!this.path || !this.from || !this.to) { return; }
-        var outL = 3;
-        var curveL = 20;
-        if (this.to.x > this.from.x) {
-          curveL = Math.floor((this.to.x-this.from.x)/2);
-        }
-        var d = [
-          "M", this.from.x, this.from.y, 
-          "L", this.from.x+outL, this.from.y,
-          "C", this.from.x+outL+curveL, this.from.y,
-               this.to.x-outL-curveL, this.to.y,
-               this.to.x-outL, this.to.y,
-          "L", this.to.x, this.to.y
-        ].join(" ");
-        this.path.setAttributeNS(null, "d", d );
+        if (!this.path || !this.sourceNode || !this.targetNode) { return; }
+
+        var sourceX = parseFloat( this.sourceNode.getAttribute("x") );
+        var sourceY = parseFloat( this.sourceNode.getAttribute("y") );
+        var targetX = parseFloat( this.targetNode.getAttribute("x") );
+        var targetY = parseFloat( this.targetNode.getAttribute("y") );
+
+        var d = makePath(sourceX, sourceY, targetX, targetY, this.zoom);
+
+        this.path.setAttributeNS(null, "d", d);
       },
       sourceChanged: function () {
         var split = this.source.split(".");
@@ -93,9 +170,9 @@
         };
         this.drawEdge();
       }
-
-
     });
+
+  })()
   </script>
   
 </polymer-element>

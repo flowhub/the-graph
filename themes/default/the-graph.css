@@ -60,17 +60,25 @@ the-graph {
 }
 
 the-graph-process, the-graph-subgraph {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
   background-color: rgba(0,0,0, 0.5);
   color: #000000;
   border-radius: 3px;
   border: 1px magenta solid;
+  width: 58px;
+  height: 58px;
 }
 
 the-graph-process h1, the-graph-subgraph h1 {
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  margin-bottom: -20px;
   font-size: 12px;
   text-align: center;
-  margin-top: -20px;
   width: 100%;
   color: white;
   font-weight: lighter;
