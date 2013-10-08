@@ -2,62 +2,62 @@
   <script>
   (function(){
 
-    var quarterPi = Math.PI/4;
-    var sw = 0-3*quarterPi;
-    var se = 0-1*quarterPi;
-    var ne = quarterPi;
-    var nw = 3*quarterPi;
-
     function makePath(sourceX, sourceY, targetX, targetY, scale){
       var nodeW = 60;
       var nodeW2 = 60 / 2;
       var nodeH = 60;
       var nodeH2 = 60 / 2;
 
-      var angle = Math.atan2(sourceY-targetY, targetX-sourceX);
       var startX, startY, endX, endY;
       var c1X, c1Y, c2X, c2Y;
 
-      if (sw <= angle && angle < se) {
-        // S: bottom to top
-        startX = sourceX + nodeW2;
-        startY = sourceY + nodeH;
-        endX = targetX + nodeW2;
-        endY = targetY;
-        c1X = startX;
-        c1Y = startY + (endY - startY)/2;
-        c2X = endX;
-        c2Y = c1Y;
-      } else if (se <= angle && angle < ne) {
-        // E: left to right
-        startX = sourceX + nodeW;
-        startY = sourceY + nodeH2;
-        endX = targetX;
-        endY = targetY + nodeH2;
-        c1X = startX + (endX - startX)/2;
-        c1Y = startY;
-        c2X = c1X;
-        c2Y = endY;
-      } else if (ne <= angle && angle < nw) {
-        // N bottom to right
-        startX = sourceX + nodeW2;
-        startY = sourceY + nodeH;
-        endX = targetX;
-        endY = targetY + nodeH2;
-        c1X = startX;
-        c1Y = startY + nodeH;
-        c2X = endX - nodeW;
-        c2Y = endY;
+      var xDiff = targetX - sourceX;
+      var yDiff = targetY - sourceY;
+
+      if (Math.abs(xDiff) < Math.abs(yDiff)){
+        if (sourceY < targetY) {
+          // S: bottom to top
+          startX = sourceX + nodeW2;
+          startY = sourceY + nodeH;
+          endX = targetX + nodeW2;
+          endY = targetY;
+          c1X = startX;
+          c1Y = startY + (endY - startY)/2;
+          c2X = endX;
+          c2Y = c1Y;
+        } else {
+          // N bottom to right
+          startX = sourceX + nodeW2;
+          startY = sourceY + nodeH;
+          endX = targetX;
+          endY = targetY + nodeH2;
+          c1X = startX;
+          c1Y = startY + nodeH;
+          c2X = endX - nodeW;
+          c2Y = endY;
+        }
       } else {
-        // W right to top
-        startX = sourceX + nodeW;
-        startY = sourceY + nodeH2;
-        endX = targetX + nodeW2;
-        endY = targetY;
-        c1X = startX + nodeW;
-        c1Y = startY;
-        c2X = endX;
-        c2Y = endY - nodeH;
+        if (sourceX < targetX) {
+          // E: left to right
+          startX = sourceX + nodeW;
+          startY = sourceY + nodeH2;
+          endX = targetX;
+          endY = targetY + nodeH2;
+          c1X = startX + (endX - startX)/2;
+          c1Y = startY;
+          c2X = c1X;
+          c2Y = endY;
+        } else {
+          // W right to top
+          startX = sourceX + nodeW;
+          startY = sourceY + nodeH2;
+          endX = targetX + nodeW2;
+          endY = targetY;
+          c1X = startX + nodeW;
+          c1Y = startY;
+          c2X = endX;
+          c2Y = endY - nodeH;
+        }
       }
 
       // Scale edge
@@ -72,11 +72,9 @@
 
       var d = [
         "M", startX, startY, 
-        // "L", startX+outL, startY,
         "C", c1X, c1Y,
              c2X, c2Y,
              endX, endY
-        // "L", endX, endY
       ];
 
       return d.join(" ");
