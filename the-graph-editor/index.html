@@ -4,12 +4,20 @@
     <title>Graph Editor</title>
     <meta charset="utf-8">
     <script src="../bower_components/polymer/polymer.min.js"></script>
+    <script src="../bower_components/gss/browser/gss.js"></script>
     <link rel="import" href="the-graph-editor.html">
     <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
   </head>
   <body>
     <the-graph-editor></the-graph-editor>
+    <style type="text/gss">
+      /* Ensure nodes are square and of touchable size */
+      [node-width] == 58;
+      the-graph-process[width] == the-graph-process[height];
+      the-graph-process[width] == [node-width];
+    </style>
     <script type="text/javascript">
+      GSS.worker = '../bower_components/gss/browser/gss-solver.min.js'
       window.addEventListener('WebComponentsReady', function() {
         window.loadGraph = function (json) {
         var editors = document.getElementsByTagName('the-graph-editor');
