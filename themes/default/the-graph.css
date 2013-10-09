@@ -76,13 +76,14 @@ the-graph-process h1, the-graph-subgraph h1 {
   position: absolute;
   bottom: 0px;
   left: 0;
-  margin-bottom: -20px;
+  margin-bottom: -27px;
   font-size: 12px;
-  text-align: center;
-  width: 100%;
   color: white;
   font-weight: lighter;
-  overflow: ellipsis;
+  padding: 2px 0;
+
+  background-color: rgba(0,0,0, 0.35);
+  border-radius: 3px;
 }
 
 path.edge {

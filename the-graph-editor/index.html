@@ -20,14 +20,16 @@
       GSS.worker = '../bower_components/gss/browser/gss-solver.min.js'
       window.addEventListener('WebComponentsReady', function() {
         window.loadGraph = function (json) {
-        var editors = document.getElementsByTagName('the-graph-editor');
+          var editors = document.getElementsByTagName('the-graph-editor');
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
         script.type = 'application/javascript';
-        /*script.src = 'https://api.github.com/gists/6699161?callback=loadGraph';*/
-        script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
+        // Clock
+        script.src = 'https://api.github.com/gists/6699161?callback=loadGraph';
+        // Edge algo test
+        // script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
         body.appendChild(script);
       });
     </script>
