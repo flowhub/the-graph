@@ -2,7 +2,19 @@
 
 <polymer-element name="the-graph-edges" attributes="edges" lightdom>
   <template>
-    <svg id="edges" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000"></svg>
+    <svg id="edges" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000">
+      <defs>
+        <marker id="mCircle" markerWidth="10" markerHeight="10" refX="5" refY="5">
+          <circle cx="5" cy="5" r="2" style="fill: lime; stroke: none;"/>
+        </marker>
+        <marker id="mArrow" markerWidth="6" markerHeight="10" refX="2" refY="4" orient="auto">
+          <path d="M 0 0 4 4 0 8" style="fill: none; stroke: lime;"/>
+        </marker>
+        <marker id="mTriangle" markerWidth="5" markerHeight="10" refX="5" refY="5" orient="auto">
+          <path d="M 0 0 5 5 0 10 Z" style="fill: lime;"/>
+        </marker>
+      </defs>
+    </svg>
     <template repeat="{{connections}}">
       <the-graph-edge connection="{{}}"></the-graph-edge>
     </template>

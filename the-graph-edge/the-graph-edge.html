@@ -96,6 +96,8 @@
       checkParent: function () {
         var rootSVG = this.parentNode.getElementsByTagName('svg')[0];
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.path.setAttributeNS(null, "marker-start", "url(#mCircle)");
+        this.path.setAttributeNS(null, "marker-end", "url(#mArrow)");
         this.routeChanged();
         rootSVG.appendChild(this.path);
         this.drawEdge();
