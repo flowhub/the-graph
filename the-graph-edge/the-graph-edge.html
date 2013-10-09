@@ -31,7 +31,7 @@
           startY = sourceY + nodeH;
           endX = targetX;
           endY = targetY + nodeH2;
-          c1X = startX;
+          c1X = startX + ( startX<endX ? nodeW : 0-nodeW );
           c1Y = startY + nodeH;
           c2X = endX - nodeW;
           c2Y = endY;
@@ -54,7 +54,7 @@
           endX = targetX + nodeW2;
           endY = targetY;
           c1X = startX + nodeW;
-          c1Y = startY;
+          c1Y = startY + ( startY<endY ? nodeH : 0-nodeH );
           c2X = endX;
           c2Y = endY - nodeH;
         }
