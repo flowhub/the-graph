@@ -96,8 +96,6 @@
       checkParent: function () {
         var rootSVG = this.parentNode.getElementsByTagName('svg')[0];
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        this.path.setAttributeNS(null, "marker-start", "url(#mCircle)");
-        this.path.setAttributeNS(null, "marker-end", "url(#mArrow)");
         this.routeChanged();
         rootSVG.appendChild(this.path);
         this.drawEdge();
@@ -136,6 +134,17 @@
         this.sourceNode = sourceNode[0];
         this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
         this.sourceMoved();
+
+        // Find/make port
+        // var outports = this.sourceNode.querySelector("the-graph-outports"); 
+        // var outport = outports.querySelector('port[name="'+split[1]+'"]');
+        // if (!outport) {
+        //   outport = document.createElement("the-graph-port");
+        //   outport.setAttribute("name", split[1]);
+        //   outports.appendChild(outport);
+        // }
+        // console.log(outport);
+        // this.sourcePort = outport;
       },
       sourceMoved: function () {
         this.drawEdge();

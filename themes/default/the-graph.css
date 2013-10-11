@@ -66,7 +66,7 @@ the-graph-process, the-graph-subgraph {
   display: block;
   background-color: rgba(0,0,0, 0.5);
   color: #000000;
-  border-radius: 3px;
+  border-radius: 5px;
   border: 1px magenta solid;
   /*width: 58px;
   height: 58px;*/
@@ -93,3 +93,16 @@ path.edge {
   stroke-width: 1.5px;
 }
 
+path.edge.route0  { stroke: #fff; }
+path.edge.route1  { stroke: hsl(  0, 100%, 60%); }
+path.edge.route2  { stroke: hsl( 30, 100%, 60%); }
+path.edge.route3  { stroke: hsl( 60, 100%, 60%); }
+path.edge.route4  { stroke: hsl( 90, 100%, 60%); }
+path.edge.route5  { stroke: hsl(120, 100%, 60%); }
+path.edge.route6  { stroke: hsl(150, 100%, 60%); }
+path.edge.route7  { stroke: hsl(180, 100%, 60%); }
+path.edge.route8  { stroke: hsl(210, 100%, 60%); }
+path.edge.route9  { stroke: hsl(240, 100%, 60%); }
+path.edge.route10 { stroke: hsl(270, 100%, 60%); }
+path.edge.route11 { stroke: hsl(300, 100%, 60%); }
+path.edge.route12 { stroke: hsl(330, 100%, 60%); }
