@@ -1,0 +1,20 @@
+<link rel="import" href="../the-graph-inports/the-graph-inports.html">
+<link rel="import" href="../the-graph-outports/the-graph-outports.html">
+<polymer-element name="the-component" attributes="name icon">
+  <script>
+    Polymer('the-component', {
+      created: function () {
+        console.log(this.impl.ownerDocument.querySelectorAll('the-graph-process'));
+        this.updateInstances();
+      },
+      findInstances: function () {
+        console.log(this);
+        return [];
+      },
+      updateInstances: function () {
+        this.findInstances().forEach(function () {
+        });
+      }
+    });
+  </script>
+</polymer-element>
