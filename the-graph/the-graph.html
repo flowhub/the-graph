@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="drag scale" lightdom>
+<polymer-element name="the-graph" attributes="drag zoom" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -32,7 +32,17 @@
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
-            this.scale = e.detail.scale;
+            var finished = false
+            for (var touch in e.detail) {
+              if (e.detail[touch].endpoint) {
+                finished = true;
+              }
+            }
+            if (!finished) {
+              this.zooming(e.detail.scale);
+            } else {
+              this.zoomed(e.detail.scale);
+            }
           }.bind(this));
         }
         if (this.$.graphpan) {
@@ -75,28 +85,22 @@
         clearTimeout(this.panDebounce);
         this.panDebounce = setTimeout(later, 750);
       },
-      scaleChanged: function () {
+      zooming: function (scale) {
         // Scale happens fast
-        var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
+        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
         var pan = this.getPan();
         theGraph.transform(this, pan.x, pan.y, scale);
-        this.zoomDone();
       },
-      zoomDebounce: null,
-      zoomDone: function () {
+      zoomed: function (scale) {
         // Zoom causes a rerendering of graph elements
-        var later = function(){
-          this.zoomDebounce = null;
-          var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
-          var zoom = this.zoom * scale;
-          this.zoom = Math.max(0.25, Math.min(zoom, 6));
-          this.fire("zoomed", this.zoom);
-          var pan = this.getPan();
-          theGraph.transform(this, pan.x, pan.y, 1);
-          this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
-        }.bind(this);
-        clearTimeout(this.zoomDebounce);
-        this.zoomDebounce = setTimeout(later, 750);
+        this.zoomDebounce = null;
+        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
+        var zoom = this.zoom * scale;
+        this.zoom = Math.max(0.25, Math.min(zoom, 6));
+        this.fire("zoomed", this.zoom);
+        var pan = this.getPan();
+        theGraph.transform(this, pan.x, pan.y, 1);
+        this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
       },
       graphChanged: function () {
         var nodes = this.querySelector("the-graph-nodes");
