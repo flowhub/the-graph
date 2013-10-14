@@ -33,6 +33,13 @@
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
             this.zooming(e.detail.scale, e.detail.center);
+
+            // Ensure the end method gets called
+            var later = function () {
+              this.zoomed(e.detail.scale, e.detail.center);
+            }.bind(this);
+            clearTimeout(this.zoomDebounce);
+            this.zoomDebounce = setTimeout(later, 750);
           }.bind(this));
         }
         if (this.$.graphpan) {
@@ -49,7 +56,14 @@
               x: panX + pan.x,
               y: panY + pan.y
             }
-            this.panning(newPan);
+            this.panning(newPan, 1);
+
+            // Ensure the end method gets called
+            var later = function () {
+              this.panned(newPan);
+            }.bind(this);
+            clearTimeout(this.panDebounce);
+            this.panDebounce = setTimeout(later, 750);
           }.bind(this));
         }
       },
@@ -61,17 +75,15 @@
         };
       },
       panDebounce: null,
-      panning: function (pan) {
-        theGraph.transform(this, pan.x, pan.y, 1);
-
-        // Ensure the end method gets called
-        var later = function () {
-          this.panned(pan);
-        }.bind(this);
-        clearTimeout(this.panDebounce);
-        this.panDebounce = setTimeout(later, 750);
+      panning: function (pan, scale) {
+        this.style.top = '0px';
+        this.style.left = '0px';
+        theGraph.transform(this, pan.x, pan.y, scale);
       },
       panned: function (pan) {
+        theGraph.transform(this, 0, 0, 1);
+        this.style.top = pan.y + 'px';
+        this.style.left = pan.x + 'px';
         this.pan = pan.x + ' ' + pan.y;
         this.fire('panned', pan);
       },
@@ -80,14 +92,10 @@
         // Scale happens fast
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
         var pan = this.getPan();
-        theGraph.transform(this, pan.x * scale, pan.y * scale, scale);
-
-        // Ensure the end method gets called
-        var later = function () {
-          this.zoomed(scale, center);
-        }.bind(this);
-        clearTimeout(this.zoomDebounce);
-        this.zoomDebounce = setTimeout(later, 750);
+        this.panning({
+          x: pan.x * scale,
+          y: pan.y * scale
+        }, scale);
       },
       zoomed: function (scale, center) {
         // Zoom causes a rerendering of graph elements
@@ -98,7 +106,10 @@
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
         // Update internal panning state based on scale
-        this.pan = pan.x * scale + ' ' + pan.y * scale;
+        this.panned({
+          x: pan.x * scale,
+          y: pan.y * scale
+        });
         this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
       },
       graphChanged: function () {
