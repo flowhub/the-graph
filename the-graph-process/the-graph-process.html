@@ -28,9 +28,7 @@
       },
       label: '',
       x: 0,
-      scaledx: 0,
       y: 0,
-      scaledy: 0,
       drag: '',
       zoom: 1,
       width: 60,
@@ -47,42 +45,40 @@
         }
       },
       xChanged: function () {
-        this.scaledx = Math.round(this.x * this.zoom);
         this.positionChanged();
       },
       yChanged: function () {
-        this.scaledy = Math.round(this.y * this.zoom);
         this.positionChanged();
       },
       dragChanged: function () {
         // TODO: Translate from view pixels to graph pixels
         var parts = this.drag.split(' ');
-        this.x = parts[0];
-        this.y = parts[1];
+        this.x = parts[0] / this.zoom;
+        this.y = parts[1] / this.zoom;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
       positionDebounce: null,
       positionChanged: function () {
-        var self = this;
-        var later = function(){
-          self.positionDebounce = null;
-          theGraph.transform(self, self.scaledx, self.scaledy);
-          self.fire('moved', {
-            x: self.x,
-            y: self.y
+        var later = function() {
+          this.positionDebounce = null;
+          theGraph.transform(this, this.x * this.zoom, this.y * this.zoom);
+          this.fire('moved', {
+            x: this.x,
+            y: this.y
           });
-        }
+        }.bind(this);
         clearTimeout(this.positionDebounce);
         this.positionDebounce = setTimeout(later, 16);
       },
       zoomChanged: function () {
+        // Update width to a scaled value
         this.style.width = Math.round(this.width*this.zoom) + "px";
         this.style.height = Math.round(this.height*this.zoom) + "px";
-        this.scaledx = Math.round(this.x * this.zoom);
-        this.scaledy = Math.round(this.y * this.zoom);
-        theGraph.transform(this, this.scaledx, this.scaledy);
+
+        // Set position by screen pixels
+        theGraph.transform(this, this.x * this.zoom, this.y * this.zoom);
       }
 
     });
