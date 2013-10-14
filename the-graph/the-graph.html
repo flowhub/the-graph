@@ -53,11 +53,17 @@
             }
             var panX = touch.movepoint.x - touch.startpoint.x;
             var panY = touch.movepoint.y - touch.startpoint.y;
+            // Handle panning in relation to previous panning state
             var pan = this.getPan();
-            this.drag = {
+            var newPan = {
               x: panX + pan.x,
               y: panY + pan.y
-            };
+            }
+            if (!touch.endpoint) {
+              this.panning(newPan);
+            } else {
+              this.panned(newPan);
+            }
           }.bind(this));
         }
       },
@@ -68,20 +74,22 @@
           y: parseInt(pan[1])
         };
       },
-      dragChanged: function () {
-        theGraph.transform(this, this.drag.x, this.drag.y, 1);
-        this.panDone();
+      panning: function (pan) {
+        theGraph.transform(this, pan.x, pan.y, 1);
+        this.style.marginTop = 0 + 'px';
+        this.style.marginLeft = 0 + 'px';
+        this.panned(pan);
       },
       panDebounce: null,
-      panDone: function () {
+      panned: function (pan) {
         var later = function () {
-          this.pan = this.drag.x + ' ' + this.drag.y;
-          this.fire('panned', {
-            x: this.drag.x,
-            y: this.drag.y
-          });
-          this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
+          theGraph.transform(this, 0, 0, 1);
+          this.style.marginTop = pan.y + 'px';
+          this.style.marginLeft = pan.x + 'px';
+          this.pan = pan.x + ' ' + pan.y;
+          this.fire('panned', pan);
         }.bind(this);
+        // TODO: Read endpoint instead of debouncing
         clearTimeout(this.panDebounce);
         this.panDebounce = setTimeout(later, 750);
       },
