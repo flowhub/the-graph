@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="panx pany scale" lightdom>
+<polymer-element name="the-graph" attributes="drag scale" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -18,54 +18,81 @@
 
   <script>
     Polymer('the-graph', {
-      panx: 0,
-      pany: 0,
+      // The actual pan state
+      pan: '0 0',
+      // User-visible pan state
+      drag: {
+        x: 0,
+        y: 0
+      },
+      // The actual zoom state
       zoom: 1,
-      created: function () {
-      },
+      // User-visible zoom state
+      scale: 1,
       enteredView: function () {
-        this.querySelector('the-behavior[type="pinch"]').addEventListener('gesture', function (e) {
-          this.scale = e.detail.scale;
-        }.bind(this));
+        if (this.$.graphpinch) {
+          this.$.graphpinch.addEventListener('gesture', function (e) {
+            this.scale = e.detail.scale;
+          }.bind(this));
+        }
+        if (this.$.graphpan) {
+          this.$.graphpan.addEventListener('gesture', function (e) {
+            var touch = e.detail[Object.keys(e.detail)[0]];
+            if (!touch.movepoint) {
+              return;
+            }
+            var panX = touch.movepoint.x - touch.startpoint.x;
+            var panY = touch.movepoint.y - touch.startpoint.y;
+            var pan = this.getPan();
+            this.drag = {
+              x: panX + pan.x,
+              y: panY + pan.y
+            };
+          }.bind(this));
+        }
       },
-      panxChanged: function () {
-        this.panChanged();
+      getPan: function () {
+        var pan = this.pan.split(' ');
+        return {
+          x: parseInt(pan[0]),
+          y: parseInt(pan[1])
+        };
       },
-      panyChanged: function () {
-        this.panChanged();
+      dragChanged: function () {
+        theGraph.transform(this, this.drag.x, this.drag.y, 1);
+        this.panDone();
       },
       panDebounce: null,
-      panChanged: function () {
-        var self = this;
-        var later = function(){
-          self.panDebounce = null;
-          theGraph.transform(self, self.panx, self.pany, self.scale);
-          self.fire('panned', {
-            x: self.panx,
-            y: self.pany
+      panDone: function () {
+        var later = function () {
+          this.pan = this.drag.x + ' ' + this.drag.y;
+          this.fire('panned', {
+            x: this.drag.x,
+            y: this.drag.y
           });
-        }
+          this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
+        }.bind(this);
         clearTimeout(this.panDebounce);
-        this.panDebounce = setTimeout(later, 16);
+        this.panDebounce = setTimeout(later, 750);
       },
-      scale: 1,
       scaleChanged: function () {
         // Scale happens fast
         var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
-        theGraph.transform(this, this.panx, this.pany, scale);
+        var pan = this.getPan();
+        theGraph.transform(this, pan.x, pan.y, scale);
         this.zoomDone();
       },
       zoomDebounce: null,
       zoomDone: function () {
         // Zoom causes a rerendering of graph elements
-        var self = this;
         var later = function(){
           this.zoomDebounce = null;
           var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
           var zoom = this.zoom * scale;
           this.zoom = Math.max(0.25, Math.min(zoom, 6));
           this.fire("zoomed", this.zoom);
-          theGraph.transform(this, this.panx, this.pany, 1);
+          var pan = this.getPan();
+          theGraph.transform(this, pan.x, pan.y, 1);
           this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
         }.bind(this);
         clearTimeout(this.zoomDebounce);

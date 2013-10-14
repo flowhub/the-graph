@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label x y drag component process" lightdom>
+<polymer-element name="the-graph-process" attributes="label position drag component process" lightdom>
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
@@ -21,56 +21,70 @@
       },
       enteredView: function () {
         var graph = this.parentNode.parentNode;
-        var self = this;
         graph.addEventListener("zoomed", function(event){
-          self.zoom = graph.zoom;
-        });
+          this.zoom = event.detail;
+        }.bind(this));
+        graph.addEventListener("panned", function(event){
+          this.pan = event.detail;
+        }.bind(this));
       },
       label: '',
-      x: 0,
-      y: 0,
+      position: '0 0',
       drag: '',
       zoom: 1,
+      pan: {
+        x: 0,
+        y: 0
+      },
       width: 60,
       height: 60,
       processChanged: function () {
         this.component = this.process.component;
         this.name = this.process.name;
         if (this.process.metadata) {
-          this.x = this.process.metadata.x;
-          this.y = this.process.metadata.y;
+          this.position = this.process.metadata.x + ' ' + this.process.metadata.y;
         }
         if (!this.label) {
           this.label = this.name;
         }
       },
-      xChanged: function () {
-        this.positionChanged();
+      getPosition: function () {
+        var position = this.position.split(' ');
+        return {
+          x: parseInt(position[0]),
+          y: parseInt(position[1])
+        };
       },
-      yChanged: function () {
-        this.positionChanged();
+      getZoomedPosition: function () {
+        var position = this.getPosition();
+        return {
+          x: position.x * this.zoom,
+          y: position.y * this.zoom
+        };
+      },
+      getDrag: function () {
+        var drag = this.drag.split(' ');
+        return {
+          x: parseInt(drag[0]),
+          y: parseInt(drag[1])
+        };
       },
       dragChanged: function () {
-        // TODO: Translate from view pixels to graph pixels
-        var parts = this.drag.split(' ');
-        this.x = parts[0] / this.zoom;
-        this.y = parts[1] / this.zoom;
+        var drag = this.getDrag();
+        var x = drag.x / this.zoom - this.pan.x / this.zoom;
+        var y = drag.y / this.zoom - this.pan.y / this.zoom;
+        this.position = x + ' ' + y;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
-      positionDebounce: null,
       positionChanged: function () {
-        var later = function() {
-          this.positionDebounce = null;
-          theGraph.transform(this, this.x * this.zoom, this.y * this.zoom);
-          this.fire('moved', {
-            x: this.x,
-            y: this.y
-          });
-        }.bind(this);
-        clearTimeout(this.positionDebounce);
-        this.positionDebounce = setTimeout(later, 16);
+        var position = this.getZoomedPosition();
+        theGraph.transform(this, position.x, position.y);
+        this.fire('moved', {
+          x: position.x,
+          y: position.y
+        });
       },
       zoomChanged: function () {
         // Update width to a scaled value
@@ -78,7 +92,8 @@
         this.style.height = Math.round(this.height*this.zoom) + "px";
 
         // Set position by screen pixels
-        theGraph.transform(this, this.x * this.zoom, this.y * this.zoom);
+        var position = this.getZoomedPosition();
+        theGraph.transform(this, position.x, position.y);
       }
 
     });
