@@ -14,9 +14,37 @@
       var xDiff = targetX - sourceX;
       var yDiff = targetY - sourceY;
 
+      var edgeType = "R->L";
+
       if (Math.abs(xDiff) < Math.abs(yDiff)){
         if (sourceY < targetY) {
           // S: bottom to top
+          edgeType = "B->T";
+        } else {
+          // N bottom to left
+          edgeType = "B->L";
+          if (sourceX+nodeW+10 < targetX) {
+            // NE: right to left
+            edgeType = "R->L";
+          }
+        }
+      } else {
+        if (sourceX < targetX) {
+          // E: right to left
+          edgeType = "R->L";
+        } else {
+          // W: right to top
+          edgeType = "R->T";
+          if (sourceY+nodeH+10 < targetY) {
+            // SW: bottom to top
+            edgeType = "B->T";
+          }
+        }
+      }
+
+      switch (edgeType) {
+        case "B->T":
+          // bottom to top
           startX = sourceX + nodeW2;
           startY = sourceY + nodeH;
           endX = targetX + nodeW2;
@@ -25,8 +53,9 @@
           c1Y = startY + (endY - startY)/2;
           c2X = endX;
           c2Y = c1Y;
-        } else {
-          // N bottom to right
+          break;
+        case "B->L":
+          // bottom to left
           startX = sourceX + nodeW2;
           startY = sourceY + nodeH;
           endX = targetX;
@@ -35,20 +64,9 @@
           c1Y = startY + nodeH;
           c2X = endX - nodeW;
           c2Y = endY;
-        }
-      } else {
-        if (sourceX < targetX) {
-          // E: left to right
-          startX = sourceX + nodeW;
-          startY = sourceY + nodeH2;
-          endX = targetX;
-          endY = targetY + nodeH2;
-          c1X = startX + (endX - startX)/2;
-          c1Y = startY;
-          c2X = c1X;
-          c2Y = endY;
-        } else {
-          // W right to top
+          break;
+        case "R->T":
+          // right to top
           startX = sourceX + nodeW;
           startY = sourceY + nodeH2;
           endX = targetX + nodeW2;
@@ -57,7 +75,19 @@
           c1Y = startY + ( startY<endY ? nodeH : 0-nodeH );
           c2X = endX;
           c2Y = endY - nodeH;
-        }
+          break;
+        case "R->L":
+        default:
+          // right to left
+          startX = sourceX + nodeW;
+          startY = sourceY + nodeH2;
+          endX = targetX;
+          endY = targetY + nodeH2;
+          c1X = startX + (endX - startX)/2;
+          c1Y = startY;
+          c2X = c1X;
+          c2Y = endY;
+          break;
       }
 
       // Scale edge
