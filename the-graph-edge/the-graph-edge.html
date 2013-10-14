@@ -118,10 +118,12 @@
       drawEdge: function () {
         if (!this.path || !this.sourceNode || !this.targetNode) { return; }
 
-        var sourceX = parseFloat( this.sourceNode.getAttribute("x") );
-        var sourceY = parseFloat( this.sourceNode.getAttribute("y") );
-        var targetX = parseFloat( this.targetNode.getAttribute("x") );
-        var targetY = parseFloat( this.targetNode.getAttribute("y") );
+        var source = this.sourceNode.getAttribute('position').split(' ');
+        var target = this.targetNode.getAttribute('position').split(' ');
+        var sourceX = parseFloat(source[0]);
+        var sourceY = parseFloat(source[1]);
+        var targetX = parseFloat(target[0]);
+        var targetY = parseFloat(target[1]);
 
         var d = makePath(sourceX, sourceY, targetX, targetY, this.zoom);
 

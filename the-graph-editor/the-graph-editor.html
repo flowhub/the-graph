@@ -8,8 +8,8 @@
     <the-graph id="graph" name="{{ graph.properties.name }}">
       <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" distance="20"></the-behavior>
       <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" speed="1.5" distance="40"></the-behavior>
-      <the-behavior type="drag" direction="north south east west" accept="nodeName=svg" action="attribute" distance="20"></the-behavior>
-      <the-behavior type="pinch"></the-behavior>
+      <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" distance="20"></the-behavior>
+      <the-behavior id="graphpinch" type="pinch"></the-behavior>
     </the-graph>
   </template>
   <script>
