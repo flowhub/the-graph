@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-graph id="graph" name="{{ graph.properties.name }}">
       <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" distance="20"></the-behavior>
+      <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" speed="2.0"></the-behavior>
       <the-behavior type="drag" direction="north south east west" accept="nodeName=svg" action="attribute" distance="20"></the-behavior>
     </the-graph>
   </template>
