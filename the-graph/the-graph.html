@@ -51,7 +51,8 @@
       scale: 1,
       scaleChanged: function () {
         // Scale happens fast
-        theGraph.transform(this, this.panx, this.pany, this.scale/this.zoom);
+        var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
+        theGraph.transform(this, this.panx, this.pany, scale);
         this.zoomDone();
       },
       zoomDebounce: null,
@@ -59,12 +60,14 @@
         // Zoom causes a rerendering of graph elements
         var self = this;
         var later = function(){
-          self.zoomDebounce = null;
-          self.zoom = self.scale;
-          self.fire("zoomed", self.zoom);
-          theGraph.transform(self, self.panx, self.pany, 1);
-          self.style.backgroundSize = (70*self.zoom)+"px "+(70*self.zoom)+"px";
-        }
+          this.zoomDebounce = null;
+          var scale = Math.max(0.25/this.zoom, Math.min(this.scale, 6/this.zoom));
+          var zoom = this.zoom * scale;
+          this.zoom = Math.max(0.25, Math.min(zoom, 6));
+          this.fire("zoomed", this.zoom);
+          theGraph.transform(this, this.panx, this.pany, 1);
+          this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
+        }.bind(this);
         clearTimeout(this.zoomDebounce);
         this.zoomDebounce = setTimeout(later, 750);
       },
