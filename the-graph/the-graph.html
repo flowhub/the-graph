@@ -23,6 +23,42 @@
       zoom: 1,
       created: function () {
       },
+      enteredView: function () {
+        var getDistance = function (origin, destination) {
+          var deltaX = destination.x - origin.x;
+          var deltaY = destination.y - origin.y;
+          var origin = null;
+          var destination = null;
+          var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+          return distance;
+        }
+
+        this.querySelector('the-behavior[type="pinch"]').addEventListener('gesture', function (e) {
+          var startX = [];
+          var startY = [];
+          var startPoints = [];
+          var movePoints = [];
+          for (var touch in e.detail) {
+            if (e.detail[touch].startpoint) {
+              startX.push(e.detail[touch].startpoint.x);
+              startY.push(e.detail[touch].startpoint.y);
+              startPoints.push(e.detail[touch].startpoint);
+            }
+            if (e.detail[touch].movepoint) {
+              movePoints.push(e.detail[touch].movepoint);
+            }
+          }
+          var center = {
+            x: ((Math.min.apply(Math, startX) + Math.max.apply(Math, startX)) / 2),
+            y: ((Math.min.apply(Math, startY) + Math.max.apply(Math, startY)) / 2)
+          };
+          var scale = 1;
+          if (startPoints.length > 1 && movePoints.length > 1) {
+            scale = getDistance(movePoints[0], movePoints[1]) / getDistance(startPoints[0], startPoints[1]);
+          }
+          this.scale = scale;
+        }.bind(this));
+      },
       panxChanged: function () {
         this.panChanged();
       },
