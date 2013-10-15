@@ -85,6 +85,14 @@ the-graph-process:before, the-graph-subgraph:before {
   bottom: 2px;
 }
 
+the-graph-process.highlight, the-graph-subgraph.highlight {
+  background-color: hsla(184, 8%, 69%, 1);
+}
+
+the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
+  display: none;
+}
+
 the-graph-process h1, the-graph-subgraph h1 {
   display: block;
   position: absolute;

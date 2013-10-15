@@ -130,6 +130,7 @@
         if (this.highlight) {
           // Focus the node
           var diameter = Math.round(this.width * this.zoom * 2);
+          this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.borderRadius = diameter / 2 + "px";
@@ -139,6 +140,7 @@
           this.style.width = Math.round(this.width * this.zoom) + "px";
           this.style.height = Math.round(this.height * this.zoom) + "px";
           this.style.borderRadius = '';
+          this.classList.remove('highlight');
           theGraph.transform(this, position.x, position.y);
         }
       }
