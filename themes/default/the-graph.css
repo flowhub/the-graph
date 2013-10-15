@@ -86,8 +86,26 @@ the-graph-process h1, the-graph-subgraph h1 {
   border-radius: 3px;
 }
 
+the-graph-process the-graph-inports {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+}
+the-graph-process the-graph-outports {
+  position: absolute;
+  right: 5px;
+  top: 10px;
+}
 the-graph-process the-graph-port {
-  color: white;
+  background-color: magenta;
+  display: block;
+  width: 2px;
+  height: 2px;
+  border-radius: 1px;
+  margin: 4px;
+}
+the-graph-process the-graph-port label {
+  display: none;
 }
 
 path.edge {
