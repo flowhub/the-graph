@@ -20,6 +20,10 @@ the-graph-editor {
   overflow: hidden;
 }
 
+the-library {
+  display: none;
+}
+
 the-graph-process {
   z-index: 10;
 }
