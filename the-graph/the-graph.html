@@ -66,6 +66,12 @@
             this.panDebounce = setTimeout(later, 750);
           }.bind(this));
         }
+        this.engine = GSS.engines[0];
+        document.querySelector('body').addEventListener("solved", function (e) {
+          console.log(e.detail.values);
+        });
+        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
+        this.engine.solve();
       },
       getPan: function () {
         var pan = this.pan.split(' ');
@@ -103,6 +109,11 @@
         var zoom = this.zoom * scale;
         this.zoom = Math.max(0.25, Math.min(zoom, 6));
         this.fire("zoomed", this.zoom);
+
+        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
+        this.engine.solve();
+        console.log(this.engine.lastCommandsForWorker);
+
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
         // Update internal panning state based on scale
