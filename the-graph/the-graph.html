@@ -66,6 +66,30 @@
             this.panDebounce = setTimeout(later, 750);
           }.bind(this));
         }
+        if (this.$.nodehighlight) {
+          this.$.nodehighlight.addEventListener('gesture', function (e) {
+            var touch = e.detail[Object.keys(e.detail)[0]];
+            if (!touch.startelement) {
+              return;
+            }
+            if (!touch.startelement.highlight) {
+              // Start of the gesture, highlight
+              if (touch.angle > 180 && touch.angle < 359) {
+                touch.startelement.highlight = 'in';
+              } else {
+                touch.startelement.highlight = 'out';
+              }
+            }
+
+            var later = function () {
+              touch.startelement.highlight = '';
+            }.bind(this);
+            clearTimeout(this.nodeDebounce);
+            this.nodeDebounce = setTimeout(later, 750);
+          }.bind(this));
+        }
+
+        // Handle passing zoom value to the GSS engine for node rescaling
         this.engine = GSS.engines[0];
         document.querySelector('body').addEventListener("solved", function (e) {
           console.log(e.detail.values);

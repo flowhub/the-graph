@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position drag component process" lightdom>
+<polymer-element name="the-graph-process" attributes="label position drag component process highlight" lightdom>
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
@@ -94,8 +94,24 @@
         // Set position by screen pixels
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x, position.y);
+      },
+      highlightChanged: function () {
+        var position = this.getZoomedPosition();
+        if (this.highlight) {
+          // Focus the node
+          var diameter = Math.round(this.width * this.zoom * 2);
+          this.style.width = diameter + "px";
+          this.style.height = diameter + "px";
+          this.style.borderRadius = diameter / 2 + "px";
+          theGraph.transform(this, position.x - diameter / 4, position.y - diameter / 4);
+        } else {
+          // Unfocus the node
+          this.style.width = Math.round(this.width * this.zoom) + "px";
+          this.style.height = Math.round(this.height * this.zoom) + "px";
+          this.style.borderRadius = '';
+          theGraph.transform(this, position.x, position.y);
+        }
       }
-
     });
   </script>
 </polymer-element>
