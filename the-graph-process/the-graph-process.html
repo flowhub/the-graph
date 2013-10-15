@@ -143,6 +143,7 @@
           this.classList.remove('highlight');
           theGraph.transform(this, position.x, position.y);
         }
+        this.fire('highlight', this.highlight);
       }
     });
   </script>
