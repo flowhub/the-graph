@@ -107,17 +107,8 @@ the-graph-process h1, the-graph-subgraph h1 {
   border-radius: 3px;
 }
 
-the-graph-process the-graph-inports {
-  position: absolute;
-  left: -8px;
-  top: 40%;
-}
-the-graph-process the-graph-outports {
-  position: absolute;
-  right: -8px;
-  top: 40%;
-}
 the-graph-process the-graph-port {
+  position: absolute;
   border: 1px solid #000000;
   background-color: hsla(147, 67%, 80%, 1);
   display: block;
