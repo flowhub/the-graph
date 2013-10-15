@@ -20,16 +20,14 @@
       icon: 'blank',
       inports: [],
       outports: [],
-      created: function () {
-        //console.log(this.impl.ownerDocument.querySelectorAll('the-graph-process'));
-        this.updateInstances();
+      iconChanged: function () {
+        this.fire('icon', this.icon);
       },
-      findInstances: function () {
-        return [];
+      inportsChanged: function () {
+        this.fire('inports', this.inports);
       },
-      updateInstances: function () {
-        this.findInstances().forEach(function () {
-        });
+      outportsChanged: function () {
+        this.fire('outports', this.outports);
       }
     });
   </script>

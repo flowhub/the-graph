@@ -4,12 +4,16 @@
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
-    <content select="the-graph-inports"></content>
-    <content select="the-graph-outports"></content>
-    <!-- 
-    <the-graph-inports></the-graph-inports>
-    <the-graph-outports></the-graph-outports>
-    -->
+    <the-graph-inports>
+      <template repeat="{{port in inports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-inports>
+    <the-graph-outports>
+      <template repeat="{{port in outports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-outports>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -27,6 +31,9 @@
         graph.addEventListener("panned", function(event){
           this.pan = event.detail;
         }.bind(this));
+
+        // Insert ports based on library
+        this.initializePorts();
       },
       label: '',
       position: '0 0',
@@ -38,6 +45,27 @@
       },
       width: 60,
       height: 60,
+      libraryComponent: null,
+      inports: [],
+      outports: [],
+      initializePorts: function () {
+        if (!this.libraryComponent) {
+          var editor = this.parentNode.parentNode.parentNode;
+          this.libraryComponent = editor.querySelector('the-component[name="' + this.component + '"]');
+        }
+        if (!this.libraryComponent) {
+          return;
+        }
+
+        this.inports = [];
+        this.outports = [];
+        this.libraryComponent.inports.forEach(function (port) {
+          this.inports.push(port);
+        }.bind(this));
+        this.libraryComponent.outports.forEach(function (port) {
+          this.outports.push(port);
+        }.bind(this));
+      },
       processChanged: function () {
         this.component = this.process.component;
         this.name = this.process.name;

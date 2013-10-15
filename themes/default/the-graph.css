@@ -86,6 +86,10 @@ the-graph-process h1, the-graph-subgraph h1 {
   border-radius: 3px;
 }
 
+the-graph-process the-graph-port {
+  color: white;
+}
+
 path.edge {
   fill: none;
   stroke-linejoin: round;
