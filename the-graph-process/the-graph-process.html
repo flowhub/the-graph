@@ -72,7 +72,9 @@
       dragChanged: function () {
         var drag = this.getDrag();
         var x = drag.x / this.zoom - this.pan.x / this.zoom;
+        x -= this.clientWidth / 2;
         var y = drag.y / this.zoom - this.pan.y / this.zoom;
+        y -= this.clientHeight / 2;
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
