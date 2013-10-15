@@ -13,9 +13,21 @@
         }
         this.sideChanged();
       },
+      getCentering: function () {
+        var onSameSide = [];
+        var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
+        childNodes.forEach(function (port) {
+          if (port.side === this.side) {
+            onSameSide.push(port);
+          }
+        }.bind(this));
+        var spaceForPort = 40 / onSameSide.length;
+        var portPosition = spaceForPort * (onSameSide.indexOf(this) + 1);
+        return portPosition;
+      },
       sideChanged: function () {
         var margin = '-8px';
-        var centering = '40%';
+        var centering = this.getCentering() + '%';
         this.style.top = '';
         this.style.bottom = '';
         this.style.right = '';
