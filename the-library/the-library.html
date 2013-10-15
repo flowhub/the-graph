@@ -1,10 +1,14 @@
 <link rel="import" href="../the-component/the-component.html">
-<polymer-element name="the-library">
+
+<polymer-element name="the-library" lightdom>
   <template>
-    <content select="the-component"></content>
+    <template repeat="{{component in components}}">
+    <the-component name="{{component.name}}" description="{{component.description}}" icon="{{component.icon}}" inports="{{component.inports}}" outports="{{component.outports}}"></the-component>
+    </template>
   </template>
   <script>
-    Polymer('the-graph-library', {
+    Polymer('the-library', {
+      components: []
     });
   </script>
 </polymer-element>

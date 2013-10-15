@@ -6,12 +6,13 @@
     <script src="../bower_components/polymer/polymer.min.js"></script>
     <script src="../bower_components/gss/browser/gss.js"></script>
     <link rel="import" href="the-graph-editor.html">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
   </head>
   <body>
     <the-graph-editor></the-graph-editor>
     <style type="text/gss">
       /* Ensure nodes are square and of touchable size */
-      [node-width] == 58;
+      [node-width] == 58 * [zoom];
       the-graph-process[width] == the-graph-process[height];
       the-graph-process[width] == [node-width];
       /* Center process label */

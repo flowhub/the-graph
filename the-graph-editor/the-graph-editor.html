@@ -1,13 +1,15 @@
+<link rel="import" href="../the-library/the-library.html">
 <link rel="import" href="../the-graph/the-graph.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
-<!-- <link rel="import" href="../the-library/the-library.html"> -->
 
 <polymer-element name="the-graph-editor" lightdom>
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
+    <the-library id="library"></the-library>
     <the-graph id="graph" name="{{ graph.properties.name }}">
-      <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" distance="20"></the-behavior>
-      <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" speed="1.5" distance="40"></the-behavior>
+      <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" distance="20" maxspeed="1.4"></the-behavior>
+      <the-behavior id="nodehighlight" type="drag" direction="east west" accept="nodeName=THE-GRAPH-PROCESS" distance="20"></the-behavior>
+      <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" minspeed="1.5" distance="40"></the-behavior>
       <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" distance="20"></the-behavior>
       <the-behavior id="graphpinch" type="pinch"></the-behavior>
     </the-graph>
@@ -16,8 +18,54 @@
   (function () {
     Polymer('the-graph-editor', {
       graph: {},
+      library: {},
       graphChanged: function () {
+        this.buildInitialLibrary();
+        for (var id in this.library) {
+          this.$.library.components.push(this.library[id]);
+        }
         this.$.graph.graph = this.graph;
+      },
+      buildInitialLibrary: function () {
+        Object.keys(this.graph.processes).forEach(function (id) {
+          var node = this.graph.processes[id];
+          if (!this.library[node.component]) {
+            this.library[node.component] = {
+              name: node.component,
+              description: '',
+              icon: 'blank',
+              inports: [],
+              outports: []
+            }
+          }
+          var component = this.library[node.component];
+
+          this.graph.connections.forEach(function (edge) {
+            var i;
+            if (edge.src && edge.src.process === id) {
+              for (i = 0; i < component.outports.length; i++) {
+                if (component.outports[i].name === edge.src.port) {
+                  return;
+                }
+              }
+              component.outports.push({
+                name: edge.src.port,
+                type: 'all'
+              });
+            }
+            if (edge.tgt.process === id) {
+              for (i = 0; i < component.inports.length; i++) {
+                if (component.inports[i].name === edge.tgt.port) {
+                  return;
+                }
+              }
+              component.inports.push({
+                name: edge.tgt.port,
+                type: 'all'
+              });
+            }
+          });
+        }.bind(this));
       }
     });
   })();

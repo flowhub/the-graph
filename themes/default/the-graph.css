@@ -20,6 +20,10 @@ the-graph-editor {
   overflow: hidden;
 }
 
+the-library {
+  display: none;
+}
+
 the-graph-process {
   z-index: 10;
 }
@@ -65,12 +69,29 @@ the-graph-process, the-graph-subgraph {
   top: 0;
   left: 0;
   display: block;
-  background-color: rgba(0,0,0, 0.5);
+  background-color: transparent;
   color: #000000;
-  border-radius: 5px;
-  border: 1px magenta solid;
-  /*width: 58px;
-  height: 58px;*/
+  border-radius: 12px;
+  border: 2px hsla(180, 11%, 32%, 1) solid;
+}
+the-graph-process:before, the-graph-subgraph:before {
+  content: '';
+  background-color: hsla(184, 8%, 69%, 1);
+  border-radius: 8px;
+  position:absolute;
+  z-index: -1;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+}
+
+the-graph-process.highlight, the-graph-subgraph.highlight {
+  background-color: hsla(184, 8%, 69%, 1);
+}
+
+the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
+  display: none;
 }
 
 the-graph-process h1, the-graph-subgraph h1 {
@@ -85,6 +106,20 @@ the-graph-process h1, the-graph-subgraph h1 {
 
   background-color: rgba(0,0,0, 0.35);
   border-radius: 3px;
+}
+
+the-graph-process the-graph-port {
+  position: absolute;
+  border: 1px solid #000000;
+  background-color: hsla(147, 67%, 80%, 1);
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 3px;
+  margin: 4px;
+}
+the-graph-process the-graph-port label {
+  display: none;
 }
 
 path.edge {

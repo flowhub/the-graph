@@ -1,15 +1,19 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position drag component process" lightdom>
+<polymer-element name="the-graph-process" attributes="label position drag component process highlight" lightdom>
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
-    <content select="the-graph-inports"></content>
-    <content select="the-graph-outports"></content>
-    <!-- 
-    <the-graph-inports></the-graph-inports>
-    <the-graph-outports></the-graph-outports>
-    -->
+    <the-graph-inports>
+      <template repeat="{{port in inports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-inports>
+    <the-graph-outports>
+      <template repeat="{{port in outports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-outports>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -27,6 +31,9 @@
         graph.addEventListener("panned", function(event){
           this.pan = event.detail;
         }.bind(this));
+
+        // Insert ports based on library
+        this.initializePorts();
       },
       label: '',
       position: '0 0',
@@ -38,6 +45,27 @@
       },
       width: 60,
       height: 60,
+      libraryComponent: null,
+      inports: [],
+      outports: [],
+      initializePorts: function () {
+        if (!this.libraryComponent) {
+          var editor = this.parentNode.parentNode.parentNode;
+          this.libraryComponent = editor.querySelector('the-component[name="' + this.component + '"]');
+        }
+        if (!this.libraryComponent) {
+          return;
+        }
+
+        this.inports = [];
+        this.outports = [];
+        this.libraryComponent.inports.forEach(function (port) {
+          this.inports.push(port);
+        }.bind(this));
+        this.libraryComponent.outports.forEach(function (port) {
+          this.outports.push(port);
+        }.bind(this));
+      },
       processChanged: function () {
         this.component = this.process.component;
         this.name = this.process.name;
@@ -72,7 +100,9 @@
       dragChanged: function () {
         var drag = this.getDrag();
         var x = drag.x / this.zoom - this.pan.x / this.zoom;
+        x -= this.clientWidth / 2;
         var y = drag.y / this.zoom - this.pan.y / this.zoom;
+        y -= this.clientHeight / 2;
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
@@ -88,8 +118,8 @@
       },
       zoomChanged: function () {
         // Update width to a scaled value
-        this.style.width = Math.round(this.width*this.zoom) + "px";
-        this.style.height = Math.round(this.height*this.zoom) + "px";
+        //this.style.width = Math.round(this.width*this.zoom) + "px";
+        //this.style.height = Math.round(this.height*this.zoom) + "px";
 
         // Set position by screen pixels
         var position = this.getZoomedPosition();
@@ -98,8 +128,26 @@
         // Recenter labels
         var label = this.querySelector("h1");
         label.style.left = Math.round((this.width/2-label.offsetWidth)*this.zoom) + "px";
+      },
+      highlightChanged: function () {
+        var position = this.getZoomedPosition();
+        if (this.highlight) {
+          // Focus the node
+          var diameter = Math.round(this.width * this.zoom * 2);
+          this.classList.add('highlight');
+          this.style.width = diameter + "px";
+          this.style.height = diameter + "px";
+          this.style.borderRadius = diameter / 2 + "px";
+          theGraph.transform(this, position.x - diameter / 4, position.y - diameter / 4);
+        } else {
+          // Unfocus the node
+          this.style.width = Math.round(this.width * this.zoom) + "px";
+          this.style.height = Math.round(this.height * this.zoom) + "px";
+          this.style.borderRadius = '';
+          this.classList.remove('highlight');
+          theGraph.transform(this, position.x, position.y);
+        }
       }
-
     });
   </script>
 </polymer-element>
