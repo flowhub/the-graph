@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="drag zoom" lightdom>
+<polymer-element name="the-graph" attributes="drag scale" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -18,6 +18,10 @@
 
   <script>
     Polymer('the-graph', {
+      minX: -500,
+      minY: -500,
+      maxX: 2000,
+      maxY: 2000,
       // The actual pan state
       pan: '0 0',
       // User-visible pan state
@@ -76,14 +80,14 @@
       },
       panDebounce: null,
       panning: function (pan, scale) {
-        this.style.top = '0px';
-        this.style.left = '0px';
+        // this.style.top = '0px';
+        // this.style.left = '0px';
         theGraph.transform(this, pan.x, pan.y, scale);
       },
       panned: function (pan) {
-        theGraph.transform(this, 0, 0, 1);
-        this.style.top = pan.y + 'px';
-        this.style.left = pan.x + 'px';
+        // theGraph.transform(this, 0, 0, 1);
+        // this.style.top = pan.y + 'px';
+        // this.style.left = pan.x + 'px';
         this.pan = pan.x + ' ' + pan.y;
         this.fire('panned', pan);
       },
@@ -110,7 +114,47 @@
           x: pan.x * scale,
           y: pan.y * scale
         });
+        // Update CSS grid image
         this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
+        this.style.backgroundPosition = (pan.x*this.zoom)+"px "+(pan.y*this.zoom)+"px";
+      },
+      padding: 500,
+      calcPadding: function () {
+        var minX = 0;
+        var minY = 0;
+        var maxX = this.padding;
+        var maxY = this.padding;
+
+        var processes = this.querySelector("the-graph-nodes").children;
+        var len = processes.length;
+        for (var i=0; i<len; i++) {
+          var node = processes[i];
+          if (node.getPosition) {
+            var pos = node.getPosition();
+            if (pos.x < minX) {
+              minX = pos.x;
+            }
+            if (pos.y < minY) {
+              minX = pos.x;
+            }
+            if (pos.x > maxX) {
+              maxX = pos.x;
+            }
+            if (pos.y > maxY) {
+              maxY = pos.y;
+            }
+          }
+        }
+        minX = Math.min(minX, 0) - this.padding;
+        minY = Math.min(minY, 0) - this.padding;
+        maxX = Math.max(maxX, window.innerWidth) + this.padding;
+        maxY = Math.max(maxY, window.innerHeight) + this.padding;
+        return {
+          minX: minX,
+          minY: minY,
+          maxX: maxX,
+          maxY: maxY
+        }
       },
       graphChanged: function () {
         var nodes = this.querySelector("the-graph-nodes");

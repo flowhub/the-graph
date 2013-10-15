@@ -58,8 +58,8 @@
       getZoomedPosition: function () {
         var position = this.getPosition();
         return {
-          x: position.x * this.zoom,
-          y: position.y * this.zoom
+          x: Math.round(position.x * this.zoom),
+          y: Math.round(position.y * this.zoom)
         };
       },
       getDrag: function () {
@@ -94,6 +94,10 @@
         // Set position by screen pixels
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x, position.y);
+
+        // Recenter labels
+        var label = this.querySelector("h1");
+        label.style.left = Math.round((this.width/2-label.offsetWidth)*this.zoom) + "px";
       }
 
     });
