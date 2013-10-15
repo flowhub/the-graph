@@ -65,6 +65,10 @@
         this.libraryComponent.outports.forEach(function (port) {
           this.outports.push(port);
         }.bind(this));
+        this.fire('ports', {
+          inports: this.inports,
+          outports: this.outports
+        });
       },
       processChanged: function () {
         this.component = this.process.component;
