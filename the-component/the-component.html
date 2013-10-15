@@ -1,14 +1,30 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-component" attributes="name icon">
+<polymer-element name="the-component" attributes="name icon description inports outports" lightdom>
+  <template>
+    <the-graph-inports>
+      <template repeat="{{port in inports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-inports>
+    <the-graph-outports>
+      <template repeat="{{port in outports}}">
+        <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
+      </template>
+    </the-graph-outports>
+  </template>
   <script>
     Polymer('the-component', {
+      name: '',
+      description: '',
+      icon: 'blank',
+      inports: [],
+      outports: [],
       created: function () {
-        console.log(this.impl.ownerDocument.querySelectorAll('the-graph-process'));
+        //console.log(this.impl.ownerDocument.querySelectorAll('the-graph-process'));
         this.updateInstances();
       },
       findInstances: function () {
-        console.log(this);
         return [];
       },
       updateInstances: function () {

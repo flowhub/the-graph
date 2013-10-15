@@ -1,8 +1,11 @@
-<polymer-element name="the-graph-port" attributes="name type">
+<polymer-element name="the-graph-port" attributes="name type" lightdom>
   <template>
     <label>{{name}}</label>
   </template>
   <script>
-    Polymer('the-graph-port');
+    Polymer('the-graph-port', {
+      name: '',
+      type: 'all'
+    });
   </script>
 </polymer-element>
