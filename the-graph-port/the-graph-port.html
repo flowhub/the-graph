@@ -91,7 +91,10 @@
           }
           this.process = this.parentNode.parentNode;
           this.process.addEventListener('highlight', function () {
-            this.sideChanged();
+            this.calculatePosition();
+          }.bind(this));
+          this.process.addEventListener('zoomed', function () {
+            this.calculatePosition();
           }.bind(this));
           return this.process;
         },
