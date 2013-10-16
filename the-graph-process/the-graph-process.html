@@ -1,9 +1,10 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position drag component process highlight" lightdom>
+<polymer-element name="the-graph-process" attributes="label position drag component process highlight icon" lightdom>
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
+    <i class="icon icon-{{icon}}"></i>
     <the-graph-inports>
       <template repeat="{{port in inports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
@@ -36,6 +37,7 @@
         this.initializePorts();
       },
       label: '',
+      icon: '',
       position: '0 0',
       drag: '',
       zoom: 1,
@@ -56,7 +58,7 @@
         if (!this.libraryComponent) {
           return;
         }
-
+        this.icon = this.libraryComponent.icon;
         this.inports = [];
         this.outports = [];
         this.libraryComponent.inports.forEach(function (port) {

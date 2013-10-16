@@ -75,7 +75,8 @@ the-graph-process, the-graph-subgraph {
 }
 the-graph-process:before, the-graph-subgraph:before {
   content: '';
-  background-color: hsla(184, 8%, 69%, 1);
+  background-color: hsla(184, 8%, 100%, 0.55);
+  font-size: 30px;
   border-radius: 8px;
   position:absolute;
   z-index: -1;
@@ -90,7 +91,7 @@ the-graph-process.highlight, the-graph-subgraph.highlight {
 }
 
 the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
-  border-radius: 100px;
+  border-radius: 200px;
 }
 
 the-graph-process.highlight the-graph-port, the-graph-subgraph.highlight the-graph-port {
@@ -132,6 +133,16 @@ the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highl
   -moz-transform: rotate(90deg); 
 }
 
+the-graph-process i.icon, the-graph-subgraph i.icon {
+  color: black;
+  position: absolute;
+  top: 50%;
+  margin-top: -15px;
+  left: 50%;
+  margin-left: -13px;
+  font-size: 30px;
+  z-index: -5;
+}
 the-graph-process h1, the-graph-subgraph h1 {
   display: block;
   position: absolute;
