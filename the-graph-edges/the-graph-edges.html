@@ -2,15 +2,30 @@
 
 <polymer-element name="the-graph-edges" attributes="edges" lightdom>
   <template>
-    <svg id="edges" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000"></svg>
+    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000">
+      <g transform="translate(500,500)"></g>
+    </svg>
     <template repeat="{{connections}}">
       <the-graph-edge connection="{{}}"></the-graph-edge>
     </template>
   </template>
 
+  <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
+
   <script>
     Polymer('the-graph-edges', {
-      connections: []
+      connections: [],
+      enteredView: function () {
+        var graph = this.parentNode;
+        this.graph = graph;
+        graph.addEventListener("bumped", function(event){
+          this.graphBumped(event.detail);
+        }.bind(this));
+        this.graphBumped({x:graph.padding, y:graph.padding});
+      },
+      graphBumped: function (bump) {
+        this.querySelector("g").setAttribute("transform", "translate("+bump.x+","+bump.y+")");
+      }
     });
   </script>
   

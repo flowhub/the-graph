@@ -20,21 +20,6 @@
 
   <script>
     Polymer('the-graph-process', {
-      created: function () {
-        this.style.position = 'absolute';
-      },
-      enteredView: function () {
-        var graph = this.parentNode.parentNode;
-        graph.addEventListener("zoomed", function(event){
-          this.zoom = event.detail;
-        }.bind(this));
-        graph.addEventListener("panned", function(event){
-          this.pan = event.detail;
-        }.bind(this));
-
-        // Insert ports based on library
-        this.initializePorts();
-      },
       label: '',
       position: '0 0',
       drag: '',
@@ -43,11 +28,34 @@
         x: 0,
         y: 0
       },
+      bump: {
+        x: 500,
+        y: 500
+      },
       width: 60,
       height: 60,
       libraryComponent: null,
       inports: [],
       outports: [],
+      created: function () {
+        this.style.position = 'absolute';
+      },
+      enteredView: function () {
+        var graph = this.parentNode.parentNode;
+        this.graph = graph;
+        graph.addEventListener("zoomed", function(event){
+          this.zoom = event.detail;
+        }.bind(this));
+        graph.addEventListener("panned", function(event){
+          this.pan = event.detail;
+        }.bind(this));
+        graph.addEventListener("bumped", function(event){
+          this.graphBumped(event.detail);
+        }.bind(this));
+
+        // Insert ports based on library
+        this.initializePorts();
+      },
       initializePorts: function () {
         if (!this.libraryComponent) {
           var editor = this.parentNode.parentNode.parentNode;
@@ -79,6 +87,12 @@
         if (!this.label) {
           this.label = this.name;
         }
+      },
+      graphBumped: function (bump) {
+        this.bump.x = bump.x;
+        this.bump.y = bump.y;
+        var position = this.getZoomedPosition();
+        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
       },
       getPosition: function () {
         var position = this.position.split(' ');
@@ -114,7 +128,7 @@
       },
       positionChanged: function () {
         var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x, position.y);
+        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
         this.fire('moved', {
           x: position.x,
           y: position.y
