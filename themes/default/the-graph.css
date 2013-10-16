@@ -149,7 +149,7 @@ the-graph-process h1, the-graph-subgraph h1 {
 the-graph-process the-graph-port {
   position: absolute;
   border: 1px solid #000000;
-  background-color: hsla(147, 67%, 80%, 1);
+  background-color: hsla(147, 0%, 80%, 1);
   display: block;
   width: 4px;
   height: 4px;
@@ -168,15 +168,28 @@ path.edge {
 }
 
 path.edge.route0  { stroke: #fff; }
+the-graph-port.route0  { background-color: #fff; }
 path.edge.route1  { stroke: hsl(  0, 100%, 60%); }
+the-graph-port.route1  { background-color: hsl(  0, 100%, 60%); }
 path.edge.route2  { stroke: hsl( 30, 100%, 60%); }
+the-graph-port.route2  { background-color: hsl( 30, 100%, 60%); }
 path.edge.route3  { stroke: hsl( 60, 100%, 60%); }
+the-graph-port.route3  { background-color: hsl( 60, 100%, 60%); }
 path.edge.route4  { stroke: hsl( 90, 100%, 60%); }
+the-graph-port.route4  { background-color: hsl( 90, 100%, 60%); }
 path.edge.route5  { stroke: hsl(120, 100%, 60%); }
+the-graph-port.route5  { background-color: hsl(120, 100%, 60%); }
 path.edge.route6  { stroke: hsl(150, 100%, 60%); }
+the-graph-port.route6  { background-color: hsl(150, 100%, 60%); }
 path.edge.route7  { stroke: hsl(180, 100%, 60%); }
+the-graph-port.route7  { background-color: hsl(180, 100%, 60%); }
 path.edge.route8  { stroke: hsl(210, 100%, 60%); }
+the-graph-port.route8  { background-color: hsl(210, 100%, 60%); }
 path.edge.route9  { stroke: hsl(240, 100%, 60%); }
+the-graph-port.route9  { background-color: hsl(240, 100%, 60%); }
 path.edge.route10 { stroke: hsl(270, 100%, 60%); }
+the-graph-port.route10 { background-color: hsl(270, 100%, 60%); }
 path.edge.route11 { stroke: hsl(300, 100%, 60%); }
+the-graph-port.route11 { background-color: hsl(300, 100%, 60%); }
 path.edge.route12 { stroke: hsl(330, 100%, 60%); }
+the-graph-port.route12 { background-color: hsl(330, 100%, 60%); }
