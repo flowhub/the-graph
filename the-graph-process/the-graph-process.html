@@ -155,14 +155,14 @@
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.borderRadius = diameter / 2 + "px";
-          theGraph.transform(this, position.x - diameter / 4, position.y - diameter / 4);
+          theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
         } else {
           // Unfocus the node
           this.style.width = Math.round(this.width * this.zoom) + "px";
           this.style.height = Math.round(this.height * this.zoom) + "px";
           this.style.borderRadius = '';
           this.classList.remove('highlight');
-          theGraph.transform(this, position.x, position.y);
+          theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
         }
         this.fire('highlight', this.highlight);
       }
