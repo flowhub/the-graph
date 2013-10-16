@@ -43,11 +43,11 @@ the-graph {
   -o-transform-origin: top left;
   transform-origin: top left;
 
-  -webkit-transform: translate3d(0,0,0) scale(1);
-  -moz-transform: translate3d(0,0,0) scale(1);
-  -ms-transform: translate3d(0,0,0) scale(1);
-  -o-transform: translate3d(0,0,0) scale(1);
-  transform: translate3d(0,0,0) scale(1);
+  -webkit-transform: translate3d(-500px,-500px,0px) scale(1);
+  -moz-transform: translate3d(-500px,-500px,0px) scale(1);
+  -ms-transform: translate3d(-500px,-500px,0px) scale(1);
+  -o-transform: translate3d(-500px,-500px,0px) scale(1);
+  transform: translate3d(-500px,-500px,0px) scale(1);
 
   background-color: #1d1d1d;
 
@@ -61,6 +61,7 @@ the-graph {
     linear-gradient(left, #2c2c2c 1px, transparent 1px),
     linear-gradient(top, #2c2c2c 1px, transparent 1px);
   background-size: 70px 70px;
+  background-position: 500px 500px;
 }
 
 the-graph-process, the-graph-subgraph {

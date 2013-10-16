@@ -125,10 +125,10 @@
         setTimeout(this.checkParent.bind(this), 0);
       },
       checkParent: function () {
-        var rootSVG = this.parentNode.getElementsByTagName('svg')[0];
+        var svgGroup = this.parentNode.querySelector('g');
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         this.routeChanged();
-        rootSVG.appendChild(this.path);
+        svgGroup.appendChild(this.path);
         this.drawEdge();
       },
       connectionChanged: function () {
