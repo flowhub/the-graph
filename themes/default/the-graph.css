@@ -94,6 +94,44 @@ the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
   display: none;
 }
 
+the-graph-process.highlight the-graph-port, the-graph-subgraph.highlight the-graph-port {
+  width: 20px;
+  height: 20px;
+  border-radius: 11px;
+}
+the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-port label {
+  display: block;
+  position: absolute;
+  color: white;
+  background-color: rgba(0,0,0, 0.6);
+  padding: 2px;
+  font-size: 10px;
+  z-index: 11;
+}
+
+the-graph-process.highlight the-graph-port.east label, the-graph-subgraph.highlight the-graph-port.east label {
+  left: 24px;
+  top: 4px;
+}
+the-graph-process.highlight the-graph-port.south label, the-graph-subgraph.highlight the-graph-port.south label {
+  top: 24px;
+  left: 4px;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg); 
+  -moz-transform: rotate(90deg); 
+}
+the-graph-process.highlight the-graph-port.west label, the-graph-subgraph.highlight the-graph-port.west label {
+  right: 24px;
+  top: 4px;
+}
+the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highlight the-graph-port.north label {
+  bottom: 24px;
+  left: 4px;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg); 
+  -moz-transform: rotate(90deg); 
+}
+
 the-graph-process h1, the-graph-subgraph h1 {
   display: block;
   position: absolute;

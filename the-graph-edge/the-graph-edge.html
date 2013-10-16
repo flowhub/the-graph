@@ -3,7 +3,7 @@
   (function(){
 
     function determinePortSides(sourceX, sourceY, targetX, targetY) {
-      var edgeType = ['east', 'west'];
+      var edgeType = ['east', 'west', 'R->L'];
       var xDiff = targetX - sourceX;
       var yDiff = targetY - sourceY;
 
@@ -14,78 +14,53 @@
       if (Math.abs(xDiff) < Math.abs(yDiff)){
         if (sourceY < targetY) {
           // S: bottom to top
-          edgeType = ['south', 'north'];
+          edgeType = ['south', 'north', 'B->T'];
         } else {
           // N bottom to left
-          edgeType = ['south', 'west'];
+          edgeType = ['south', 'west', 'B->L'];
           if (sourceX+nodeW+10 < targetX) {
             // NE: right to left
-            edgeType = ['east', 'west'];
+            edgeType = ['east', 'west', 'R->L'];
           }
         }
       } else {
         if (sourceX < targetX) {
           // E: right to left
-          edgeType = ['east', 'west'];
+          edgeType = ['east', 'west', 'R->L'];
         } else {
           // W: right to top
-          edgeType = ['east', 'north'];
+          edgeType = ['east', 'north', 'R->T'];
           if (sourceY+nodeH+10 < targetY) {
             // SW: bottom to top
-            edgeType = ['south', 'north'];
+            edgeType = ['south', 'north', 'B->T'];
           }
         }
       }
       return edgeType;
     };
 
-    function makePath(sourceX, sourceY, targetX, targetY, scale){
+    function makePath(sourcePos, targetPos, edgeType, scale){
+      var sourceX = sourcePos.left + sourcePos.width / 2;
+      var sourceY = sourcePos.top + sourcePos.height / 2;
+      var targetX = targetPos.left + targetPos.width / 2;
+      var targetY = targetPos.top + targetPos.height / 2;
       var nodeW = 60;
       var nodeW2 = 60 / 2;
       var nodeH = 60;
       var nodeH2 = 60 / 2;
 
-      var startX, startY, endX, endY;
+      var startX = sourceX;
+      var startY = sourceY
+      var endX = targetX;
+      var endY = targetY;
       var c1X, c1Y, c2X, c2Y;
 
       var xDiff = targetX - sourceX;
       var yDiff = targetY - sourceY;
 
-      var edgeType = "R->L";
-
-      if (Math.abs(xDiff) < Math.abs(yDiff)){
-        if (sourceY < targetY) {
-          // S: bottom to top
-          edgeType = "B->T";
-        } else {
-          // N bottom to left
-          edgeType = "B->L";
-          if (sourceX+nodeW+10 < targetX) {
-            // NE: right to left
-            edgeType = "R->L";
-          }
-        }
-      } else {
-        if (sourceX < targetX) {
-          // E: right to left
-          edgeType = "R->L";
-        } else {
-          // W: right to top
-          edgeType = "R->T";
-          if (sourceY+nodeH+10 < targetY) {
-            // SW: bottom to top
-            edgeType = "B->T";
-          }
-        }
-      }
-
       switch (edgeType) {
         case "B->T":
           // bottom to top
-          startX = sourceX + nodeW2;
-          startY = sourceY + nodeH;
-          endX = targetX + nodeW2;
-          endY = targetY;
           c1X = startX;
           c1Y = startY + (endY - startY)/2;
           c2X = endX;
@@ -93,10 +68,6 @@
           break;
         case "B->L":
           // bottom to left
-          startX = sourceX + nodeW2;
-          startY = sourceY + nodeH;
-          endX = targetX;
-          endY = targetY + nodeH2;
           c1X = startX + ( startX<endX ? nodeW : 0-nodeW );
           c1Y = startY + nodeH;
           c2X = endX - nodeW;
@@ -104,10 +75,6 @@
           break;
         case "R->T":
           // right to top
-          startX = sourceX + nodeW;
-          startY = sourceY + nodeH2;
-          endX = targetX + nodeW2;
-          endY = targetY;
           c1X = startX + nodeW;
           c1Y = startY + ( startY<endY ? nodeH : 0-nodeH );
           c2X = endX;
@@ -116,18 +83,14 @@
         case "R->L":
         default:
           // right to left
-          startX = sourceX + nodeW;
-          startY = sourceY + nodeH2;
-          endX = targetX;
-          endY = targetY + nodeH2;
           c1X = startX + (endX - startX)/2;
           c1Y = startY;
           c2X = c1X;
           c2Y = endY;
           break;
-      }
-
-      // Scale edge
+        }
+/*
+        // Scale edge
       startX = Math.round(startX*scale);
       startY = Math.round(startY*scale);
       endX = Math.round(endX*scale);
@@ -136,6 +99,7 @@
       c1Y = Math.round(c1Y*scale);
       c2X = Math.round(c2X*scale);
       c2Y = Math.round(c2Y*scale);
+      */
 
       var d = [
         "M", startX, startY, 
@@ -183,19 +147,54 @@
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
       },
       drawEdge: function () {
-        if (!this.path || !this.sourceNode || !this.targetNode) { return; }
-        var source = this.sourceNode.getPosition();
-        var target = this.targetNode.getPosition();
+        if (!this.path || !this.sourceNode || !this.targetNode) {
+          return;
+        }
+        if (!this.sourcePort) {
+          this.getSourcePort();
+          return;
+        }
+        if (!this.targetPort) {
+          this.getTargetPort();
+          return;
+        }
+        var source = this.sourceNode.getZoomedPosition();
+        var target = this.targetNode.getZoomedPosition();
 
         var edgeType = determinePortSides(source.x, source.y, target.x, target.y);
-        if (this.sourcePort) {
-          this.sourcePort.setAttribute('side', edgeType[0]);
-        }
-        if (this.targetPort) {
-          this.targetPort.setAttribute('side', edgeType[1]);
+        if (!this.sourcePort || !this.targetPort) {
+          return;
         }
 
-        var d = makePath(source.x, source.y, target.x, target.y, this.zoom);
+        var mod = 3;
+        this.sourcePort.setAttribute('side', edgeType[0]);
+        var sourcePos = {
+          left: source.x + mod + this.sourcePort.offsetLeft,
+          top: source.y + mod + this.sourcePort.offsetTop,
+          width: this.sourcePort.clientWidth,
+          height: this.sourcePort.clientHeight
+        };
+
+        this.targetPort.setAttribute('side', edgeType[1]);
+        var targetPos = {
+          left: target.x + mod + this.targetPort.offsetLeft,
+          top: target.y + mod + this.targetPort.offsetTop,
+          width: this.targetPort.clientWidth,
+          height: this.targetPort.clientHeight
+        };
+
+        if (this.sourceNode.classList.contains('highlight')) {
+          var sourceDiameter = this.sourceNode.width * this.zoom * 2;
+          sourcePos.left -= sourceDiameter / 4;
+          sourcePos.top -= sourceDiameter / 4;
+        }
+        if (this.targetNode.classList.contains('highlight')) {
+          var targetDiameter = this.targetNode.width * this.zoom * 2;
+          targetPos.left -= targetDiameter / 4;
+          targetPos.top -= targetDiameter / 4;
+        }
+
+        var d = makePath(sourcePos, targetPos, edgeType[2], this.zoom);
 
         this.path.setAttributeNS(null, "d", d);
       },
@@ -206,12 +205,22 @@
           return;
         }
         this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
+        this.sourceNode.addEventListener("highlight", this.sourceMoved.bind(this));
+        this.sourceNode.addEventListener("ports", this.sourceMoved.bind(this));
 
         // Find port asynchronously to give process time to draw it
         window.setTimeout(function () {
-          this.sourcePort = this.sourceNode.querySelector('the-graph-port[name="' + split[1] + '"]');
-          this.sourceMoved();
+          this.getSourcePort();
         }.bind(this), 0);
+      },
+      getSourcePort: function () {
+        var split = this.source.split(".");
+        this.sourcePort = this.sourceNode.querySelector('the-graph-port[name="' + split[1] + '"]');
+        if (!this.sourcePort) {
+          return;
+        }
+        this.sourcePort.addEventListener("side", this.sourceMoved.bind(this));
+        this.sourceMoved();
       },
       sourceMoved: function () {
         this.drawEdge();
@@ -223,11 +232,21 @@
           return;
         }
         this.targetNode.addEventListener("moved", this.targetMoved.bind(this));
+        this.targetNode.addEventListener("highlight", this.targetMoved.bind(this));
+        this.targetNode.addEventListener("ports", this.targetMoved.bind(this));
         // Find port asynchronously to give process time to draw it
         window.setTimeout(function () {
-          this.targetPort = this.targetNode.querySelector('the-graph-port[name="' + split[1] + '"]');
-          this.targetMoved();
+          this.getTargetPort();
         }.bind(this), 0);
+      },
+      getTargetPort: function () {
+        var split = this.target.split(".");
+        this.targetPort = this.targetNode.querySelector('the-graph-port[name="' + split[1] + '"]');
+        if (!this.targetPort) {
+          return;
+        }
+        this.targetPort.addEventListener("side", this.targetMoved.bind(this));
+        this.targetMoved();
       },
       targetMoved: function () {
         this.drawEdge();

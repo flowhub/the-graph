@@ -26,6 +26,7 @@
         return portPosition;
       },
       sideChanged: function () {
+        this.className = this.side;
         var margin = '-8px';
         var centering = this.getCentering() + '%';
         this.style.top = '';
@@ -49,7 +50,8 @@
             this.style.top = margin;
             this.style.left = centering;
             break;
-        }
+          }
+        this.fire('side', this.side);
       }
     });
   </script>
