@@ -20,6 +20,20 @@ the-graph-editor {
   overflow: hidden;
 }
 
+the-graph-editor #zoom {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+}
+the-graph-editor #zoom button {
+  background-color: #2a2b31;
+  color: white;
+  border: none;
+  font-size: 20px;
+  padding: 6px 10px;
+  opacity: 0.7;
+}
+
 the-library {
   display: none;
 }

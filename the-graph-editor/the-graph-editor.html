@@ -13,12 +13,26 @@
       <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" distance="20"></the-behavior>
       <the-behavior id="graphpinch" type="pinch"></the-behavior>
     </the-graph>
+    <div id="zoom">
+      <button id="zoomin"><i class="icon-plus"></i></button>
+      <button id="zoomout"><i class="icon-minus"></i></button>
+    </div>
   </template>
   <script>
   (function () {
     Polymer('the-graph-editor', {
       graph: {},
       library: {},
+      enteredView: function () {
+        this.$.zoomin.addEventListener('click', function (event) {
+          event.preventDefault();
+          this.zoomIn();
+        }.bind(this));
+        this.$.zoomout.addEventListener('click', function (event) {
+          event.preventDefault();
+          this.zoomOut();
+        }.bind(this));
+      },
       graphChanged: function () {
         this.buildInitialLibrary();
         for (var id in this.library) {
@@ -65,6 +79,12 @@
             }
           });
         }.bind(this));
+      },
+      zoomIn: function () {
+        this.$.graph.zoomed(1.1);
+      },
+      zoomOut: function () {
+        this.$.graph.zoomed(0.9);
       }
     });
   })();
