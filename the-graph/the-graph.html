@@ -109,11 +109,13 @@
                 sourcePort = touch.current;
                 sourcePort.classList.toggle('selected');
               } else {
-                if (targetPort) {
+                if (sourcePort.canConnect(touch.current)) {
+                  if (targetPort) {
+                    targetPort.classList.toggle('selected');
+                  }
+                  targetPort = touch.current;
                   targetPort.classList.toggle('selected');
                 }
-                targetPort = touch.current;
-                targetPort.classList.toggle('selected');
               }
             }
 
@@ -133,7 +135,11 @@
 
               if (sourceNode && sourcePort && targetNode && targetPort) {
                 // Make a connection!
-                this.connect(sourceNode, sourcePort, targetNode, targetPort);
+                if (sourcePort.isOutport()) {
+                  this.connect(sourceNode, sourcePort, targetNode, targetPort);
+                } else {
+                  this.connect(targetNode, targetPort, sourceNode, sourcePort);
+                }
               }
 
               sourceNode = null;
