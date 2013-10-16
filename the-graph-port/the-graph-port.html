@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-port" attributes="name type side" lightdom>
+<polymer-element name="the-graph-port" attributes="name type side route" lightdom>
   <template>
     <label>{{name}}</label>
   </template>
@@ -62,6 +62,7 @@
 
       Polymer('the-graph-port', {
         name: '',
+        route: 0,
         type: 'all',
         side: 'west',
         enteredView: function () {
@@ -83,8 +84,11 @@
           return this.process;
         },
         sideChanged: function () {
-          this.className = this.side;
+          this.className = this.side + ' route' + this.route;
           this.calculatePosition();
+        },
+        routeChanged: function () {
+          this.className = this.side + ' route' + this.route;
         },
         calculatePosition: function () {
           var onSameSide = [];

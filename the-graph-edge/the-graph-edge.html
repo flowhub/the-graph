@@ -143,6 +143,12 @@
         }
       },
       routeChanged: function () {
+        if (this.sourcePort) {
+          this.sourcePort.route = this.route;
+        }
+        if (this.targetPort) {
+          this.targetPort.route = this.route;
+        }
         if (!this.path) { return; }
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
       },
@@ -219,6 +225,7 @@
         if (!this.sourcePort) {
           return;
         }
+        this.sourcePort.route = this.route;
         this.sourcePort.addEventListener("side", this.sourceMoved.bind(this));
         this.sourceMoved();
       },
@@ -245,6 +252,7 @@
         if (!this.targetPort) {
           return;
         }
+        this.targetPort.route = this.route;
         this.targetPort.addEventListener("side", this.targetMoved.bind(this));
         this.targetMoved();
       },
