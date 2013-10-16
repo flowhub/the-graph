@@ -55,6 +55,10 @@
             clearTimeout(this.zoomDebounce);
             this.zoomDebounce = setTimeout(later, 750);
           }.bind(this));
+          this.$.graphpinch.addEventListener('gestureend', function (e) {
+            clearTimeout(this.zoomDebounce);
+            this.zoomed(e.detail.scale, e.detail.center);
+          }.bind(this));
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -78,6 +82,19 @@
             }.bind(this);
             clearTimeout(this.panDebounce);
             this.panDebounce = setTimeout(later, 750);
+          }.bind(this));
+          this.$.graphpan.addEventListener('gestureend', function (e) {
+            clearTimeout(this.panDebounce);
+            var touch = e.detail[Object.keys(e.detail)[0]];
+            var panX = touch.movepoint.x - touch.startpoint.x;
+            var panY = touch.movepoint.y - touch.startpoint.y;
+            // Handle panning in relation to previous panning state
+            var pan = this.getPan();
+            var newPan = {
+              x: panX + pan.x,
+              y: panY + pan.y
+            }
+            this.panned(newPan);
           }.bind(this));
         }
         if (this.$.nodehighlight) {
@@ -173,9 +190,6 @@
 
         // Handle passing zoom value to the GSS engine for node rescaling
         this.engine = GSS.engines[0];
-        document.querySelector('body').addEventListener("solved", function (e) {
-          console.log(e.detail.values);
-        });
         this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
         this.engine.solve();
       },
@@ -227,7 +241,6 @@
 
         this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
         this.engine.solve();
-        console.log(this.engine.lastCommandsForWorker);
 
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
