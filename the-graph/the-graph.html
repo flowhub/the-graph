@@ -67,6 +67,10 @@
           }.bind(this));
         }
         if (this.$.nodehighlight) {
+          var sourceNode = null;
+          var sourcePort = null;
+          var targetNode = null;
+          var targetPort = null;
           this.$.nodehighlight.addEventListener('gesture', function (e) {
             var touch = e.detail[Object.keys(e.detail)[0]];
             if (touch.endelement) {
@@ -75,20 +79,75 @@
             if (!touch.startelement) {
               return;
             }
-            if (!touch.startelement.highlight) {
+            if (!sourceNode) {
               // Start of the gesture, highlight
+              sourceNode = touch.startelement;
               if (touch.angle > 180 && touch.angle < 359) {
-                touch.startelement.highlight = 'in';
+                sourceNode.highlight = 'in';
               } else {
-                touch.startelement.highlight = 'out';
+                sourceNode.highlight = 'out';
+              }
+            }
+
+            if (sourcePort && touch.current.nodeName === 'THE-GRAPH-PROCESS' && touch.current !== sourceNode) {
+              if (targetNode) {
+                targetNode.highlight = '';
+              }
+              targetNode = touch.current;
+              if (sourceNode.highlight === 'in') {
+                targetNode.highlight = 'out';
+              } else {
+                targetNode.highlight = 'in';
+              }
+            }
+
+            if (touch.current.nodeName === 'THE-GRAPH-PORT') {
+              if (touch.current.parentNode.parentNode === sourceNode) {
+                if (sourcePort) {
+                  sourcePort.classList.toggle('selected');
+                }
+                sourcePort = touch.current;
+                sourcePort.classList.toggle('selected');
+              } else {
+                if (targetPort) {
+                  targetPort.classList.toggle('selected');
+                }
+                targetPort = touch.current;
+                targetPort.classList.toggle('selected');
               }
             }
 
             var later = function () {
-              touch.startelement.highlight = '';
+              if (sourceNode) {
+                sourceNode.highlight = '';
+              }
+              if (targetNode) {
+                targetNode.highlight = '';
+              }
+              if (sourcePort) {
+                sourcePort.classList.toggle('selected');
+              }
+              if (targetPort) {
+                targetPort.classList.toggle('selected');
+              }
+
+              if (sourceNode && sourcePort && targetNode && targetPort) {
+                // Make a connection!
+                this.connect(sourceNode, sourcePort, targetNode, targetPort);
+              }
+
+              sourceNode = null;
+              sourcePort = null;
+              targetNode = null;
+              targetPort = null;
             }.bind(this);
+
             clearTimeout(this.nodeDebounce);
-            this.nodeDebounce = setTimeout(later, 750);
+            if (touch.endelement) {
+              later();
+            } else {
+              this.nodeDebounce = setTimeout(later, 750);
+            }
           }.bind(this));
         }
 
@@ -171,7 +230,19 @@
           return;
           initials.iips.push(connection);
         });
-
+      },
+      connect: function (sourceNode, sourcePort, targetNode, targetPort) {
+        var edges = this.querySelector("the-graph-edges");
+        edges.connections.push({
+          src: {
+            process: sourceNode.getAttribute('name'),
+            port: sourcePort.name
+          },
+          tgt: {
+            process: targetNode.getAttribute('name'),
+            port: targetPort.name
+          }
+        });
       }
     });
   </script>

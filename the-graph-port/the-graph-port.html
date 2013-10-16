@@ -83,12 +83,19 @@
           }.bind(this));
           return this.process;
         },
+        updateClass: function () {
+          var selected = '';
+          if (this.classList.contains('selected')) {
+            selected = ' selected';
+          }
+          this.className = this.side + ' route' + this.route + selected;
+        },
         sideChanged: function () {
-          this.className = this.side + ' route' + this.route;
+          this.updateClass();
           this.calculatePosition();
         },
         routeChanged: function () {
-          this.className = this.side + ' route' + this.route;
+          this.updateClass();
         },
         calculatePosition: function () {
           var onSameSide = [];

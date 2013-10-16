@@ -114,6 +114,9 @@ the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight t
   font-size: 12px;
   z-index: -1;
 }
+the-graph-process.highlight the-graph-port.selected label, the-graph-subgraph.highlight the-graph-port.selected label {
+  background-color: magenta;
+}
 
 the-graph-process.highlight the-graph-port.east label, the-graph-subgraph.highlight the-graph-port.east label {
   top: -5px;
