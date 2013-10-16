@@ -104,6 +104,9 @@
         };
       },
       dragChanged: function () {
+        if (this.highlight) {
+          return;
+        }
         var drag = this.getDrag();
         var x = drag.x / this.zoom - this.pan.x / this.zoom;
         x -= this.clientWidth / 2;
