@@ -24,6 +24,14 @@
       graph: {},
       library: {},
       enteredView: function () {
+        this.addEventListener('mousewheel', function (event) {
+          event.preventDefault();
+          var originalPan = this.$.graph.getPan();
+          this.$.graph.panned({
+            x: originalPan.x + event.wheelDeltaX,
+            y: originalPan.y + event.wheelDeltaY
+          });
+        });
         this.$.zoomin.addEventListener('click', function (event) {
           event.preventDefault();
           this.zoomIn();
