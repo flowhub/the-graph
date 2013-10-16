@@ -1,9 +1,10 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position drag component process highlight" lightdom>
+<polymer-element name="the-graph-process" attributes="label position drag component process highlight icon" lightdom>
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
+    <i class="icon icon-{{icon}}"></i>
     <the-graph-inports>
       <template repeat="{{port in inports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
@@ -21,6 +22,7 @@
   <script>
     Polymer('the-graph-process', {
       label: '',
+      icon: '',
       position: '0 0',
       drag: '',
       zoom: 1,
@@ -64,7 +66,7 @@
         if (!this.libraryComponent) {
           return;
         }
-
+        this.icon = this.libraryComponent.icon;
         this.inports = [];
         this.outports = [];
         this.libraryComponent.inports.forEach(function (port) {
@@ -135,17 +137,11 @@
         });
       },
       zoomChanged: function () {
-        // Update width to a scaled value
-        //this.style.width = Math.round(this.width*this.zoom) + "px";
-        //this.style.height = Math.round(this.height*this.zoom) + "px";
-
         // Set position by screen pixels
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x, position.y);
 
-        // Recenter labels
-        var label = this.querySelector("h1");
-        label.style.left = Math.round((this.width/2-label.offsetWidth)*this.zoom) + "px";
+        this.fire('zoomed', this.zoom);
       },
       highlightChanged: function () {
         var position = this.getZoomedPosition();

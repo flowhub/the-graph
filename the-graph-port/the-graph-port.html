@@ -66,12 +66,24 @@
         type: 'all',
         side: 'west',
         enteredView: function () {
-          if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
+          if (this.isOutport()) {
             this.side = 'east';
           }
           setTimeout(function () {
             this.sideChanged();
           }.bind(this), 0);
+        },
+        isOutport: function () {
+          if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
+            return true;
+          }
+          return false;
+        },
+        canConnect: function (target) {
+          if (this.isOutport() !== target.isOutport()) {
+            return true;
+          }
+          return false;
         },
         getProcess: function () {
           if (this.process) {
@@ -79,16 +91,26 @@
           }
           this.process = this.parentNode.parentNode;
           this.process.addEventListener('highlight', function () {
-            this.sideChanged();
+            this.calculatePosition();
+          }.bind(this));
+          this.process.addEventListener('zoomed', function () {
+            this.calculatePosition();
           }.bind(this));
           return this.process;
         },
+        updateClass: function () {
+          var selected = '';
+          if (this.classList.contains('selected')) {
+            selected = ' selected';
+          }
+          this.className = this.side + ' route' + this.route + selected;
+        },
         sideChanged: function () {
-          this.className = this.side + ' route' + this.route;
+          this.updateClass();
           this.calculatePosition();
         },
         routeChanged: function () {
-          this.className = this.side + ' route' + this.route;
+          this.updateClass();
         },
         calculatePosition: function () {
           var onSameSide = [];
