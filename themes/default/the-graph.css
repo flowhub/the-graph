@@ -103,6 +103,7 @@ the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight t
   position: absolute;
   color: white;
   background-color: rgba(0,0,0, 0.6);
+  border-radius: 3px;
   padding: 2px;
   font-size: 10px;
   z-index: 11;
@@ -110,7 +111,7 @@ the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight t
 
 the-graph-process.highlight the-graph-port.east label, the-graph-subgraph.highlight the-graph-port.east label {
   left: 24px;
-  top: 4px;
+  top: 2px;
 }
 the-graph-process.highlight the-graph-port.south label, the-graph-subgraph.highlight the-graph-port.south label {
   top: 24px;
@@ -121,7 +122,7 @@ the-graph-process.highlight the-graph-port.south label, the-graph-subgraph.highl
 }
 the-graph-process.highlight the-graph-port.west label, the-graph-subgraph.highlight the-graph-port.west label {
   right: 24px;
-  top: 4px;
+  top: 2px;
 }
 the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highlight the-graph-port.north label {
   bottom: 24px;
