@@ -83,14 +83,14 @@ the-graph-process:before, the-graph-subgraph:before {
   left: 2px;
   right: 2px;
   bottom: 2px;
+  display: block;
 }
 
 the-graph-process.highlight, the-graph-subgraph.highlight {
-  background-color: hsla(184, 8%, 69%, 1);
 }
 
 the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
-  display: none;
+  border-radius: 100px;
 }
 
 the-graph-process.highlight the-graph-port, the-graph-subgraph.highlight the-graph-port {
