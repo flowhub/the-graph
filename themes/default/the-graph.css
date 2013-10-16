@@ -72,6 +72,7 @@ the-graph-process, the-graph-subgraph {
   color: #000000;
   border-radius: 12px;
   border: 2px hsla(180, 11%, 32%, 1) solid;
+  cursor: move;
 }
 the-graph-process:before, the-graph-subgraph:before {
   content: '';
@@ -88,6 +89,7 @@ the-graph-process:before, the-graph-subgraph:before {
 }
 
 the-graph-process.highlight, the-graph-subgraph.highlight {
+  cursor: auto;
 }
 
 the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
