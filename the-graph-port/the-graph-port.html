@@ -3,56 +3,115 @@
     <label>{{name}}</label>
   </template>
   <script>
-    Polymer('the-graph-port', {
-      name: '',
-      type: 'all',
-      side: 'west',
-      enteredView: function () {
-        if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
-          this.side = 'east';
+    (function () {
+      var sides = {
+        east: 45,
+        south: 135,
+        west: 225,
+        north: 315
+      };
+
+      function getPortInSide (index, ports) {
+        return 360 / Object.keys(sides).length / (ports + 1) * (index + 1);
+      };
+
+      function getPortDegrees (index, ports, side) {
+        var inside = getPortInSide(index, ports);
+        var absolute = sides[side] + inside;
+        if (absolute > 360) {
+          absolute -= 360;
         }
-        this.sideChanged();
-      },
-      getCentering: function () {
-        var onSameSide = [];
-        var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
-        childNodes.forEach(function (port) {
-          if (port.side === this.side) {
-            onSameSide.push(port);
+        return absolute;
+      };
+
+      function distanceInSquare (degrees, radius) {
+        degrees = degrees % 8;
+        var radians = degrees * (Math.PI / 180);
+        var adjacent = radius;
+        return adjacent / Math.cos(radians);
+      };
+
+      function distanceInCircle (degrees, radius) {
+        return radius;
+      };
+
+      function getPortPosition (shape, degrees, parent, port) {
+        var distance;
+        //var radius = parent.width / 2;
+        var radius = parent.offsetWidth / 2;
+        if (!radius) {
+          radius = 30;
+        }
+        if (shape == 'circle') {
+          distance = distanceInCircle(degrees, radius);
+        } else {
+          distance = distanceInSquare(degrees, radius);
+        }
+        var radians = degrees * (Math.PI / 180);
+        var margin = port.offsetWidth / 2 + 6;
+        var x = Math.round(Math.cos(radians) * distance);
+        var y = Math.round(Math.sin(radians) * distance);
+        var posProps = {
+          right: null,
+          left: y + radius - margin,
+          top: null,
+          bottom: x + radius - margin
+        };
+        return posProps;
+      };
+
+      Polymer('the-graph-port', {
+        name: '',
+        type: 'all',
+        side: 'west',
+        enteredView: function () {
+          if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
+            this.side = 'east';
           }
-        }.bind(this));
-        var spaceForPort = 40 / onSameSide.length;
-        var portPosition = spaceForPort * (onSameSide.indexOf(this) + 1);
-        return portPosition;
-      },
-      sideChanged: function () {
-        this.className = this.side;
-        var margin = '-8px';
-        var centering = this.getCentering() + '%';
-        this.style.top = '';
-        this.style.bottom = '';
-        this.style.right = '';
-        this.style.left = '';
-        switch (this.side) {
-          case 'east':
-            this.style.right = margin;
-            this.style.top = centering;
-            break;
-          case 'south':
-            this.style.bottom = margin;
-            this.style.left = centering;
-            break;
-          case 'west':
-            this.style.left = margin;
-            this.style.top = centering;
-            break;
-          case 'north':
-            this.style.top = margin;
-            this.style.left = centering;
-            break;
+          setTimeout(function () {
+            this.sideChanged();
+          }.bind(this), 0);
+        },
+        getProcess: function () {
+          if (this.process) {
+            return this.process;
           }
-        this.fire('side', this.side);
-      }
-    });
+          this.process = this.parentNode.parentNode;
+          this.process.addEventListener('highlight', function () {
+            this.sideChanged();
+          }.bind(this));
+          return this.process;
+        },
+        sideChanged: function () {
+          this.className = this.side;
+          this.calculatePosition();
+        },
+        calculatePosition: function () {
+          var onSameSide = [];
+          var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
+          childNodes.forEach(function (port) {
+            if (port.side === this.side) {
+              onSameSide.push(port);
+            }
+          }.bind(this));
+
+          var degrees = getPortDegrees(onSameSide.indexOf(this), onSameSide.length, this.side);
+
+          var shape = 'square';
+          if (this.getProcess().classList.contains('highlight')) {
+            shape = 'circle';
+          }
+          var position = getPortPosition(shape, degrees, this.getProcess(), this);
+          for (var side in position) {
+            if (position[side] !== null) {
+              this.style[side] = position[side] + 'px';
+            } else {
+              this.style[side] = '';
+            }
+          }
+          this.fire('side', this.side);
+        }
+      });
+    })();
   </script>
 </polymer-element>
