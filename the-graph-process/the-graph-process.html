@@ -142,7 +142,7 @@
       zoomChanged: function () {
         // Set position by screen pixels
         var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x, position.y);
+        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
 
         this.fire('zoomed', this.zoom);
       },
