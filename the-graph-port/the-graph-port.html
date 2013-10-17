@@ -130,6 +130,9 @@
             shape = 'circle';
           }
           var position = getPortPosition(shape, degrees, this.getProcess(), this);
+          if (this.side == 'south') {
+            position.bottom -= 1;
+          }
           for (var side in position) {
             if (position[side] !== null) {
               this.style[side] = position[side] + 'px';

@@ -190,11 +190,17 @@
         };
 
         if (this.sourceNode.classList.contains('highlight')) {
+          // Highlighted ports are bigger
           var sourceDiameter = this.sourceNode.width * this.zoom * 2;
           sourcePos.left -= sourceDiameter / 4;
           sourcePos.top -= sourceDiameter / 4;
+        } else {
+          // Account for the triangular shape of the port
+          sourcePos.left += this.sourcePort.offsetWidth / 2.7;
+          sourcePos.top += this.sourcePort.offsetHeight / 2.8;
         }
         if (this.targetNode.classList.contains('highlight')) {
+          // Highlighted ports are bigger
           var targetDiameter = this.targetNode.width * this.zoom * 2;
           targetPos.left -= targetDiameter / 4;
           targetPos.top -= targetDiameter / 4;
