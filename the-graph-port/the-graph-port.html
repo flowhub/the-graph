@@ -110,6 +110,18 @@
         sideChanged: function () {
           this.updateClass();
           this.calculatePosition();
+
+          // Update the others as well
+          var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
+          childNodes.forEach(function (port) {
+            if (port.nodeName !== 'THE-GRAPH-PORT') {
+              return;
+            }
+            if (port === this) {
+              return;
+            }
+            port.calculatePosition();
+          }.bind(this));
         },
         routeChanged: function () {
           this.updateClass();
