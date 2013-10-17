@@ -146,6 +146,12 @@
 
             if (touch.current.nodeName === 'THE-GRAPH-PORT') {
               if (touch.current.parentNode.parentNode === sourceNode) {
+                if (sourceNode.highlight === 'in' && touch.current.isOutport()) {
+                  return;
+                }
+                if (sourceNode.highlight === 'out' && !touch.current.isOutport()) {
+                  return;
+                }
                 if (sourcePort) {
                   sourcePort.classList.toggle('selected');
                 }
