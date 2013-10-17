@@ -110,7 +110,7 @@ the-graph-process.highlight, the-graph-subgraph.highlight {
 }
 
 the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
-  border-radius: 200px;
+  border-radius: 400px;
   background-color: hsla(184, 8%, 0%, 0.55);
 }
 
@@ -178,6 +178,7 @@ the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highl
 the-graph-process i.icon, the-graph-subgraph i.icon {
   color: black;
   position: absolute;
+  overflow: hidden;
   top: 50%;
   margin-top: -15px;
   left: 50%;

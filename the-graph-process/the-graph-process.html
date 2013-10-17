@@ -148,11 +148,19 @@
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
 
         // Sizing
-        var diameter = Math.round(this.width * this.zoom);
+        var diameter = this.getDiameter();
         this.style.width = diameter + 'px';
         this.style.height = diameter + 'px';
 
         this.fire('zoomed', this.zoom);
+      },
+      getDiameter: function () {
+        var diameter = Math.round(this.width * this.zoom);
+        if (diameter < 24) {
+          // Ensure sane touchable size
+          return diameter = 24;
+        }
+        return diameter;
       },
       getHighlightDiameter: function () {
         // By default, nodes expand to double their size
@@ -169,7 +177,7 @@
         ports.forEach(function (port) {
           perSide[port.side]++;
         });
-        var portSize = 22;
+        var portSize = 30;
 
         var sideArea = diameter * Math.PI / 4;
         var maxPortsPerSide = Math.max(perSide.east, perSide.south, perSide.west, perSide.north);
@@ -199,8 +207,9 @@
           }
         } else {
           // Unfocus the node
-          this.style.width = Math.round(this.width * this.zoom) + "px";
-          this.style.height = Math.round(this.height * this.zoom) + "px";
+          var diameter = this.getDiameter();
+          this.style.width = diameter + "px";
+          this.style.height = diameter + "px";
           this.style.borderRadius = '';
           this.classList.remove('highlight');
           theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
