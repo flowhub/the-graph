@@ -115,20 +115,49 @@
               sourceNode = touch.startelement;
               if (touch.angle > 180 && touch.angle < 359) {
                 sourceNode.highlight = 'in';
+
+                // Select first inport
+                sourcePort = sourceNode.querySelector('the-graph-inports the-graph-port');
+                if (sourcePort) {
+                  sourcePort.classList.toggle('selected');
+                }
               } else {
                 sourceNode.highlight = 'out';
+
+                // Select first inport
+                sourcePort = sourceNode.querySelector('the-graph-outports the-graph-port');
+                if (sourcePort) {
+                  sourcePort.classList.toggle('selected');
+                }
               }
             }
 
             if (sourcePort && touch.current.nodeName === 'THE-GRAPH-PROCESS' && touch.current !== sourceNode) {
               if (targetNode) {
+                if (targetNode == touch.current) {
+                  return;
+                }
                 targetNode.highlight = '';
               }
               targetNode = touch.current;
               if (sourceNode.highlight === 'in') {
                 targetNode.highlight = 'out';
+
+                // Select first outport
+                targetPort = targetNode.querySelector('the-graph-outports the-graph-port');
+                if (targetPort) {
+                  console.log(targetPort);
+                  targetPort.classList.toggle('selected');
+                }
               } else {
                 targetNode.highlight = 'in';
+
+                // Select first inport
+                targetPort = targetNode.querySelector('the-graph-inports the-graph-port');
+                if (targetPort) {
+                  console.log(targetPort);
+                  targetPort.classList.toggle('selected');
+                }
               }
             }
 
