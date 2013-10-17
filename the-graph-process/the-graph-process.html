@@ -195,6 +195,7 @@
           this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
+          this.style.zIndex = 11;
           this.style.borderRadius = diameter / 2 + "px";
           theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
 
@@ -210,6 +211,7 @@
           var diameter = this.getDiameter();
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
+          this.style.zIndex = 10;
           this.style.borderRadius = '';
           this.classList.remove('highlight');
           theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
