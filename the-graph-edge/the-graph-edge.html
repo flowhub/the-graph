@@ -89,17 +89,6 @@
           c2Y = endY;
           break;
         }
-/*
-        // Scale edge
-      startX = Math.round(startX*scale);
-      startY = Math.round(startY*scale);
-      endX = Math.round(endX*scale);
-      endY = Math.round(endY*scale);
-      c1X = Math.round(c1X*scale);
-      c1Y = Math.round(c1Y*scale);
-      c2X = Math.round(c2X*scale);
-      c2Y = Math.round(c2Y*scale);
-      */
 
       var d = [
         "M", startX, startY, 
@@ -188,10 +177,9 @@
           width: this.targetPort.clientWidth,
           height: this.targetPort.clientHeight
         };
-
         if (this.sourceNode.classList.contains('highlight')) {
           // Highlighted ports are bigger
-          var sourceDiameter = this.sourceNode.width * this.zoom * 2;
+          var sourceDiameter = this.sourceNode.offsetWidth * this.zoom;
           sourcePos.left -= sourceDiameter / 4;
           sourcePos.top -= sourceDiameter / 4;
         } else {
@@ -201,11 +189,10 @@
         }
         if (this.targetNode.classList.contains('highlight')) {
           // Highlighted ports are bigger
-          var targetDiameter = this.targetNode.width * this.zoom * 2;
+          var targetDiameter = this.targetNode.offsetWidth * this.zoom;
           targetPos.left -= targetDiameter / 4;
           targetPos.top -= targetDiameter / 4;
         }
-
         var d = makePath(sourcePos, targetPos, edgeType[2], this.zoom);
 
         this.path.setAttributeNS(null, "d", d);

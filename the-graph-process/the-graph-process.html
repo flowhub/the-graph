@@ -146,11 +146,36 @@
 
         this.fire('zoomed', this.zoom);
       },
+      getHighlightDiameter: function () {
+        // By default, nodes expand to double their size
+        var diameter = Math.round(this.width * this.zoom * 2);
+
+        // Count the maximum number of ports on a given side
+        var ports = Array.prototype.slice.call(this.getElementsByTagName('the-graph-port'));
+        var perSide = {
+          east: 0,
+          south: 0,
+          west: 0,
+          north: 0
+        };
+        ports.forEach(function (port) {
+          perSide[port.side]++;
+        });
+        var portSize = 22;
+
+        var sideArea = diameter * Math.PI / 4;
+        var maxPortsPerSide = Math.max(perSide.east, perSide.south, perSide.west, perSide.north);
+        if (sideArea / maxPortsPerSide < portSize) {
+          diameter = maxPortsPerSide * portSize * 4 / Math.PI;
+        }
+
+        return diameter;
+      },
       highlightChanged: function () {
         var position = this.getZoomedPosition();
         if (this.highlight) {
           // Focus the node
-          var diameter = Math.round(this.width * this.zoom * 2);
+          var diameter = this.getHighlightDiameter();
           this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
