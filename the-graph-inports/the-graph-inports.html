@@ -1,9 +1,14 @@
 <link rel="import" href="../the-graph-port/the-graph-port.html">
-<polymer-element name="the-graph-inports" lightdom>
+<polymer-element name="the-graph-inports" attributes="highlight" lightdom>
   <template>
     <content select="the-graph-port"></content>
   </template>
   <script>
-    Polymer('the-graph-inports');
+    Polymer('the-graph-inports', {
+      highlight: '',
+      highlightChanged: function () {
+        this.classList.toggle('highlight');
+      }
+    });
   </script>
 </polymer-element>

@@ -156,6 +156,14 @@
           this.style.height = diameter + "px";
           this.style.borderRadius = diameter / 2 + "px";
           theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
+
+          if (this.highlight === 'in') {
+            this.querySelector('the-graph-inports').highlight = this.highlight;
+            this.querySelector('the-graph-outports').highlight = '';
+          } else {
+            this.querySelector('the-graph-outports').highlight = this.highlight;
+            this.querySelector('the-graph-inports').highlight = '';
+          }
         } else {
           // Unfocus the node
           this.style.width = Math.round(this.width * this.zoom) + "px";
@@ -163,6 +171,12 @@
           this.style.borderRadius = '';
           this.classList.remove('highlight');
           theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+
+          if (this.highlight === 'in') {
+            this.querySelector('the-graph-inports').highlight = '';
+          } else {
+            this.querySelector('the-graph-outports').highlight = '';
+          }
         }
         this.fire('highlight', this.highlight);
       }
