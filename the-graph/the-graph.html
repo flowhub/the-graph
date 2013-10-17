@@ -217,9 +217,18 @@
         this.fire('panned', pan);
       },
       calcBump: function () {
+        // For expanding in -x -y direction
         this.bump.x = Math.max(0, this._pan.x) + this.padding;
         this.bump.y = Math.max(0, this._pan.y) + this.padding;
+
+        // For expanding in +x +y direction
+        this.style.width = this.bump.x + 0-this._pan.x + window.innerWidth + this.padding*2 + "px";
+        this.style.height = this.bump.y + 0-this._pan.y + window.innerHeight + this.padding*2 + "px";
+
+        // the-edges and the-process listen to this
         this.fire('bumped', this.bump);
+
+        // Need to redraw CSS grid when size changed
         this.updateGridBg();
       },
       zoomDebounce: null,
@@ -285,6 +294,7 @@
         this.updatePaddedSize();
       },
       updatePaddedSize: function () {
+        // XXX?
         this.style.width = -this.minX + this.maxX + this.padding*2 + "px";
         this.style.height = -this.minY + this.maxY + this.padding*2 + "px";
         this.updateGridBg();
