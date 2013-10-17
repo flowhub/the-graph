@@ -25,7 +25,11 @@
       };
 
       function distanceInSquare (degrees, radius) {
-        degrees = degrees % 8;
+        var origDegrees = degrees;
+        degrees = degrees % 90;
+        if (degrees >= 45) {
+          degrees = 90 - degrees;
+        }
         var radians = degrees * (Math.PI / 180);
         var adjacent = radius;
         return adjacent / Math.cos(radians);
