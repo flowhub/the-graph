@@ -57,6 +57,9 @@
 
         // Insert ports based on library
         this.initializePorts();
+
+        // Handle sizing
+        this.zoomChanged();
       },
       initializePorts: function () {
         if (!this.libraryComponent) {
@@ -143,6 +146,11 @@
         // Set position by screen pixels
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+
+        // Sizing
+        var diameter = Math.round(this.width * this.zoom);
+        this.style.width = diameter + 'px';
+        this.style.height = diameter + 'px';
 
         this.fire('zoomed', this.zoom);
       },
