@@ -4,7 +4,7 @@
 <polymer-element name="the-graph-nodes" lightdom>
   <template>
     <template repeat="{{process in processes}}">
-    <the-graph-process name="{{process.name}}" position="{{process.metadata.x}} {{process.metadata.y}}" label="{{process.name}}" component="{{process.component}}"></the-graph-process>
+    <the-graph-process name="{{process.name}}" position="{{process.metadata.x}} {{process.metadata.y}}" label="{{process.metadata.label}}" component="{{process.component}}"></the-graph-process>
     </template>
   </template>
 
