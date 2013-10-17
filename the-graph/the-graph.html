@@ -122,6 +122,7 @@
                   return;
                 }
                 targetNode.highlight = '';
+                targetPort = null;
               }
               targetNode = touch.current;
               if (sourceNode.highlight === 'in') {
@@ -160,42 +161,34 @@
                 }
               }
             }
-
-            var later = function () {
-              if (sourceNode) {
-                sourceNode.highlight = '';
-              }
-              if (targetNode) {
-                targetNode.highlight = '';
-              }
-              if (sourcePort) {
-                sourcePort.classList.toggle('selected');
-              }
-              if (targetPort) {
-                targetPort.classList.toggle('selected');
-              }
-
-              if (sourceNode && sourcePort && targetNode && targetPort) {
-                // Make a connection!
-                if (sourcePort.isOutport()) {
-                  this.connect(sourceNode, sourcePort, targetNode, targetPort);
-                } else {
-                  this.connect(targetNode, targetPort, sourceNode, sourcePort);
-                }
-              }
-
-              sourceNode = null;
-              sourcePort = null;
-              targetNode = null;
-              targetPort = null;
-            }.bind(this);
-
-            clearTimeout(this.nodeDebounce);
-            if (touch.endelement) {
-              later();
-            } else {
-              this.nodeDebounce = setTimeout(later, 750);
+          }.bind(this));
+          this.$.nodehighlight.addEventListener('gestureend', function (e) {
+            if (sourceNode) {
+              sourceNode.highlight = '';
             }
+            if (targetNode) {
+              targetNode.highlight = '';
+            }
+            if (sourcePort) {
+              sourcePort.classList.toggle('selected');
+            }
+            if (targetPort) {
+              targetPort.classList.toggle('selected');
+            }
+
+            if (sourceNode && sourcePort && targetNode && targetPort) {
+              // Make a connection!
+              if (sourcePort.isOutport()) {
+                this.connect(sourceNode, sourcePort, targetNode, targetPort);
+                } else {
+                this.connect(targetNode, targetPort, sourceNode, sourcePort);
+              }
+            }
+
+            sourceNode = null;
+            sourcePort = null;
+            targetNode = null;
+            targetPort = null;
           }.bind(this));
         }
 
