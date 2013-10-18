@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-edge" attributes="source target route connection">
+<polymer-element name="the-graph-edge" attributes="source target route connection group">
   <script>
   (function(){
 
@@ -103,21 +103,23 @@
     Polymer('the-graph-edge', {
       route: 0,
       zoom: 1,
+      group: null,
       created: function () {
       },
       enteredView: function () {
         var graph = this.parentNode.parentNode;
-        var self = this;
         graph.addEventListener("zoomed", function(event){
-          self.zoom = graph.zoom;
-        });
-        setTimeout(this.checkParent.bind(this), 50);
+          this.zoom = graph.zoom;
+        }.bind(this));
+        this.group = this.parentNode.$.connections;
       },
-      checkParent: function () {
-        var svgGroup = this.parentNode.querySelector('g');
+      groupChanged: function () {
+        if (!this.group) {
+          return;
+        }
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         this.routeChanged();
-        svgGroup.appendChild(this.path);
+        this.group.appendChild(this.path);
         this.drawEdge();
       },
       connectionChanged: function () {

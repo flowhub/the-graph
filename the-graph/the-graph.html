@@ -332,13 +332,15 @@
         }
 
         // Make connection elements
+        var connections = [];
         this.graph.connections.forEach(function (connection) {
           if (connection.src) {
-            edges.connections.push(connection);
+            connections.push(connection);
           }
           return;
           initials.iips.push(connection);
-        });
+          });
+          edges.connections = connections;
 
         this.calcMinMax();
       },
