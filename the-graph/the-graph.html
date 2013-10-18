@@ -271,6 +271,12 @@
         setTimeout(function () {
           this.zoom = Math.max(0.25, Math.min(zoom, 6));
           this.fire("zoomed", this.zoom);
+
+          // Update internal panning state based on scale
+          this.panned({
+            x: pan.x * scale,
+            y: pan.y * scale
+          });
         }.bind(this), 0);
 
         this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
@@ -278,12 +284,6 @@
 
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
-        // Update internal panning state based on scale
-        this.panned({
-          x: pan.x * scale,
-          y: pan.y * scale
-        });
-        this.updateGridBg();
       },
       calcMinMax: function () {
         var minX = 0;
