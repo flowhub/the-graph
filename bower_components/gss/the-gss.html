@@ -1,0 +1,22 @@
+<element name="the-gss" attributes="worker">
+  <script>
+    if (this !== window) {
+      var GSS = require('/gss');
+      this.register({
+        prototype: {
+          readyCallback: function () {
+            // Hide the GSS rules
+            this.style.display = 'none';
+            // Read Web Worker path
+            var workerPath = this.getAttribute('worker');
+            // Instantiate GSS with parent element as container
+            var runner = new GSS(workerPath, this.parentNode);
+            // Read rules and run
+            var rules = this.textContent.trim();
+            runner.run(rules);
+          }
+        }
+      });
+    }
+  </script>
+</element>

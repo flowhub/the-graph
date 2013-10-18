@@ -1,0 +1,38 @@
+<polymer-element name="the-behavior" attributes="type direction minspeed maxspeed distance action accept arguments debug listento">
+  <script src="../browser/the-behavior.js"></script>
+  <script>
+    var behavior = require('the-behavior');
+
+    Polymer('the-behavior', {
+      network: null,
+      listento: 'container',
+      enteredView: function () {
+        this.container = this.parentElement;
+        var debug = [];
+        if (this.debug) {
+          debug = this.debug.split(' ');
+        }
+        behavior.runGraph(behavior.prepareGraph(this), function (network) {
+          if (debug.length) {
+            network.on('data', function (data) {
+              var matches = false;
+              debug.forEach(function (debuggable) {
+                if (data.id.indexOf(debuggable) !== -1) {
+                  matches = true;
+                }
+              });
+              if (!matches) {
+                return;
+              }
+              var val = data.data;
+              if (typeof data.data === 'object') {
+                val = toString.call(data.data);
+              }
+              console.log(data.id, val);
+            });
+          }
+        });
+      }
+    });
+  </script>
+</polymer-element>
