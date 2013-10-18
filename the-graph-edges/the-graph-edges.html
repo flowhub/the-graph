@@ -5,19 +5,15 @@
     <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
       <g id="connections" transform="translate(500,500)"></g>
     </svg>
-    <template repeat="{{connections}}">
-      <the-graph-edge connection="{{}}"></the-graph-edge>
-    </template>
+    <content select="the-graph-edge"></content>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
     Polymer('the-graph-edges', {
-      connections: [],
       enteredView: function () {
         var graph = this.parentNode;
-        this.graph = graph;
         graph.addEventListener("bumped", function(event){
           this.graphBumped(event.detail);
         }.bind(this));
@@ -26,17 +22,18 @@
           y:graph.padding
         });
       },
-      connectionsChanged: function () {
-        this.setGroupForEdges();
-      },
-      setGroupForEdges: function () {
+      getEdgesBySide: function (side) {
         var childNodes = Array.prototype.slice.call(this.childNodes);
-        childNodes.forEach(function (node) {
-          if (node.nodeType !== 'THE-GRAPH-EDGE') {
+        var edges = [];
+        childNodes.forEach(function (child) {
+          if (child.nodeName !== 'THE-GRAPH-EDGE') {
             return;
           }
-          node.group = this.$.connections;
+          if (child.source === side || child.target == side) {
+            edges.push(child);
+          }
         });
+        return edges;
       },
       graphBumped: function (bump) {
         this.$.connections.setAttribute("transform", "translate("+bump.x+","+bump.y+")");

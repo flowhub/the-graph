@@ -5,12 +5,12 @@
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
     <i class="icon icon-{{icon}}"></i>
-    <the-graph-inports>
+    <the-graph-inports id="inports">
       <template repeat="{{port in inports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
       </template>
     </the-graph-inports>
-    <the-graph-outports>
+    <the-graph-outports id="outports">
       <template repeat="{{port in outports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
       </template>
@@ -82,6 +82,32 @@
           inports: this.inports,
           outports: this.outports
         });
+      },
+      getInportByName: function (name) {
+        var childNodes = Array.prototype.slice.call(this.$.inports.childNodes);
+        var port = null;
+        childNodes.forEach(function (child) {
+          if (child.nodeName !== 'THE-GRAPH-PORT') {
+            return;
+          }
+          if (child.getAttribute('name') === name) {
+            port = child;
+          }
+        });
+        return port;
+      },
+      getOutportByName: function (name) {
+        var childNodes = Array.prototype.slice.call(this.$.outports.childNodes);
+        var port = null;
+        childNodes.forEach(function (child) {
+          if (child.nodeName !== 'THE-GRAPH-PORT') {
+            return;
+          }
+          if (child.getAttribute('name') === name) {
+            port = child;
+          }
+        });
+        return port;
       },
       processChanged: function () {
         this.component = this.process.component;
