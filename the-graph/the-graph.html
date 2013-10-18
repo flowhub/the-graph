@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -52,6 +52,7 @@
       maxX: 2000,
       maxY: 2000,
       grid: 70,
+      snap: 35,
       nodes: [],
       edges: [],
       library: null,
@@ -394,6 +395,8 @@
               case 'THE-GRAPH-PROCESS':
                 // Provide the component to the process
                 node.libraryComponent = this.library.getComponent(node.component);
+                node.grid = this.grid;
+                node.snap = this.snap;
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
