@@ -1,0 +1,54 @@
+<link rel="import" href="../the-behavior/the-behavior.html">
+<polymer-element name="the-behaviors" attributes="debug listento">
+  <script src="../browser/the-behavior.js"></script>
+  <script>
+    var behavior = require('the-behavior');
+
+    Polymer('the-behaviors', {
+      listento: 'container',
+      enteredView: function () {
+        this.container = this.parentElement;
+        var debug = [];
+        if (this.debug) {
+          debug = this.debug.split(' ');
+        }
+        var checkDebug = function (data, debug) {
+          var matches = false;
+          debug.forEach(function (debuggable) {
+            if (data.id.indexOf(debuggable) !== -1) {
+              matches = true;
+            }
+          });
+          return matches;
+        };
+        var debugId = function (data) {
+          var id = data.id;
+          if (data.subgraph) {
+            id = data.subgraph + ' ' + id;
+          }
+          return id;
+        };
+        behavior.runGraph(behavior.prepareGraph(this), function (network) {
+          if (debug.length) {
+            network.on('data', function (data) {
+              if (!checkDebug(data, debug)) {
+                return;
+              }
+              var val = data.data;
+              if (typeof data.data === 'object') {
+                val = toString.call(data.data);
+              }
+              console.log(debugId(data), val);
+            });
+            network.on('disconnect', function (data) {
+              if (!checkDebug(data, debug)) {
+                return;
+              }
+              console.log(debugId(data), 'DISC');
+            });
+          }
+        });
+      }
+    });
+  </script>
+</polymer-element>
