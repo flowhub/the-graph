@@ -79,8 +79,8 @@
         });
       },
       gridChanged: function () {
-        this.width = this.grid;
-        this.height = this.grid;
+        this.width = this.grid - 1;
+        this.height = this.grid - 1;
         this.zoomChanged();
       },
       getInports: function () {
