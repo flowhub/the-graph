@@ -364,6 +364,19 @@
 
         this.calcMinMax();
       },
+      gridChanged: function () {
+        var processes = this.$.nodes.getProcesses();
+        processes.forEach(function (process) {
+          process.grid = this.grid;
+        }.bind(this));
+        this.updateGridBg();
+      },
+      snapChanged: function () {
+        var processes = this.$.nodes.getProcesses();
+        processes.forEach(function (process) {
+          process.snap = this.snap;
+        }.bind(this));
+      },
       connect: function (sourceNode, sourcePort, targetNode, targetPort) {
         this.edges.push({
           source: sourcePort.getNodeName() + '.' + sourcePort.name,

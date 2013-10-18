@@ -78,6 +78,11 @@
           outports: this.outports
         });
       },
+      gridChanged: function () {
+        this.width = this.grid;
+        this.height = this.grid;
+        this.zoomChanged();
+      },
       getInports: function () {
         return Array.prototype.slice.call(this.$.inports.getElementsByTagName('the-graph-port'));
       },
