@@ -107,12 +107,15 @@
           }.bind(this));
           return this.process;
         },
-        updateClass: function () {
+        updateClass: function (side) {
           var selected = '';
           if (this.classList.contains('selected')) {
             selected = ' selected';
           }
-          this.className = this.side + ' route' + this.route + selected;
+          if (!side) {
+            side = this.side;
+          }
+          this.className = side + ' route' + this.route + selected;
         },
         sideChanged: function () {
           this.updateClass();
@@ -134,32 +137,40 @@
           this.updateClass();
         },
         calculatePosition: function () {
+          var shape = 'square';
+          var side = this.side;
+          if (this.getProcess().classList.contains('highlight')) {
+            shape = 'circle';
+            if (side === 'south') {
+              side = 'east';
+            }
+            if (side === 'north') {
+              side = 'west';
+            }
+            this.updateClass(side);
+          }
           var onSameSide = [];
           var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
           childNodes.forEach(function (port) {
-            if (port.side === this.side) {
+            if (port.side === side || port === this) {
               onSameSide.push(port);
             }
           }.bind(this));
 
-          var degrees = getPortDegrees(onSameSide.indexOf(this), onSameSide.length, this.side);
+          var degrees = getPortDegrees(onSameSide.indexOf(this), onSameSide.length, side);
 
-          var shape = 'square';
-          if (this.getProcess().classList.contains('highlight')) {
-            shape = 'circle';
-          }
           var position = getPortPosition(shape, degrees, this.getProcess(), this);
           if (this.side == 'south') {
             position.bottom -= 1;
           }
-          for (var side in position) {
-            if (position[side] !== null) {
-              this.style[side] = position[side] + 'px';
+          for (var posSide in position) {
+            if (position[posSide] !== null) {
+              this.style[posSide] = position[posSide] + 'px';
             } else {
-              this.style[side] = '';
+              this.style[posSide] = '';
             }
           }
-          this.fire('side', this.side);
+          this.fire('side', side);
         }
       });
     })();
