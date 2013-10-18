@@ -117,6 +117,12 @@
         }.bind(this));
         this.group = this.parentNode.$.connections;
       },
+      leftView: function () {
+        if (!this.path) {
+          return;
+        }
+        this.group.removeChild(this.path);
+      },
       getSource: function () {
         var split = this.source.split('.');
         return {

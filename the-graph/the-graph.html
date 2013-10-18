@@ -408,6 +408,19 @@
                 break;
             }
           }.bind(this));
+          var removedNodes = Array.prototype.slice.call(mutation.removedNodes);
+          removedNodes.forEach(function (node) {
+            switch (node.nodeName) {
+              case 'THE-GRAPH-PROCESS':
+                var edges = this.$.edges.getEdges();
+                edges.forEach(function (edge) {
+                  if (edge.sourceNode === node || edge.targetNode === node) {
+                    this.$.edges.removeChild(edge);
+                  }
+                }.bind(this));
+                break;
+            }
+          }.bind(this));
         }.bind(this));
       },
       observe: function () {
