@@ -51,6 +51,7 @@
           this.$.graphpinch.addEventListener('gestureend', function (e) {
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
+          this.observe();
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -356,6 +357,45 @@
             port: targetPort.name
           }
         });
+      },
+      observer: null,
+      addObservers: {},
+      handleMutations: function (mutations) {
+        mutations.forEach(function (mutation) {
+          var addedNodes = Array.prototype.slice.call(mutation.addedNodes);
+          addedNodes.forEach(function (node) {
+            if (node.nodeName === '#text' || node.nodeName === 'path') {
+              return;
+            }
+            if (node.observeAdded) {
+              node.observeAdded.forEach(function (type) {
+                if (!this.addObservers[type]) {
+                  this.addObservers[type] = [];
+                }
+                this.addObservers[type].push(node);
+              }.bind(this));
+            }
+            if (this.addObservers[node.nodeName]) {
+              this.addObservers[node.nodeName].forEach(function (observer) {
+                observer.nodeAdded(node);
+              }.bind(this));
+            }
+          }.bind(this));
+        }.bind(this));
+      },
+      observe: function () {
+        this.observer = new MutationObserver(this.handleMutations.bind(this));
+        this.observer.observe(this, {
+          subtree: true,
+          childList: true,
+          attributes: false,
+          characterData: false
+        });
+      },
+      leftView: function () {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
       }
     });
   </script>
