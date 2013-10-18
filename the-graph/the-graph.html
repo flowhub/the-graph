@@ -51,6 +51,7 @@
       minY: 0,
       maxX: 2000,
       maxY: 2000,
+      grid: 70,
       nodes: [],
       edges: [],
       library: null,
@@ -324,7 +325,8 @@
       },
       updateGridBg: function () {
         // Update CSS grid image
-        this.style.backgroundSize = (70*this.zoom)+"px "+(70*this.zoom)+"px";
+        var size = Math.round(this.grid*this.zoom);
+        this.style.backgroundSize = size+"px "+size+"px";
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {

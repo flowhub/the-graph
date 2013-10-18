@@ -24,6 +24,10 @@
       label: '',
       icon: '',
       position: '0 0',
+      // _position: {
+      //   x: 0,
+      //   y: 0
+      // },
       drag: '',
       zoom: 1,
       pan: {
@@ -34,6 +38,7 @@
         x: 500,
         y: 500
       },
+      snap: 35,
       width: 60,
       height: 60,
       libraryComponent: null,
@@ -116,6 +121,7 @@
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
       },
       getPosition: function () {
+        // return this._position;
         var position = this.position.split(' ');
         return {
           x: parseInt(position[0]),
@@ -125,8 +131,8 @@
       getZoomedPosition: function () {
         var position = this.getPosition();
         return {
-          x: Math.round(position.x * this.zoom),
-          y: Math.round(position.y * this.zoom)
+          x: Math.round(position.x*this.zoom),
+          y: Math.round(position.y*this.zoom)
         };
       },
       getDrag: function () {
@@ -145,6 +151,13 @@
         x -= this.clientWidth / 2;
         var y = drag.y / this.zoom - this.pan.y / this.zoom;
         y -= this.clientHeight / 2;
+
+        // Snap to grid
+        x = Math.round(x / this.snap) * this.snap;
+        y = Math.round(y / this.snap) * this.snap;
+
+        // this._position.x = x;
+        // this._position.y = y;
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
