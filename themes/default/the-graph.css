@@ -134,11 +134,13 @@ the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight t
   padding: 4px;
   font-size: 12px;
   z-index: -1;
-  opacity: 0.6;
+  filter: grayscale(0.7) brightness(0.6);
+  -webkit-filter: grayscale(0.7) brightness(0.6);
 }
 the-graph-process.highlight the-graph-inports.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-inports.highlight the-graph-port label,
 the-graph-process.highlight the-graph-outports.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-outports.highlight the-graph-port label {
-  opacity: 1;
+  filter: none;
+  -webkit-filter: none;
 }
 the-graph-process.highlight the-graph-port.selected label, the-graph-subgraph.highlight the-graph-port.selected label {
   background-color: magenta;

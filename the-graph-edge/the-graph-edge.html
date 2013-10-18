@@ -111,7 +111,7 @@
         graph.addEventListener("zoomed", function(event){
           self.zoom = graph.zoom;
         });
-        setTimeout(this.checkParent.bind(this), 0);
+        setTimeout(this.checkParent.bind(this), 50);
       },
       checkParent: function () {
         var svgGroup = this.parentNode.querySelector('g');
