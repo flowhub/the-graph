@@ -55,20 +55,10 @@
           this.graphBumped(event.detail);
         }.bind(this));
 
-        // Insert ports based on library
-        this.initializePorts();
-
         // Handle sizing
         this.zoomChanged();
       },
-      initializePorts: function () {
-        if (!this.libraryComponent) {
-          var editor = this.parentNode.parentNode.parentNode;
-          this.libraryComponent = editor.querySelector('the-component[name="' + this.component + '"]');
-        }
-        if (!this.libraryComponent) {
-          return;
-        }
+      libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
         this.inports = [];
         this.outports = [];
@@ -83,26 +73,26 @@
           outports: this.outports
         });
       },
+      getInports: function () {
+        return Array.prototype.slice.call(this.$.inports.getElementsByTagName('the-graph-port'));
+      },
       getInportByName: function (name) {
-        var childNodes = Array.prototype.slice.call(this.$.inports.childNodes);
+        var childNodes = this.getInports();
         var port = null;
         childNodes.forEach(function (child) {
-          if (child.nodeName !== 'THE-GRAPH-PORT') {
-            return;
-          }
           if (child.getAttribute('name') === name) {
             port = child;
           }
         });
         return port;
       },
+      getOutports: function () {
+        return Array.prototype.slice.call(this.$.outports.getElementsByTagName('the-graph-port'));
+      },
       getOutportByName: function (name) {
-        var childNodes = Array.prototype.slice.call(this.$.outports.childNodes);
+        var childNodes = this.getOutports();
         var port = null;
         childNodes.forEach(function (child) {
-          if (child.nodeName !== 'THE-GRAPH-PORT') {
-            return;
-          }
           if (child.getAttribute('name') === name) {
             port = child;
           }
@@ -226,11 +216,11 @@
           theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
 
           if (this.highlight === 'in') {
-            this.querySelector('the-graph-inports').highlight = this.highlight;
-            this.querySelector('the-graph-outports').highlight = '';
+            this.$.inports.highlight = this.highlight;
+            this.$.outports.highlight = '';
           } else {
-            this.querySelector('the-graph-outports').highlight = this.highlight;
-            this.querySelector('the-graph-inports').highlight = '';
+            this.$.inports.highlight = '';
+            this.$.outports.highlight = this.highlight;
           }
         } else {
           // Unfocus the node
@@ -243,9 +233,9 @@
           theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
 
           if (this.highlight === 'in') {
-            this.querySelector('the-graph-inports').highlight = '';
+            this.$.inports.highlight = '';
           } else {
-            this.querySelector('the-graph-outports').highlight = '';
+            this.$.outports.highlight = '';
           }
         }
         this.fire('highlight', this.highlight);

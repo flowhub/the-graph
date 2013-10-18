@@ -8,10 +8,14 @@
 
   <template>
     <content select="the-behavior"></content>
-    <the-graph-nodes id="nodes"></the-graph-nodes>
+    <the-graph-nodes id="nodes">
+      <template repeat="{{ node in nodes }}">
+        <the-graph-process name="{{node.name}}" position="{{node.metadata.x}} {{node.metadata.y}}" label="{{node.metadata.label}}" component="{{node.component}}"></the-graph-process>
+      </template>
+    </the-graph-nodes>
     <the-graph-edges id="edges">
       <template repeat="{{ edge in edges }}">
-      <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.route }}"></the-graph-edge>
+        <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
       </template>
     </the-graph-edges>
     <the-graph-initials></the-graph-initials>
@@ -47,7 +51,9 @@
       minY: 0,
       maxX: 2000,
       maxY: 2000,
+      nodes: [],
       edges: [],
+      library: null,
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -107,7 +113,7 @@
                 sourceNode.highlight = 'in';
 
                 // Select first inport
-                sourcePort = sourceNode.querySelector('the-graph-inports the-graph-port');
+                sourcePort = sourceNode.getInports()[0];
                 if (sourcePort) {
                   sourcePort.classList.toggle('selected');
                 }
@@ -115,7 +121,7 @@
                 sourceNode.highlight = 'out';
 
                 // Select first inport
-                sourcePort = sourceNode.querySelector('the-graph-outports the-graph-port');
+                sourcePort = sourceNode.getOutports()[0];
                 if (sourcePort) {
                   sourcePort.classList.toggle('selected');
                 }
@@ -135,7 +141,7 @@
                 targetNode.highlight = 'out';
 
                 // Select first outport
-                targetPort = targetNode.querySelector('the-graph-outports the-graph-port');
+                targetPort = targetNode.getOutports()[0];
                 if (targetPort) {
                   targetPort.classList.toggle('selected');
                 }
@@ -143,7 +149,7 @@
                 targetNode.highlight = 'in';
 
                 // Select first inport
-                targetPort = targetNode.querySelector('the-graph-inports the-graph-port');
+                targetPort = targetNode.getInports()[0];
                 if (targetPort) {
                   targetPort.classList.toggle('selected');
                 }
@@ -322,7 +328,6 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
-        var nodes = this.querySelector("the-graph-nodes");
         var initials = this.querySelector("the-graph-initials");
         var exports = this.querySelector("the-graph-exports");
 
@@ -333,7 +338,7 @@
           if (!p.metadata.label) {
             p.metadata.label = p.name;
           }
-          nodes.processes.push(p);
+          this.nodes.push(p);
         }
 
         // Make connection elements
@@ -345,7 +350,9 @@
             this.edges.push({
               source: connection.src.process + '.' + connection.src.port,
               target: connection.tgt.process + '.' + connection.tgt.port,
-              route: connection.metadata.route ? connection.metadata.route : 0
+              metadata: {
+                route: connection.metadata.route ? connection.metadata.route : 0
+              }
             });
           }
           return;
@@ -358,7 +365,9 @@
         this.edges.push({
           source: sourcePort.getNodeName() + '.' + sourcePort.name,
           target: targetPort.getNodeName() + '.' + targetPort.name,
-          route: 0
+          metadata: {
+            route: 0
+          }
         });
       },
       observer: null,
@@ -380,6 +389,10 @@
                   }
                 });
                 break;
+              case 'THE-GRAPH-PROCESS':
+                // Provide the component to the process
+                node.libraryComponent = this.library.getComponent(node.component);
+                break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
                 var source = node.getSource();
@@ -392,6 +405,19 @@
                 if (node.targetNode) {
                   node.targetPort = node.targetNode.getInportByName(target.port);
                 }
+                break;
+            }
+          }.bind(this));
+          var removedNodes = Array.prototype.slice.call(mutation.removedNodes);
+          removedNodes.forEach(function (node) {
+            switch (node.nodeName) {
+              case 'THE-GRAPH-PROCESS':
+                var edges = this.$.edges.getEdges();
+                edges.forEach(function (edge) {
+                  if (edge.sourceNode === node || edge.targetNode === node) {
+                    this.$.edges.removeChild(edge);
+                  }
+                }.bind(this));
                 break;
             }
           }.bind(this));

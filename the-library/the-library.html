@@ -3,12 +3,22 @@
 <polymer-element name="the-library" lightdom>
   <template>
     <template repeat="{{component in components}}">
-    <the-component name="{{component.name}}" description="{{component.description}}" icon="{{component.icon}}" inports="{{component.inports}}" outports="{{component.outports}}"></the-component>
+      <the-component name="{{component.name}}" description="{{component.description}}" icon="{{component.icon}}" inports="{{component.inports}}" outports="{{component.outports}}"></the-component>
     </template>
   </template>
   <script>
     Polymer('the-library', {
-      components: []
+      components: [],
+      getComponent: function (name) {
+        var childNodes = Array.prototype.slice.call(this.getElementsByTagName('the-component'));
+        var node = null;
+        childNodes.forEach(function (child) {
+          if (child.getAttribute('name') === name) {
+            node = child;
+          }
+        });
+        return node;
+      }
     });
   </script>
 </polymer-element>

@@ -3,23 +3,17 @@
 
 <polymer-element name="the-graph-nodes" lightdom>
   <template>
-    <template repeat="{{process in processes}}">
-    <the-graph-process name="{{process.name}}" position="{{process.metadata.x}} {{process.metadata.y}}" label="{{process.metadata.label}}" component="{{process.component}}"></the-graph-process>
-    </template>
+   <content select="the-graph-process"></content>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
     Polymer('the-graph-nodes', {
-      processes: [],
       getProcessByName: function (name) {
-        var childNodes = Array.prototype.slice.call(this.childNodes);
+        var childNodes = Array.prototype.slice.call(this.getElementsByTagName('the-graph-process'));
         var node = null;
         childNodes.forEach(function (child) {
-          if (child.nodeName !== 'THE-GRAPH-PROCESS') {
-            return;
-          }
           if (child.getAttribute('name') === name) {
             node = child;
           }
