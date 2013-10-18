@@ -10,8 +10,11 @@
 
   <script>
     Polymer('the-graph-nodes', {
+      getProcesses: function () {
+        return Array.prototype.slice.call(this.getElementsByTagName('the-graph-process'));
+      },
       getProcessByName: function (name) {
-        var childNodes = Array.prototype.slice.call(this.getElementsByTagName('the-graph-process'));
+        var childNodes = this.getProcesses();
         var node = null;
         childNodes.forEach(function (child) {
           if (child.getAttribute('name') === name) {

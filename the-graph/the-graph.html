@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -52,6 +52,7 @@
       maxX: 2000,
       maxY: 2000,
       grid: 70,
+      snap: 35,
       nodes: [],
       edges: [],
       library: null,
@@ -270,6 +271,12 @@
         setTimeout(function () {
           this.zoom = Math.max(0.25, Math.min(zoom, 6));
           this.fire("zoomed", this.zoom);
+
+          // Update internal panning state based on scale
+          this.panned({
+            x: pan.x * scale,
+            y: pan.y * scale
+          });
         }.bind(this), 0);
 
         this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
@@ -277,12 +284,6 @@
 
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
-        // Update internal panning state based on scale
-        this.panned({
-          x: pan.x * scale,
-          y: pan.y * scale
-        });
-        this.updateGridBg();
       },
       calcMinMax: function () {
         var minX = 0;
@@ -363,6 +364,19 @@
 
         this.calcMinMax();
       },
+      gridChanged: function () {
+        var processes = this.$.nodes.getProcesses();
+        processes.forEach(function (process) {
+          process.grid = this.grid;
+        }.bind(this));
+        this.updateGridBg();
+      },
+      snapChanged: function () {
+        var processes = this.$.nodes.getProcesses();
+        processes.forEach(function (process) {
+          process.snap = this.snap;
+        }.bind(this));
+      },
       connect: function (sourceNode, sourcePort, targetNode, targetPort) {
         this.edges.push({
           source: sourcePort.getNodeName() + '.' + sourcePort.name,
@@ -394,6 +408,8 @@
               case 'THE-GRAPH-PROCESS':
                 // Provide the component to the process
                 node.libraryComponent = this.library.getComponent(node.component);
+                node.grid = this.grid;
+                node.snap = this.snap;
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
