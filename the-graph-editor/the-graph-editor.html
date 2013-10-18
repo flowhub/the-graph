@@ -47,6 +47,7 @@
           this.$.library.components.push(this.library[id]);
         }
         this.$.graph.graph = this.graph;
+        this.$.graph.library = this.$.library;
       },
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {
