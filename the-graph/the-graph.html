@@ -47,16 +47,8 @@
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
             this.zooming(e.detail.scale, e.detail.center);
-
-            // Ensure the end method gets called
-            var later = function () {
-              this.zoomed(e.detail.scale, e.detail.center);
-            }.bind(this);
-            clearTimeout(this.zoomDebounce);
-            this.zoomDebounce = setTimeout(later, 750);
           }.bind(this));
           this.$.graphpinch.addEventListener('gestureend', function (e) {
-            clearTimeout(this.zoomDebounce);
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
         }
@@ -75,16 +67,8 @@
               y: panY + pan.y
             }
             this.panning(newPan, 1);
-
-            // Ensure the end method gets called
-            var later = function () {
-              this.panned(newPan);
-            }.bind(this);
-            clearTimeout(this.panDebounce);
-            this.panDebounce = setTimeout(later, 750);
           }.bind(this));
           this.$.graphpan.addEventListener('gestureend', function (e) {
-            clearTimeout(this.panDebounce);
             var touch = e.detail[Object.keys(e.detail)[0]];
             var panX = touch.movepoint.x - touch.startpoint.x;
             var panY = touch.movepoint.y - touch.startpoint.y;
@@ -115,25 +99,59 @@
               sourceNode = touch.startelement;
               if (touch.angle > 180 && touch.angle < 359) {
                 sourceNode.highlight = 'in';
+
+                // Select first inport
+                sourcePort = sourceNode.querySelector('the-graph-inports the-graph-port');
+                if (sourcePort) {
+                  sourcePort.classList.toggle('selected');
+                }
               } else {
                 sourceNode.highlight = 'out';
+
+                // Select first inport
+                sourcePort = sourceNode.querySelector('the-graph-outports the-graph-port');
+                if (sourcePort) {
+                  sourcePort.classList.toggle('selected');
+                }
               }
             }
 
             if (sourcePort && touch.current.nodeName === 'THE-GRAPH-PROCESS' && touch.current !== sourceNode) {
               if (targetNode) {
+                if (targetNode == touch.current) {
+                  return;
+                }
                 targetNode.highlight = '';
+                targetPort = null;
               }
               targetNode = touch.current;
               if (sourceNode.highlight === 'in') {
                 targetNode.highlight = 'out';
+
+                // Select first outport
+                targetPort = targetNode.querySelector('the-graph-outports the-graph-port');
+                if (targetPort) {
+                  targetPort.classList.toggle('selected');
+                }
               } else {
                 targetNode.highlight = 'in';
+
+                // Select first inport
+                targetPort = targetNode.querySelector('the-graph-inports the-graph-port');
+                if (targetPort) {
+                  targetPort.classList.toggle('selected');
+                }
               }
             }
 
             if (touch.current.nodeName === 'THE-GRAPH-PORT') {
               if (touch.current.parentNode.parentNode === sourceNode) {
+                if (sourceNode.highlight === 'in' && touch.current.isOutport()) {
+                  return;
+                }
+                if (sourceNode.highlight === 'out' && !touch.current.isOutport()) {
+                  return;
+                }
                 if (sourcePort) {
                   sourcePort.classList.toggle('selected');
                 }
@@ -149,42 +167,34 @@
                 }
               }
             }
-
-            var later = function () {
-              if (sourceNode) {
-                sourceNode.highlight = '';
-              }
-              if (targetNode) {
-                targetNode.highlight = '';
-              }
-              if (sourcePort) {
-                sourcePort.classList.toggle('selected');
-              }
-              if (targetPort) {
-                targetPort.classList.toggle('selected');
-              }
-
-              if (sourceNode && sourcePort && targetNode && targetPort) {
-                // Make a connection!
-                if (sourcePort.isOutport()) {
-                  this.connect(sourceNode, sourcePort, targetNode, targetPort);
-                } else {
-                  this.connect(targetNode, targetPort, sourceNode, sourcePort);
-                }
-              }
-
-              sourceNode = null;
-              sourcePort = null;
-              targetNode = null;
-              targetPort = null;
-            }.bind(this);
-
-            clearTimeout(this.nodeDebounce);
-            if (touch.endelement) {
-              later();
-            } else {
-              this.nodeDebounce = setTimeout(later, 750);
+          }.bind(this));
+          this.$.nodehighlight.addEventListener('gestureend', function (e) {
+            if (sourceNode) {
+              sourceNode.highlight = '';
             }
+            if (targetNode) {
+              targetNode.highlight = '';
+            }
+            if (sourcePort) {
+              sourcePort.classList.toggle('selected');
+            }
+            if (targetPort) {
+              targetPort.classList.toggle('selected');
+            }
+
+            if (sourceNode && sourcePort && targetNode && targetPort) {
+              // Make a connection!
+              if (sourcePort.isOutport()) {
+                this.connect(sourceNode, sourcePort, targetNode, targetPort);
+                } else {
+                this.connect(targetNode, targetPort, sourceNode, sourcePort);
+              }
+            }
+
+            sourceNode = null;
+            sourcePort = null;
+            targetNode = null;
+            targetPort = null;
           }.bind(this));
         }
 
@@ -201,7 +211,6 @@
         // };
         return this._pan;
       },
-      panDebounce: null,
       panning: function (pan, scale) {
         // This panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
@@ -231,7 +240,6 @@
         // Need to redraw CSS grid when size changed
         this.updateGridBg();
       },
-      zoomDebounce: null,
       zooming: function (scale, center) {
         // Scale happens fast
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
@@ -245,8 +253,11 @@
         // Zoom causes a rerendering of graph elements
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
         var zoom = this.zoom * scale;
-        this.zoom = Math.max(0.25, Math.min(zoom, 6));
-        this.fire("zoomed", this.zoom);
+
+        setTimeout(function () {
+          this.zoom = Math.max(0.25, Math.min(zoom, 6));
+          this.fire("zoomed", this.zoom);
+        }.bind(this), 0);
 
         this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
         this.engine.solve();
