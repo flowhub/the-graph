@@ -68,14 +68,11 @@ the-graph {
   background-color: #1d1d1d;
 
   background-image:
-    -moz-linear-gradient(left, #2c2c2c 1px, transparent 1px),
-    -moz-linear-gradient(top, #2c2c2c 1px, transparent 1px);
+    -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
   background-image:
-    -webkit-linear-gradient(left, #2c2c2c 1px, transparent 1px),
-    -webkit-linear-gradient(top, #2c2c2c 1px, transparent 1px);
+    -moz-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
   background-image:
-    linear-gradient(left, #2c2c2c 1px, transparent 1px),
-    linear-gradient(top, #2c2c2c 1px, transparent 1px);
+    radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
   background-size: 70px 70px;
   background-position: 500px 500px;
 }

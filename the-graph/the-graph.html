@@ -9,7 +9,11 @@
   <template>
     <content select="the-behavior"></content>
     <the-graph-nodes id="nodes"></the-graph-nodes>
-    <the-graph-edges id="edges"></the-graph-edges>
+    <the-graph-edges id="edges">
+      <template repeat="{{ edge in edges }}">
+      <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.route }}"></the-graph-edge>
+      </template>
+    </the-graph-edges>
     <the-graph-initials></the-graph-initials>
     <the-graph-exports></the-graph-exports>
   </template>
@@ -43,6 +47,7 @@
       minY: 0,
       maxX: 2000,
       maxY: 2000,
+      edges: [],
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -51,6 +56,7 @@
           this.$.graphpinch.addEventListener('gestureend', function (e) {
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
+          this.observe();
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -317,7 +323,6 @@
       },
       graphChanged: function () {
         var nodes = this.querySelector("the-graph-nodes");
-        var edges = this.querySelector("the-graph-edges");
         var initials = this.querySelector("the-graph-initials");
         var exports = this.querySelector("the-graph-exports");
 
@@ -332,30 +337,79 @@
         }
 
         // Make connection elements
-        var connections = [];
         this.graph.connections.forEach(function (connection) {
           if (connection.src) {
-            connections.push(connection);
+            if (!connection.metadata) {
+              connection.metadata = {};
+            }
+            this.edges.push({
+              source: connection.src.process + '.' + connection.src.port,
+              target: connection.tgt.process + '.' + connection.tgt.port,
+              route: connection.metadata.route ? connection.metadata.route : 0
+            });
           }
           return;
           initials.iips.push(connection);
-          });
-          edges.connections = connections;
+        }.bind(this));
 
         this.calcMinMax();
       },
       connect: function (sourceNode, sourcePort, targetNode, targetPort) {
-        var edges = this.querySelector("the-graph-edges");
-        edges.connections.push({
-          src: {
-            process: sourceNode.getAttribute('name'),
-            port: sourcePort.name
-          },
-          tgt: {
-            process: targetNode.getAttribute('name'),
-            port: targetPort.name
-          }
+        this.edges.push({
+          source: sourcePort.getNodeName() + '.' + sourcePort.name,
+          target: targetPort.getNodeName() + '.' + targetPort.name,
+          route: 0
         });
+      },
+      observer: null,
+      handleMutations: function (mutations) {
+        mutations.forEach(function (mutation) {
+          var addedNodes = Array.prototype.slice.call(mutation.addedNodes);
+          addedNodes.forEach(function (node) {
+            switch (node.nodeName) {
+              case 'THE-GRAPH-PORT':
+                // Give the port to any edges that may be waiting for it
+                var portName = node.getAttribute('name');
+                var nodeName = node.getNodeName();
+                var edges = this.$.edges.getEdgesBySide(nodeName + '.' + portName);
+                edges.forEach(function (edge) {
+                  if (node.isOutport()) {
+                    edge.sourcePort = node;
+                  } else {
+                    edge.targetPort = node;
+                  }
+                });
+                break;
+              case 'THE-GRAPH-EDGE':
+                // Provide the edge with the information from DOM
+                var source = node.getSource();
+                node.sourceNode = this.$.nodes.getProcessByName(source.node);
+                if (node.sourceNode) {
+                  node.sourcePort = node.sourceNode.getOutportByName(source.port);
+                }
+                var target = node.getTarget();
+                node.targetNode = this.$.nodes.getProcessByName(target.node);
+                if (node.targetNode) {
+                  node.targetPort = node.targetNode.getInportByName(target.port);
+                }
+                break;
+            }
+          }.bind(this));
+        }.bind(this));
+      },
+      observe: function () {
+        this.observer = new MutationObserver(this.handleMutations.bind(this));
+        this.observer.observe(this, {
+          subtree: true,
+          childList: true,
+          attributes: false,
+          characterData: false
+        });
+      },
+      leftView: function () {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
       }
     });
   </script>

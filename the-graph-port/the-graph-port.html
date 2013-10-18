@@ -77,6 +77,9 @@
             this.sideChanged();
           }.bind(this), 0);
         },
+        getNodeName: function () {
+          return this.parentNode.parentNode.getAttribute('name');
+        },
         isOutport: function () {
           if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
             return true;

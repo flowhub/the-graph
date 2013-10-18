@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-edge" attributes="source target route connection group">
+<polymer-element name="the-graph-edge" attributes="source target route connection group sourceNode sourcePort targetNode">
   <script>
   (function(){
 
@@ -101,17 +101,35 @@
     }
 
     Polymer('the-graph-edge', {
+      source: '',
+      target: '',
       route: 0,
       zoom: 1,
       group: null,
-      created: function () {
-      },
+      targetNode: null,
+      targetPort: null,
+      sourceNode: null,
+      sourcePort: null,
       enteredView: function () {
         var graph = this.parentNode.parentNode;
         graph.addEventListener("zoomed", function(event){
           this.zoom = graph.zoom;
         }.bind(this));
         this.group = this.parentNode.$.connections;
+      },
+      getSource: function () {
+        var split = this.source.split('.');
+        return {
+          node: split[0],
+          port: split[1]
+        };
+      },
+      getTarget: function () {
+        var split = this.target.split('.');
+        return {
+          node: split[0],
+          port: split[1]
+        };
       },
       groupChanged: function () {
         if (!this.group) {
@@ -122,17 +140,6 @@
         this.group.appendChild(this.path);
         this.drawEdge();
       },
-      connectionChanged: function () {
-        // Reference to the actual node list
-        this.nodes = this.connection.nodes;
-
-        // Other connection attributes
-        this.source = this.connection.src.process + '.' + this.connection.src.port;
-        this.target = this.connection.tgt.process + '.' + this.connection.tgt.port;
-        if (this.connection.metadata) {
-          this.route = this.connection.metadata.route;
-        }
-      },
       routeChanged: function () {
         if (this.sourcePort) {
           this.sourcePort.route = this.route;
@@ -140,19 +147,13 @@
         if (this.targetPort) {
           this.targetPort.route = this.route;
         }
-        if (!this.path) { return; }
+        if (!this.path) {
+          return;
+        }
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
       },
       drawEdge: function () {
-        if (!this.path || !this.sourceNode || !this.targetNode) {
-          return;
-        }
-        if (!this.sourcePort) {
-          this.getSourcePort();
-          return;
-        }
-        if (!this.targetPort) {
-          this.getTargetPort();
+        if (!this.path || !this.sourceNode || !this.targetNode || !this.sourcePort || !this.targetPort) {
           return;
         }
         var source = this.sourceNode.getZoomedPosition();
@@ -199,57 +200,28 @@
 
         this.path.setAttributeNS(null, "d", d);
       },
-      sourceChanged: function () {
-        var split = this.source.split(".");
-        this.sourceNode = this.parentNode.parentNode.querySelector('the-graph-process[name="' + split[0] + '"]');
-        if (!this.sourceNode) {
-          return;
-        }
+      sourceNodeChanged: function () {
         this.sourceNode.addEventListener("moved", this.sourceMoved.bind(this));
         this.sourceNode.addEventListener("highlight", this.sourceMoved.bind(this));
         this.sourceNode.addEventListener("ports", this.sourceMoved.bind(this));
-
-        // Find port asynchronously to give process time to draw it
-        window.setTimeout(function () {
-          this.getSourcePort();
-        }.bind(this), 0);
       },
-      getSourcePort: function () {
-        var split = this.source.split(".");
-        this.sourcePort = this.sourceNode.querySelector('the-graph-port[name="' + split[1] + '"]');
-        if (!this.sourcePort) {
-          return;
-        }
+      sourcePortChanged: function (port) {
         this.sourcePort.route = this.route;
         this.sourcePort.addEventListener("side", this.sourceMoved.bind(this));
-        this.sourceMoved();
+        this.drawEdge();
       },
       sourceMoved: function () {
         this.drawEdge();
       },
-      targetChanged: function () {
-        var split = this.target.split(".");
-        this.targetNode = this.parentNode.parentNode.querySelector('the-graph-process[name="' + split[0] + '"]');
-        if (!this.targetNode) {
-          return;
-        }
+      targetNodeChanged: function () {
         this.targetNode.addEventListener("moved", this.targetMoved.bind(this));
         this.targetNode.addEventListener("highlight", this.targetMoved.bind(this));
         this.targetNode.addEventListener("ports", this.targetMoved.bind(this));
-        // Find port asynchronously to give process time to draw it
-        window.setTimeout(function () {
-          this.getTargetPort();
-        }.bind(this), 0);
       },
-      getTargetPort: function () {
-        var split = this.target.split(".");
-        this.targetPort = this.targetNode.querySelector('the-graph-port[name="' + split[1] + '"]');
-        if (!this.targetPort) {
-          return;
-        }
+      targetPortChanged: function () {
         this.targetPort.route = this.route;
         this.targetPort.addEventListener("side", this.targetMoved.bind(this));
-        this.targetMoved();
+        this.drawEdge();
       },
       targetMoved: function () {
         this.drawEdge();
