@@ -6,7 +6,7 @@ window.theGraph = util;
 util.transform = function (el, x, y, scale) {
   if (scale === undefined) { scale = 1; }
   var move = "translate3d("+x+"px,"+y+"px,0px) scale("+scale+")";
-
+  
   // TODO prefix test
   el.style.webkitTransform = move;
   el.style.MozTransform = move;

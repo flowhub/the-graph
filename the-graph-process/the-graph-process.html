@@ -53,12 +53,6 @@
         graph.addEventListener("zoomed", function(event){
           this.zoom = event.detail;
         }.bind(this));
-        graph.addEventListener("panned", function(event){
-          this.pan = event.detail;
-        }.bind(this));
-        graph.addEventListener("bumped", function(event){
-          this.graphBumped(event.detail);
-        }.bind(this));
 
         // Handle sizing
         this.zoomChanged();
@@ -119,9 +113,10 @@
           this.label = this.name;
         }
       },
-      graphBumped: function (bump) {
-        this.bump.x = bump.x;
-        this.bump.y = bump.y;
+      graphPanned: function (info) {
+        this.pan = info.pan;
+        this.bump = info.bump;
+        
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
       },
@@ -158,8 +153,10 @@
         y -= this.clientHeight / 2;
 
         // Snap to grid
-        x = Math.round(x / this.snap) * this.snap;
-        y = Math.round(y / this.snap) * this.snap;
+        if (this.snap > 1) {
+          x = Math.round(x / this.snap) * this.snap;
+          y = Math.round(y / this.snap) * this.snap;
+        }
 
         // this._position.x = x;
         // this._position.y = y;
