@@ -4,7 +4,7 @@
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 <link rel="import" href="../bower_components/the-behavior/the-behavior/the-behavior.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale grid snap" lightdom>
+<polymer-element name="the-graph" attributes="pan grid snap" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -222,21 +222,27 @@
       },
       panning: function (pan, scale) {
         // This panning is with just css transform
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
-        // console.log("panning", pan.x - this.bump.x, pan.y - this.bump.y);
+        var x = pan.x - this.bump.x;
+        var y = pan.y - this.bump.y;
+        theGraph.transform(this, x, y, scale);
       },
       panned: function (pan) {
+        // Round
+        pan.x = Math.round(pan.x);
+        pan.y = Math.round(pan.y);
         // This moves elements
         this._pan.x = pan.x;
         this._pan.y = pan.y;
         this.pan = pan.x + ' ' + pan.y;
 
         var bump = this.calcBump();
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
-        // console.log("panned", pan.x - this.bump.x, pan.y - this.bump.y);
 
-        // Instead of the bump event #27
-        this.$.nodes.graphPanned({pan:pan, bump:bump});
+        var x = pan.x - bump.x;
+        var y = pan.y - bump.y;
+        theGraph.transform(this, x, y);
+
+        // Instead of firing the bumped event #27
+        this.$.nodes.graphPanned({pan:this._pan, bump:bump});
         this.$.edges.graphBumped(bump);
       },
       calcBump: function () {
