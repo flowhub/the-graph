@@ -18,6 +18,9 @@
       function getPortDegrees (index, ports, side) {
         var inside = getPortInSide(index, ports);
         var absolute = sides[side] + inside;
+        if (side==="west") {
+          absolute = sides["north"] - inside;
+        }
         if (absolute > 360) {
           absolute -= 360;
         }
