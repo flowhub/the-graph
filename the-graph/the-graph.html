@@ -58,9 +58,17 @@
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
+            if (e.detail.scale===1) {
+              // Pan gesture event, don't zoom
+              return;
+            }
             this.zooming(e.detail.scale, e.detail.center);
           }.bind(this));
           this.$.graphpinch.addEventListener('gestureend', function (e) {
+            if (e.detail.scale===1) {
+              // Pan gestureend event, don't zoom
+              return;
+            }
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
           this.observe();
@@ -217,29 +225,25 @@
         //this.engine.solve();
       },
       getPan: function () {
-        // var pan = this.pan.split(' ');
-        // return {
-        //   x: parseInt(pan[0]),
-        //   y: parseInt(pan[1])
-        // };
         return this._pan;
       },
       panning: function (pan, scale) {
-        // This panning is with just css transform
+        // Panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
       },
       panned: function (pan) {
-        // This moves elements
+        // At the end of the pan gesture, elements actually move
         this._pan.x = pan.x;
         this._pan.y = pan.y;
         this.pan = pan.x + ' ' + pan.y;
 
         var bump = this.calcBump();
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
 
         // this.fire('panned', {pan:pan, bump:bump});
         this.$.nodes.graphPanned( {pan:pan, bump:bump} );
         this.$.edges.graphBumped(bump); 
+
+        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
       },
       calcBump: function () {
         // For expanding in -x -y direction
