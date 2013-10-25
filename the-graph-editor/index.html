@@ -4,7 +4,7 @@
     <title>Graph Editor</title>
     <meta charset="utf-8">
     <script src="../bower_components/polymer/polymer.min.js"></script>
-    <script src="../bower_components/gss/browser/gss.js"></script>
+    <!-- <script src="../bower_components/gss/browser/gss.js"></script> -->
     <link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html">
     <link rel="import" href="the-graph-editor.html">
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
@@ -16,14 +16,16 @@
       <div id="loading-message">loading custom elements...</div>
     </div>
 
+    <!--
     <style type="text/gss">
       /* Ensure nodes are square and of touchable size */
       [node-width] == 58 * [zoom];
       /* Center process label */
       /*.the-graph-process-label[left] == [node-width]/2 - .the-graph-process-label[intrinsic-width]/2;*/
     </style>
+    -->
     <script type="text/javascript">
-      GSS.worker = '../bower_components/gss/browser/gss-solver.min.js'
+      // GSS.worker = '../bower_components/gss/browser/gss-solver.min.js'
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('WebComponentsReady', function() {
         // Remove loading message
