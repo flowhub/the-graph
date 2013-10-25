@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
   </head>
   <body>
-    <div id="loading" style="position:absolute;top:10px;left:10px;">
-      <img src="loading.gif"/><br/>
-      loading custom elements...
-    </div>
     <the-graph-editor grid="60" snap="30"></the-graph-editor>
+    <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
+      <img src="loading.gif"/>
+      <div id="loading-message">loading custom elements...</div>
+    </div>
+
     <style type="text/gss">
       /* Ensure nodes are square and of touchable size */
       [node-width] == 58 * [zoom];
@@ -25,10 +26,14 @@
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('WebComponentsReady', function() {
         // Remove loading message
-        var loading = document.getElementById("loading");
-        loading.parentNode.removeChild(loading);
+        var loadingMessage = document.getElementById("loading-message");
+        loadingMessage.innerHTML = "loading graph data...";
 
         window.loadGraph = function (json) {
+          // Remove loading message
+          var loading = document.getElementById("loading");
+          loading.parentNode.removeChild(loading);
+          // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
         };
@@ -36,7 +41,7 @@
         var script = document.createElement('script');
         script.type = 'application/javascript';
         // Clock
-        script.src = 'https://api.github.com/gists/6699161?callback=loadGraph';
+        script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
         // Gesture object building (lots of ports!)
         //script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
         // Gesture data gathering (big graph)
