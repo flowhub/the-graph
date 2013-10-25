@@ -77,6 +77,41 @@
           inports: this.inports,
           outports: this.outports
         });
+        this.libraryComponent.addEventListener('icon', function (event) {
+          this.icon = event.detail;
+        }.bind(this));
+        this.libraryComponent.addEventListener('inports', function (event) {
+          event.detail.forEach(function (portDef) {
+            var port = null;
+            this.inports.forEach(function (p) {
+              if (p.name === portDef.name) {
+                port = p;
+              }
+            });
+            if (!port) {
+              this.inports.push(portDef);
+              return;
+            }
+            port.type = portDef.type;
+            port.array = portDef.array;
+          }.bind(this));
+        }.bind(this));
+        this.libraryComponent.addEventListener('outports', function (event) {
+          event.detail.forEach(function (portDef) {
+            var port = null;
+            this.outports.forEach(function (p) {
+              if (p.name === portDef.name) {
+                port = p;
+              }
+            });
+            if (!port) {
+              this.outports.push(portDef);
+              return;
+            }
+            port.type = portDef.type;
+            port.array = portDef.array;
+          }.bind(this));
+        }.bind(this));
       },
       gridChanged: function () {
         this.width = this.grid - 1;
