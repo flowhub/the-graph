@@ -53,6 +53,17 @@
         graph.addEventListener("zoomed", function(event){
           this.zoom = event.detail;
         }.bind(this));
+        // graph.addEventListener("panned", function(event){
+        //   this.pan = event.detail.pan;
+        //   this.graphBumped(event.detail.bump);
+        // }.bind(this));
+        // graph.addEventListener("bumped", function(event){
+        //   this.graphBumped(event.detail);
+        // }.bind(this));
+
+        // Initial bump
+        this.bump.x = graph.padding;
+        this.bump.y = graph.padding;
 
         // Handle sizing
         this.zoomChanged();
@@ -71,6 +82,41 @@
           inports: this.inports,
           outports: this.outports
         });
+        this.libraryComponent.addEventListener('icon', function (event) {
+          this.icon = event.detail;
+        }.bind(this));
+        this.libraryComponent.addEventListener('inports', function (event) {
+          event.detail.forEach(function (portDef) {
+            var port = null;
+            this.inports.forEach(function (p) {
+              if (p.name === portDef.name) {
+                port = p;
+              }
+            });
+            if (!port) {
+              this.inports.push(portDef);
+              return;
+            }
+            port.type = portDef.type;
+            port.array = portDef.array;
+          }.bind(this));
+        }.bind(this));
+        this.libraryComponent.addEventListener('outports', function (event) {
+          event.detail.forEach(function (portDef) {
+            var port = null;
+            this.outports.forEach(function (p) {
+              if (p.name === portDef.name) {
+                port = p;
+              }
+            });
+            if (!port) {
+              this.outports.push(portDef);
+              return;
+            }
+            port.type = portDef.type;
+            port.array = portDef.array;
+          }.bind(this));
+        }.bind(this));
       },
       gridChanged: function () {
         this.width = this.grid - 1;
@@ -113,10 +159,9 @@
           this.label = this.name;
         }
       },
-      graphPanned: function (info) {
-        this.pan = info.pan;
-        this.bump = info.bump;
-        
+      graphBumped: function (bump) {
+        this.bump.x = bump.x;
+        this.bump.y = bump.y;
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
       },
@@ -153,10 +198,8 @@
         y -= this.clientHeight / 2;
 
         // Snap to grid
-        if (this.snap > 1) {
-          x = Math.round(x / this.snap) * this.snap;
-          y = Math.round(y / this.snap) * this.snap;
-        }
+        x = Math.round(x / this.snap) * this.snap;
+        y = Math.round(y / this.snap) * this.snap;
 
         // this._position.x = x;
         // this._position.y = y;
@@ -258,4 +301,3 @@
     });
   </script>
 </polymer-element>
-

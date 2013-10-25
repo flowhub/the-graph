@@ -14,7 +14,15 @@
     Polymer('the-graph-edges', {
       enteredView: function () {
         var graph = this.parentNode;
-        this.graphBumped(graph.bump);
+        // graph.addEventListener("panned", function(event){
+        //   this.graphBumped(event.detail.bump);
+        // }.bind(this));
+
+        // Initial bump
+        this.graphBumped({
+          x: graph.padding,
+          y: graph.padding
+        });
       },
       getEdges: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-edge'));

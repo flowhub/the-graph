@@ -1,6 +1,5 @@
 <link rel="import" href="../the-library/the-library.html">
 <link rel="import" href="../the-graph/the-graph.html">
-<link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html">
 
 <polymer-element name="the-graph-editor" attributes="grid snap" lightdom>
   <template>
@@ -47,24 +46,18 @@
       },
       graphChanged: function () {
         this.buildInitialLibrary();
-        for (var id in this.library) {
-          this.$.library.components.push(this.library[id]);
-        }
         this.$.graph.graph = this.graph;
         this.$.graph.library = this.$.library;
       },
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {
           var node = this.graph.processes[id];
-          if (!this.library[node.component]) {
-            this.library[node.component] = {
-              name: node.component,
-              description: '',
-              inports: [],
-              outports: []
-            }
-          }
-          var component = this.library[node.component];
+          var component = {
+            name: node.component,
+            description: '',
+            inports: [],
+            outports: []
+          };
 
           this.graph.connections.forEach(function (edge) {
             var i;
@@ -91,7 +84,58 @@
               });
             }
           });
+          this.registerComponent(component);
         }.bind(this));
+      },
+      registerComponent: function (definition) {
+        if (!this.library[definition.name]) {
+          // New component, register
+          this.library[definition.name] = definition;
+          this.$.library.components.push(this.library[definition.name]);
+          return;
+        }
+        // Update existing
+        var component = this.library[definition.name];
+        if (definition.description) {
+          component.description = definition.description;
+        }
+        if (definition.icon) {
+          component.icon = definition.icon;
+        }
+        definition.inports.forEach(function (defPort) {
+          var port = null;
+          component.inports.forEach(function (p) {
+            if (p.name === defPort.name) {
+              port = p;
+            }
+          });
+          if (port) {
+            port.type = defPort.type;
+            return;
+          }
+          component.inports.push({
+            name: defPort.name,
+            type: defPort.type,
+            array: defPort.array
+          });
+        });
+        definition.outports.forEach(function (defPort) {
+          var port = null;
+          component.outports.forEach(function (p) {
+            if (p.name === defPort.name) {
+              port = p;
+            }
+          });
+          if (port) {
+            port.type = defPort.type;
+            return;
+          }
+          component.outports.push({
+            name: defPort.name,
+            type: defPort.type,
+            array: defPort.array
+          });
+        });
       },
       zoomIn: function () {
         this.$.graph.zoomed(1.1);

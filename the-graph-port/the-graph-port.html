@@ -18,6 +18,9 @@
       function getPortDegrees (index, ports, side) {
         var inside = getPortInSide(index, ports);
         var absolute = sides[side] + inside;
+        if (side==="west") {
+          absolute = sides["north"] - inside;
+        }
         if (absolute > 360) {
           absolute -= 360;
         }
@@ -118,6 +121,9 @@
           this.className = side + ' route' + this.route + selected;
         },
         sideChanged: function () {
+          if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
+            return;
+          }
           this.updateClass();
           this.calculatePosition();
 
@@ -137,6 +143,9 @@
           this.updateClass();
         },
         calculatePosition: function () {
+          if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
+            return;
+          }
           var shape = 'square';
           var side = this.side;
           if (this.getProcess().classList.contains('highlight')) {
