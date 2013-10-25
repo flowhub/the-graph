@@ -14,12 +14,14 @@
     Polymer('the-graph-edges', {
       enteredView: function () {
         var graph = this.parentNode;
-        graph.addEventListener("bumped", function(event){
-          this.graphBumped(event.detail);
-        }.bind(this));
+        // graph.addEventListener("panned", function(event){
+        //   this.graphBumped(event.detail.bump);
+        // }.bind(this));
+
+        // Initial bump
         this.graphBumped({
-          x:graph.padding,
-          y:graph.padding
+          x: graph.padding,
+          y: graph.padding
         });
       },
       getEdges: function () {

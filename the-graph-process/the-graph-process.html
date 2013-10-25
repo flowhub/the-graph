@@ -53,12 +53,17 @@
         graph.addEventListener("zoomed", function(event){
           this.zoom = event.detail;
         }.bind(this));
-        graph.addEventListener("panned", function(event){
-          this.pan = event.detail;
-        }.bind(this));
-        graph.addEventListener("bumped", function(event){
-          this.graphBumped(event.detail);
-        }.bind(this));
+        // graph.addEventListener("panned", function(event){
+        //   this.pan = event.detail.pan;
+        //   this.graphBumped(event.detail.bump);
+        // }.bind(this));
+        // graph.addEventListener("bumped", function(event){
+        //   this.graphBumped(event.detail);
+        // }.bind(this));
+
+        // Initial bump
+        this.bump.x = graph.padding;
+        this.bump.y = graph.padding;
 
         // Handle sizing
         this.zoomChanged();

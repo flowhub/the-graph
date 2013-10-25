@@ -234,9 +234,12 @@
         this._pan.y = pan.y;
         this.pan = pan.x + ' ' + pan.y;
 
-        this.calcBump();
+        var bump = this.calcBump();
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
-        this.fire('panned', pan);
+
+        // this.fire('panned', {pan:pan, bump:bump});
+        this.$.nodes.graphPanned( {pan:pan, bump:bump} );
+        this.$.edges.graphBumped(bump); 
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -248,10 +251,12 @@
         this.style.height = this.bump.y + 0-this._pan.y + window.innerHeight + this.padding*2 + "px";
 
         // the-edges and the-process listen to this
-        this.fire('bumped', this.bump);
+        // this.fire('bumped', this.bump);
 
         // Need to redraw CSS grid when size changed
         this.updateGridBg();
+
+        return this.bump;
       },
       zooming: function (scale, center) {
         // Scale happens fast
