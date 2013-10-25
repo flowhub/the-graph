@@ -213,9 +213,9 @@
         }
 
         // Handle passing zoom value to the GSS engine for node rescaling
-        this.engine = GSS.engines[0];
-        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
-        this.engine.solve();
+        //this.engine = GSS.engines[0];
+        //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
+        //this.engine.solve();
       },
       getPan: function () {
         // var pan = this.pan.split(' ');
@@ -279,8 +279,8 @@
           });
         }.bind(this), 0);
 
-        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
-        this.engine.solve();
+        //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
+        //this.engine.solve();
 
         var pan = this.getPan();
         theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
