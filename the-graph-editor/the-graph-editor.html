@@ -26,6 +26,11 @@
       library: {},
       grid: 70,
       snap: 35,
+      plugins: {},
+      addPlugin: function (name, plugin) {
+        this.plugins[name] = plugin;
+        plugin.register(this);
+      },
       enteredView: function () {
         this.addEventListener('mousewheel', function (event) {
           event.preventDefault();
@@ -43,6 +48,12 @@
           event.preventDefault();
           this.zoomOut();
         }.bind(this));
+      },
+      leftView: function () {
+        for (var name in this.plugins) {
+          this.plugins[name].unregister(this);
+          delete this.plugins[name];
+        }
       },
       graphChanged: function () {
         this.buildInitialLibrary();
