@@ -269,22 +269,18 @@
         // TODO center for pinch
         var visableW = this.parentNode.offsetWidth; 
         var visableH = this.parentNode.offsetHeight;
-        // var offsetX = (visableW - visableW*scale) / 2;
-        // var offsetY = (visableH - visableH*scale) / 2;
-        var originX = visableW/2 - pan.x + this.bump.x;
-        var originY = visableH/2 - pan.y + this.bump.y;
-        theGraph.transformOrigin(this, originX, originY);
+        // This is a manual transform origin calculation. Don't ask me how.
+        var ox = (pan.x-this.bump.x) * scale + (visableW - visableW*scale) / 2;
+        var oy = (pan.y-this.bump.y) * scale + (visableH - visableH*scale) / 2;
 
-        this.panning({
-          x: pan.x,
-          y: pan.y
-        }, scale);
+        theGraph.transform(this, ox, oy, scale);
         // Debounce enhance
       },
       scaleToZoom: function () {
         // Debounced from scaleChanged
         if (this.scale === this.zoom) { return; }
-
+        // Scale to zoom
+        // Scale to pan
       },
       zooming: function (scale, center) {
         // Scale happens fast
