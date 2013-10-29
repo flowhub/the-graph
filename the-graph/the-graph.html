@@ -262,6 +262,30 @@
 
         return this.bump;
       },
+      scaleChanged: function () {
+        var pan = this.getPan();
+        // TODO normalize zoom
+        var scale = this.scale;
+        // TODO center for pinch
+        var visableW = this.parentNode.offsetWidth; 
+        var visableH = this.parentNode.offsetHeight;
+        // var offsetX = (visableW - visableW*scale) / 2;
+        // var offsetY = (visableH - visableH*scale) / 2;
+        var originX = visableW/2 - pan.x + this.bump.x;
+        var originY = visableH/2 - pan.y + this.bump.y;
+        theGraph.transformOrigin(this, originX, originY);
+
+        this.panning({
+          x: pan.x,
+          y: pan.y
+        }, scale);
+        // Debounce enhance
+      },
+      scaleToZoom: function () {
+        // Debounced from scaleChanged
+        if (this.scale === this.zoom) { return; }
+
+      },
       zooming: function (scale, center) {
         // Scale happens fast
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));

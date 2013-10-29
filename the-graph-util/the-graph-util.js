@@ -18,5 +18,19 @@ util.transform = function (el, x, y, scale) {
   return el;
 };
 
+util.transformOrigin = function (el, x, y) {
+  x = Math.round(x);
+  y = Math.round(y);
+  var origin = x+"px "+y+"px";
+  
+  // TODO prefix test
+  el.style.webkitTransformOrigin = origin;
+  el.style.MozTransformOrigin = origin;
+  el.style.msTransformOrigin = origin;
+  el.style.OTransformOrigin = origin;
+  el.style.transformOrigin = origin;
+  return el;
+};
+
 
 })();

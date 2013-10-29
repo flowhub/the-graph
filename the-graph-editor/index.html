@@ -39,6 +39,8 @@
           // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
+          // Debug
+          g = editors[0].$.graph;
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
