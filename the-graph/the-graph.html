@@ -3,7 +3,7 @@
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale grid snap" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap" touch-action="none" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -20,6 +20,9 @@
     <the-graph-initials></the-graph-initials>
     <the-graph-exports></the-graph-exports>
   </template>
+
+  <script type="text/javascript" src="../bower_components/hammerjs/dist/hammer.js"></script>
+  <!-- // <script type="text/javascript" src="../bower_components/hammerjs/plugins/hammer.fakemultitouch.js"></script> -->
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
@@ -223,6 +226,28 @@
         //this.engine = GSS.engines[0];
         //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
         //this.engine.solve();
+
+        // Initial w/h
+        this.calcBump();
+        this.observe();
+        this.setupGestures();
+      },
+      setupGestures: function () {
+
+        var graph = this;
+        window.addEventListener('track', function(event) {
+          graph.panning({
+            x: graph._pan.x + event.dx,
+            y: graph._pan.y + event.dy
+          });
+        });
+        window.addEventListener('trackend', function(event) {
+          graph.panned({
+            x: graph._pan.x + event.dx,
+            y: graph._pan.y + event.dy
+          });
+        });
+
       },
       getPan: function () {
         return this._pan;
@@ -265,33 +290,43 @@
       zooming: function (scale, center) {
         // Scale happens fast
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        var pan = this.getPan();
-        this.panning({
-          x: pan.x * scale,
-          y: pan.y * scale
-        }, scale);
+        // console.log(center.x + this._pan.x + this.bump.x, center.y + this._pan.y + this.bump.y);
+        theGraph.origin(this, center.x + this._pan.x + this.bump.x, center.y + this._pan.y + this.bump.y);
+        theGraph.transform(this, 0-this.bump.x, 0-this.bump.y, scale);
       },
       zoomed: function (scale, center) {
+        if (center === undefined) {
+          center = {
+            x: window.innerWidth/2,
+            y: window.innerHeight/2
+          };
+        }
+
         // Zoom causes a rerendering of graph elements
         scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
         var zoom = this.zoom * scale;
 
-        setTimeout(function () {
-          this.zoom = Math.max(0.25, Math.min(zoom, 6));
-          this.fire("zoomed", this.zoom);
-
-          // Update internal panning state based on scale
-          this.panned({
-            x: pan.x * scale,
-            y: pan.y * scale
-          });
-        }.bind(this), 0);
+        // setTimeout(function () {
+        // }.bind(this), 0);
 
         //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
         //this.engine.solve();
 
         var pan = this.getPan();
-        theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
+        // theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
+
+        this.zoom = Math.max(0.25, Math.min(zoom, 6));
+
+        var distanceToOriginX = this.bump.x + center.x;
+        var distanceToOriginY = this.bump.y + center.y;
+
+        // Update internal panning state based on scale
+        // this.panned({
+        //   x: pan.x * scale,
+        //   y: pan.y * scale
+        // });
+        this.updateGridBg();
+        this.fire("zoomed", this.zoom);
       },
       calcMinMax: function () {
         var minX = 0;
@@ -323,14 +358,6 @@
         this.minY = minY;
         this.maxX = maxX;
         this.maxY = maxY;
-
-        this.updatePaddedSize();
-      },
-      updatePaddedSize: function () {
-        // XXX?
-        this.style.width = -this.minX + this.maxX + this.padding*2 + "px";
-        this.style.height = -this.minY + this.maxY + this.padding*2 + "px";
-        this.updateGridBg();
       },
       updateGridBg: function () {
         // Update CSS grid image
@@ -371,6 +398,7 @@
         }.bind(this));
 
         this.calcMinMax();
+        this.updateGridBg();
       },
       gridChanged: function () {
         var processes = this.$.nodes.getProcesses();

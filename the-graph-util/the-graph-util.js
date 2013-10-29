@@ -3,6 +3,18 @@
 var util = {};
 window.theGraph = util;
 
+util.origin = function (el, x, y) {
+  var origin = x+"px "+y+"px";
+  
+  // TODO prefix test
+  el.style.webkitTransformOrigin = origin;
+  el.style.MozTransformOrigin = origin;
+  el.style.msTransformOrigin = origin;
+  el.style.OTransformOrigin = origin;
+  el.style.transformOrigin = origin;
+  return el;
+};
+
 util.transform = function (el, x, y, scale) {
   if (scale === undefined) { scale = 1; }
   x = Math.round(x);
