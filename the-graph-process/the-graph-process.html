@@ -20,14 +20,12 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function(){
+
     Polymer('the-graph-process', {
       label: '',
       icon: '',
       position: '0 0',
-      // _position: {
-      //   x: 0,
-      //   y: 0
-      // },
       drag: '',
       zoom: 1,
       pan: {
@@ -44,8 +42,11 @@
       libraryComponent: null,
       inports: [],
       outports: [],
-      created: function () {
-        this.style.position = 'absolute';
+      ready: function () {
+        var pos = this.getPosition();
+        this._position = [pos.x, pos.y];
+
+        // this.style.position = 'absolute';
       },
       enteredView: function () {
         var graph = this.parentNode.parentNode;
@@ -60,6 +61,11 @@
         // graph.addEventListener("bumped", function(event){
         //   this.graphBumped(event.detail);
         // }.bind(this));
+        
+        // Oh snap
+        this.addEventListener("pointerup", function(){
+          setTimeout(this.snapToGrid.bind(this), 100);
+        }.bind(this));
 
         // Initial bump
         this.bump.x = graph.padding;
@@ -194,22 +200,34 @@
         var drag = this.getDrag();
         var x = drag.x / this.zoom - this.pan.x / this.zoom;
         x -= this.clientWidth / 2;
+        x = Math.round(x);
         var y = drag.y / this.zoom - this.pan.y / this.zoom;
         y -= this.clientHeight / 2;
+        y = Math.round(y);
 
-        // Snap to grid
+        this.position = x + ' ' + y;
+      },
+      snapToGrid: function () {
+        // Called on pointerup with a short delay
+        var x = this._position[0];
+        var y = this._position[1];
         x = Math.round(x / this.snap) * this.snap;
         y = Math.round(y / this.snap) * this.snap;
 
-        // this._position.x = x;
-        // this._position.y = y;
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
+      // _positionChanged: function () {
+      //   console.log(this._position);
+      // },
       positionChanged: function () {
-        var position = this.getZoomedPosition();
+        var position = this.getPosition();
+        this._position[0] = position.x;
+        this._position[1] = position.y;
+
+        position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
         this.fire('moved', {
           x: position.x,
@@ -299,6 +317,8 @@
         this.fire('highlight', this.highlight);
       }
     });
+
+  })()
   </script>
 </polymer-element>
 
