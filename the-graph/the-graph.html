@@ -24,28 +24,22 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function(){
+
     Polymer('the-graph', {
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
-      _pan: {
-        x: 0,
-        y: 0
-      },
-      drag: {
-        x: 0,
-        y: 0
-      },
+      _pan: { x: 0, y: 0 },
+      drag: { x: 0, y: 0 },
       // The actual zoom state
       zoom: 1,
       // User-visible zoom state
       scale: 1,
       // Infinite scroll bounds
       padding: 500,
-      bump: {
-        x: 500,
-        y: 500
-      },
+      bump: { x: 500, y: 500 },
+      scalePanD: { x: 0, y: 0 },
       minX: 0,
       minY: 0,
       maxX: 2000,
@@ -55,6 +49,12 @@
       nodes: [],
       edges: [],
       library: null,
+      ready: function () {
+        this._pan = { x: 0, y: 0 };
+        this.drag = { x: 0, y: 0 };
+        this.bump = { x: this.padding, y: this.padding };
+        this.scalePanD = { x: 0, y: 0 };
+      },
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -262,36 +262,54 @@
 
         return this.bump;
       },
-      zooming: function (scale, center) {
-        // Scale happens fast
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
+      enhanceTimeout: null,
+      scaleChanged: function () {
+        // Fast-moving scale change
+        // var scale = this.scale;
+        var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
-        this.panning({
-          x: pan.x * scale,
-          y: pan.y * scale
-        }, scale);
+        // TODO center for pinch
+        var pageX = this.parentNode.offsetWidth/2; 
+        var pageY = this.parentNode.offsetHeight/2;
+        var currentX = pan.x - this.bump.x;
+        var currentY = pan.y - this.bump.y;
+        // This is a manual transform origin equivalent for pan.
+        var oX = (currentX - pageX) * scaleD + pageX;
+        var oY = (currentY - pageY) * scaleD + pageY;
+        // To be corrected later
+        this.scalePanD.x = oX + this.bump.x*scaleD;
+        this.scalePanD.y = oY + this.bump.y*scaleD;
+
+        theGraph.transform(this, oX, oY, scaleD);
+
+        // Debounce "enhance"
+        clearTimeout(this.enhanceTimeout);
+        this.enhanceTimeout = setTimeout( this.scaleToZoom.bind(this), 500);
       },
-      zoomed: function (scale, center) {
-        // Zoom causes a rerendering of graph elements
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        var zoom = this.zoom * scale;
+      scaleToZoom: function () {
+        // Debounced from scaleChanged
+        clearTimeout(this.enhanceTimeout);
+        this.zoom = this.scale;
+      },
+      zoomChanged: function () {
+        // Slower zoom change that redraws graph, debounced from scaleChanged
+        this.fire("zoomed", this.zoom);
 
-        setTimeout(function () {
-          this.zoom = Math.max(0.25, Math.min(zoom, 6));
-          this.fire("zoomed", this.zoom);
-
-          // Update internal panning state based on scale
-          this.panned({
-            x: pan.x * scale,
-            y: pan.y * scale
-          });
-        }.bind(this), 0);
-
-        //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
-        //this.engine.solve();
-
-        var pan = this.getPan();
-        theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
+        // Transform offset to pan
+        this.panned(this.scalePanD);
+        this.scalePanD.x = 0;
+        this.scalePanD.y = 0;
+      },
+      zooming: function (scaleD, center) {
+        // Scale change to scale
+        // TODO center
+        var scale = scaleD * this.zoom;
+        this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
+      },
+      zoomed: function () {
+        // TODO Enhance immediately on gesture end?
+        // clearTimeout(this.enhanceTimeout);
+        // this.scaleToZoom();        
       },
       calcMinMax: function () {
         var minX = 0;
@@ -464,6 +482,8 @@
         }
       }
     });
+
+  })()
   </script>
   
 </polymer-element>

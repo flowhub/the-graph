@@ -5,18 +5,19 @@
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-library id="library"></the-library>
-    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{ snap }}" grid="{{ grid }}">
-    <the-behaviors>
-      <the-behavior id="graphpinch" type="pinch"></the-behavior>
-      <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" minspeed="1.5" mindistance="40"></the-behavior>
-      <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" mindistance="20"></the-behavior>
-      <the-behavior id="nodehighlight" type="drag" direction="east west" accept="nodeName=THE-GRAPH-PROCESS" mindistance="20"></the-behavior>
-      <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" mindistance="20"></the-behavior>
-    </the-behaviors>
+    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{ snap }}" grid="{{ grid }}" scale="{{ scale }}">
+      <the-behaviors>
+        <the-behavior id="graphpinch" type="pinch"></the-behavior>
+        <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" minspeed="1.5" mindistance="40"></the-behavior>
+        <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" mindistance="20"></the-behavior>
+        <the-behavior id="nodehighlight" type="drag" direction="east west" accept="nodeName=THE-GRAPH-PROCESS" mindistance="20"></the-behavior>
+        <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" mindistance="20"></the-behavior>
+      </the-behaviors>
     </the-graph>
     <div id="zoom">
-      <button id="zoomin"><i class="icon-plus"></i></button>
       <button id="zoomout"><i class="icon-minus"></i></button>
+      <input id="zoomrange" type="range" value="{{ scale }}" min=".25" max="2" step="0.05" style="width:110px;" />
+      <button id="zoomin"><i class="icon-plus"></i></button>
     </div>
   </template>
   <script>
@@ -26,6 +27,12 @@
       library: {},
       grid: 70,
       snap: 35,
+      scale: 1,
+      plugins: {},
+      addPlugin: function (name, plugin) {
+        this.plugins[name] = plugin;
+        plugin.register(this);
+      },
       enteredView: function () {
         this.addEventListener('mousewheel', function (event) {
           event.preventDefault();
@@ -37,12 +44,20 @@
         });
         this.$.zoomin.addEventListener('click', function (event) {
           event.preventDefault();
-          this.zoomIn();
+          this.scale = parseFloat(this.scale);
+          this.scale = Math.min(this.scale+0.25, 2);
         }.bind(this));
         this.$.zoomout.addEventListener('click', function (event) {
           event.preventDefault();
-          this.zoomOut();
+          this.scale = parseFloat(this.scale);
+          this.scale = Math.max(this.scale-0.25, 0.25);
         }.bind(this));
+      },
+      leftView: function () {
+        for (var name in this.plugins) {
+          this.plugins[name].unregister(this);
+          delete this.plugins[name];
+        }
       },
       graphChanged: function () {
         this.buildInitialLibrary();
@@ -136,12 +151,6 @@
             array: defPort.array
           });
         });
-      },
-      zoomIn: function () {
-        this.$.graph.zoomed(1.1);
-      },
-      zoomOut: function () {
-        this.$.graph.zoomed(0.9);
       }
     });
   })();

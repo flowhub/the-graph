@@ -35,7 +35,9 @@ the-graph-editor #zoom button {
   color: white;
   border: none;
   font-size: 20px;
-  padding: 6px 10px;
+  padding: 0;
+  width: 56px;
+  height: 56px;
   opacity: 0.7;
 }
 
