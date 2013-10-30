@@ -251,11 +251,13 @@
         this._pan.y = Math.round(pan.y);
         this.pan = this._pan.x + ' ' + this._pan.y;
 
+        console.log(pan,this._pan);
+
         var bump = this.calcBump();
 
         var info = {
-          pan: pan, 
-          bump: bump, 
+          pan: this._pan,
+          bump: bump,
           zoom: this.zoom
         };
         this.$.nodes.graphBumped(info);
@@ -296,8 +298,8 @@
         var oX = (currentX - pageX) * scaleD + pageX;
         var oY = (currentY - pageY) * scaleD + pageY;
         // To be corrected later
-        this.scalePanD.x = oX + this.bump.x*scaleD;
-        this.scalePanD.y = oY + this.bump.y*scaleD;
+        this.scalePanD.x = Math.round(oX + this.bump.x*scaleD);
+        this.scalePanD.y = Math.round(oY + this.bump.y*scaleD);
 
         theGraph.transform(this, oX, oY, scaleD);
 
