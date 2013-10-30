@@ -17,7 +17,11 @@
         <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
       </template>
     </the-graph-edges>
-    <the-graph-initials></the-graph-initials>
+    <the-graph-initials id="initials">
+      <template repeat="{{ initial in initials }}">
+        <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
+      </template>
+    </the-graph-initials>
     <the-graph-exports></the-graph-exports>
   </template>
 
@@ -48,6 +52,8 @@
       snap: 35,
       nodes: [],
       edges: [],
+      initials: [],
+      exports: [],
       library: null,
       ready: function () {
         this._pan = { x: 0, y: 0 };
@@ -383,9 +389,12 @@
                 route: connection.metadata.route ? connection.metadata.route : 0
               }
             });
+            return;
           }
-          return;
-          initials.iips.push(connection);
+          this.initials.push({
+            data: connection.data,
+            target: connection.tgt.process + '.' + connection.tgt.port
+          });
         }.bind(this));
 
         this.calcMinMax();
@@ -511,6 +520,16 @@
             tgt: {
               process: edgeTarget.node,
               port: edgeTarget.port
+            }
+          });
+        });
+        this.$.initials.getInitials().forEach(function(initial) {
+          var initialTarget = initial.getTarget();
+          definition.connections.push({
+            data: initial.data,
+            tgt: {
+              process: initialTarget.node,
+              port: initialTarget.port
             }
           });
         });
