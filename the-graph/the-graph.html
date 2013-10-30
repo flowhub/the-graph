@@ -22,7 +22,11 @@
         <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
       </template>
     </the-graph-initials>
-    <the-graph-exports></the-graph-exports>
+    <the-graph-exports id="exports">
+      <template repeat="{{ export in exports }}">
+        <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
+      </template>
+    </the-graph-exports>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -363,9 +367,6 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
-        var initials = this.querySelector("the-graph-initials");
-        var exports = this.querySelector("the-graph-exports");
-
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -395,6 +396,9 @@
             data: connection.data,
             target: connection.tgt.process + '.' + connection.tgt.port
           });
+        }.bind(this));
+        this.graph.exports.forEach(function (exp) {
+          this.exports.push(exp);
         }.bind(this));
 
         this.calcMinMax();
@@ -492,7 +496,7 @@
       },
       toJSON: function () {
         var definition = {
-          properties: {},
+          properties: this.graph.properties,
           exports: [],
           processes: {},
           connections: []
@@ -531,6 +535,12 @@
               process: initialTarget.node,
               port: initialTarget.port
             }
+          });
+        });
+        this.$.exports.getExports().forEach(function(exp) {
+          definition.exports.push({
+            private: exp.private,
+            public: exp.public
           });
         });
         return definition;
