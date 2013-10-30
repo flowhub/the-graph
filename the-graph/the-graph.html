@@ -24,28 +24,22 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function(){
+
     Polymer('the-graph', {
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
-      _pan: {
-        x: 0,
-        y: 0
-      },
-      drag: {
-        x: 0,
-        y: 0
-      },
+      _pan: { x: 0, y: 0 },
+      drag: { x: 0, y: 0 },
       // The actual zoom state
       zoom: 1,
       // User-visible zoom state
       scale: 1,
       // Infinite scroll bounds
       padding: 500,
-      bump: {
-        x: 500,
-        y: 500
-      },
+      bump: { x: 500, y: 500 },
+      scalePanD: { x: 0, y: 0 },
       minX: 0,
       minY: 0,
       maxX: 2000,
@@ -55,6 +49,12 @@
       nodes: [],
       edges: [],
       library: null,
+      ready: function () {
+        this._pan = { x: 0, y: 0 };
+        this.drag = { x: 0, y: 0 };
+        this.bump = { x: this.padding, y: this.padding };
+        this.scalePanD = { x: 0, y: 0 };
+      },
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -262,34 +262,46 @@
 
         return this.bump;
       },
+      enhanceTimeout: null,
       scaleChanged: function () {
+        // Fast-moving scale change
+        // var scale = this.scale;
+        var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
-        // TODO normalize zoom
-        var scale = this.scale;
         // TODO center for pinch
-        var visableW = this.parentNode.offsetWidth; 
-        var visableH = this.parentNode.offsetHeight;
-        // This is a manual transform origin calculation. Don't ask me how.
-        var ox = (pan.x-this.bump.x) * scale + (visableW - visableW*scale) / 2;
-        var oy = (pan.y-this.bump.y) * scale + (visableH - visableH*scale) / 2;
+        var pageX = this.parentNode.offsetWidth/2; 
+        var pageY = this.parentNode.offsetHeight/2;
+        var currentX = pan.x - this.bump.x;
+        var currentY = pan.y - this.bump.y;
+        // This is a manual transform origin equivalent for pan.
+        var oX = (currentX - pageX) * scaleD + pageX;
+        var oY = (currentY - pageY) * scaleD + pageY;
+        // To be corrected later
+        this.scalePanD.x = oX + this.bump.x*scaleD;
+        this.scalePanD.y = oY + this.bump.y*scaleD;
 
-        theGraph.transform(this, ox, oy, scale);
-        // Debounce enhance
+        theGraph.transform(this, oX, oY, scaleD);
+
+        // Debounce "enhance"
+        clearTimeout(this.enhanceTimeout);
+        this.enhanceTimeout = setTimeout( this.scaleToZoom.bind(this), 500);
       },
       scaleToZoom: function () {
         // Debounced from scaleChanged
-        if (this.scale === this.zoom) { return; }
-        // Scale to zoom
-        // Scale to pan
+        this.zoom = this.scale;
+      },
+      zoomChanged: function () {
+        // Slower zoom change that redraws graph, debounced from scaleChanged
+        this.fire("zoomed", this.zoom);
+
+        // Transform offset to pan
+        this.panned(this.scalePanD);
+        this.scalePanD.x = 0;
+        this.scalePanD.y = 0;
       },
       zooming: function (scale, center) {
         // Scale happens fast
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        var pan = this.getPan();
-        this.panning({
-          x: pan.x * scale,
-          y: pan.y * scale
-        }, scale);
+        this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
       },
       zoomed: function (scale, center) {
         // Zoom causes a rerendering of graph elements
@@ -484,6 +496,8 @@
         }
       }
     });
+
+  })()
   </script>
   
 </polymer-element>
