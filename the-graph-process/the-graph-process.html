@@ -180,7 +180,11 @@
         this.style.width = diameter + 'px';
         this.style.height = diameter + 'px';
 
-        this.fire('zoomed', this.zoom);
+        // Update all ports
+        var ports = Array.prototype.slice.call(this.getElementsByTagName('the-graph-port'));
+        ports.forEach(function(port){
+          port.graphZoom();
+        }.bind(this));
       },
       getPosition: function () {
         // return this._position;

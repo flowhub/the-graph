@@ -261,7 +261,7 @@
           zoom: this.zoom
         };
         this.$.nodes.graphBumped(info);
-        this.$.edges.graphBumped(bump); 
+        this.$.edges.graphBumped(info); 
 
         theGraph.transform(this, this._pan.x - this.bump.x, this._pan.y - this.bump.y);
       },

@@ -104,11 +104,12 @@
             this.updateClass();
             this.calculatePosition();
           }.bind(this));
-          this.process.addEventListener('zoomed', function () {
-            this.updateClass();
-            this.calculatePosition();
-          }.bind(this));
           return this.process;
+        },
+        graphZoom: function () {
+          // Called sync from the-process.graphZoom
+          this.updateClass();
+          this.calculatePosition();
         },
         updateClass: function (side) {
           var selected = '';
