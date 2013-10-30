@@ -17,8 +17,16 @@
         <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
       </template>
     </the-graph-edges>
-    <the-graph-initials></the-graph-initials>
-    <the-graph-exports></the-graph-exports>
+    <the-graph-initials id="initials">
+      <template repeat="{{ initial in initials }}">
+        <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
+      </template>
+    </the-graph-initials>
+    <the-graph-exports id="exports">
+      <template repeat="{{ export in exports }}">
+        <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
+      </template>
+    </the-graph-exports>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -49,6 +57,8 @@
       snap: 35,
       nodes: [],
       edges: [],
+      initials: [],
+      exports: [],
       library: null,
       ready: function () {
         this._pan = { x: 0, y: 0 };
@@ -367,9 +377,6 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
-        var initials = this.querySelector("the-graph-initials");
-        var exports = this.querySelector("the-graph-exports");
-
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -393,9 +400,15 @@
                 route: connection.metadata.route ? connection.metadata.route : 0
               }
             });
+            return;
           }
-          return;
-          initials.iips.push(connection);
+          this.initials.push({
+            data: connection.data,
+            target: connection.tgt.process + '.' + connection.tgt.port
+          });
+        }.bind(this));
+        this.graph.exports.forEach(function (exp) {
+          this.exports.push(exp);
         }.bind(this));
 
         this.calcMinMax();
@@ -490,10 +503,59 @@
         if (this.observer) {
           this.observer.disconnect();
         }
+      },
+      toJSON: function () {
+        var definition = {
+          properties: this.graph.properties,
+          exports: [],
+          processes: {},
+          connections: []
+        };
+        this.$.nodes.getProcesses().forEach(function(node) {
+          var nodeId = node.getAttribute('name');
+          var nodePos = node.getPosition();
+          definition.processes[nodeId] = {
+            component: node.component,
+            metadata: {
+              x: nodePos.x,
+              y: nodePos.y,
+              label: node.label
+            }
+          };
+        });
+        this.$.edges.getEdges().forEach(function(edge) {
+          var edgeSource = edge.getSource();
+          var edgeTarget = edge.getTarget();
+          definition.connections.push({
+            src: {
+              process: edgeSource.node,
+              port: edgeSource.port
+            },
+            tgt: {
+              process: edgeTarget.node,
+              port: edgeTarget.port
+            }
+          });
+        });
+        this.$.initials.getInitials().forEach(function(initial) {
+          var initialTarget = initial.getTarget();
+          definition.connections.push({
+            data: initial.data,
+            tgt: {
+              process: initialTarget.node,
+              port: initialTarget.port
+            }
+          });
+        });
+        this.$.exports.getExports().forEach(function(exp) {
+          definition.exports.push({
+            private: exp.private,
+            public: exp.public
+          });
+        });
+        return definition;
       }
     });
-
   })()
   </script>
-  
 </polymer-element>

@@ -151,6 +151,9 @@
             array: defPort.array
           });
         });
+      },
+      toJSON: function () {
+        return this.$.graph.toJSON();
       }
     });
   })();
