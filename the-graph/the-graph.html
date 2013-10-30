@@ -480,10 +480,43 @@
         if (this.observer) {
           this.observer.disconnect();
         }
+      },
+      toJSON: function () {
+        var definition = {
+          properties: {},
+          exports: [],
+          processes: {},
+          connections: []
+        };
+        this.$.nodes.getProcesses().forEach(function(node) {
+          var nodeId = node.getAttribute('name');
+          var nodePos = node.getPosition();
+          definition.processes[nodeId] = {
+            component: node.component,
+            metadata: {
+              x: nodePos.x,
+              y: nodePos.y,
+              label: node.label
+            }
+          };
+        });
+        this.$.edges.getEdges().forEach(function(edge) {
+          var edgeSource = edge.getSource();
+          var edgeTarget = edge.getTarget();
+          definition.connections.push({
+            src: {
+              process: edgeSource.node,
+              port: edgeSource.port
+            },
+            tgt: {
+              process: edgeTarget.node,
+              port: edgeTarget.port
+            }
+          });
+        });
+        return definition;
       }
     });
-
   })()
   </script>
-  
 </polymer-element>
