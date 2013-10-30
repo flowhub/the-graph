@@ -247,9 +247,9 @@
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this._pan.x = pan.x;
-        this._pan.y = pan.y;
-        this.pan = pan.x + ' ' + pan.y;
+        this._pan.x = Math.round(pan.x);
+        this._pan.y = Math.round(pan.y);
+        this.pan = this._pan.x + ' ' + this._pan.y;
 
         var bump = this.calcBump();
 
@@ -261,7 +261,7 @@
         this.$.nodes.graphBumped(info);
         this.$.edges.graphBumped(bump); 
 
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
+        theGraph.transform(this, this._pan.x - this.bump.x, this._pan.y - this.bump.y);
       },
       calcBump: function () {
         // For expanding in -x -y direction
