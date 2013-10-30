@@ -28,6 +28,11 @@
       grid: 70,
       snap: 35,
       scale: 1,
+      plugins: {},
+      addPlugin: function (name, plugin) {
+        this.plugins[name] = plugin;
+        plugin.register(this);
+      },
       enteredView: function () {
         this.addEventListener('mousewheel', function (event) {
           event.preventDefault();
@@ -47,6 +52,12 @@
           this.scale = parseFloat(this.scale);
           this.scale = Math.max(this.scale-0.25, 0.25);
         }.bind(this));
+      },
+      leftView: function () {
+        for (var name in this.plugins) {
+          this.plugins[name].unregister(this);
+          delete this.plugins[name];
+        }
       },
       graphChanged: function () {
         this.buildInitialLibrary();
