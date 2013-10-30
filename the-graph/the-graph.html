@@ -288,6 +288,7 @@
       },
       scaleToZoom: function () {
         // Debounced from scaleChanged
+        clearTimeout(this.enhanceTimeout);
         this.zoom = this.scale;
       },
       zoomChanged: function () {
@@ -299,31 +300,16 @@
         this.scalePanD.x = 0;
         this.scalePanD.y = 0;
       },
-      zooming: function (scale, center) {
-        // Scale happens fast
+      zooming: function (scaleD, center) {
+        // Scale change to scale
+        // TODO center
+        var scale = scaleD * this.zoom;
         this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
       },
-      zoomed: function (scale, center) {
-        // Zoom causes a rerendering of graph elements
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        var zoom = this.zoom * scale;
-
-        setTimeout(function () {
-          this.zoom = Math.max(0.25, Math.min(zoom, 6));
-          this.fire("zoomed", this.zoom);
-
-          // Update internal panning state based on scale
-          this.panned({
-            x: pan.x * scale,
-            y: pan.y * scale
-          });
-        }.bind(this), 0);
-
-        //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
-        //this.engine.solve();
-
-        var pan = this.getPan();
-        theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
+      zoomed: function () {
+        // TODO Enhance immediately on gesture end?
+        // clearTimeout(this.enhanceTimeout);
+        // this.scaleToZoom();        
       },
       calcMinMax: function () {
         var minX = 0;
