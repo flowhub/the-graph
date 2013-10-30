@@ -45,22 +45,10 @@
       ready: function () {
         var pos = this.getPosition();
         this._position = [pos.x, pos.y];
-
-        // this.style.position = 'absolute';
       },
       enteredView: function () {
         var graph = this.parentNode.parentNode;
         this.graph = graph;
-        graph.addEventListener("zoomed", function(event){
-          this.zoom = event.detail;
-        }.bind(this));
-        // graph.addEventListener("panned", function(event){
-        //   this.pan = event.detail.pan;
-        //   this.graphBumped(event.detail.bump);
-        // }.bind(this));
-        // graph.addEventListener("bumped", function(event){
-        //   this.graphBumped(event.detail);
-        // }.bind(this));
         
         // Oh snap
         this.addEventListener("pointerup", function(){
@@ -72,7 +60,7 @@
         this.bump.y = graph.padding;
 
         // Handle sizing
-        this.zoomChanged();
+        this.graphZoom(this.zoom);
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -127,7 +115,7 @@
       gridChanged: function () {
         this.width = this.grid - 1;
         this.height = this.grid - 1;
-        this.zoomChanged();
+        this.graphZoom(this.zoom);
       },
       getInports: function () {
         return Array.prototype.slice.call(this.$.inports.getElementsByTagName('the-graph-port'));
@@ -165,11 +153,33 @@
           this.label = this.name;
         }
       },
-      graphBumped: function (bump) {
+      graphPanBumpZoom: function (info) {
+        this.pan.x = info.pan.x;
+        this.pan.y = info.pan.y;
+        this.graphBump(info.bump);
+        if (this.zoom !== info.zoom) {
+          this.graphZoom(info.zoom);
+        }
+      },
+      graphBump: function (bump) {
         this.bump.x = bump.x;
         this.bump.y = bump.y;
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+      },
+      graphZoom: function (zoom) {
+        this.zoom = zoom;
+
+        // Set position by screen pixels
+        var position = this.getZoomedPosition();
+        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+
+        // Sizing
+        var diameter = this.getDiameter();
+        this.style.width = diameter + 'px';
+        this.style.height = diameter + 'px';
+
+        this.fire('zoomed', this.zoom);
       },
       getPosition: function () {
         // return this._position;
@@ -233,18 +243,6 @@
           x: position.x,
           y: position.y
         });
-      },
-      zoomChanged: function () {
-        // Set position by screen pixels
-        var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
-
-        // Sizing
-        var diameter = this.getDiameter();
-        this.style.width = diameter + 'px';
-        this.style.height = diameter + 'px';
-
-        this.fire('zoomed', this.zoom);
       },
       getDiameter: function () {
         var diameter = Math.round(this.width * this.zoom);

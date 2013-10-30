@@ -40,6 +40,7 @@
       padding: 500,
       bump: { x: 500, y: 500 },
       scalePanD: { x: 0, y: 0 },
+      zoomCenter: null,
       minX: 0,
       minY: 0,
       maxX: 2000,
@@ -62,6 +63,7 @@
               // Pan gesture event, don't zoom
               return;
             }
+            // console.log("zoom", e.detail.center);
             this.zooming(e.detail.scale, e.detail.center);
           }.bind(this));
           this.$.graphpinch.addEventListener('gestureend', function (e) {
@@ -79,6 +81,7 @@
             if (!touch.movepoint) {
               return;
             }
+            // console.log("pan", touch.movepoint);
             var panX = touch.movepoint.x - touch.startpoint.x;
             var panY = touch.movepoint.y - touch.startpoint.y;
             // Handle panning in relation to previous panning state
@@ -228,6 +231,7 @@
         return this._pan;
       },
       panning: function (pan, scale) {
+        if (this.scale !== this.zoom) { return; }
         // Panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
       },
@@ -239,8 +243,12 @@
 
         var bump = this.calcBump();
 
-        // this.fire('panned', {pan:pan, bump:bump});
-        this.$.nodes.graphPanned( {pan:pan, bump:bump} );
+        var info = {
+          pan: pan, 
+          bump: bump, 
+          zoom: this.zoom
+        };
+        this.$.nodes.graphBumped(info);
         this.$.edges.graphBumped(bump); 
 
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
@@ -265,10 +273,11 @@
       enhanceTimeout: null,
       scaleChanged: function () {
         // Fast-moving scale change
-        // var scale = this.scale;
         var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
-        // TODO center for pinch
+        // Center on pinch or parent center 
+        // var pageX = this.zoomCenter ? this.zoomCenter.x : this.parentNode.offsetWidth/2; 
+        // var pageY = this.zoomCenter ? this.zoomCenter.y : this.parentNode.offsetHeight/2;
         var pageX = this.parentNode.offsetWidth/2; 
         var pageY = this.parentNode.offsetHeight/2;
         var currentX = pan.x - this.bump.x;
@@ -287,28 +296,29 @@
         this.enhanceTimeout = setTimeout( this.scaleToZoom.bind(this), 500);
       },
       scaleToZoom: function () {
+        // Slower zoom change that redraws graph, debounced from scaleChanged
         // Debounced from scaleChanged
         clearTimeout(this.enhanceTimeout);
         this.zoom = this.scale;
-      },
-      zoomChanged: function () {
-        // Slower zoom change that redraws graph, debounced from scaleChanged
-        this.fire("zoomed", this.zoom);
 
         // Transform offset to pan
+        // this.pan sends the new zoom to nodes
         this.panned(this.scalePanD);
-        this.scalePanD.x = 0;
-        this.scalePanD.y = 0;
       },
       zooming: function (scaleD, center) {
         // Scale change to scale
-        // TODO center
+        if (center) {
+          if (!this.zoomCenter) { this.zoomCenter = {}; }
+          this.zoomCenter.x = center.x;
+          this.zoomCenter.y = center.y;
+        }
+        // TODO fix when held and zoom changes within the same gesture
         var scale = scaleD * this.zoom;
         this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
       },
       zoomed: function () {
-        // TODO Enhance immediately on gesture end?
-        // clearTimeout(this.enhanceTimeout);
+        // Enhance on gesture end
+        // ??? Why does this break stuff?
         // this.scaleToZoom();        
       },
       calcMinMax: function () {
