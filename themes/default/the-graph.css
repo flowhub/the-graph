@@ -25,12 +25,12 @@ the-graph-editor {
   overflow: hidden;
 }
 
-the-graph-editor #zoom {
+the-graph-nav {
   position: fixed;
   bottom: 0px;
   right: 0px;
 }
-the-graph-editor #zoom button {
+the-graph-nav button {
   background-color: #2a2b31;
   color: white;
   border: none;

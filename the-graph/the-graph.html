@@ -489,6 +489,7 @@
             }
           }.bind(this));
         }.bind(this));
+        this.fire("mutated", mutations);
       },
       observe: function () {
         this.observer = new MutationObserver(this.handleMutations.bind(this));

@@ -1,0 +1,68 @@
+<polymer-element name="the-graph-thumb" attributes="graph width height" lightdom>
+  <template>
+    <canvas id="canvas" width="{{width}}" height="{{height}}"></canvas>
+  </template>
+  <script>
+  (function () {
+
+    Polymer('the-graph-thumb', {
+      graph: null,
+      scale: 1,
+      fillStyle: "white",
+      ready: function () {
+        this.context = this.$.canvas.getContext("2d");
+        this.context.fillStyle = this.fillStyle;
+      },
+      enteredView: function () {
+      },
+      redrawGraph: function () {
+        if (!this.graph || !this.graph.processes) { return; }
+        // Clear
+        this.context.clearRect(0, 0, this.width, this.height);
+        // Find dimensions
+        var toDraw = [];
+        var minX = 0;
+        var minY = 0;
+        var maxX = 500;
+        var maxY = 500;
+        Object.keys(this.graph.processes).forEach(function(key){
+          var process = this.graph.processes[key];
+          if ( process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y) ) {
+            toDraw.push(process);
+            minX = Math.min(minX, process.metadata.x);
+            minY = Math.min(minY, process.metadata.y);
+            maxX = Math.max(maxX, process.metadata.x);
+            maxY = Math.max(maxY, process.metadata.y);
+          }
+        }.bind(this));
+        var w = maxX - minX;
+        var h = maxY - minY;
+        // Scale dimensions
+        var scale = (w > h) ? this.width/w : this.height/h;
+        var size = Math.round(60 * scale);
+        // Draw edges
+        // Draw nodes
+        toDraw.forEach(function(node){
+          var x = node.metadata.x * scale;
+          var y = node.metadata.y * scale;
+          this.context.fillRect(x,y,size,size);
+        }.bind(this));
+      },
+      graphChanged: function () {
+        // TODO changes
+        this.redrawGraph();
+      },
+      fillStyleChanged: function () {
+        this.context.fillStyle = this.fillStyle;
+      },
+      widthChanged: function () {
+        this.fillStyleChanged();
+      },
+      heightChanged: function () {
+        this.fillStyleChanged();
+      },
+    });
+
+  })();
+  </script>
+</polymer-element>

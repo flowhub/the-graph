@@ -1,0 +1,48 @@
+<link rel="import" href="../the-graph-nav/the-graph-thumb.html">
+
+<polymer-element name="the-graph-map" attributes="graph viewrect" lightdom>
+  <style>
+    the-graph-map {
+      position: relative;
+    }
+    #thumb {
+      position: absolute;
+      top: 0; left: 0; 
+      background-color: rgba(42, 43, 49, 0.85);
+    }
+    #viewrect {
+      position: absolute;
+      top: 0; left: 0; 
+      width: 200px; 
+      height: 150px; 
+      border: 1px solid red;
+    }
+  </style>
+  <template>
+    <the-graph-thumb id="thumb" graph="{{ graph }}" width="200" height="150"></the-graph-thumb>
+    <div id="viewrect"></div>
+  </template>
+  <script>
+  (function () {
+
+    Polymer('the-graph-map', {
+      graph: null,
+      rect: null,
+      ready: function () {
+        this.rect = {};
+      },
+      enteredView: function () {
+      },
+      graphChanged: function () {
+      },
+      rectChanged: function () {
+        this.$.viewrect.style.top = this.rect.top+"px";
+        this.$.viewrect.style.left = this.rect.left+"px";
+        this.$.viewrect.style.width = this.rect.width+"px";
+        this.$.viewrect.style.height = this.rect.height+"px";
+      }
+    });
+
+  })();
+  </script>
+</polymer-element>
