@@ -38,6 +38,7 @@
         // this.graph is the-graph custom element
         // this.graph.graph is the bare graph object
         if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
+        if (!this.context || !this.context.impl) { return; }
         var graph = this.graph.graph;
         // Clear
         this.context.clearRect(0, 0, this.width, this.height);
@@ -111,14 +112,17 @@
         this.redrawGraph();
       },
       resetStyles: function () {
+        if (!this.context || !this.context.impl) { return; }
         this.fillStyleChanged();
         this.strokeStyleChanged();
         this.context.impl.lineWidth = this.lineWidth;
       },
       fillStyleChanged: function () {
+        if (!this.context || !this.context.impl) { return; }
         this.context.impl.fillStyle = this.fillStyle;
       },
       strokeStyleChanged: function () {
+        if (!this.context || !this.context.impl) { return; }
         this.context.impl.strokeStyle = this.strokeStyle;
       },
       widthChanged: function () {
