@@ -60,8 +60,8 @@
         if (y < 0) { h += y; }
         x = theGraph.clip(x, 0, this.width);
         y = theGraph.clip(y, 0, this.height);
-        w = theGraph.clip(w, 1, this.width-x);
-        h = theGraph.clip(h, 1, this.height-y);
+        w = theGraph.clip(w, 0, this.width-x);
+        h = theGraph.clip(h, 0, this.height-y);
 
         // Size and translate rect
         this.$.viewrect.style.width = w+"px";
