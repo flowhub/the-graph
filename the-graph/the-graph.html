@@ -17,8 +17,16 @@
         <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
       </template>
     </the-graph-edges>
-    <the-graph-initials></the-graph-initials>
-    <the-graph-exports></the-graph-exports>
+    <the-graph-initials id="initials">
+      <template repeat="{{ initial in initials }}">
+        <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
+      </template>
+    </the-graph-initials>
+    <the-graph-exports id="exports">
+      <template repeat="{{ export in exports }}">
+        <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
+      </template>
+    </the-graph-exports>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -40,6 +48,7 @@
       padding: 500,
       bump: { x: 500, y: 500 },
       scalePanD: { x: 0, y: 0 },
+      zoomCenter: null,
       minX: 0,
       minY: 0,
       maxX: 2000,
@@ -48,6 +57,8 @@
       snap: 35,
       nodes: [],
       edges: [],
+      initials: [],
+      exports: [],
       library: null,
       ready: function () {
         this._pan = { x: 0, y: 0 };
@@ -62,6 +73,7 @@
               // Pan gesture event, don't zoom
               return;
             }
+            // console.log("zoom", e.detail.center);
             this.zooming(e.detail.scale, e.detail.center);
           }.bind(this));
           this.$.graphpinch.addEventListener('gestureend', function (e) {
@@ -79,6 +91,7 @@
             if (!touch.movepoint) {
               return;
             }
+            // console.log("pan", touch.movepoint);
             var panX = touch.movepoint.x - touch.startpoint.x;
             var panY = touch.movepoint.y - touch.startpoint.y;
             // Handle panning in relation to previous panning state
@@ -228,22 +241,30 @@
         return this._pan;
       },
       panning: function (pan, scale) {
+        if (this.scale !== this.zoom) { return; }
         // Panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this._pan.x = pan.x;
-        this._pan.y = pan.y;
-        this.pan = pan.x + ' ' + pan.y;
+        this.pan = Math.round(pan.x) + ' ' + Math.round(pan.y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        this._pan.x = parseInt(pan[0], 10);
+        this._pan.y = parseInt(pan[1], 10);
 
         var bump = this.calcBump();
 
-        // this.fire('panned', {pan:pan, bump:bump});
-        this.$.nodes.graphPanned( {pan:pan, bump:bump} );
-        this.$.edges.graphBumped(bump); 
+        var info = {
+          pan: this._pan,
+          bump: bump,
+          zoom: this.zoom
+        };
+        this.$.nodes.graphBumped(info);
+        this.$.edges.graphBumped(info); 
 
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
+        theGraph.transform(this, this._pan.x - this.bump.x, this._pan.y - this.bump.y);
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -265,10 +286,11 @@
       enhanceTimeout: null,
       scaleChanged: function () {
         // Fast-moving scale change
-        // var scale = this.scale;
         var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
-        // TODO center for pinch
+        // Center on pinch or parent center 
+        // var pageX = this.zoomCenter ? this.zoomCenter.x : this.parentNode.offsetWidth/2; 
+        // var pageY = this.zoomCenter ? this.zoomCenter.y : this.parentNode.offsetHeight/2;
         var pageX = this.parentNode.offsetWidth/2; 
         var pageY = this.parentNode.offsetHeight/2;
         var currentX = pan.x - this.bump.x;
@@ -277,8 +299,8 @@
         var oX = (currentX - pageX) * scaleD + pageX;
         var oY = (currentY - pageY) * scaleD + pageY;
         // To be corrected later
-        this.scalePanD.x = oX + this.bump.x*scaleD;
-        this.scalePanD.y = oY + this.bump.y*scaleD;
+        this.scalePanD.x = Math.round(oX + this.bump.x*scaleD);
+        this.scalePanD.y = Math.round(oY + this.bump.y*scaleD);
 
         theGraph.transform(this, oX, oY, scaleD);
 
@@ -287,28 +309,29 @@
         this.enhanceTimeout = setTimeout( this.scaleToZoom.bind(this), 500);
       },
       scaleToZoom: function () {
+        // Slower zoom change that redraws graph, debounced from scaleChanged
         // Debounced from scaleChanged
         clearTimeout(this.enhanceTimeout);
         this.zoom = this.scale;
-      },
-      zoomChanged: function () {
-        // Slower zoom change that redraws graph, debounced from scaleChanged
-        this.fire("zoomed", this.zoom);
 
         // Transform offset to pan
+        // this.pan sends the new zoom to nodes
         this.panned(this.scalePanD);
-        this.scalePanD.x = 0;
-        this.scalePanD.y = 0;
       },
       zooming: function (scaleD, center) {
         // Scale change to scale
-        // TODO center
+        if (center) {
+          if (!this.zoomCenter) { this.zoomCenter = {}; }
+          this.zoomCenter.x = center.x;
+          this.zoomCenter.y = center.y;
+        }
+        // TODO fix when held and zoom changes within the same gesture
         var scale = scaleD * this.zoom;
         this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
       },
       zoomed: function () {
-        // TODO Enhance immediately on gesture end?
-        // clearTimeout(this.enhanceTimeout);
+        // Enhance on gesture end
+        // ??? Why does this break stuff?
         // this.scaleToZoom();        
       },
       calcMinMax: function () {
@@ -357,9 +380,6 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
-        var initials = this.querySelector("the-graph-initials");
-        var exports = this.querySelector("the-graph-exports");
-
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -383,9 +403,15 @@
                 route: connection.metadata.route ? connection.metadata.route : 0
               }
             });
+            return;
           }
-          return;
-          initials.iips.push(connection);
+          this.initials.push({
+            data: connection.data,
+            target: connection.tgt.process + '.' + connection.tgt.port
+          });
+        }.bind(this));
+        this.graph.exports.forEach(function (exp) {
+          this.exports.push(exp);
         }.bind(this));
 
         this.calcMinMax();
@@ -466,6 +492,7 @@
             }
           }.bind(this));
         }.bind(this));
+        this.fire("mutated", mutations);
       },
       observe: function () {
         this.observer = new MutationObserver(this.handleMutations.bind(this));
@@ -480,10 +507,59 @@
         if (this.observer) {
           this.observer.disconnect();
         }
+      },
+      toJSON: function () {
+        var definition = {
+          properties: this.graph.properties,
+          exports: [],
+          processes: {},
+          connections: []
+        };
+        this.$.nodes.getProcesses().forEach(function(node) {
+          var nodeId = node.getAttribute('name');
+          var nodePos = node.getPosition();
+          definition.processes[nodeId] = {
+            component: node.component,
+            metadata: {
+              x: nodePos.x,
+              y: nodePos.y,
+              label: node.label
+            }
+          };
+        });
+        this.$.edges.getEdges().forEach(function(edge) {
+          var edgeSource = edge.getSource();
+          var edgeTarget = edge.getTarget();
+          definition.connections.push({
+            src: {
+              process: edgeSource.node,
+              port: edgeSource.port
+            },
+            tgt: {
+              process: edgeTarget.node,
+              port: edgeTarget.port
+            }
+          });
+        });
+        this.$.initials.getInitials().forEach(function(initial) {
+          var initialTarget = initial.getTarget();
+          definition.connections.push({
+            data: initial.data,
+            tgt: {
+              process: initialTarget.node,
+              port: initialTarget.port
+            }
+          });
+        });
+        this.$.exports.getExports().forEach(function(exp) {
+          definition.exports.push({
+            private: exp.private,
+            public: exp.public
+          });
+        });
+        return definition;
       }
     });
-
   })()
   </script>
-  
 </polymer-element>

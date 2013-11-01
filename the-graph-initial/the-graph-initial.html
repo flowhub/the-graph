@@ -1,7 +1,17 @@
 <polymer-element name="the-graph-initial" attributes="target data">
 
   <script>
-    Polymer('the-graph-initial', {});
+    Polymer('the-graph-initial', {
+      target: '',
+      data: '',
+      getTarget: function () {
+        var split = this.target.split('.');
+        return {
+          node: split[0],
+          port: split[1]
+        };
+      }
+    });
   </script>
   
 </polymer-element>

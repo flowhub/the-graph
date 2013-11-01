@@ -111,10 +111,6 @@
       sourceNode: null,
       sourcePort: null,
       enteredView: function () {
-        var graph = this.parentNode.parentNode;
-        graph.addEventListener("zoomed", function(event){
-          this.zoom = graph.zoom;
-        }.bind(this));
         this.group = this.parentNode.$.connections;
       },
       leftView: function () {
@@ -230,9 +226,6 @@
         this.drawEdge();
       },
       targetMoved: function () {
-        this.drawEdge();
-      },
-      zoomChanged: function () {
         this.drawEdge();
       }
     });

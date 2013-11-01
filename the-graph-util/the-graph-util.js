@@ -32,5 +32,9 @@ util.transformOrigin = function (el, x, y) {
   return el;
 };
 
+util.clip = function (num, min, max) {
+  return Math.max(Math.min(num, max), min);
+}
+
 
 })();
