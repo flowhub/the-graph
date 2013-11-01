@@ -12,6 +12,21 @@
       fillStyle: "white",
       strokeStyle: "white",
       lineWidth: 1,
+      edgeColors: [
+        "white",
+        "hsl(  0, 100%, 60%)",
+        "hsl( 30, 100%, 60%)",
+        "hsl( 60, 100%, 60%)",
+        "hsl( 90, 100%, 60%)",
+        "hsl(120, 100%, 60%)",
+        "hsl(150, 100%, 60%)",
+        "hsl(180, 100%, 60%)",
+        "hsl(210, 100%, 60%)",
+        "hsl(240, 100%, 60%)",
+        "hsl(270, 100%, 60%)",
+        "hsl(300, 100%, 60%)",
+        "hsl(330, 100%, 60%)"
+      ],
       ready: function () {
         this.context = this.$.canvas.getContext("2d");
         this.resetStyles();
@@ -54,6 +69,12 @@
           var target = this.graph.processes[connection.tgt.process];
           // Draw path
           try {
+            if (connection.metadata && connection.metadata.route) {
+              // Color if route defined
+              this.context.impl.strokeStyle = this.edgeColors[connection.metadata.route];
+            } else {
+              this.context.impl.strokeStyle = this.edgeColors[0];
+            }
             var fromX = Math.round(source.metadata.x*scale+sizeHalf)-0.5;
             var fromY = Math.round(source.metadata.y*scale+sizeHalf)-0.5;
             var toX = Math.round(target.metadata.x*scale+sizeHalf)-0.5;
