@@ -247,9 +247,12 @@
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this._pan.x = Math.round(pan.x);
-        this._pan.y = Math.round(pan.y);
-        this.pan = this._pan.x + ' ' + this._pan.y;
+        this.pan = Math.round(pan.x) + ' ' + Math.round(pan.y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        this._pan.x = parseInt(pan[0], 10);
+        this._pan.y = parseInt(pan[1], 10);
 
         var bump = this.calcBump();
 

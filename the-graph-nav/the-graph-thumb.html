@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-thumb" attributes="graph width height" lightdom>
+<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle" lightdom>
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}"></canvas>
   </template>
@@ -7,7 +7,7 @@
 
     Polymer('the-graph-thumb', {
       graph: null,
-      scale: 1,
+      thumbscale: 1,
       nodeSize: 60,
       fillStyle: "white",
       strokeStyle: "white",
@@ -30,11 +30,15 @@
       ready: function () {
         this.context = this.$.canvas.getContext("2d");
         this.resetStyles();
+        this.thumbrectangle = [0,0,500,500];
       },
       enteredView: function () {
       },
       redrawGraph: function () {
-        if (!this.graph || !this.graph.processes) { return; }
+        // this.graph is the-graph custom element
+        // this.graph.graph is the bare graph object
+        if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
+        var graph = this.graph.graph;
         // Clear
         this.context.clearRect(0, 0, this.width, this.height);
         // Find dimensions
@@ -43,8 +47,8 @@
         var minY = 0;
         var maxX = 500;
         var maxY = 500;
-        Object.keys(this.graph.processes).forEach(function(key){
-          var process = this.graph.processes[key];
+        Object.keys(graph.processes).forEach(function(key){
+          var process = graph.processes[key];
           if ( process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y) ) {
             toDraw.push(process);
             minX = Math.min(minX, process.metadata.x);
@@ -57,16 +61,22 @@
         maxY += this.nodeSize*2;
         var w = maxX - minX;
         var h = maxY - minY;
+        // For the-graph-map to listen
+        this.thumbrectangle[0] = minX;
+        this.thumbrectangle[1] = minY;
+        this.thumbrectangle[2] = w;
+        this.thumbrectangle[3] = h;
         // Scale dimensions
         var scale = (w > h) ? this.width/w : this.height/h;
+        this.thumbscale = scale;
         var size = Math.round(this.nodeSize * scale);
         var sizeHalf = size / 2;
         // Draw edges
-        Object.keys(this.graph.connections).forEach(function(key){
-          var connection = this.graph.connections[key];
+        Object.keys(graph.connections).forEach(function(key){
+          var connection = graph.connections[key];
           if (!connection.src || !connection.tgt) { return; }
-          var source = this.graph.processes[connection.src.process];
-          var target = this.graph.processes[connection.tgt.process];
+          var source = graph.processes[connection.src.process];
+          var target = graph.processes[connection.tgt.process];
           // Draw path
           try {
             if (connection.metadata && connection.metadata.route) {
@@ -88,14 +98,13 @@
           }
         }.bind(this));    
         // Draw nodes
-        this.context.impl.strokeStyle = "black";
+        this.context.impl.strokeStyle = this.strokeStyle;
         toDraw.forEach(function(node){
           var x = Math.round(node.metadata.x * scale)-0.5;
           var y = Math.round(node.metadata.y * scale)-0.5;
           this.context.fillRect(x,y,size,size);
           this.context.strokeRect(x,y,size,size);
         }.bind(this));
-        this.context.impl.strokeStyle = this.strokeStyle;
       },
       graphChanged: function () {
         // TODO changes
@@ -114,9 +123,11 @@
       },
       widthChanged: function () {
         this.resetStyles();
+        this.redrawGraph();
       },
       heightChanged: function () {
         this.resetStyles();
+        this.redrawGraph();
       },
     });
 

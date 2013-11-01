@@ -6,7 +6,7 @@
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-library id="library"></the-library>
-    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{ snap }}" grid="{{ grid }}" scale="{{ scale }}">
+    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{snap}}" grid="{{grid}}" scale="{{scale}}" pan="{{pan}}">
       <the-behaviors>
         <the-behavior id="graphpinch" type="pinch"></the-behavior>
         <the-behavior type="swipe" direction="north" accept="nodeName=THE-GRAPH-PROCESS" action="remove" minspeed="1.5" mindistance="40"></the-behavior>
@@ -15,7 +15,7 @@
         <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" mindistance="20"></the-behavior>
       </the-behaviors>
     </the-graph>
-    <the-graph-nav graph="{{graph}}" scale="{{scale}}"></the-graph-nav>
+    <the-graph-nav id="nav" scale="{{scale}}" pan="{{pan}}"></the-graph-nav>
   </template>
   <script>
   (function () {
@@ -25,6 +25,7 @@
       grid: 70,
       snap: 35,
       scale: 1,
+      pan: "0 0",
       plugins: {},
       addPlugin: function (name, plugin) {
         this.plugins[name] = plugin;
@@ -33,11 +34,13 @@
       enteredView: function () {
         this.addEventListener('mousewheel', function (event) {
           event.preventDefault();
-          var originalPan = this.$.graph.getPan();
-          this.$.graph.panned({
-            x: originalPan.x + event.wheelDeltaX,
-            y: originalPan.y + event.wheelDeltaY
-          });
+          
+          var pan = this.pan.split(" ");
+          var x = parseInt(pan[0], 10);
+          var y = parseInt(pan[1], 10);
+          x += event.wheelDeltaX;
+          y += event.wheelDeltaY;
+          this.pan = x + " " + y;
         });
       },
       leftView: function () {
@@ -50,6 +53,9 @@
         this.buildInitialLibrary();
         this.$.graph.graph = this.graph;
         this.$.graph.library = this.$.library;
+
+        // Reference the graph element
+        this.$.nav.graph = this.$.graph;
       },
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {
