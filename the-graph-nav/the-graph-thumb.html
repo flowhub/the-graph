@@ -38,7 +38,7 @@
         // this.graph.graph is the bare graph object
         if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
         if (!this.context || !this.context.impl) { 
-          this.setTimeout( this.redrawGraph.bind(this), 500);
+          setTimeout( this.redrawGraph.bind(this), 500);
           return; 
         }
         var graph = this.graph.graph;
