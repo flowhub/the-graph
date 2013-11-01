@@ -38,6 +38,8 @@
         // this.graph.graph is the bare graph object
         if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
         if (!this.context || !this.context.impl) { 
+          // ??? 
+          this.context = this.$.canvas.getContext("2d");
           setTimeout( this.redrawGraph.bind(this), 500);
           return; 
         }
