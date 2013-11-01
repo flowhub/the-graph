@@ -380,6 +380,10 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
+        this.nodes = [];
+        this.edges = [];
+        this.initials = [];
+        this.exports = [];
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
