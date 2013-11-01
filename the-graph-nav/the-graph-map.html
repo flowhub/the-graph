@@ -20,7 +20,7 @@
     }
   </style>
   <template>
-    <the-graph-thumb id="thumb" graph="{{graph}}" thumbrectangle="{{thumbrectangle}}" width="{{width}}" height="{{height}}"></the-graph-thumb>
+    <the-graph-thumb id="thumb" thumbrectangle="{{thumbrectangle}}" width="{{width}}" height="{{height}}"></the-graph-thumb>
     <div id="viewrect"></div>
   </template>
   <script>
@@ -89,6 +89,9 @@
         var ed = document.getElementsByTagName("the-graph-editor")[0];
         this.viewrectangle[2] = ed.offsetWidth / this.scale;
         this.viewrectangle[3] = ed.offsetHeight / this.scale;
+      },
+      graphChanged: function () {
+        this.$.thumb.graphjson = this.graph.graph;
       }
 
     });
