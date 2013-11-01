@@ -91,9 +91,16 @@
         this.viewrectangle[3] = ed.offsetHeight / this.scale;
       },
       graphChanged: function () {
-        this.$.thumb.graphjson = this.graph.graph;
+        this.$.thumb.graphjson = this.graph.toJSON();
+        this.graph.addEventListener('changed', function () {
+          this.$.thumb.graphjson = this.graph.toJSON();
+          this.$.thumb.redrawGraph();
+        }.bind(this));
+        this.graph.addEventListener('moved', function () {
+          this.$.thumb.graphjson = this.graph.toJSON();
+          this.$.thumb.redrawGraph();
+        }.bind(this));
       }
-
     });
 
   })();
