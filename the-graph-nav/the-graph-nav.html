@@ -34,6 +34,14 @@
           this.scale = parseFloat(this.scale);
           this.scale = Math.max(this.scale-0.25, 0.25);
         }.bind(this));
+      },
+      graphChanged: function () {
+        this.graph.addEventListener('changed', function () {
+          this.$.map.redrawGraph();
+        }.bind(this));
+        this.graph.addEventListener('moved', function () {
+          this.$.map.redrawGraph();
+        }.bind(this));
       }
     });
 

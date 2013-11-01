@@ -46,7 +46,7 @@
           // ???
           context = context.impl;
         }
-        var graph = this.graph.graph;
+        var graph = this.graph.toJSON();
         // Clear
         context.clearRect(0, 0, this.width, this.height);
         // Find dimensions

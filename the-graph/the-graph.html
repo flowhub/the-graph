@@ -466,6 +466,7 @@
                 node.libraryComponent = this.library.getComponent(node.component);
                 node.grid = this.grid;
                 node.snap = this.snap;
+                this.fire('changed', this);
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
@@ -479,6 +480,7 @@
                 if (node.targetNode) {
                   node.targetPort = node.targetNode.getInportByName(target.port);
                 }
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));
@@ -492,6 +494,10 @@
                     this.$.edges.removeChild(edge);
                   }
                 }.bind(this));
+                this.fire('changed', this);
+                break;
+              case 'THE-GRAPH-EDGE':
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));

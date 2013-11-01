@@ -89,8 +89,10 @@
         var ed = document.getElementsByTagName("the-graph-editor")[0];
         this.viewrectangle[2] = ed.offsetWidth / this.scale;
         this.viewrectangle[3] = ed.offsetHeight / this.scale;
+      },
+      redrawGraph: function () {
+        this.$.thumb.redrawGraph();
       }
-
     });
 
   })();
