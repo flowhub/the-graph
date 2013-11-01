@@ -9,7 +9,7 @@
       graph: null,
       thumbscale: 1,
       nodeSize: 60,
-      fillStyle: "white",
+      fillStyle: "black",
       strokeStyle: "white",
       lineWidth: 1,
       edgeColors: [
@@ -29,7 +29,6 @@
       ],
       ready: function () {
         this.context = this.$.canvas.getContext("2d");
-        this.resetStyles();
         this.thumbrectangle = [0,0,500,500];
       },
       enteredView: function () {
@@ -100,6 +99,8 @@
         }.bind(this));    
         // Draw nodes
         this.context.impl.strokeStyle = this.strokeStyle;
+        this.context.impl.fillStyle = this.fillStyle;
+        this.context.impl.lineWidth = this.lineWidth;
         toDraw.forEach(function(node){
           var x = Math.round(node.metadata.x * scale)-0.5;
           var y = Math.round(node.metadata.y * scale)-0.5;
@@ -108,29 +109,13 @@
         }.bind(this));
       },
       graphChanged: function () {
-        // TODO changes
+        // TODO graph changes
         this.redrawGraph();
       },
-      resetStyles: function () {
-        if (!this.context || !this.context.impl) { return; }
-        this.fillStyleChanged();
-        this.strokeStyleChanged();
-        this.context.impl.lineWidth = this.lineWidth;
-      },
-      fillStyleChanged: function () {
-        if (!this.context || !this.context.impl) { return; }
-        this.context.impl.fillStyle = this.fillStyle;
-      },
-      strokeStyleChanged: function () {
-        if (!this.context || !this.context.impl) { return; }
-        this.context.impl.strokeStyle = this.strokeStyle;
-      },
       widthChanged: function () {
-        this.resetStyles();
         this.redrawGraph();
       },
       heightChanged: function () {
-        this.resetStyles();
         this.redrawGraph();
       },
     });
