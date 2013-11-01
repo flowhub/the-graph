@@ -33,6 +33,10 @@
         this.viewrectangle = [0,0,500,500];
       },
       enteredView: function () {
+        // Recenter graph by tapping map
+        this.addEventListener("tap", function(event){
+          this.pan = "0 0";
+        }.bind(this));
         // Pan graph by dragging map
         this.addEventListener("track", function(event){
           var pan = this.pan.split(" ");
@@ -41,6 +45,8 @@
           x -= event.ddx / this.thumbscale;
           y -= event.ddy / this.thumbscale;
           this.pan = x + " " + y;
+
+          event.preventTap();
         }.bind(this));
       },
       viewrectangleChanged: function () {
