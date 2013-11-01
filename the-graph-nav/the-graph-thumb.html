@@ -28,7 +28,6 @@
         "hsl(330, 100%, 60%)"
       ],
       ready: function () {
-        this.context = this.$.canvas.getContext("2d");
         this.thumbrectangle = [0,0,500,500];
       },
       enteredView: function () {
@@ -37,15 +36,19 @@
         // this.graph is the-graph custom element
         // this.graph.graph is the bare graph object
         if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
-        if (!this.context || !this.context.impl) { 
+        var context = this.$.canvas.getContext("2d");
+        if (!context) { 
           // ??? 
-          this.context = this.$.canvas.getContext("2d");
           setTimeout( this.redrawGraph.bind(this), 500);
           return; 
         }
+        if (context.impl) {
+          // ???
+          context = context.impl;
+        }
         var graph = this.graph.graph;
         // Clear
-        this.context.clearRect(0, 0, this.width, this.height);
+        context.clearRect(0, 0, this.width, this.height);
         // Find dimensions
         var toDraw = [];
         var minX = 0;
@@ -86,31 +89,31 @@
           try {
             if (connection.metadata && connection.metadata.route) {
               // Color if route defined
-              this.context.impl.strokeStyle = this.edgeColors[connection.metadata.route];
+              context.strokeStyle = this.edgeColors[connection.metadata.route];
             } else {
-              this.context.impl.strokeStyle = this.edgeColors[0];
+              context.strokeStyle = this.edgeColors[0];
             }
             var fromX = Math.round(source.metadata.x*scale+sizeHalf)-0.5;
             var fromY = Math.round(source.metadata.y*scale+sizeHalf)-0.5;
             var toX = Math.round(target.metadata.x*scale+sizeHalf)-0.5;
             var toY = Math.round(target.metadata.y*scale+sizeHalf)-0.5;
-            this.context.beginPath();
-            this.context.moveTo(fromX, fromY);
-            this.context.lineTo(toX, toY);
-            this.context.stroke();
+            context.beginPath();
+            context.moveTo(fromX, fromY);
+            context.lineTo(toX, toY);
+            context.stroke();
           } catch (error) {
             return;
           }
         }.bind(this));    
         // Draw nodes
-        this.context.impl.strokeStyle = this.strokeStyle;
-        this.context.impl.fillStyle = this.fillStyle;
-        this.context.impl.lineWidth = this.lineWidth;
+        context.strokeStyle = this.strokeStyle;
+        context.fillStyle = this.fillStyle;
+        context.lineWidth = this.lineWidth;
         toDraw.forEach(function(node){
           var x = Math.round(node.metadata.x * scale)-0.5;
           var y = Math.round(node.metadata.y * scale)-0.5;
-          this.context.fillRect(x,y,size,size);
-          this.context.strokeRect(x,y,size,size);
+          context.fillRect(x,y,size,size);
+          context.strokeRect(x,y,size,size);
         }.bind(this));
       },
       graphChanged: function () {
