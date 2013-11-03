@@ -83,7 +83,18 @@
             }
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
-          this.observe();
+        }
+        if (this.$.scratch) {
+          this.$.scratch.addEventListener('gestureend', function (e) {
+            var scratched = e.detail[Object.keys(e.detail)[0]].elements;
+            scratched.forEach(function (element) {
+              switch (element.nodeName) {
+                case 'THE-GRAPH-PROCESS':
+                  element.parentNode.removeChild(element);
+                  break;
+              }
+            });
+          }.bind(this));
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -231,6 +242,7 @@
             targetPort = null;
           }.bind(this));
         }
+        this.observe();
 
         // Handle passing zoom value to the GSS engine for node rescaling
         //this.engine = GSS.engines[0];
