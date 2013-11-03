@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle" lightdom>
+<polymer-element name="the-graph-thumb" attributes="graphjson width height thumbscale thumbrectangle" lightdom>
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}"></canvas>
   </template>
@@ -6,7 +6,7 @@
   (function () {
 
     Polymer('the-graph-thumb', {
-      graph: null,
+      graphjson: null,
       thumbscale: 1,
       nodeSize: 60,
       fillStyle: "black",
@@ -35,7 +35,7 @@
       redrawGraph: function () {
         // this.graph is the-graph custom element
         // this.graph.graph is the bare graph object
-        if (!this.graph || !this.graph.graph || !this.graph.graph.processes) { return; }
+        if (!this.graphjson || !this.graphjson.processes) { return; }
         var context = this.$.canvas.getContext("2d");
         if (!context) { 
           // ??? 
@@ -46,7 +46,7 @@
           // ???
           context = context.impl;
         }
-        var graph = this.graph.graph;
+        var graph = this.graphjson;
         // Clear
         context.clearRect(0, 0, this.width, this.height);
         // Find dimensions
@@ -116,7 +116,7 @@
           context.strokeRect(x,y,size,size);
         }.bind(this));
       },
-      graphChanged: function () {
+      graphjsonChanged: function () {
         // TODO graph changes
         this.redrawGraph();
       },

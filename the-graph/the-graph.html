@@ -83,7 +83,18 @@
             }
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
-          this.observe();
+        }
+        if (this.$.scratch) {
+          this.$.scratch.addEventListener('gestureend', function (e) {
+            var scratched = e.detail[Object.keys(e.detail)[0]].elements;
+            scratched.forEach(function (element) {
+              switch (element.nodeName) {
+                case 'THE-GRAPH-PROCESS':
+                  element.parentNode.removeChild(element);
+                  break;
+              }
+            });
+          }.bind(this));
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -231,6 +242,7 @@
             targetPort = null;
           }.bind(this));
         }
+        this.observe();
 
         // Handle passing zoom value to the GSS engine for node rescaling
         //this.engine = GSS.engines[0];
@@ -380,6 +392,10 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
+        this.nodes = [];
+        this.edges = [];
+        this.initials = [];
+        this.exports = [];
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -462,6 +478,7 @@
                 node.libraryComponent = this.library.getComponent(node.component);
                 node.grid = this.grid;
                 node.snap = this.snap;
+                this.fire('changed', this);
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
@@ -475,6 +492,7 @@
                 if (node.targetNode) {
                   node.targetPort = node.targetNode.getInportByName(target.port);
                 }
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));
@@ -488,6 +506,10 @@
                     this.$.edges.removeChild(edge);
                   }
                 }.bind(this));
+                this.fire('changed', this);
+                break;
+              case 'THE-GRAPH-EDGE':
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));
@@ -538,6 +560,9 @@
             tgt: {
               process: edgeTarget.node,
               port: edgeTarget.port
+            },
+            metadata: {
+              route: edge.route
             }
           });
         });
