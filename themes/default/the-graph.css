@@ -3,7 +3,7 @@ the-graph-editor {
   padding: none;
   font-family: verdana;
   color: white;
-  background-color: black;
+
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -68,7 +68,7 @@ the-graph {
   -o-transform: translate3d(-500px,-500px,0px) scale(1);
   transform: translate3d(-500px,-500px,0px) scale(1);
 
-  background-color: #1d1d1d;
+  /*background-color: #1d1d1d;*/
 
   background-image:
     -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
