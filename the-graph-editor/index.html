@@ -13,7 +13,7 @@
   </head>
   <body>
     <the-pointer-trail listento="html"></the-pointer-trail>
-    <the-graph-editor grid="60" snap="30"></the-graph-editor>
+    <the-graph-editor id="editor" width="800" height="600" grid="60" snap="30"></the-graph-editor>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
       <div id="loading-message">loading custom elements...</div>
@@ -57,7 +57,18 @@
         // Edge algo test
         //script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
         body.appendChild(script);
+
+        // Resize to fill window and also have explicit w/h attributes
+        var editor = document.getElementById("editor");
+        var resize = function () {
+          editor.setAttribute("width", window.innerWidth);
+          editor.setAttribute("height", window.innerHeight);
+        };
+        window.addEventListener("resize", resize);
+        resize();
+
       });
+
     </script>
   </body>
 </html>
