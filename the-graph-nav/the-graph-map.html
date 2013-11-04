@@ -1,10 +1,11 @@
 <link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
 
-<polymer-element name="the-graph-map" attributes="graph width height pan scale viewrectangle" lightdom>
+<polymer-element name="the-graph-map" attributes="graph width height pan scale viewwidth viewheight" lightdom>
   <style>
     the-graph-map {
       position: relative;
       overflow: hidden;
+      cursor: move;
     }
     #thumb {
       position: absolute;
@@ -50,10 +51,10 @@
         }.bind(this));
       },
       viewrectangleChanged: function () {
-        var x = Math.round( this.viewrectangle[0] * this.thumbscale );
-        var y = Math.round( this.viewrectangle[1] * this.thumbscale );
-        var w = Math.round( this.viewrectangle[2] * this.thumbscale );
-        var h = Math.round( this.viewrectangle[3] * this.thumbscale );
+        var x = Math.round( (this.viewrectangle[0]/this.scale - this.thumbrectangle[0]) * this.thumbscale );
+        var y = Math.round( (this.viewrectangle[1]/this.scale - this.thumbrectangle[1]) * this.thumbscale );
+        var w = Math.round( this.viewrectangle[2] * this.thumbscale / this.scale );
+        var h = Math.round( this.viewrectangle[3] * this.thumbscale / this.scale );
 
         // Clip to bounds
         if (x < 0) { w += x; }
@@ -62,6 +63,8 @@
         y = theGraph.clip(y, 0, this.height);
         w = theGraph.clip(w, 0, this.width-x);
         h = theGraph.clip(h, 0, this.height-y);
+
+        console.log(x, y, w, h);
 
         // Size and translate rect
         this.$.viewrect.style.width = w+"px";
@@ -80,15 +83,19 @@
         this.viewrectangleChanged();
       },
       thumbrectangleChanged: function () {
+        // Binding this from the-graph-thumb to know the dimensions rendered
         var w = this.thumbrectangle[2];
         var h = this.thumbrectangle[3];
         this.thumbscale = (w>h) ? this.width/w : this.height/h;
       },
       scaleChanged: function () {
-        // TODO multiple editors
-        var ed = document.getElementsByTagName("the-graph-editor")[0];
-        this.viewrectangle[2] = ed.offsetWidth / this.scale;
-        this.viewrectangle[3] = ed.offsetHeight / this.scale;
+        this.viewrectangleChanged();
+      },
+      viewwidthChanged: function () {
+        this.viewrectangle[2] = parseInt(this.viewwidth, 10);
+      },
+      viewheightChanged: function () {
+        this.viewrectangle[3] = parseInt(this.viewheight, 10);
       },
       graphChanged: function () {
         this.$.thumb.graphjson = this.graph.toJSON();
