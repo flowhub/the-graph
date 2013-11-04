@@ -1,4 +1,4 @@
-<link rel="import" href="../the-graph-nav/the-graph-thumb.html">
+<link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
 
 <polymer-element name="the-graph-map" attributes="graph width height pan scale viewrectangle" lightdom>
   <style>
@@ -94,11 +94,11 @@
         this.$.thumb.graphjson = this.graph.toJSON();
         this.graph.addEventListener('changed', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          this.$.thumb.redrawGraph();
+          // this.$.thumb.redrawGraph();
         }.bind(this));
         this.graph.addEventListener('moved', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          this.$.thumb.redrawGraph();
+          // this.$.thumb.redrawGraph();
         }.bind(this));
       }
     });

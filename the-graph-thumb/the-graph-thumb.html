@@ -49,6 +49,7 @@
         var graph = this.graphjson;
         // Clear
         context.clearRect(0, 0, this.width, this.height);
+        context.lineWidth = this.lineWidth;
         // Find dimensions
         var toDraw = [];
         var minX = 0;
@@ -108,7 +109,6 @@
         // Draw nodes
         context.strokeStyle = this.strokeStyle;
         context.fillStyle = this.fillStyle;
-        context.lineWidth = this.lineWidth;
         toDraw.forEach(function(node){
           var x = Math.round(node.metadata.x * scale)-0.5;
           var y = Math.round(node.metadata.y * scale)-0.5;
@@ -117,7 +117,6 @@
         }.bind(this));
       },
       graphjsonChanged: function () {
-        // TODO graph changes
         this.redrawGraph();
       },
       widthChanged: function () {
@@ -126,6 +125,9 @@
       heightChanged: function () {
         this.redrawGraph();
       },
+      toDataURL: function () {
+        return this.$.canvas.toDataURL();
+      }
     });
 
   })();
