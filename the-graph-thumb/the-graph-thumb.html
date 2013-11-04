@@ -47,15 +47,17 @@
           context = context.impl;
         }
         var graph = this.graphjson;
+        // Reset origin
+        context.setTransform(1,0,0,1,0,0);
         // Clear
         context.clearRect(0, 0, this.width, this.height);
         context.lineWidth = this.lineWidth;
         // Find dimensions
         var toDraw = [];
-        var minX = 0;
-        var minY = 0;
-        var maxX = 500;
-        var maxY = 500;
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
         Object.keys(graph.processes).forEach(function(key){
           var process = graph.processes[key];
           if ( process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y) ) {
@@ -66,11 +68,14 @@
             maxY = Math.max(maxY, process.metadata.y);
           }
         }.bind(this));
+        if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY) ) { return; }
+        minX -= this.nodeSize;
+        minY -= this.nodeSize;
         maxX += this.nodeSize*2;
         maxY += this.nodeSize*2;
         var w = maxX - minX;
         var h = maxY - minY;
-        // For the-graph-map to listen
+        // For the-graph-map to bind
         this.thumbrectangle[0] = minX;
         this.thumbrectangle[1] = minY;
         this.thumbrectangle[2] = w;
@@ -80,6 +85,8 @@
         this.thumbscale = scale;
         var size = Math.round(this.nodeSize * scale);
         var sizeHalf = size / 2;
+        // Translate origin to match
+        context.setTransform(1,0,0,1,0-minX*scale,0-minY*scale);
         // Draw edges
         Object.keys(graph.connections).forEach(function(key){
           var connection = graph.connections[key];
