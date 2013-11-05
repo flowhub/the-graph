@@ -99,11 +99,9 @@
         this.$.thumb.graphjson = this.graph.toJSON();
         this.graph.addEventListener('changed', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          // this.$.thumb.redrawGraph();
         }.bind(this));
         this.graph.addEventListener('moved', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          // this.$.thumb.redrawGraph();
         }.bind(this));
       }
     });
