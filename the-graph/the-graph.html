@@ -1,4 +1,5 @@
 <link rel="import" href="../the-graph-exports/the-graph-exports.html">
+<link rel="import" href="../the-graph-groups/the-graph-groups.html">
 <link rel="import" href="../the-graph-nodes/the-graph-nodes.html">
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
@@ -27,6 +28,11 @@
         <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
       </template>
     </the-graph-exports>
+    <the-graph-groups id="groups">
+      <template repeat="{{ group in groups }}">
+      <the-graph-group name="{{ group.name }}" label="{{ group.metadata.label }}" nodes="{{ group.nodes }}"></the-graph-group>
+      </template>
+    </the-graph-groups>
   </template>
 
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
@@ -59,6 +65,7 @@
       edges: [],
       initials: [],
       exports: [],
+      groups: [],
       library: null,
       ready: function () {
         this._pan = { x: 0, y: 0 };
@@ -396,6 +403,7 @@
         this.edges = [];
         this.initials = [];
         this.exports = [];
+        this.groups = [];
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -428,6 +436,12 @@
         }.bind(this));
         this.graph.exports.forEach(function (exp) {
           this.exports.push(exp);
+        }.bind(this));
+        if (!this.graph.groups) {
+          this.graph.groups = [];
+        }
+        this.graph.groups.forEach(function (group) {
+          this.groups.push(group);
         }.bind(this));
 
         this.calcMinMax();
@@ -534,6 +548,7 @@
         var definition = {
           properties: this.graph.properties,
           exports: [],
+          groups: [],
           processes: {},
           connections: []
         };
@@ -580,6 +595,15 @@
           definition.exports.push({
             private: exp.private,
             public: exp.public
+          });
+        });
+        this.$.groups.getGroups().forEach(function(group) {
+          definition.groups.push({
+            name: group.name,
+            nodes: group.nodes,
+            metadata: {
+              label: group.label
+            }
           });
         });
         return definition;
