@@ -305,27 +305,27 @@
           y: Math.round(position.y*this.zoom)
         };
       },
-      getDrag: function () {
-        var drag = this.drag.split(' ');
-        return {
-          x: parseInt(drag[0]),
-          y: parseInt(drag[1])
-        };
-      },
-      dragChanged: function () {
-        if (this.highlight) {
-          return;
-        }
-        var drag = this.getDrag();
-        var x = drag.x / this.zoom - this.pan.x / this.zoom;
-        x -= this.clientWidth / 2;
-        x = Math.round(x);
-        var y = drag.y / this.zoom - this.pan.y / this.zoom;
-        y -= this.clientHeight / 2;
-        y = Math.round(y);
+      // getDrag: function () {
+      //   var drag = this.drag.split(' ');
+      //   return {
+      //     x: parseInt(drag[0]),
+      //     y: parseInt(drag[1])
+      //   };
+      // },
+      // dragChanged: function () {
+      //   if (this.highlight) {
+      //     return;
+      //   }
+      //   var drag = this.getDrag();
+      //   var x = drag.x / this.zoom - this.pan.x / this.zoom;
+      //   x -= this.clientWidth / 2;
+      //   x = Math.round(x);
+      //   var y = drag.y / this.zoom - this.pan.y / this.zoom;
+      //   y -= this.clientHeight / 2;
+      //   y = Math.round(y);
 
-        this.position = x + ' ' + y;
-      },
+      //   this.position = x + ' ' + y;
+      // },
       snapToGrid: function () {
         // Called on pointerup with a short delay
         var x = this._position[0];
