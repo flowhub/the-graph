@@ -34,14 +34,19 @@
         plugin.register(this);
       },
       enteredView: function () {
-        this.addEventListener('mousewheel', function (event) {
+        var wheelEventName = "onwheel" in document.createElement("div") ? "wheel" :
+          (document.onmousewheel !== undefined ? "mousewheel" : undefined);
+
+        if (!wheelEventName) { return; }
+
+        this.addEventListener(wheelEventName, function (event) {
           event.preventDefault();
           
           var pan = this.pan.split(" ");
           var x = parseInt(pan[0], 10);
           var y = parseInt(pan[1], 10);
-          x += event.wheelDeltaX;
-          y += event.wheelDeltaY;
+          x += event.wheelDeltaX !== undefined ? event.wheelDeltaX : event.deltaX ;
+          y += event.wheelDeltaY !== undefined ? event.wheelDeltaY : event.deltaY ;
           this.pan = x + " " + y;
         });
       },
