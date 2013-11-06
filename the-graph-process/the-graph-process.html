@@ -50,11 +50,6 @@
       enteredView: function () {
         var graph = this.parentNode.parentNode;
         this.graph = graph;
-        
-        // Oh snap
-        this.addEventListener("pointerup", function(){
-          setTimeout(this.snapToGrid.bind(this), 100);
-        }.bind(this));
 
         // Initial bump
         this.bump.x = graph.padding;
@@ -62,6 +57,111 @@
 
         // Handle sizing
         this.graphZoom(this.zoom);
+
+        //
+        // Autopan when dragging nodes to edge
+        //
+
+        var autoPanThreshold = 20;
+        var autopanSpeed = 15;
+        var panX, panY;
+        var autopanInterval;
+
+        var panGraph = function () {
+          var x = this.graph._pan.x;
+          var y = this.graph._pan.y;
+          if (panX) { x += panX; }
+          if (panY) { y += panY; }
+          this.graph.pan = x + " " + y;
+        }
+
+        var checkPan = function (event) {
+          panX = null;
+          panY = null;
+          if (event.pageX < autoPanThreshold) {
+            panX = autopanSpeed;
+          }
+          else if (event.pageX > this.graph.width-autoPanThreshold) {
+            panX = -autopanSpeed;
+          }
+          if (event.pageY < autoPanThreshold) {
+            panY = autopanSpeed;
+          }
+          else if (event.pageY > this.graph.height-autoPanThreshold) {
+            panY = -autopanSpeed;
+          }
+          clearInterval(autopanInterval);
+          if (panX || panY) {
+            panGraph.call(this);
+            autopanInterval = setInterval( panGraph.bind(this), 100 );
+          }
+          console.log(event.pageX, panX, panY)
+        }
+        
+        //
+        // Gesture recognition for highlighting and moving
+        //
+
+        var dragStartX, dragStartY, dragStartPanX, dragStartPanY, gestureRecognised;
+        var gestureThreshold = 20;
+
+        // Move or highlight
+        this.addEventListener("trackstart", function(event){
+          dragStartPanX = this.pan.x;
+          dragStartPanY = this.pan.y;
+          var pos = this.getPosition();
+          dragStartX = pos.x;
+          dragStartY = pos.y;
+          gestureRecognised = null;
+        }.bind(this));
+
+        this.addEventListener("track", function(event){
+          if (gestureRecognised === "highlight") { return; }
+
+          if (!gestureRecognised) {
+            if ( Math.abs(event.dy) > gestureThreshold ) {
+              gestureRecognised = "move";
+            }
+            else if ( Math.abs(event.dx) > gestureThreshold ) {
+              // Highlight it
+              gestureRecognised = "highlight";
+              this.highlight = (event.dx > 0) ? "out" : "in";
+              return;
+            }
+            else {
+              // Gesture not far enough
+              return;
+            }
+          }
+
+          // Move it
+          if (gestureRecognised === "move") { 
+            // Calculate pan delta, if panning while moving
+            var dx = ( event.dx - (this.pan.x - dragStartPanX) ) / this.zoom;
+            var dy = ( event.dy - (this.pan.y - dragStartPanY) ) / this.zoom;
+            // New position
+            var x = dragStartX + dx;
+            var y = dragStartY + dy;
+            this.position = x + " " + y;
+
+            // Autopan?
+            checkPan.call(this, event);
+          }
+        }.bind(this));
+
+        this.addEventListener("trackend", function(event){
+          if (gestureRecognised === "highlight") { 
+            // Unhighlight
+            this.highlight = null;
+          }
+          else if (gestureRecognised === "move") { 
+            // Oh snap
+            this.snapToGrid();
+          }
+          gestureRecognised = null;
+          clearInterval(autopanInterval);
+        }.bind(this));
+
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -234,9 +334,6 @@
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
-      // _positionChanged: function () {
-      //   console.log(this._position);
-      // },
       positionChanged: function () {
         var position = this.getPosition();
         this._position[0] = position.x;
