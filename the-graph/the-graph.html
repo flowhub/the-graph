@@ -432,6 +432,7 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
+        this.observe();
         this.nodes = [];
         this.edges = [];
         this.initials = [];
@@ -565,6 +566,9 @@
         this.fire("mutated", mutations);
       },
       observe: function () {
+        if (this.observer) {
+          return;
+        }
         this.observer = new MutationObserver(this.handleMutations.bind(this));
         this.observer.observe(this, {
           subtree: true,
