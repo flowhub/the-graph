@@ -66,6 +66,7 @@
         var autopanSpeed = 15;
         var panX, panY;
         var autopanInterval;
+        var lastEvent;
 
         var panGraph = function () {
           var x = this.graph._pan.x;
@@ -93,9 +94,12 @@
           clearInterval(autopanInterval);
           if (panX || panY) {
             panGraph.call(this);
-            autopanInterval = setInterval( panGraph.bind(this), 100 );
+            autopanInterval = setInterval( function(){
+              panGraph.call(this);
+              // Retrigger track to move the process (otherwise gets left behind)
+              this.dispatchEvent(event);
+            }.bind(this), 100 );
           }
-          console.log(event.pageX, panX, panY)
         }
         
         //
