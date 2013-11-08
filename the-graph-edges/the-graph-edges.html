@@ -12,33 +12,41 @@
 
   <script>
     Polymer('the-graph-edges', {
+      zoom: 1,
       enteredView: function () {
         var graph = this.parentNode;
-        // graph.addEventListener("panned", function(event){
-        //   this.graphBumped(event.detail.bump);
-        // }.bind(this));
-
         // Initial bump
         this.graphBumped({
-          x: graph.padding,
-          y: graph.padding
+          zoom: 1,
+          bump: {
+            x: graph.padding,
+            y: graph.padding
+          }
         });
       },
       getEdges: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-edge'));
       },
       getEdgesBySide: function (side) {
-        var childNodes = this.getEdges();
+        var childEdges = this.getEdges();
         var edges = [];
-        childNodes.forEach(function (child) {
+        childEdges.forEach(function (child) {
           if (child.source === side || child.target == side) {
             edges.push(child);
           }
         });
         return edges;
       },
-      graphBumped: function (bump) {
-        this.$.connections.setAttribute("transform", "translate("+bump.x+","+bump.y+")");
+      graphBumped: function (info) {
+        if (this.zoom !== info.zoom) {
+          this.zoom = info.zoom;
+          var childEdges = this.getEdges();
+          childEdges.forEach(function (child) {
+            child.zoom = info.zoom;
+            child.drawEdge();
+          });
+        }
+        this.$.connections.setAttribute("transform", "translate("+info.bump.x+","+info.bump.y+")");
       }
     });
   </script>

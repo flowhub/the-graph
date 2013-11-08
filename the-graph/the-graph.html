@@ -1,9 +1,10 @@
 <link rel="import" href="../the-graph-exports/the-graph-exports.html">
+<link rel="import" href="../the-graph-groups/the-graph-groups.html">
 <link rel="import" href="../the-graph-nodes/the-graph-nodes.html">
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale grid snap" touch-action="none" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
 
   <template>
     <content select="the-behavior"></content>
@@ -17,8 +18,21 @@
         <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
       </template>
     </the-graph-edges>
-    <the-graph-initials></the-graph-initials>
-    <the-graph-exports></the-graph-exports>
+    <the-graph-initials id="initials">
+      <template repeat="{{ initial in initials }}">
+        <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
+      </template>
+    </the-graph-initials>
+    <the-graph-exports id="exports">
+      <template repeat="{{ export in exports }}">
+        <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
+      </template>
+    </the-graph-exports>
+    <the-graph-groups id="groups">
+      <template repeat="{{ group in groups }}">
+      <the-graph-group name="{{ group.name }}" label="{{ group.metadata.label }}" nodes="{{ group.nodes }}"></the-graph-group>
+      </template>
+    </the-graph-groups>
   </template>
 
   <script type="text/javascript" src="../bower_components/hammerjs/dist/hammer.js"></script>
@@ -27,37 +41,43 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function(){
+
     Polymer('the-graph', {
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
-      _pan: {
-        x: 0,
-        y: 0
-      },
-      drag: {
-        x: 0,
-        y: 0
-      },
+      _pan: { x: 0, y: 0 },
+      drag: { x: 0, y: 0 },
       // The actual zoom state
       zoom: 1,
       // User-visible zoom state
       scale: 1,
       // Infinite scroll bounds
       padding: 500,
-      bump: {
-        x: 500,
-        y: 500
-      },
+      bump: { x: 500, y: 500 },
+      scalePanD: { x: 0, y: 0 },
+      width: 500,
+      height: 500,
+      zoomCenter: null,
       minX: 0,
       minY: 0,
-      maxX: 2000,
-      maxY: 2000,
+      maxX: 500,
+      maxY: 500,
       grid: 70,
       snap: 35,
       nodes: [],
       edges: [],
+      initials: [],
+      exports: [],
+      groups: [],
       library: null,
+      ready: function () {
+        this._pan = { x: 0, y: 0 };
+        this.drag = { x: 0, y: 0 };
+        this.bump = { x: this.padding, y: this.padding };
+        this.scalePanD = { x: 0, y: 0 };
+      },
       enteredView: function () {
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -65,6 +85,7 @@
               // Pan gesture event, don't zoom
               return;
             }
+            // console.log("zoom", e.detail.center);
             this.zooming(e.detail.scale, e.detail.center);
           }.bind(this));
           this.$.graphpinch.addEventListener('gestureend', function (e) {
@@ -74,7 +95,18 @@
             }
             this.zoomed(e.detail.scale, e.detail.center);
           }.bind(this));
-          this.observe();
+        }
+        if (this.$.scratch) {
+          this.$.scratch.addEventListener('gestureend', function (e) {
+            var scratched = e.detail[Object.keys(e.detail)[0]].elements;
+            scratched.forEach(function (element) {
+              switch (element.nodeName) {
+                case 'THE-GRAPH-PROCESS':
+                  element.parentNode.removeChild(element);
+                  break;
+              }
+            });
+          }.bind(this));
         }
         if (this.$.graphpan) {
           this.$.graphpan.addEventListener('gesture', function (e) {
@@ -82,6 +114,7 @@
             if (!touch.movepoint) {
               return;
             }
+            // console.log("pan", touch.movepoint);
             var panX = touch.movepoint.x - touch.startpoint.x;
             var panY = touch.movepoint.y - touch.startpoint.y;
             // Handle panning in relation to previous panning state
@@ -221,11 +254,15 @@
             targetPort = null;
           }.bind(this));
         }
+        this.observe();
 
         // Handle passing zoom value to the GSS engine for node rescaling
         //this.engine = GSS.engines[0];
         //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
         //this.engine.solve();
+
+        // Used to limit panning
+        this.addEventListener('moved', this.calcMinMax.bind(this));
 
         // Initial w/h
         this.calcBump();
@@ -247,28 +284,61 @@
             y: graph._pan.y + event.dy
           });
         });
-
       },
       getPan: function () {
         return this._pan;
       },
       panning: function (pan, scale) {
+        if (this.scale !== this.zoom) { return; }
         // Panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this._pan.x = pan.x;
-        this._pan.y = pan.y;
-        this.pan = pan.x + ' ' + pan.y;
+        this.pan = Math.round(pan.x) + ' ' + Math.round(pan.y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        var x = parseInt(pan[0], 10);
+        var y = parseInt(pan[1], 10);
+
+        // Don't pan beyond min/max
+        var limitPan = false;
+        if ( x > 0-(this.minX-this.width) ) {
+          x = 0-(this.minX-this.width);
+          limitPan = true;
+        }
+        if ( y > 0-(this.minY-this.height) ) {
+          y = 0-(this.minY-this.height);
+          limitPan = true;
+        }
+        if ( x < 0-this.maxX) {
+          x = 0-this.maxX;
+          limitPan = true;
+        }
+        if ( y < 0-this.maxY) {
+          y = 0-this.maxY;
+          limitPan = true;
+        }
+        if (limitPan) {
+          this.pan = x + " " + y;
+          return;
+        }
+
+        this._pan.x = x;
+        this._pan.y = y;
 
         var bump = this.calcBump();
 
-        // this.fire('panned', {pan:pan, bump:bump});
-        this.$.nodes.graphPanned( {pan:pan, bump:bump} );
-        this.$.edges.graphBumped(bump); 
+        var info = {
+          pan: this._pan,
+          bump: bump,
+          zoom: this.zoom
+        };
+        this.$.nodes.graphBumped(info);
+        this.$.edges.graphBumped(info); 
 
-        theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y);
+        theGraph.transform(this, this._pan.x - this.bump.x, this._pan.y - this.bump.y);
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -276,8 +346,8 @@
         this.bump.y = Math.max(0, this._pan.y) + this.padding;
 
         // For expanding in +x +y direction
-        this.style.width = this.bump.x + 0-this._pan.x + window.innerWidth + this.padding*2 + "px";
-        this.style.height = this.bump.y + 0-this._pan.y + window.innerHeight + this.padding*2 + "px";
+        this.style.width = this.bump.x + 0-this._pan.x + this.width + this.padding*2 + "px";
+        this.style.height = this.bump.y + 0-this._pan.y + this.height + this.padding*2 + "px";
 
         // the-edges and the-process listen to this
         // this.fire('bumped', this.bump);
@@ -287,52 +357,65 @@
 
         return this.bump;
       },
-      zooming: function (scale, center) {
-        // Scale happens fast
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        // console.log(center.x + this._pan.x + this.bump.x, center.y + this._pan.y + this.bump.y);
-        theGraph.origin(this, center.x + this._pan.x + this.bump.x, center.y + this._pan.y + this.bump.y);
-        theGraph.transform(this, 0-this.bump.x, 0-this.bump.y, scale);
-      },
-      zoomed: function (scale, center) {
-        if (center === undefined) {
-          center = {
-            x: window.innerWidth/2,
-            y: window.innerHeight/2
-          };
-        }
-
-        // Zoom causes a rerendering of graph elements
-        scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-        var zoom = this.zoom * scale;
-
-        // setTimeout(function () {
-        // }.bind(this), 0);
-
-        //this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom, 'strong']);
-        //this.engine.solve();
-
+      enhanceTimeout: null,
+      scaleChanged: function () {
+        // Fast-moving scale change
+        var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
-        // theGraph.transform(this, pan.x * scale, pan.y * scale, 1);
+        // Center on pinch or parent center 
+        // var pageX = this.zoomCenter ? this.zoomCenter.x : this.width/2; 
+        // var pageY = this.zoomCenter ? this.zoomCenter.y : this.height/2;
+        var pageX = this.width/2; 
+        var pageY = this.height/2;
+        var currentX = pan.x - this.bump.x;
+        var currentY = pan.y - this.bump.y;
+        // This is a manual transform origin equivalent for pan.
+        var oX = (currentX - pageX) * scaleD + pageX;
+        var oY = (currentY - pageY) * scaleD + pageY;
+        // To be corrected later
+        this.scalePanD.x = Math.round(oX + this.bump.x*scaleD);
+        this.scalePanD.y = Math.round(oY + this.bump.y*scaleD);
 
-        this.zoom = Math.max(0.25, Math.min(zoom, 6));
+        theGraph.transform(this, oX, oY, scaleD);
 
-        var distanceToOriginX = this.bump.x + center.x;
-        var distanceToOriginY = this.bump.y + center.y;
+        // Debounce "enhance"
+        clearTimeout(this.enhanceTimeout);
+        this.enhanceTimeout = setTimeout( this.scaleToZoom.bind(this), 500);
+      },
+      scaleToZoom: function () {
+        // Slower zoom change that redraws graph, debounced from scaleChanged
+        // Debounced from scaleChanged
+        clearTimeout(this.enhanceTimeout);
+        this.zoom = this.scale;
 
-        // Update internal panning state based on scale
-        // this.panned({
-        //   x: pan.x * scale,
-        //   y: pan.y * scale
-        // });
-        this.updateGridBg();
-        this.fire("zoomed", this.zoom);
+        // Transform offset to pan
+        // this.pan sends the new zoom to nodes
+        this.panned(this.scalePanD);
+      },
+      zooming: function (scaleD, center) {
+        // Scale change to scale
+        if (center) {
+          if (!this.zoomCenter) { this.zoomCenter = {}; }
+          this.zoomCenter.x = center.x;
+          this.zoomCenter.y = center.y;
+        }
+        // TODO fix when held and zoom changes within the same gesture
+        var scale = scaleD * this.zoom;
+        this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
+      },
+      zoomed: function () {
+        // Enhance on gesture end
+        // ??? Why does this break stuff?
+        // this.scaleToZoom();        
+      },
+      nodeMoved: function () {
+        this.calcMinMax();
       },
       calcMinMax: function () {
         var minX = 0;
         var minY = 0;
-        var maxX = window.innerWidth;
-        var maxY = window.innerHeight;
+        var maxX = 500;
+        var maxY = 500;
 
         var processes = this.querySelector("the-graph-nodes").children;
         var len = processes.length;
@@ -344,7 +427,7 @@
               minX = pos.x;
             }
             if (pos.y < minY) {
-              minX = pos.x;
+              minY = pos.y;
             }
             if (pos.x > maxX) {
               maxX = pos.x;
@@ -358,6 +441,13 @@
         this.minY = minY;
         this.maxX = maxX;
         this.maxY = maxY;
+
+        this.updatePaddedSize();
+      },
+      updatePaddedSize: function () {
+        this.style.width = -this.minX + this.maxX + this.padding*2 + "px";
+        this.style.height = -this.minY + this.maxY + this.padding*2 + "px";
+        this.updateGridBg();
       },
       updateGridBg: function () {
         // Update CSS grid image
@@ -366,9 +456,12 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
-        var initials = this.querySelector("the-graph-initials");
-        var exports = this.querySelector("the-graph-exports");
-
+        this.observe();
+        this.nodes = [];
+        this.edges = [];
+        this.initials = [];
+        this.exports = [];
+        this.groups = [];
         // Convert processes to an array
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
@@ -392,11 +485,24 @@
                 route: connection.metadata.route ? connection.metadata.route : 0
               }
             });
+            return;
           }
-          return;
-          initials.iips.push(connection);
+          this.initials.push({
+            data: connection.data,
+            target: connection.tgt.process + '.' + connection.tgt.port
+          });
+        }.bind(this));
+        this.graph.exports.forEach(function (exp) {
+          this.exports.push(exp);
+        }.bind(this));
+        if (!this.graph.groups) {
+          this.graph.groups = [];
+        }
+        this.graph.groups.forEach(function (group) {
+          this.groups.push(group);
         }.bind(this));
 
+        // Used to limit panning
         this.calcMinMax();
         this.updateGridBg();
       },
@@ -446,6 +552,7 @@
                 node.libraryComponent = this.library.getComponent(node.component);
                 node.grid = this.grid;
                 node.snap = this.snap;
+                this.fire('changed', this);
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
@@ -459,6 +566,7 @@
                 if (node.targetNode) {
                   node.targetPort = node.targetNode.getInportByName(target.port);
                 }
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));
@@ -472,12 +580,20 @@
                     this.$.edges.removeChild(edge);
                   }
                 }.bind(this));
+                this.fire('changed', this);
+                break;
+              case 'THE-GRAPH-EDGE':
+                this.fire('changed', this);
                 break;
             }
           }.bind(this));
         }.bind(this));
+        this.fire("mutated", mutations);
       },
       observe: function () {
+        if (this.observer) {
+          return;
+        }
         this.observer = new MutationObserver(this.handleMutations.bind(this));
         this.observer.observe(this, {
           subtree: true,
@@ -490,8 +606,72 @@
         if (this.observer) {
           this.observer.disconnect();
         }
+      },
+      toJSON: function () {
+        var definition = {
+          properties: this.graph.properties,
+          exports: [],
+          groups: [],
+          processes: {},
+          connections: []
+        };
+        this.$.nodes.getProcesses().forEach(function(node) {
+          var nodeId = node.getAttribute('name');
+          var nodePos = node.getPosition();
+          definition.processes[nodeId] = {
+            component: node.component,
+            metadata: {
+              x: nodePos.x,
+              y: nodePos.y,
+              label: node.label
+            }
+          };
+        });
+        this.$.edges.getEdges().forEach(function(edge) {
+          var edgeSource = edge.getSource();
+          var edgeTarget = edge.getTarget();
+          definition.connections.push({
+            src: {
+              process: edgeSource.node,
+              port: edgeSource.port
+            },
+            tgt: {
+              process: edgeTarget.node,
+              port: edgeTarget.port
+            },
+            metadata: {
+              route: edge.route
+            }
+          });
+        });
+        this.$.initials.getInitials().forEach(function(initial) {
+          var initialTarget = initial.getTarget();
+          definition.connections.push({
+            data: initial.data,
+            tgt: {
+              process: initialTarget.node,
+              port: initialTarget.port
+            }
+          });
+        });
+        this.$.exports.getExports().forEach(function(exp) {
+          definition.exports.push({
+            private: exp.private,
+            public: exp.public
+          });
+        });
+        this.$.groups.getGroups().forEach(function(group) {
+          definition.groups.push({
+            name: group.name,
+            nodes: group.nodes,
+            metadata: {
+              label: group.label
+            }
+          });
+        });
+        return definition;
       }
     });
+  })()
   </script>
-  
 </polymer-element>

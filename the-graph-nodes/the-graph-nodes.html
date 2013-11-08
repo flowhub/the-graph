@@ -23,12 +23,10 @@
         });
         return node;
       },
-      graphPanned: function (info) {
+      graphBumped: function (info) {
         var childNodes = this.getProcesses();
         childNodes.forEach(function (child) {
-          child.pan.x = info.pan.x;
-          child.pan.y = info.pan.y;
-          child.graphBumped(info.bump);
+          child.graphPanBumpZoom(info);
         });
       }
     });

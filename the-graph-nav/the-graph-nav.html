@@ -1,0 +1,42 @@
+<link rel="import" href="../the-graph-nav/the-graph-map.html">
+
+<polymer-element name="the-graph-nav" attributes="graph scale pan viewwidth viewheight" lightdom>
+  <style>
+    the-graph-nav {
+      position: relative;
+    }
+    the-graph-map {
+      position: relative;
+      top: -160px;
+      left: 0;
+    }
+  </style>
+  <template>
+    <the-graph-map id="map" graph="{{graph}}" scale="{{scale}}" pan="{{pan}}" viewwidth="{{viewwidth}}" viewheight="{{viewheight}}" width="200" height="150"></the-graph-map>
+    <div id="zoom">
+      <button id="zoomout"><i class="icon-minus"></i></button>
+      <input id="zoomrange" type="range" value="{{ scale }}" min=".25" max="2" step="0.05" style="width:110px;" />
+      <button id="zoomin"><i class="icon-plus"></i></button>
+    </div>
+  </template>
+  <script>
+  (function () {
+
+    Polymer('the-graph-nav', {
+      enteredView: function () {
+        this.$.zoomin.addEventListener('click', function (event) {
+          event.preventDefault();
+          this.scale = parseFloat(this.scale);
+          this.scale = Math.min(this.scale+0.25, 2);
+        }.bind(this));
+        this.$.zoomout.addEventListener('click', function (event) {
+          event.preventDefault();
+          this.scale = parseFloat(this.scale);
+          this.scale = Math.max(this.scale-0.25, 0.25);
+        }.bind(this));
+      }
+    });
+
+  })();
+  </script>
+</polymer-element>

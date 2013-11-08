@@ -1,0 +1,111 @@
+<link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
+
+<polymer-element name="the-graph-map" attributes="graph width height pan scale viewwidth viewheight" lightdom>
+  <style>
+    the-graph-map {
+      position: relative;
+      overflow: hidden;
+      cursor: move;
+    }
+    #thumb {
+      position: absolute;
+      top: 0; left: 0; 
+      background-color: rgba(42, 43, 49, 0.85);
+    }
+    #viewrect {
+      position: absolute;
+      top: 0; left: 0; 
+      width: 200px; 
+      height: 150px; 
+      border: 1px solid red;
+    }
+  </style>
+  <template>
+    <the-graph-thumb id="thumb" thumbrectangle="{{thumbrectangle}}" width="{{width}}" height="{{height}}"></the-graph-thumb>
+    <div id="viewrect"></div>
+  </template>
+  <script>
+  (function () {
+
+    Polymer('the-graph-map', {
+      width: 200,
+      height: 150,
+      ready: function () {
+        this.viewrectangle = [0,0,500,500];
+      },
+      enteredView: function () {
+        // Recenter graph by tapping map
+        this.addEventListener("tap", function(event){
+          this.pan = "0 0";
+        }.bind(this));
+        // Pan graph by dragging map
+        this.addEventListener("track", function(event){
+          var pan = this.pan.split(" ");
+          var x = parseInt(pan[0], 10);
+          var y = parseInt(pan[1], 10);
+          x -= event.ddx / this.thumbscale;
+          y -= event.ddy / this.thumbscale;
+          this.pan = x + " " + y;
+
+          event.preventTap();
+        }.bind(this));
+      },
+      viewrectangleChanged: function () {
+        var x = Math.round( (this.viewrectangle[0]/this.scale - this.thumbrectangle[0]) * this.thumbscale );
+        var y = Math.round( (this.viewrectangle[1]/this.scale - this.thumbrectangle[1]) * this.thumbscale );
+        var w = Math.round( this.viewrectangle[2] * this.thumbscale / this.scale );
+        var h = Math.round( this.viewrectangle[3] * this.thumbscale / this.scale );
+
+        // Clip to bounds
+        if (x < 0) { w += x; }
+        if (y < 0) { h += y; }
+        x = theGraph.clip(x, 0, this.width);
+        y = theGraph.clip(y, 0, this.height);
+        w = theGraph.clip(w, 0, this.width-x);
+        h = theGraph.clip(h, 0, this.height-y);
+
+        // Size and translate rect
+        this.$.viewrect.style.width = w+"px";
+        this.$.viewrect.style.height = h+"px";
+        theGraph.transform(this.$.viewrect, x, y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        var x = parseInt(pan[0], 10);
+        var y = parseInt(pan[1], 10);
+
+        this.viewrectangle[0] = -x;
+        this.viewrectangle[1] = -y;
+      },
+      thumbscaleChanged: function () {
+        this.viewrectangleChanged();
+      },
+      thumbrectangleChanged: function () {
+        // Binding this from the-graph-thumb to know the dimensions rendered
+        var w = this.thumbrectangle[2];
+        var h = this.thumbrectangle[3];
+        this.thumbscale = (w>h) ? this.width/w : this.height/h;
+      },
+      scaleChanged: function () {
+        this.viewrectangleChanged();
+      },
+      viewwidthChanged: function () {
+        this.viewrectangle[2] = parseInt(this.viewwidth, 10);
+      },
+      viewheightChanged: function () {
+        this.viewrectangle[3] = parseInt(this.viewheight, 10);
+      },
+      graphChanged: function () {
+        this.$.thumb.graphjson = this.graph.toJSON();
+        this.graph.addEventListener('changed', function () {
+          this.$.thumb.graphjson = this.graph.toJSON();
+        }.bind(this));
+        this.graph.addEventListener('moved', function () {
+          this.$.thumb.graphjson = this.graph.toJSON();
+        }.bind(this));
+      }
+    });
+
+  })();
+  </script>
+</polymer-element>

@@ -20,14 +20,13 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function(){
+
     Polymer('the-graph-process', {
       label: '',
+      component: '',
       icon: '',
       position: '0 0',
-      // _position: {
-      //   x: 0,
-      //   y: 0
-      // },
       drag: '',
       zoom: 1,
       pan: {
@@ -44,29 +43,129 @@
       libraryComponent: null,
       inports: [],
       outports: [],
-      created: function () {
-        this.style.position = 'absolute';
+      ready: function () {
+        var pos = this.getPosition();
+        this._position = [pos.x, pos.y];
       },
       enteredView: function () {
         var graph = this.parentNode.parentNode;
         this.graph = graph;
-        graph.addEventListener("zoomed", function(event){
-          this.zoom = event.detail;
-        }.bind(this));
-        // graph.addEventListener("panned", function(event){
-        //   this.pan = event.detail.pan;
-        //   this.graphBumped(event.detail.bump);
-        // }.bind(this));
-        // graph.addEventListener("bumped", function(event){
-        //   this.graphBumped(event.detail);
-        // }.bind(this));
 
         // Initial bump
         this.bump.x = graph.padding;
         this.bump.y = graph.padding;
 
         // Handle sizing
-        this.zoomChanged();
+        this.graphZoom(this.zoom);
+
+        //
+        // Autopan when dragging nodes to edge
+        //
+
+        var autoPanThreshold = 20;
+        var autopanSpeed = 15;
+        var panX, panY;
+        var autopanInterval;
+        var lastEvent;
+
+        var panGraph = function () {
+          var x = this.graph._pan.x;
+          var y = this.graph._pan.y;
+          if (panX) { x += panX; }
+          if (panY) { y += panY; }
+          this.graph.pan = x + " " + y;
+        }
+
+        var checkPan = function (event) {
+          panX = null;
+          panY = null;
+          if (event.pageX < autoPanThreshold) {
+            panX = autopanSpeed;
+          }
+          else if (event.pageX > this.graph.width-autoPanThreshold) {
+            panX = -autopanSpeed;
+          }
+          if (event.pageY < autoPanThreshold) {
+            panY = autopanSpeed;
+          }
+          else if (event.pageY > this.graph.height-autoPanThreshold) {
+            panY = -autopanSpeed;
+          }
+          clearInterval(autopanInterval);
+          if (panX || panY) {
+            panGraph.call(this);
+            autopanInterval = setInterval( function(){
+              panGraph.call(this);
+              // Retrigger track to move the process (otherwise gets left behind)
+              this.dispatchEvent(event);
+            }.bind(this), 100 );
+          }
+        }
+        
+        //
+        // Gesture recognition for highlighting and moving
+        //
+
+        var dragStartX, dragStartY, dragStartPanX, dragStartPanY, gestureRecognised;
+        var gestureThreshold = 20;
+
+        // Move or highlight
+        this.addEventListener("trackstart", function(event){
+          dragStartPanX = this.pan.x;
+          dragStartPanY = this.pan.y;
+          var pos = this.getPosition();
+          dragStartX = pos.x;
+          dragStartY = pos.y;
+          gestureRecognised = null;
+        }.bind(this));
+
+        this.addEventListener("track", function(event){
+          if (gestureRecognised === "highlight") { return; }
+
+          if (!gestureRecognised) {
+            if ( Math.abs(event.dy) > gestureThreshold ) {
+              gestureRecognised = "move";
+            }
+            else if ( Math.abs(event.dx) > gestureThreshold ) {
+              // Highlight it
+              gestureRecognised = "highlight";
+              this.highlight = (event.dx > 0) ? "out" : "in";
+              return;
+            }
+            else {
+              // Gesture not far enough
+              return;
+            }
+          }
+
+          // Move it
+          if (gestureRecognised === "move") { 
+            // Calculate pan delta, if panning while moving
+            var dx = ( event.dx - (this.pan.x - dragStartPanX) ) / this.zoom;
+            var dy = ( event.dy - (this.pan.y - dragStartPanY) ) / this.zoom;
+            // New position
+            var x = dragStartX + dx;
+            var y = dragStartY + dy;
+            this.position = x + " " + y;
+
+            // Autopan?
+            checkPan.call(this, event);
+          }
+        }.bind(this));
+
+        this.addEventListener("trackend", function(event){
+          if (gestureRecognised === "highlight") { 
+            // Unhighlight
+            this.highlight = null;
+          }
+          else if (gestureRecognised === "move") { 
+            // Oh snap
+            this.snapToGrid();
+          }
+          gestureRecognised = null;
+          clearInterval(autopanInterval);
+        }.bind(this));
+
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -121,7 +220,7 @@
       gridChanged: function () {
         this.width = this.grid - 1;
         this.height = this.grid - 1;
-        this.zoomChanged();
+        this.graphZoom(this.zoom);
       },
       getInports: function () {
         return Array.prototype.slice.call(this.$.inports.getElementsByTagName('the-graph-port'));
@@ -159,11 +258,37 @@
           this.label = this.name;
         }
       },
-      graphBumped: function (bump) {
+      graphPanBumpZoom: function (info) {
+        this.pan.x = info.pan.x;
+        this.pan.y = info.pan.y;
+        this.graphBump(info.bump);
+        if (this.zoom !== info.zoom) {
+          this.graphZoom(info.zoom);
+        }
+      },
+      graphBump: function (bump) {
         this.bump.x = bump.x;
         this.bump.y = bump.y;
         var position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+      },
+      graphZoom: function (zoom) {
+        this.zoom = zoom;
+
+        // Set position by screen pixels
+        var position = this.getZoomedPosition();
+        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+
+        // Sizing
+        var diameter = this.getDiameter();
+        this.style.width = diameter + 'px';
+        this.style.height = diameter + 'px';
+
+        // Update all ports
+        var ports = Array.prototype.slice.call(this.getElementsByTagName('the-graph-port'));
+        ports.forEach(function(port){
+          port.graphZoom();
+        }.bind(this));
       },
       getPosition: function () {
         // return this._position;
@@ -180,53 +305,50 @@
           y: Math.round(position.y*this.zoom)
         };
       },
-      getDrag: function () {
-        var drag = this.drag.split(' ');
-        return {
-          x: parseInt(drag[0]),
-          y: parseInt(drag[1])
-        };
-      },
-      dragChanged: function () {
-        if (this.highlight) {
-          return;
-        }
-        var drag = this.getDrag();
-        var x = drag.x / this.zoom - this.pan.x / this.zoom;
-        x -= this.clientWidth / 2;
-        var y = drag.y / this.zoom - this.pan.y / this.zoom;
-        y -= this.clientHeight / 2;
+      // getDrag: function () {
+      //   var drag = this.drag.split(' ');
+      //   return {
+      //     x: parseInt(drag[0]),
+      //     y: parseInt(drag[1])
+      //   };
+      // },
+      // dragChanged: function () {
+      //   if (this.highlight) {
+      //     return;
+      //   }
+      //   var drag = this.getDrag();
+      //   var x = drag.x / this.zoom - this.pan.x / this.zoom;
+      //   x -= this.clientWidth / 2;
+      //   x = Math.round(x);
+      //   var y = drag.y / this.zoom - this.pan.y / this.zoom;
+      //   y -= this.clientHeight / 2;
+      //   y = Math.round(y);
 
-        // Snap to grid
+      //   this.position = x + ' ' + y;
+      // },
+      snapToGrid: function () {
+        // Called on pointerup with a short delay
+        var x = this._position[0];
+        var y = this._position[1];
         x = Math.round(x / this.snap) * this.snap;
         y = Math.round(y / this.snap) * this.snap;
 
-        // this._position.x = x;
-        // this._position.y = y;
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
       positionChanged: function () {
-        var position = this.getZoomedPosition();
+        var position = this.getPosition();
+        this._position[0] = position.x;
+        this._position[1] = position.y;
+
+        position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
         this.fire('moved', {
           x: position.x,
           y: position.y
         });
-      },
-      zoomChanged: function () {
-        // Set position by screen pixels
-        var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
-
-        // Sizing
-        var diameter = this.getDiameter();
-        this.style.width = diameter + 'px';
-        this.style.height = diameter + 'px';
-
-        this.fire('zoomed', this.zoom);
       },
       getDiameter: function () {
         var diameter = Math.round(this.width * this.zoom);
@@ -299,6 +421,8 @@
         this.fire('highlight', this.highlight);
       }
     });
+
+  })()
   </script>
 </polymer-element>
 

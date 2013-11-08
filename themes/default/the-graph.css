@@ -3,7 +3,7 @@ the-graph-editor {
   padding: none;
   font-family: verdana;
   color: white;
-  background-color: black;
+
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -15,22 +15,20 @@ the-graph-editor {
 
 the-graph-editor {
   display: block;
-  width: 100%;
-  height: 100%;
 
   background-color: #1d1d1d;
 
   position: absolute;
-  left: 0; top: 0; right: 0; bottom: 0;
+  left: 0; top: 0;
   overflow: hidden;
 }
 
-the-graph-editor #zoom {
-  position: fixed;
+the-graph-nav {
+  position: absolute;
   bottom: 0px;
   right: 0px;
 }
-the-graph-editor #zoom button {
+the-graph-nav button {
   background-color: #2a2b31;
   color: white;
   border: none;
@@ -70,7 +68,7 @@ the-graph {
   -o-transform: translate3d(-500px,-500px,0px) scale(1);
   transform: translate3d(-500px,-500px,0px) scale(1);
 
-  background-color: #1d1d1d;
+  /*background-color: #1d1d1d;*/
 
   background-image:
     -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
