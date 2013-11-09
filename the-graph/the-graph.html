@@ -280,20 +280,24 @@
 
         // Don't pan beyond min/max
         var limitPan = false;
-        if ( x > 0-(this.minX-this.width) ) {
-          x = 0-(this.minX-this.width);
+        var minX = 0 - (this.minX*this.zoom - this.width);
+        if ( x > minX ) {
+          x = minX;
           limitPan = true;
         }
-        if ( y > 0-(this.minY-this.height) ) {
-          y = 0-(this.minY-this.height);
+        var minY = 0 - (this.minY*this.zoom - this.height);
+        if ( y > minY ) {
+          y = minY;
           limitPan = true;
         }
-        if ( x < 0-this.maxX) {
-          x = 0-this.maxX;
+        var maxX = 0 - this.maxX*this.zoom;
+        if ( x < maxX) {
+          x = maxX;
           limitPan = true;
         }
-        if ( y < 0-this.maxY) {
-          y = 0-this.maxY;
+        var maxY = 0 - this.maxY*this.zoom;
+        if ( y < maxY) {
+          y = maxY;
           limitPan = true;
         }
         if (limitPan) {
@@ -314,7 +318,7 @@
         this.$.nodes.graphBumped(info);
         this.$.edges.graphBumped(info); 
 
-        theGraph.transform(this, this._pan.x - this.bump.x, this._pan.y - this.bump.y);
+        theGraph.transform(this, x - this.bump.x, y - this.bump.y);
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -365,7 +369,7 @@
         this.zoom = this.scale;
 
         // Transform offset to pan
-        // this.pan sends the new zoom to nodes
+        // this.panChanged sends the new zoom to nodes
         this.panned(this.scalePanD);
       },
       zooming: function (scaleD, center) {
@@ -388,10 +392,10 @@
         this.calcMinMax();
       },
       calcMinMax: function () {
-        var minX = 0;
-        var minY = 0;
-        var maxX = 500;
-        var maxY = 500;
+        var minX = Infinity;
+        var minY = Infinity;
+        var maxX = -Infinity;
+        var maxY = -Infinity;
 
         var processes = this.querySelector("the-graph-nodes").children;
         var len = processes.length;
@@ -413,6 +417,13 @@
             }
           }
         }
+
+        if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY) ) { return; }
+        minX -= 0;
+        minY -= 0;
+        maxX += 60;
+        maxY += 60;
+
         this.minX = minX;
         this.minY = minY;
         this.maxX = maxX;
@@ -421,8 +432,8 @@
         this.updatePaddedSize();
       },
       updatePaddedSize: function () {
-        this.style.width = -this.minX + this.maxX + this.padding*2 + "px";
-        this.style.height = -this.minY + this.maxY + this.padding*2 + "px";
+        this.style.width = ( (-this.minX + this.maxX)*this.zoom + this.padding*2 ) + "px";
+        this.style.height = ( (-this.minY + this.maxY)*this.zoom + this.padding*2 ) + "px";
         this.updateGridBg();
       },
       updateGridBg: function () {
