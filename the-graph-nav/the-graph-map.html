@@ -64,8 +64,6 @@
         w = theGraph.clip(w, 0, this.width-x);
         h = theGraph.clip(h, 0, this.height-y);
 
-        console.log(x, y, w, h);
-
         // Size and translate rect
         this.$.viewrect.style.width = w+"px";
         this.$.viewrect.style.height = h+"px";
@@ -101,11 +99,9 @@
         this.$.thumb.graphjson = this.graph.toJSON();
         this.graph.addEventListener('changed', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          // this.$.thumb.redrawGraph();
         }.bind(this));
         this.graph.addEventListener('moved', function () {
           this.$.thumb.graphjson = this.graph.toJSON();
-          // this.$.thumb.redrawGraph();
         }.bind(this));
       }
     });
