@@ -152,10 +152,7 @@
         this.pathTouch.setAttributeNS(null, "class", "edge-touch" );
 
         // Add event for touchable path
-        this.pathTouch.addEventListener("tap", function(event){
-          this.bringToTop();
-          this.fire("tapped", event);
-        }.bind(this));
+        this.pathTouch.addEventListener('click', this.onClick.bind(this), false);
 
         // Make visible path
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -259,9 +256,11 @@
       },
       targetMoved: function () {
         this.drawEdge();
+      },
+      onClick: function () {
+        this.fire('edgeclick', this);
       }
     });
-
   })()
   </script>
   

@@ -62,6 +62,8 @@
 
         // Handle sizing
         this.graphZoom(this.zoom);
+
+        this.addEventListener('click', this.onClick.bind(this), false);
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -318,9 +320,11 @@
           }
         }
         this.fire('highlight', this.highlight);
+      },
+      onClick: function () {
+        this.fire('nodeclick', this);
       }
     });
-
   })()
   </script>
 </polymer-element>
