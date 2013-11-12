@@ -7,7 +7,7 @@
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
-    "polymer": ">=0.0.20131025",
+    "polymer": "0.0.20131025",
     "font-awesome": "3.2.x",
     "the-behavior": "*",
     "gss": "git://github.com/the-gss/gss.git#gh-pages"
