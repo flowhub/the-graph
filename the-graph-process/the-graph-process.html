@@ -323,6 +323,19 @@
       },
       onClick: function () {
         this.fire('nodeclick', this);
+      },
+      toJSON: function () {
+        var nodeId = this.getAttribute('name');
+        var nodePos = this.getPosition();
+        return {
+          id: nodeId,
+          component: this.component,
+          metadata: {
+            x: nodePos.x,
+            y: nodePos.y,
+            label: this.label
+          }
+        };
       }
     });
   })()

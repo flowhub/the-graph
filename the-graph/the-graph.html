@@ -79,6 +79,9 @@
         this.addEventListener('moved', function () {
           this.fire('changed', this);
         }.bind(this));
+        this.addEventListener('iip', function () {
+          this.fire('changed', this);
+        }.bind(this));
 
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
@@ -543,6 +546,7 @@
                 node.grid = this.grid;
                 node.snap = this.snap;
                 this.fire('changed', this);
+                this.fire('addnode', node);
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
@@ -557,9 +561,11 @@
                   node.targetPort = node.targetNode.getInportByName(target.port);
                 }
                 this.fire('changed', this);
+                this.fire('addedge', node);
                 break;
               case 'THE-GRAPH-INITIAL':
                 this.fire('changed', this);
+                this.fire('addinitial', node);
                 break;
             }
           }.bind(this));
@@ -574,12 +580,15 @@
                   }
                 }.bind(this));
                 this.fire('changed', this);
+                this.fire('removenode', node);
                 break;
               case 'THE-GRAPH-EDGE':
                 this.fire('changed', this);
+                this.fire('removeedge', node);
                 break;
               case 'THE-GRAPH-INITIAL':
                 this.fire('changed', this);
+                this.fire('removeinitial', node);
                 break;
             }
           }.bind(this));
@@ -612,43 +621,16 @@
           connections: []
         };
         this.$.nodes.getProcesses().forEach(function(node) {
-          var nodeId = node.getAttribute('name');
-          var nodePos = node.getPosition();
-          definition.processes[nodeId] = {
-            component: node.component,
-            metadata: {
-              x: nodePos.x,
-              y: nodePos.y,
-              label: node.label
-            }
-          };
+          var data = node.toJSON();
+          var nodeId = data.id;
+          delete data.id;
+          definition.processes[nodeId] = data;
         });
         this.$.edges.getEdges().forEach(function(edge) {
-          var edgeSource = edge.getSource();
-          var edgeTarget = edge.getTarget();
-          definition.connections.push({
-            src: {
-              process: edgeSource.node,
-              port: edgeSource.port
-            },
-            tgt: {
-              process: edgeTarget.node,
-              port: edgeTarget.port
-            },
-            metadata: {
-              route: edge.route
-            }
-          });
+          definition.connections.push(edge.toJSON());
         });
         this.$.initials.getInitials().forEach(function(initial) {
-          var initialTarget = initial.getTarget();
-          definition.connections.push({
-            data: initial.data,
-            tgt: {
-              process: initialTarget.node,
-              port: initialTarget.port
-            }
-          });
+          definition.connections.push(initial.toJSON());
         });
         this.$.exports.getExports().forEach(function(exp) {
           definition.exports.push({

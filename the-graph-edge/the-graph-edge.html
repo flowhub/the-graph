@@ -259,6 +259,23 @@
       },
       onClick: function () {
         this.fire('edgeclick', this);
+      },
+      toJSON: function () {
+        var edgeSource = this.getSource();
+        var edgeTarget = this.getTarget();
+        return {
+          src: {
+            process: edgeSource.node,
+            port: edgeSource.port
+          },
+          tgt: {
+            process: edgeTarget.node,
+            port: edgeTarget.port
+          },
+          metadata: {
+            route: this.route
+          }
+        };
       }
     });
   })()
