@@ -76,6 +76,10 @@
         this.scalePanD = { x: 0, y: 0 };
       },
       enteredView: function () {
+        this.addEventListener('moved', function () {
+          this.fire('changed', this);
+        }.bind(this));
+
         if (this.$.graphpinch) {
           this.$.graphpinch.addEventListener('gesture', function (e) {
             if (e.detail.scale===1) {
@@ -554,6 +558,9 @@
                 }
                 this.fire('changed', this);
                 break;
+              case 'THE-GRAPH-INITIAL':
+                this.fire('changed', this);
+                break;
             }
           }.bind(this));
           var removedNodes = Array.prototype.slice.call(mutation.removedNodes);
@@ -569,6 +576,9 @@
                 this.fire('changed', this);
                 break;
               case 'THE-GRAPH-EDGE':
+                this.fire('changed', this);
+                break;
+              case 'THE-GRAPH-INITIAL':
                 this.fire('changed', this);
                 break;
             }
