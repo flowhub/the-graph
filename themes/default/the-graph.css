@@ -291,6 +291,11 @@ path.edge {
   stroke-width: 1.5px;
 }
 
+path.selected {
+  stroke: #b5cf44;
+  stroke-opacity: 0.1;
+}
+
 path.edge.route0  { stroke: #fff; }
 the-graph-inports the-graph-port.route0  { background-color: #fff; }
 the-graph-process.highlight the-graph-outports the-graph-port.route0  { background-color: #fff; }
