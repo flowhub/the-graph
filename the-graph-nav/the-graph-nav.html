@@ -34,6 +34,14 @@
           this.scale = parseFloat(this.scale);
           this.scale = Math.max(this.scale-0.25, 0.25);
         }.bind(this));
+
+        // Don't track graph when using zoom slider
+        this.$.zoomrange.addEventListener("pointerdown", function (event) {
+          event.stopPropagation();
+        });
+        this.$.zoomrange.addEventListener("pointerup", function (event) {
+          event.stopPropagation();
+        });
       }
     });
 
