@@ -15,9 +15,7 @@ the-graph-editor {
 
 the-graph-editor {
   display: block;
-
-  background-color: #1d1d1d;
-
+  background-color: hsl(187, 50%, 7%);
   position: absolute;
   left: 0; top: 0;
   overflow: hidden;
@@ -68,8 +66,6 @@ the-graph {
   -o-transform: translate3d(-500px,-500px,0px) scale(1);
   transform: translate3d(-500px,-500px,0px) scale(1);
 
-  /*background-color: #1d1d1d;*/
-
   background-image:
     -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
   background-image:
@@ -103,6 +99,9 @@ the-graph-process:before, the-graph-subgraph:before {
   right: 2px;
   bottom: 2px;
   display: block;
+}
+the-graph-process.selected, the-graph-subgraph.selected {
+  box-shadow: 0 0 5px #b5cf44;
 }
 
 the-graph-process.highlight, the-graph-subgraph.highlight {
@@ -290,6 +289,11 @@ path.edge {
   stroke-linejoin: round;
   stroke: #66FF00;
   stroke-width: 1.5px;
+}
+
+path.selected {
+  stroke: #b5cf44;
+  stroke-opacity: 0.1;
 }
 
 path.edge.route0  { stroke: #fff; }

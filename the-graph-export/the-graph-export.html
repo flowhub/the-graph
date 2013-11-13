@@ -1,7 +1,15 @@
-<polymer-element name="the-graph-export" attributes="private public">
+<link rel="import" href="../the-graph-process/the-graph-process.html">
+<link rel="import" href="../the-graph-edge/the-graph-edge.html">
+
+
+<polymer-element name="the-graph-export" attributes="private public" extends="the-graph-process">
 
   <script>
+  (function(){
+
     Polymer('the-graph-export', {
+      ready: function () {},
+      enteredView: function () {},
       private: '',
       public: '',
       getPrivate: function () {
@@ -10,8 +18,14 @@
           node: split[0],
           port: split[1]
         };
+      },
+      highlightChanged: function () {
+        // Don't highlight
+        return;
       }
     });
+
+  })();
   </script>
   
 </polymer-element>

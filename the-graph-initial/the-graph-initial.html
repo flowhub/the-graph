@@ -10,6 +10,19 @@
           node: split[0],
           port: split[1]
         };
+      },
+      dataChanged: function () {
+        this.fire('iip', this);
+      },
+      toJSON: function () {
+        var initialTarget = this.getTarget();
+        return {
+          data: this.data,
+          tgt: {
+            process: initialTarget.node,
+            port: initialTarget.port
+          }
+        };
       }
     });
   </script>

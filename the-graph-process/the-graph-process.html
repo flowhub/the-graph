@@ -175,6 +175,7 @@
           clearInterval(autopanInterval);
         }.bind(this));
 
+        this.addEventListener('click', this.onClick.bind(this), false);
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -428,9 +429,24 @@
           }
         }
         this.fire('highlight', this.highlight);
+      },
+      onClick: function () {
+        this.fire('nodeclick', this);
+      },
+      toJSON: function () {
+        var nodeId = this.getAttribute('name');
+        var nodePos = this.getPosition();
+        return {
+          id: nodeId,
+          component: this.component,
+          metadata: {
+            x: nodePos.x,
+            y: nodePos.y,
+            label: this.label
+          }
+        };
       }
     });
-
   })()
   </script>
 </polymer-element>
