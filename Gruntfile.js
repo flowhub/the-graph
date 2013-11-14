@@ -1,4 +1,5 @@
 (function() {
+  "use strict";
   module.exports = function() {
 
     var banner = 
@@ -10,25 +11,32 @@
       elements: ['the-*/*.html']
     };
 
+    var jshintOptions = { 
+      strict: true,
+      newcap: false 
+    };
+
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
       jshint: {
-        all: sources.scripts,
+        options: jshintOptions,
+        all: {
+          src: sources.scripts
+        },
         force: {
-          options: { force: true },
-          files: { src: sources.scripts }
+          src: sources.scripts,
+          options: { force: true }
         }
       },
       inlinelint: {
-        html: sources.elements,
-        options: { 
-          strict: true,
-          newcap: false 
-        }//,
-        // force: {
-        //   options: { force: true },
-        //   files: { src: sources.scripts }
-        // }
+        options: jshintOptions,
+        all: {
+          src: sources.elements,
+        },
+        force: {
+          src: sources.elements,
+          options: { force: true }
+        }
       },
       watch: {
         scripts: {
@@ -48,11 +56,16 @@
       }
     });
 
+    // on watch events configure jshint:all to only run on changed file
+    // this.event.on('watch', function(action, filepath) {
+    //   this.config('jshint.all.src', filepath);
+    // });
+
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
 
-    this.registerTask('test', ['jshint', 'inlinelint']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all']);
     this.registerTask('default', ['test']);
   };
 
