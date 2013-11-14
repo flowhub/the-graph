@@ -59,7 +59,6 @@
           loading.parentNode.removeChild(loading);
           // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
-          console.log(editors[0].$);
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
           // Debug
           window.g = editors[0].$.graph;
@@ -70,9 +69,9 @@
         // Clock
         // script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
         // Gesture object building (lots of ports!)
-        script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
+        // script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
         // Gesture data gathering (big graph)
-        //script.src = 'https://api.github.com/gists/7022262?callback=loadGraph';
+        script.src = 'https://api.github.com/gists/7022262?callback=loadGraph';
         // Edge algo test
         //script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
         body.appendChild(script);

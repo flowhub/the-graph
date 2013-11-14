@@ -132,7 +132,7 @@
             var newPan = {
               x: panX + pan.x,
               y: panY + pan.y
-            }
+            };
             this.panning(newPan, 1);
           }.bind(this));
           this.$.graphpan.addEventListener('gestureend', function (e) {
@@ -144,7 +144,7 @@
             var newPan = {
               x: panX + pan.x,
               y: panY + pan.y
-            }
+            };
             this.panned(newPan);
           }.bind(this));
         }

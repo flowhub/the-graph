@@ -75,7 +75,7 @@
           if (panX) { x += panX; }
           if (panY) { y += panY; }
           this.graph.pan = x + " " + y;
-        }
+        };
 
         var checkPan = function (event) {
           panX = null;
@@ -101,7 +101,7 @@
               this.dispatchEvent(event);
             }.bind(this), 100 );
           }
-        }
+        };
         
         //
         // Gesture recognition for highlighting and moving
@@ -305,8 +305,8 @@
         // return this._position;
         var position = this.position.split(' ');
         return {
-          x: parseInt(position[0]),
-          y: parseInt(position[1])
+          x: parseInt(position[0], 10),
+          y: parseInt(position[1], 10)
         };
       },
       getZoomedPosition: function () {
@@ -365,7 +365,7 @@
         var diameter = Math.round(this.width * this.zoom);
         if (diameter < 24) {
           // Ensure sane touchable size
-          return diameter = 24;
+          diameter = 24;
         }
         return diameter;
       },
@@ -396,9 +396,10 @@
       },
       highlightChanged: function () {
         var position = this.getZoomedPosition();
+        var diameter;
         if (this.highlight) {
           // Focus the node
-          var diameter = this.getHighlightDiameter();
+          diameter = this.getHighlightDiameter();
           this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
@@ -415,7 +416,7 @@
           }
         } else {
           // Unfocus the node
-          var diameter = this.getDiameter();
+          diameter = this.getDiameter();
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.zIndex = 10;

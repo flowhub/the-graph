@@ -47,7 +47,7 @@ util.transformOrigin = function (el, x, y) {
 
 util.clip = function (num, min, max) {
   return Math.max(Math.min(num, max), min);
-}
+};
 
 
 })();

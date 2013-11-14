@@ -13,15 +13,15 @@
         north: 315
       };
 
-      function getPortInSide (index, ports) {
+      var getPortInSide = function (index, ports) {
         return 360 / Object.keys(sides).length / (ports + 1) * (index + 1);
       };
 
-      function getPortDegrees (index, ports, side) {
+      var getPortDegrees = function (index, ports, side) {
         var inside = getPortInSide(index, ports);
         var absolute = sides[side] + inside;
         if (side==="west") {
-          absolute = sides["north"] - inside;
+          absolute = sides.north - inside;
         }
         if (absolute > 360) {
           absolute -= 360;
@@ -29,7 +29,7 @@
         return absolute;
       };
 
-      function distanceInSquare (degrees, radius) {
+      var distanceInSquare = function (degrees, radius) {
         var origDegrees = degrees;
         degrees = degrees % 90;
         if (degrees >= 45) {
@@ -40,11 +40,11 @@
         return adjacent / Math.cos(radians);
       };
 
-      function distanceInCircle (degrees, radius) {
+      var distanceInCircle = function (degrees, radius) {
         return radius;
       };
 
-      function getPortPosition (shape, degrees, parent, port) {
+      var getPortPosition = function (shape, degrees, parent, port) {
         var distance;
         //var radius = parent.width / 2;
         var radius = parent.offsetWidth / 2;

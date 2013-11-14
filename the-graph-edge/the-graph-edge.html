@@ -12,7 +12,7 @@
   (function(){
     "use strict";
 
-    function determinePortSides(sourceX, sourceY, targetX, targetY) {
+    var determinePortSides = function (sourceX, sourceY, targetX, targetY) {
       var edgeType = ['east', 'west', 'R->L'];
       var xDiff = targetX - sourceX;
       var yDiff = targetY - sourceY;
@@ -49,7 +49,7 @@
       return edgeType;
     };
 
-    function makePath(sourcePos, targetPos, edgeType, scale){
+    var makePath = function (sourcePos, targetPos, edgeType, scale){
       var sourceX = sourcePos.left + sourcePos.width / 2;
       var sourceY = sourcePos.top + sourcePos.height / 2;
       var targetX = targetPos.left + targetPos.width / 2;
@@ -60,7 +60,7 @@
       var nodeH2 = 60 / 2;
 
       var startX = sourceX;
-      var startY = sourceY
+      var startY = sourceY;
       var endX = targetX;
       var endY = targetY;
       var c1X, c1Y, c2X, c2Y;
@@ -91,6 +91,7 @@
           c2Y = endY - nodeH;
           break;
         case "R->L":
+          /* falls through */
         default:
           // right to left
           c1X = startX + (endX - startX)/2;
@@ -108,7 +109,7 @@
       ];
 
       return d.join(" ");
-    }
+    };
 
     Polymer('the-graph-edge', {
       source: '',
