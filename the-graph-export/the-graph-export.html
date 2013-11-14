@@ -13,8 +13,15 @@
       private: '',
       public: '',
       ready: function () {
+        this.super();
+
         var pos = this.getPosition();
         this._position = [pos.x, pos.y];
+        this.positionChanged();
+        this.graphZoom(this.zoom);
+      },
+      enteredView: function () {
+        this.super();
       },
       getPrivate: function () {
         var split = this.private.split('.');
