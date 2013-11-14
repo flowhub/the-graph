@@ -60,11 +60,13 @@
       },
       graphChanged: function () {
         this.buildInitialLibrary();
-        this.$.graph.graph = this.graph;
-        this.$.graph.library = this.$.library;
+
+        var graphEl = this.querySelector("#graph");
+        graphEl.graph = this.graph;
+        graphEl.library = this.$.library;
 
         // Reference the graph element
-        this.$.nav.graph = this.$.graph;
+        this.$.nav.graph = graphEl;
       },
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {

@@ -61,7 +61,7 @@
           var editors = document.getElementsByTagName('the-graph-editor');
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
           // Debug
-          window.g = editors[0].$.graph;
+          window.g = editors[0];
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
