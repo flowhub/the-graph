@@ -2,7 +2,7 @@
 <link rel="import" href="../the-graph-edge/the-graph-edge.html">
 
 
-<polymer-element name="the-graph-export" attributes="private public" extends="the-graph-process">
+<polymer-element name="the-graph-export" attributes="private public position route" extends="the-graph-process">
 
   <script>
   (function(){
@@ -12,6 +12,17 @@
       enteredView: function () {},
       private: '',
       public: '',
+      ready: function () {
+        this.super();
+
+        var pos = this.getPosition();
+        this._position = [pos.x, pos.y];
+        this.positionChanged();
+        this.graphZoom(this.zoom);
+      },
+      enteredView: function () {
+        this.super();
+      },
       getPrivate: function () {
         var split = this.private.split('.');
         return {
@@ -22,7 +33,21 @@
       highlightChanged: function () {
         // Don't highlight
         return;
+      },
+      toJSON: function () {
+        var nodePos = this.getPosition();
+
+        return {
+          "public": this.public,
+          "private": this.private,
+          metadata: {
+            x: nodePos.x,
+            y: nodePos.y,
+            route: this.route
+          }
+        };
       }
+
     });
 
   })();

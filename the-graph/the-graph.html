@@ -25,7 +25,7 @@
     </the-graph-initials>
     <the-graph-exports id="exports">
       <template repeat="{{ export in exports }}">
-        <the-graph-export public="{{ export.public }}" private="{{ export.private }}"></the-graph-export>
+        <the-graph-export public="{{ export.public }}" private="{{ export.private }}" label="{{ export.public }}" position="{{export.metadata.x}} {{export.metadata.y}}" route="{{export.metadata.route}}"></the-graph-export>
       </template>
     </the-graph-exports>
     <the-graph-groups id="groups">
@@ -41,6 +41,7 @@
   (function(){
 
     Polymer('the-graph', {
+      id: null,
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
@@ -344,6 +345,7 @@
           zoom: this.zoom
         };
         this.$.nodes.graphBumped(info);
+        this.$.exports.graphBumped(info);
         this.$.edges.graphBumped(info); 
 
         theGraph.transform(this, x - this.bump.x, y - this.bump.y);
@@ -472,6 +474,7 @@
       },
       graphChanged: function () {
         this.observe();
+        this.id = this.graph.id;
         this.nodes = [];
         this.edges = [];
         this.initials = [];
@@ -507,9 +510,19 @@
             target: connection.tgt.process + '.' + connection.tgt.port
           });
         }.bind(this));
+
+        // Convert exports to an array
+        if (!this.graph.exports) {
+          this.graph.exports = [];
+        }
         this.graph.exports.forEach(function (exp) {
+          if (!exp.metadata) {
+            exp.metadata = {x:0,y:0,route:0};
+          }
           this.exports.push(exp);
         }.bind(this));
+
+        // Convert groups to an array
         if (!this.graph.groups) {
           this.graph.groups = [];
         }
@@ -655,10 +668,7 @@
           definition.connections.push(initial.toJSON());
         });
         this.$.exports.getExports().forEach(function(exp) {
-          definition.exports.push({
-            private: exp.private,
-            public: exp.public
-          });
+          definition.exports.push(exp.toJSON());
         });
         this.$.groups.getGroups().forEach(function(group) {
           definition.groups.push({
