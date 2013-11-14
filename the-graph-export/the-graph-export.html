@@ -1,17 +1,49 @@
-<polymer-element name="the-graph-export" attributes="private public">
+<link rel="import" href="../the-graph-process/the-graph-process.html">
+<link rel="import" href="../the-graph-edge/the-graph-edge.html">
+
+
+<polymer-element name="the-graph-export" attributes="private public position route" extends="the-graph-process">
 
   <script>
+  (function(){
+
     Polymer('the-graph-export', {
+      ready: function () {},
+      enteredView: function () {},
       private: '',
       public: '',
+      ready: function () {
+        var pos = this.getPosition();
+        this._position = [pos.x, pos.y];
+      },
       getPrivate: function () {
         var split = this.private.split('.');
         return {
           node: split[0],
           port: split[1]
         };
+      },
+      highlightChanged: function () {
+        // Don't highlight
+        return;
+      },
+      toJSON: function () {
+        var nodePos = this.getPosition();
+
+        return {
+          "public": this.public,
+          "private": this.private,
+          metadata: {
+            x: nodePos.x,
+            y: nodePos.y,
+            route: this.route
+          }
+        };
       }
+
     });
+
+  })();
   </script>
   
 </polymer-element>

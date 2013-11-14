@@ -41,10 +41,6 @@ the-library {
   display: none;
 }
 
-the-graph-process {
-  z-index: 10;
-}
-
 the-graph {
   color: white;
 
@@ -76,7 +72,8 @@ the-graph {
   background-position: 500px 500px;
 }
 
-the-graph-process, the-graph-subgraph {
+the-graph-process, the-graph-subgraph, the-graph-export {
+  z-index: 10;
   position: absolute;
   top: 0;
   left: 0;
@@ -87,7 +84,7 @@ the-graph-process, the-graph-subgraph {
   border: 2px hsla(180, 11%, 32%, 1) solid;
   cursor: move;
 }
-the-graph-process:before, the-graph-subgraph:before {
+the-graph-process:before, the-graph-subgraph:before, the-graph-export:before {
   content: '';
   background-color: hsla(184, 8%, 100%, 0.55);
   font-size: 30px;
@@ -100,7 +97,7 @@ the-graph-process:before, the-graph-subgraph:before {
   bottom: 2px;
   display: block;
 }
-the-graph-process.selected, the-graph-subgraph.selected {
+the-graph-process.selected, the-graph-subgraph.selected, the-graph-export.selected {
   box-shadow: 0 0 5px #b5cf44;
 }
 
@@ -176,7 +173,7 @@ the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highl
   -moz-transform: rotate(90deg);
 }
 
-the-graph-process i.icon, the-graph-subgraph i.icon {
+the-graph-process i.icon, the-graph-subgraph i.icon, the-graph-export i.icon {
   color: black;
   position: absolute;
   overflow: hidden;
@@ -194,7 +191,7 @@ the-graph-process.highlight i.icon, the-graph-subgraph.highlight i.icon {
   margin-top: -10px;
   margin-left: -8px;
 }
-the-graph-process h1, the-graph-subgraph h1 {
+the-graph-process h1, the-graph-subgraph h1, the-graph-export h1 {
   display: block;
   position: absolute;
   bottom: -27px;
