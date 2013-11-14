@@ -41,6 +41,7 @@
   (function(){
 
     Polymer('the-graph', {
+      id: null,
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
@@ -451,6 +452,7 @@
       },
       graphChanged: function () {
         this.observe();
+        this.id = this.graph.id;
         this.nodes = [];
         this.edges = [];
         this.initials = [];
