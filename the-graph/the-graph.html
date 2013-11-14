@@ -1,13 +1,17 @@
-<link rel="import" href="../the-graph-exports/the-graph-exports.html">
 <link rel="import" href="../the-graph-groups/the-graph-groups.html">
 <link rel="import" href="../the-graph-nodes/the-graph-nodes.html">
+<link rel="import" href="../the-graph-process/the-graph-process.html">
 <link rel="import" href="../the-graph-edges/the-graph-edges.html">
+<link rel="import" href="../the-graph-edge/the-graph-edge.html">
 <link rel="import" href="../the-graph-initials/the-graph-initials.html">
+<link rel="import" href="../the-graph-initial/the-graph-initial.html">
+<link rel="import" href="../the-graph-exports/the-graph-exports.html">
+<link rel="import" href="../the-graph-export/the-graph-export.html">
 
 <polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
 
   <template>
-    <content select="the-behavior"></content>
+    <!-- <content select="the-behavior"></content> -->
     <the-graph-nodes id="nodes">
       <template repeat="{{ node in nodes }}">
         <the-graph-process name="{{node.name}}" position="{{node.metadata.x}} {{node.metadata.y}}" label="{{node.metadata.label}}" component="{{node.component}}"></the-graph-process>
