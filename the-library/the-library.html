@@ -7,6 +7,9 @@
     </template>
   </template>
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-library', {
       components: [],
       getComponent: function (name) {
@@ -20,5 +23,7 @@
         return node;
       }
     });
+    
+  })();
   </script>
 </polymer-element>

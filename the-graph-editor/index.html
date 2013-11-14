@@ -11,8 +11,8 @@
       };
     </script>
     <script src="../bower_components/gss/browser/gss.js"></script> -->
-    <link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html">
-    <!--<link rel="import" href="../bower_components/the-behavior/the-pointer-trail/the-pointer-trail.html">-->
+    <!-- <link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html"> -->
+    <!-- <link rel="import" href="../bower_components/the-behavior/the-pointer-trail/the-pointer-trail.html"> -->
     <link rel="import" href="the-graph-editor.html">
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
 
@@ -47,6 +47,8 @@
     <script type="text/javascript">
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('WebComponentsReady', function() {
+        "use strict";
+
         // Remove loading message
         var loadingMessage = document.getElementById("loading-message");
         loadingMessage.innerHTML = "loading graph data...";
@@ -57,6 +59,7 @@
           loading.parentNode.removeChild(loading);
           // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
+          console.log(editors[0].$);
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
           // Debug
           window.g = editors[0].$.graph;

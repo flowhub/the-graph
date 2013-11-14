@@ -6,22 +6,13 @@
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-library id="library"></the-library>
-    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{snap}}" grid="{{grid}}" scale="{{scale}}" pan="{{pan}}" width="{{width}}" height="{{height}}">
-    <the-behaviors listento="html">
-        <the-behavior id="graphpinch" type="pinch"></the-behavior>
-        <the-behavior id="scratch" type="scratch" accept="nodeName=svg" mindistance="40" minspeed="0.6"></the-behavior>
-        <!-- 
-        <the-behavior type="drag" direction="north south" accept="nodeName=THE-GRAPH-PROCESS" action="attribute" mindistance="20"></the-behavior>
-        <the-behavior type="drag" direction="north south east west" accept="nodeName=THE-GRAPH-EXPORT" action="attribute" mindistance="20"></the-behavior>
-        <the-behavior id="nodehighlight" type="drag" direction="east west" accept="nodeName=THE-GRAPH-PROCESS" mindistance="20"></the-behavior>
-        <the-behavior id="graphpan" type="drag" direction="north south east west" accept="nodeName=svg" mindistance="20"></the-behavior>
-        -->
-      </the-behaviors>
-    </the-graph>
+    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{snap}}" grid="{{grid}}" scale="{{scale}}" pan="{{pan}}" width="{{width}}" height="{{height}}"></the-graph>
     <the-graph-nav id="nav" scale="{{scale}}" pan="{{pan}}" viewwidth="{{width}}" viewheight="{{height}}"></the-graph-nav>
   </template>
   <script>
   (function () {
+    "use strict";
+
     Polymer('the-graph-editor', {
       graph: {},
       library: {},
@@ -32,6 +23,8 @@
       scale: 1,
       pan: "0 0",
       plugins: {},
+      ready: function () {
+      },
       addPlugin: function (name, plugin) {
         this.plugins[name] = plugin;
         plugin.register(this);
@@ -165,6 +158,7 @@
         return this.$.graph.toJSON();
       }
     });
+
   })();
   </script>
 </polymer-element>

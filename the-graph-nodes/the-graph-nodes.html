@@ -9,6 +9,9 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-graph-nodes', {
       getProcesses: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-process'));
@@ -30,5 +33,7 @@
         });
       }
     });
+
+  })();
   </script>
 </polymer-element>

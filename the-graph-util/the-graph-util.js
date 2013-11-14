@@ -1,4 +1,5 @@
 (function (){
+"use strict";
 
 var util = {};
 window.theGraph = util;
