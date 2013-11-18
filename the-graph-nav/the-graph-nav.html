@@ -14,9 +14,9 @@
   <template>
     <the-graph-map id="map" graph="{{graph}}" scale="{{scale}}" pan="{{pan}}" viewwidth="{{viewwidth}}" viewheight="{{viewheight}}" width="200" height="150"></the-graph-map>
     <div id="zoom">
-      <button id="zoomout"><i class="icon-minus"></i></button>
+      <button id="zoomout"><i class="fa fa-minus"></i></button>
       <input id="zoomrange" type="range" value="{{ scale }}" min=".25" max="2" step="0.05" style="width:110px;" />
-      <button id="zoomin"><i class="icon-plus"></i></button>
+      <button id="zoomin"><i class="fa fa-plus"></i></button>
     </div>
   </template>
   <script>
