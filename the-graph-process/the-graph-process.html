@@ -38,7 +38,7 @@
         x: 500,
         y: 500
       },
-      snap: 35,
+      snap: 30,
       width: 60,
       height: 60,
       libraryComponent: null,
@@ -344,10 +344,11 @@
       // },
       snapToGrid: function () {
         // Called on pointerup with a short delay
-        var x = this._position[0];
-        var y = this._position[1];
-        x = Math.round(x / this.snap) * this.snap;
-        y = Math.round(y / this.snap) * this.snap;
+        var position = this.getPosition();
+        var x = Math.round(position.x / this.snap) * this.snap;
+        var y = Math.round(position.y / this.snap) * this.snap;
+
+        console.log(this.snap, position.x, position.y, x, y);
 
         this.position = x + ' ' + y;
       },

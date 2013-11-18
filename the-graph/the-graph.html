@@ -68,7 +68,7 @@
       maxX: 500,
       maxY: 500,
       grid: 70,
-      snap: 35,
+      snap: 30,
       nodes: [],
       edges: [],
       initials: [],
@@ -551,6 +551,10 @@
         processes.forEach(function (process) {
           process.snap = this.snap;
         }.bind(this));
+        var exports = this.$.exports.getExports();
+        exports.forEach(function (exp) {
+          exp.snap = this.snap;
+        }.bind(this));
       },
       connect: function (sourceNode, sourcePort, targetNode, targetPort) {
         this.edges.push({
@@ -583,6 +587,13 @@
               case 'THE-GRAPH-PROCESS':
                 // Provide the component to the process
                 node.libraryComponent = this.library.getComponent(node.component);
+                node.grid = this.grid;
+                node.snap = this.snap;
+                this.fire('changed', this);
+                this.fire('addnode', node);
+                break;
+              case 'THE-GRAPH-EXPORT':
+                // Provide the component to the process
                 node.grid = this.grid;
                 node.snap = this.snap;
                 this.fire('changed', this);
