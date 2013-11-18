@@ -44,6 +44,7 @@
       libraryComponent: null,
       inports: [],
       outports: [],
+      directionalGestureEnabled: true,
       ready: function () {
         var pos = this.getPosition();
         this._position = [pos.x, pos.y];
@@ -128,6 +129,10 @@
           event.stopPropagation();
 
           if (gestureRecognised === "highlight") { return; }
+
+          if (!this.directionalGestureEnabled) {
+            gestureRecognised = "move";
+          }
 
           if (!gestureRecognised) {
             if ( Math.abs(event.dy) > gestureThreshold ) {
