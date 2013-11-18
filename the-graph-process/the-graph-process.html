@@ -4,6 +4,9 @@
 
   <template>
     <h1 class="the-graph-process-label">{{label}}</h1>
+    <template if="{{ label != component }}">
+    <h2 class="the-graph-process-component">{{component}}</h2>
+    </template>
     <i class="icon fa fa-{{icon}}"></i>
     <the-graph-inports id="inports">
       <template repeat="{{port in inports}}">

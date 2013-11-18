@@ -209,10 +209,24 @@ the-graph-process h1, the-graph-subgraph h1, the-graph-export h1 {
   width: 100%;
   */
 }
+the-graph-process h2, the-graph-subgraph h2 {
+  display: block;
+  position: absolute;
+  bottom: -42px;
+  left: 0;
+  font-size: 8px;
+  color: hsl(189, 11%, 26%);
+  font-weight: lighter;
+  text-transform: uppercase;
+}
 the-graph-process.highlight h1, the-graph-subgraph.highlight h1 {
   bottom: 20px;
   padding-left: 30%;
   background-color: transparent;
+}
+the-graph-process.highlight h2, the-graph-subgraph.highlight h2 {
+  bottom: 10px;
+  padding-left: 30%;
 }
 
 the-graph-process the-graph-port {
