@@ -56,13 +56,19 @@
       zoom: 1,
       // User-visible zoom state
       scale: 1,
+      scaleMax: 2,
+      scaleMin: 0.25,
+      // Pinching gesture
+      pinching: false,
+      zoomCenter: null,
+      pinchDelta: null,
+      tracking: false,
       // Infinite scroll bounds
       padding: 500,
       bump: { x: 500, y: 500 },
       scalePanD: { x: 0, y: 0 },
       width: 500,
       height: 500,
-      zoomCenter: null,
       minX: 0,
       minY: 0,
       maxX: 500,
@@ -280,32 +286,81 @@
         this.setupGestures();
       },
       setupGestures: function () {
-        var graph = this;
+        // Zooming
+
+        var calcCenter = function(x1,y1,x2,y2){
+          return {
+            x: x1 + (x2-x1)/2,
+            y: y1 + (y2-y1)/2
+          };
+        };
+        var calcDistance = function(x1,y1,x2,y2){
+          var dX = x2-x1;
+          var dY = y2-y1;
+          return Math.sqrt(dX*dX + dY*dY);
+        };
+
+        var startDistance = 0;
+        var startZoom = this.zoom;
+        this.addEventListener('touchstart', function(event){
+          if (this.tracking) { return; }
+          if (event.touches.length === 2){
+            var t1 = event.touches[0];
+            var t2 = event.touches[1];
+            this.zoomCenter = calcCenter(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
+            this.pinchDelta = {x:0,y:0};
+            startDistance = calcDistance(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
+            startZoom = this.zoom;
+            this.pinching = true;
+          }
+        }.bind(this));
+        this.addEventListener('touchmove', function(event){
+          if (!this.pinching || !startDistance) { return; }
+
+          var t1 = event.touches[0];
+          var t2 = event.touches[1];
+          var currentCenter = calcCenter(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
+          this.pinchDelta.x = this.zoomCenter.x - currentCenter.x;
+          this.pinchDelta.y = this.zoomCenter.y - currentCenter.y;
+          var distance = calcDistance(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
+          var scaleDelta = (distance/startDistance) * (startZoom/this.zoom);
+          this.scale = this.zoom * scaleDelta;
+        }.bind(this));
+        this.addEventListener('touchend', function(event){
+          if (!this.pinching) { return; }
+          if (event.touches.length <= 1){
+            this.zoomCenter = null;
+            this.pinchDelta = null;
+            startDistance = 0;
+            this.scaleToZoom();
+          }
+          if (event.touches.length <= 0){
+            this.pinching = false;
+          }
+        }.bind(this));
 
         // Panning
-        this.addEventListener('track', function(event) {
-          graph.panning({
-            x: graph._pan.x + event.dx,
-            y: graph._pan.y + event.dy
-          });
-        });
-        this.addEventListener('trackend', function(event) {
-          graph.panned({
-            x: graph._pan.x + event.dx,
-            y: graph._pan.y + event.dy
-          });
-        });
 
-        // Zooming
-        // this.addEventListener('touchstart', function(event){
-        //   console.log("touchstart", event);
-        // });
-        // this.addEventListener('touchmove', function(event){
-        //   console.log("touchmove", event);
-        // });
-        // this.addEventListener('touchend', function(event){
-        //   console.log("touchend", event);
-        // });
+        this.addEventListener('trackstart', function(event) {
+          if (this.pinching) { return; }
+          this.tracking = true;
+        }.bind(this));
+        this.addEventListener('track', function(event) {
+          if (this.pinching) { return; }
+          this.panning({
+            x: this._pan.x + event.dx,
+            y: this._pan.y + event.dy
+          });
+        }.bind(this));
+        this.addEventListener('trackend', function(event) {
+          if (this.pinching) { return; }
+          this.panned({
+            x: this._pan.x + event.dx,
+            y: this._pan.y + event.dy
+          });
+          this.tracking = false;
+        }.bind(this));
+
       },
       getPan: function () {
         return this._pan;
@@ -386,19 +441,30 @@
       },
       enhanceTimeout: null,
       scaleChanged: function () {
+        // Limit scaling
+        if (this.scale < this.scaleMin) {
+          this.scale = this.scaleMin;
+          return;
+        }
+        if (this.scale > this.scaleMax) {
+          this.scale = this.scaleMax;
+          return;
+        }
         // Fast-moving scale change
         var scaleD = this.scale / this.zoom;
         var pan = this.getPan();
         // Center on pinch or parent center 
-        // var pageX = this.zoomCenter ? this.zoomCenter.x : this.width/2; 
-        // var pageY = this.zoomCenter ? this.zoomCenter.y : this.height/2;
-        var pageX = this.width/2; 
-        var pageY = this.height/2;
+        var pageX = this.zoomCenter ? this.zoomCenter.x : this.width/2; 
+        var pageY = this.zoomCenter ? this.zoomCenter.y : this.height/2;
         var currentX = pan.x - this.bump.x;
         var currentY = pan.y - this.bump.y;
         // This is a manual transform origin equivalent for pan.
         var oX = (currentX - pageX) * scaleD + pageX;
         var oY = (currentY - pageY) * scaleD + pageY;
+        if (this.pinchDelta) {
+          oX -= this.pinchDelta.x;
+          oY -= this.pinchDelta.y;
+        }
         // To be corrected later
         this.scalePanD.x = Math.round(oX + this.bump.x*scaleD);
         this.scalePanD.y = Math.round(oY + this.bump.y*scaleD);
@@ -419,22 +485,22 @@
         // this.panChanged sends the new zoom to nodes
         this.panned(this.scalePanD);
       },
-      zooming: function (scaleD, center) {
-        // Scale change to scale
-        if (center) {
-          if (!this.zoomCenter) { this.zoomCenter = {}; }
-          this.zoomCenter.x = center.x;
-          this.zoomCenter.y = center.y;
-        }
-        // TODO fix when held and zoom changes within the same gesture
-        var scale = scaleD * this.zoom;
-        this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-      },
-      zoomed: function () {
-        // Enhance on gesture end
-        // ??? Why does this break stuff?
-        // this.scaleToZoom();        
-      },
+      // zooming: function (scaleD, center) {
+      //   // Scale change to scale
+      //   if (center) {
+      //     if (!this.zoomCenter) { this.zoomCenter = {}; }
+      //     this.zoomCenter.x = center.x;
+      //     this.zoomCenter.y = center.y;
+      //   }
+      //   // TODO fix when held and zoom changes within the same gesture
+      //   var scale = scaleD * this.zoom;
+      //   this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
+      // },
+      // zoomed: function () {
+      //   // Enhance on gesture end
+      //   // ??? Why does this break stuff?
+      //   // this.scaleToZoom();        
+      // },
       nodeMoved: function () {
         this.calcMinMax();
       },

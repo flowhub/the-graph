@@ -110,8 +110,21 @@
         var dragStartX, dragStartY, dragStartPanX, dragStartPanY, gestureRecognised;
         var gestureThreshold = 20;
 
+        // Don't zoom the-graph
+        // this.addEventListener("touchstart", function(event){
+        //   event.stopPropagation();
+        // });
+        // this.addEventListener("touchmove", function(event){
+        //   event.stopPropagation();
+        // });
+        // this.addEventListener("touchend", function(event){
+        //   event.stopPropagation();
+        // });
+
         // Move or highlight
         this.addEventListener("trackstart", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
 
@@ -124,6 +137,8 @@
         }.bind(this));
 
         this.addEventListener("track", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
 
@@ -165,6 +180,8 @@
         }.bind(this));
 
         this.addEventListener("trackend", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
           
