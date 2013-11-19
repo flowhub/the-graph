@@ -8,7 +8,7 @@
 <link rel="import" href="../the-graph-exports/the-graph-exports.html">
 <link rel="import" href="../the-graph-export/the-graph-export.html">
 
-<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" touch-action="none" lightdom>
 
   <template>
     <!-- <content select="the-behavior"></content> -->
@@ -280,20 +280,32 @@
         this.setupGestures();
       },
       setupGestures: function () {
-
         var graph = this;
-        window.addEventListener('track', function(event) {
+
+        // Panning
+        this.addEventListener('track', function(event) {
           graph.panning({
             x: graph._pan.x + event.dx,
             y: graph._pan.y + event.dy
           });
         });
-        window.addEventListener('trackend', function(event) {
+        this.addEventListener('trackend', function(event) {
           graph.panned({
             x: graph._pan.x + event.dx,
             y: graph._pan.y + event.dy
           });
         });
+
+        // Zooming
+        // this.addEventListener('touchstart', function(event){
+        //   console.log("touchstart", event);
+        // });
+        // this.addEventListener('touchmove', function(event){
+        //   console.log("touchmove", event);
+        // });
+        // this.addEventListener('touchend', function(event){
+        //   console.log("touchend", event);
+        // });
       },
       getPan: function () {
         return this._pan;

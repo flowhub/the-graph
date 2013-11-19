@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
 
-<polymer-element name="the-graph-map" attributes="graph width height pan scale viewwidth viewheight" lightdom>
+<polymer-element name="the-graph-map" attributes="graph width height pan scale viewwidth viewheight" touch-action="none" lightdom>
   <style>
     the-graph-map {
       position: relative;
@@ -41,6 +41,9 @@
         }.bind(this));
         // Pan graph by dragging map
         this.addEventListener("track", function(event){
+          // Don't pan graph
+          event.stopPropagation();
+
           var pan = this.pan.split(" ");
           var x = parseInt(pan[0], 10);
           var y = parseInt(pan[1], 10);
@@ -49,6 +52,10 @@
           this.pan = x + " " + y;
 
           event.preventTap();
+        }.bind(this));
+        this.addEventListener("trackend", function(event){
+          // Don't pan graph
+          event.stopPropagation();
         }.bind(this));
       },
       viewrectangleChanged: function () {
