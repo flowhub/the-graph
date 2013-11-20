@@ -196,31 +196,28 @@ the-graph-process.highlight i.icon, the-graph-subgraph.highlight i.icon {
   margin-top: -10px;
   margin-left: -8px;
 }
-the-graph-process h1, the-graph-subgraph h1, the-graph-export h1 {
-  display: block;
+the-graph-process .the-graph-process-label {
   position: absolute;
-  bottom: -27px;
-  left: 0;
+  bottom: -34px;
+  left: 0px;
+  text-align: center;
+}
+the-graph-process h1, the-graph-subgraph h1, the-graph-export h1 {
+  display: inline;
   font-size: 12px;
   color: white;
   font-weight: lighter;
-  padding: 2px 0;
+  padding: 2px;
+  margin: 0px;
   background-color: rgba(0,0,0, 0.35);
   border-radius: 3px;
-
-  /*
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-  */
 }
 the-graph-process h2, the-graph-subgraph h2, the-graph-export h2 {
   display: block;
-  position: absolute;
-  bottom: -42px;
-  left: 0;
   font-size: 8px;
+  margin: 0px;
+  margin-top: 2px;
+  padding: 0px;
   color: hsl(189, 11%, 26%);
   font-weight: lighter;
   text-transform: uppercase;
