@@ -320,6 +320,11 @@
           var t1 = event.touches[0];
           var t2 = event.touches[1];
           var currentCenter = calcCenter(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
+          if (!this.pinchDelta) {
+            this.zoomCenter.x = currentCenter.x;
+            this.zoomCenter.y = currentCenter.y;
+            this.pinchDelta = {x:0,y:0};
+          }
           this.pinchDelta.x = this.zoomCenter.x - currentCenter.x;
           this.pinchDelta.y = this.zoomCenter.y - currentCenter.y;
           var distance = calcDistance(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
@@ -406,6 +411,10 @@
           return;
         }
 
+        if (this.pinchDelta) {
+          this.pinchDelta = null;
+        }
+
         this._pan.x = x;
         this._pan.y = y;
 
@@ -485,22 +494,6 @@
         // this.panChanged sends the new zoom to nodes
         this.panned(this.scalePanD);
       },
-      // zooming: function (scaleD, center) {
-      //   // Scale change to scale
-      //   if (center) {
-      //     if (!this.zoomCenter) { this.zoomCenter = {}; }
-      //     this.zoomCenter.x = center.x;
-      //     this.zoomCenter.y = center.y;
-      //   }
-      //   // TODO fix when held and zoom changes within the same gesture
-      //   var scale = scaleD * this.zoom;
-      //   this.scale = Math.max(0.25/this.zoom, Math.min(scale, 6/this.zoom));
-      // },
-      // zoomed: function () {
-      //   // Enhance on gesture end
-      //   // ??? Why does this break stuff?
-      //   // this.scaleToZoom();        
-      // },
       nodeMoved: function () {
         this.calcMinMax();
       },
