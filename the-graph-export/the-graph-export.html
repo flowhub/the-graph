@@ -3,7 +3,7 @@
 <link rel="import" href="../the-graph-edge/the-graph-edge.html">
 
 
-<polymer-element name="the-graph-export" attributes="private public position route snap" extends="the-graph-process">
+<polymer-element name="the-graph-export" attributes="private public position label route snap" extends="the-graph-process">
 
   <script>
   /* jshint strict: false */
@@ -13,6 +13,7 @@
     Polymer('the-graph-export', {
       private: '',
       public: '',
+      icon: '',
       directionalGestureEnabled: false,
       ready: function () {
         this.super();
@@ -24,6 +25,45 @@
       },
       enteredView: function () {
         this.super();
+        this.connect();
+      },
+      waitingForLibrary: false,
+      connect: function () {
+        var pri = this.getPrivate();
+        var node = this.graph.getNodeByName( pri.node );
+        if (!node) {
+          throw new Error("Export: node '" + pri.node + "' not found.");
+        }
+        var inport = node.getInportByName(pri.port);
+        var outport = node.getOutportByName(pri.port);
+        if (!inport && !outport) {
+          // Wait for ports to change
+          if (!this.waitingForLibrary) {
+            node.addEventListener("ports", function(event){
+              setTimeout(this.connect.bind(this), 100);
+            }.bind(this));
+            this.waitingForLibrary = true;
+          }
+          return;
+        }
+        if (inport && outport) {
+          throw new Error("Ambiguous export '" + pri.port + "' ... please chime in at https://github.com/noflo/noflo/issues/118");
+        }
+
+        this.isImport = inport ? true : false;
+      },
+      isImportChanged: function(){
+        this.icon = this.isImport ? 'sign-in' : 'sign-out';
+        if (this.isImport) {
+          // Imports have one outport
+          this.inports = [];
+          this.outports = [{name:"import",type:"all"}];
+        } else {
+          // Exports have one inport
+          this.inports = [{name:"export",type:"all"}];
+          this.outports = [];
+        }
+        // TODO make wire
       },
       getPrivate: function () {
         var split = this.private.split('.');

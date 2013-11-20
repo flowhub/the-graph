@@ -163,7 +163,7 @@
           }
           var shape = 'square';
           var side = this.side;
-          if (this.getProcess().classList.contains('highlight')) {
+          if (this.getProcess().classList && this.getProcess().classList.contains('highlight')) {
             shape = 'circle';
             if (side === 'south') {
               side = 'east';

@@ -578,6 +578,21 @@
           }
         });
       },
+      getNodes: function () {
+        return Array.prototype.slice.call(this.$.nodes.children);
+      },
+      getNodeByName: function (name) {
+        // Case-insensitive matching, since exports are lower-case
+        name = name.toLowerCase();
+        var childNodes = this.getNodes();
+        var node = null;
+        childNodes.forEach(function (child) {
+          if (child.getAttribute('name') && (child.getAttribute('name').toLowerCase() === name)) {
+            node = child;
+          }
+        });
+        return node;
+      },
       observer: null,
       handleMutations: function (mutations) {
         mutations.forEach(function (mutation) {

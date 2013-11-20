@@ -221,7 +221,7 @@ the-graph-process.highlight h1, the-graph-subgraph.highlight h1 {
   background-color: transparent;
 }
 
-the-graph-process the-graph-port {
+the-graph-port {
   position: absolute;
   border: 1px solid #000000;
   background-color: hsla(147, 0%, 80%, 1);
@@ -231,7 +231,7 @@ the-graph-process the-graph-port {
   border-radius: 3px;
   margin: 4px;
 }
-the-graph-process the-graph-outports the-graph-port.east {
+the-graph-outports the-graph-port.east {
   width: 0;
   height: 0;
   border-color: transparent transparent transparent #f00;
@@ -241,7 +241,7 @@ the-graph-process the-graph-outports the-graph-port.east {
   margin-left: 5px;
 }
 
-the-graph-process the-graph-outports the-graph-port.east:before {
+the-graph-outports the-graph-port.east:before {
   content: '';
   display: block;
   position: absolute;
@@ -256,7 +256,7 @@ the-graph-process the-graph-outports the-graph-port.east:before {
   background-color: transparent;
   z-index: -1;
 }
-the-graph-process the-graph-outports the-graph-port.south {
+the-graph-outports the-graph-port.south {
 
   width: 0;
   height: 0;
@@ -266,7 +266,7 @@ the-graph-process the-graph-outports the-graph-port.south {
   background-color: transparent;
   margin-top: 7px;
 }
-the-graph-process the-graph-outports the-graph-port.south:before {
+the-graph-outports the-graph-port.south:before {
   content: '';
   display: block;
   position: absolute;
@@ -282,7 +282,7 @@ the-graph-process the-graph-outports the-graph-port.south:before {
   z-index: -1;
 }
 
-the-graph-process the-graph-port label {
+the-graph-port label {
   display: none;
 }
 
