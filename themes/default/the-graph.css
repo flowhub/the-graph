@@ -62,12 +62,18 @@ the-graph {
   transform: translate3d(-500px,-500px,0px) scale(1);
 
   background-image:
-    -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
+    -webkit-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
+    -webkit-linear-gradient(rgb(70,0,0) 2px, transparent 2px),
+    -webkit-linear-gradient(90deg, rgb(70,0,0) 2px, transparent 2px);
   background-image:
-    -moz-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
+    -moz-radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
+    -moz-linear-gradient(rgb(70,0,0) 2px, transparent 2px),
+    -moz-linear-gradient(90deg, rgb(70,0,0) 2px, transparent 2px);
   background-image:
-    radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px);
-  background-size: 70px 70px;
+    radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
+    linear-gradient(rgb(70,0,0) 2px, transparent 2px),
+    linear-gradient(90deg, rgb(70,0,0) 2px, transparent 2px);
+  background-size: 60px 60px, 180px 180px, 180px 180px;
   background-position: 500px 500px;
 }
 

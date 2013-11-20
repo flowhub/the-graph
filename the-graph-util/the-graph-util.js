@@ -21,6 +21,7 @@ util.transform = function (el, x, y, scale) {
   x = Math.round(x);
   y = Math.round(y);
   var move = "translate3d("+x+"px,"+y+"px,0px) scale("+scale+")";
+  // var move = "translate("+x+"px,"+y+"px) scale("+scale+")";
   
   // TODO prefix test
   el.style.webkitTransform = move;

@@ -95,65 +95,6 @@
           this.fire('changed', this);
         }.bind(this));
 
-        if (this.$.graphpinch) {
-          this.$.graphpinch.addEventListener('gesture', function (e) {
-            if (e.detail.scale===1) {
-              // Pan gesture event, don't zoom
-              return;
-            }
-            // console.log("zoom", e.detail.center);
-            this.zooming(e.detail.scale, e.detail.center);
-          }.bind(this));
-          this.$.graphpinch.addEventListener('gestureend', function (e) {
-            if (e.detail.scale===1) {
-              // Pan gestureend event, don't zoom
-              return;
-            }
-            this.zoomed(e.detail.scale, e.detail.center);
-          }.bind(this));
-        }
-        if (this.$.scratch) {
-          this.$.scratch.addEventListener('gestureend', function (e) {
-            var scratched = e.detail[Object.keys(e.detail)[0]].elements;
-            scratched.forEach(function (element) {
-              switch (element.nodeName) {
-                case 'THE-GRAPH-PROCESS':
-                  element.parentNode.removeChild(element);
-                  break;
-              }
-            });
-          }.bind(this));
-        }
-        if (this.$.graphpan) {
-          this.$.graphpan.addEventListener('gesture', function (e) {
-            var touch = e.detail[Object.keys(e.detail)[0]];
-            if (!touch.movepoint) {
-              return;
-            }
-            // console.log("pan", touch.movepoint);
-            var panX = touch.movepoint.x - touch.startpoint.x;
-            var panY = touch.movepoint.y - touch.startpoint.y;
-            // Handle panning in relation to previous panning state
-            var pan = this.getPan();
-            var newPan = {
-              x: panX + pan.x,
-              y: panY + pan.y
-            };
-            this.panning(newPan, 1);
-          }.bind(this));
-          this.$.graphpan.addEventListener('gestureend', function (e) {
-            var touch = e.detail[Object.keys(e.detail)[0]];
-            var panX = touch.movepoint.x - touch.startpoint.x;
-            var panY = touch.movepoint.y - touch.startpoint.y;
-            // Handle panning in relation to previous panning state
-            var pan = this.getPan();
-            var newPan = {
-              x: panX + pan.x,
-              y: panY + pan.y
-            };
-            this.panned(newPan);
-          }.bind(this));
-        }
         if (this.$.nodehighlight) {
           var sourceNode = null;
           var sourcePort = null;
@@ -329,6 +270,7 @@
           this.pinchDelta.y = this.zoomCenter.y - currentCenter.y;
           var distance = calcDistance(t1.pageX, t1.pageY, t2.pageX, t2.pageY);
           var scaleDelta = (distance/startDistance) * (startZoom/this.zoom);
+
           this.scale = this.zoom * scaleDelta;
         }.bind(this));
         this.addEventListener('touchend', function(event){
@@ -371,7 +313,6 @@
         return this._pan;
       },
       panning: function (pan, scale) {
-        if (this.scale !== this.zoom) { return; }
         // Panning is with just css transform
         theGraph.transform(this, pan.x - this.bump.x, pan.y - this.bump.y, scale);
       },
@@ -545,7 +486,8 @@
       updateGridBg: function () {
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
-        this.style.backgroundSize = size+"px "+size+"px";
+        var size3 = (size*3)+"px "+(size*3)+"px";
+        this.style.backgroundSize = size+"px "+size+"px, "+size3+", "+size3;
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
