@@ -3,10 +3,17 @@
 <polymer-element name="the-graph-process" attributes="label position drag component process highlight icon" lightdom>
 
   <template>
-    <h1 class="the-graph-process-label">{{label}}</h1>
-    <template if="{{ label != component }}">
-    <h2 class="the-graph-process-component">{{component}}</h2>
-    </template>
+    <div class="the-graph-process-label">
+      <h1>{{label}}</h1>
+      <h2>
+        <template if="{{ label != component }}">
+        {{component}}
+        </template>
+        <template if="{{ label == component }}">
+        &nbsp;
+        </template>
+      </h2>
+    </div>
     <i class="icon fa fa-{{icon}}"></i>
     <the-graph-inports id="inports">
       <template repeat="{{port in inports}}">
@@ -190,6 +197,10 @@
         ports.forEach(function(port){
           port.graphZoom();
         }.bind(this));
+
+        // Update label
+        var label = this.getElementsByClassName('the-graph-process-label')[0];
+        label.style.left = (diameter / 2 - label.clientWidth / 2) + 'px';
       },
       getPosition: function () {
         // return this._position;

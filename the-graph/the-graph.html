@@ -77,11 +77,6 @@
         this.scalePanD = { x: 0, y: 0 };
       },
       enteredView: function () {
-        /*
-        document.addEventListener('solved', function (data) {
-          console.log(data.detail.values);
-        });
-        */
         this.addEventListener('moved', function () {
           this.fire('changed', this);
         }.bind(this));
@@ -266,11 +261,6 @@
         }
         this.observe();
 
-        // Handle passing zoom value to the GSS engine for node rescaling
-        this.engine = GSS.engines[0];
-        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.zoom]);
-        this.engine.solve();
-
         // Used to limit panning
         this.addEventListener('moved', this.calcMinMax.bind(this));
       },
@@ -401,8 +391,6 @@
         // Enhance on gesture end
         // ??? Why does this break stuff?
         // this.scaleToZoom();        
-        this.engine.registerCommand(["suggest", ["get","[zoom]"], this.scale]);
-        this.engine.solve();
       },
       nodeMoved: function () {
         this.calcMinMax();
@@ -460,7 +448,6 @@
       },
       graphChanged: function () {
         this.observe();
-        GSS.unobserve();
         this.graphId = this.graph.id;
         this.nodes = [];
         this.edges = [];
@@ -519,8 +506,6 @@
 
         // Used to limit panning
         this.calcMinMax();
-
-        GSS.observe();
       },
       gridChanged: function () {
         var processes = this.$.nodes.getProcesses();
