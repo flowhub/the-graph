@@ -215,7 +215,7 @@ the-graph-process h1, the-graph-subgraph h1, the-graph-export h1 {
   width: 100%;
   */
 }
-the-graph-process h2, the-graph-subgraph h2 {
+the-graph-process h2, the-graph-subgraph h2, the-graph-export h2 {
   display: block;
   position: absolute;
   bottom: -42px;

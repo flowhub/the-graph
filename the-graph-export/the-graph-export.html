@@ -54,6 +54,7 @@
       },
       isImportChanged: function(){
         this.icon = this.isImport ? 'sign-in' : 'sign-out';
+        this.component = this.isImport ? 'import' : 'export';
         if (this.isImport) {
           // Imports have one outport
           this.inports = [];
