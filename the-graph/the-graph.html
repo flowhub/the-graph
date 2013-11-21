@@ -80,6 +80,9 @@
         this.addEventListener('moved', function () {
           this.fire('changed', this);
         }.bind(this));
+        this.addEventListener('label', function () {
+          this.fire('changed', this);
+        }.bind(this));
         this.addEventListener('iip', function () {
           this.fire('changed', this);
         }.bind(this));
@@ -529,7 +532,8 @@
           }
         });
       },
-      observer: null,
+      mutationObserver: null,
+      graphObserver: null,
       handleMutations: function (mutations) {
         mutations.forEach(function (mutation) {
           var addedNodes = Array.prototype.slice.call(mutation.addedNodes);
@@ -604,11 +608,11 @@
         this.fire("mutated", mutations);
       },
       observe: function () {
-        if (this.observer) {
+        if (!this.mutationObserver) {
           return;
         }
-        this.observer = new MutationObserver(this.handleMutations.bind(this));
-        this.observer.observe(this, {
+        this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
+        this.mutationObserver.observe(this, {
           subtree: true,
           childList: true,
           attributes: false,
@@ -616,8 +620,8 @@
         });
       },
       leftView: function () {
-        if (this.observer) {
-          this.observer.disconnect();
+        if (this.mutationObserver) {
+          this.mutationObserver.disconnect();
         }
       },
       toJSON: function () {

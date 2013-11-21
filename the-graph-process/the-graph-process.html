@@ -75,6 +75,9 @@
 
         this.addEventListener('click', this.onClick.bind(this), false);
       },
+      labelChanged: function () {
+        this.fire('label', this);
+      },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
         this.inports = [];
