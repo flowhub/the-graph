@@ -376,9 +376,6 @@
         this.style.width = this.bump.x + 0-this._pan.x + this.width + this.padding*2 + "px";
         this.style.height = this.bump.y + 0-this._pan.y + this.height + this.padding*2 + "px";
 
-        // the-edges and the-process listen to this
-        // this.fire('bumped', this.bump);
-
         // Need to redraw CSS grid when size changed
         this.updateGridBg();
 
@@ -435,6 +432,7 @@
       },
       nodeMoved: function () {
         this.calcMinMax();
+        this.calcBump();
       },
       calcMinMax: function () {
         var minX = Infinity;
@@ -474,12 +472,6 @@
         this.maxX = maxX;
         this.maxY = maxY;
 
-        this.updatePaddedSize();
-      },
-      updatePaddedSize: function () {
-        this.style.width = ( (-this.minX + this.maxX)*this.zoom + this.padding*2 ) + "px";
-        this.style.height = ( (-this.minY + this.maxY)*this.zoom + this.padding*2 ) + "px";
-        this.updateGridBg();
       },
       updateGridBg: function () {
         // Update CSS grid image
