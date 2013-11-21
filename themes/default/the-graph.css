@@ -132,29 +132,29 @@ the-graph.tiny .the-graph-node:before {
   bottom: 1px;
 }
 
-the-graph-process.selected, the-graph-subgraph.selected, the-graph-export.selected {
+.the-graph-node.selected {
   box-shadow: 0 0 5px #b5cf44;
 }
 
-the-graph-process.highlight, the-graph-subgraph.highlight {
+.the-graph-node.highlight {
   cursor: auto;
 }
 
-the-graph-process.highlight:before, the-graph-subgraph.highlight:before {
+.the-graph-node.highlight:before {
   border-radius: 400px;
   background-color: hsla(184, 8%, 0%, 0.55);
 }
 
-the-graph-process.highlight the-graph-inports the-graph-port, the-graph-subgraph.highlight the-graph-inports the-graph-port,
-the-graph-process.highlight the-graph-outports the-graph-port.south, the-graph-subgraph.highlight the-graph-outports the-graph-port.south,
-the-graph-process.highlight the-graph-outports the-graph-port.east, the-graph-subgraph.highlight the-graph-outports the-graph-port.east {
+.the-graph-node.highlight the-graph-inports the-graph-port, 
+.the-graph-node.highlight the-graph-outports the-graph-port.south, 
+.the-graph-node.highlight the-graph-outports the-graph-port.east {
   width: 16px;
   height: 16px;
   border: 2px solid black;
   border-radius: 11px;
   display: block;
 }
-the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-port label {
+.the-graph-node.highlight the-graph-port label {
   display: block;
   position: absolute;
   color: black;
@@ -168,22 +168,22 @@ the-graph-process.highlight the-graph-port label, the-graph-subgraph.highlight t
   filter: grayscale(0.7) brightness(0.6);
   -webkit-filter: grayscale(0.7) brightness(0.6);
 }
-the-graph-process.highlight the-graph-inports.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-inports.highlight the-graph-port label,
-the-graph-process.highlight the-graph-outports.highlight the-graph-port label, the-graph-subgraph.highlight the-graph-outports.highlight the-graph-port label {
+.the-graph-node.highlight the-graph-inports.highlight the-graph-port label,
+.the-graph-node.highlight the-graph-outports.highlight the-graph-port label {
   filter: none;
   -webkit-filter: none;
 }
-the-graph-process.highlight the-graph-port.selected label, the-graph-subgraph.highlight the-graph-port.selected label {
+.the-graph-node.highlight the-graph-port.selected label {
   background-color: magenta;
 }
 
-the-graph-process.highlight the-graph-port.east label, the-graph-subgraph.highlight the-graph-port.east label {
+.the-graph-node.highlight the-graph-port.east label {
   top: -5px;
   left: -5px;
   padding-left: 28px;
   padding-top: 5px;
 }
-the-graph-process.highlight the-graph-port.south label, the-graph-subgraph.highlight the-graph-port.south label {
+.the-graph-node.highlight the-graph-port.south label {
   left: -18px;
   top: 10px;
   padding-left: 28px;
@@ -192,13 +192,13 @@ the-graph-process.highlight the-graph-port.south label, the-graph-subgraph.highl
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
 }
-the-graph-process.highlight the-graph-port.west label, the-graph-subgraph.highlight the-graph-port.west label {
+.the-graph-node.highlight the-graph-port.west label {
   right: -5px;
   top: -5px;
   padding-right: 28px;
   padding-top: 5px;
 }
-the-graph-process.highlight the-graph-port.north label, the-graph-subgraph.highlight the-graph-port.north label {
+.the-graph-node.highlight the-graph-port.north label {
   left: -14px;
   bottom: 5px;
   padding-right: 28px;
@@ -390,66 +390,66 @@ path.selected {
 
 path.edge.route0  { stroke: #fff; }
 the-graph-inports the-graph-port.route0  { background-color: #fff; }
-the-graph-process.highlight the-graph-outports the-graph-port.route0  { background-color: #fff; }
+.the-graph-node.highlight the-graph-outports the-graph-port.route0  { background-color: #fff; }
 the-graph-outports the-graph-port.east.route0 { border-left-color: #fff; }
 the-graph-outports the-graph-port.south.route0 { border-top-color: #fff; }
 path.edge.route1  { stroke: hsl(  0, 100%, 60%); }
 the-graph-inports the-graph-port.route1  { background-color: hsl(  0, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route1  { background-color: hsl(  0, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route1  { background-color: hsl(  0, 100%, 60%); }
 the-graph-outports the-graph-port.east.route1  { border-left-color: hsl(  0, 100%, 60%); }
 the-graph-outports the-graph-port.south.route1  { border-top-color: hsl(  0, 100%, 60%); }
 path.edge.route2  { stroke: hsl( 30, 100%, 60%); }
 the-graph-inports the-graph-port.route2  { background-color: hsl( 30, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route2  { background-color: hsl(30, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route2  { background-color: hsl(30, 100%, 60%); }
 the-graph-outports the-graph-port.east.route2  { border-left-color: hsl(30, 100%, 60%); }
 the-graph-outports the-graph-port.south.route2  { border-top-color: hsl(30, 100%, 60%); }
 path.edge.route3  { stroke: hsl( 60, 100%, 60%); }
 the-graph-inports the-graph-port.route3  { background-color: hsl( 60, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route3  { background-color: hsl(60, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route3  { background-color: hsl(60, 100%, 60%); }
 the-graph-outports the-graph-port.east.route3  { border-left-color: hsl(60, 100%, 60%); }
 the-graph-outports the-graph-port.south.route3  { border-top-color: hsl(60, 100%, 60%); }
 path.edge.route4  { stroke: hsl( 90, 100%, 60%); }
 the-graph-inports the-graph-port.route4  { background-color: hsl( 90, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route4  { background-color: hsl(90, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route4  { background-color: hsl(90, 100%, 60%); }
 the-graph-outports the-graph-port.east.route4  { border-left-color: hsl(90, 100%, 60%); }
 the-graph-outports the-graph-port.south.route4  { border-top-color: hsl(90, 100%, 60%); }
 path.edge.route5  { stroke: hsl(120, 100%, 60%); }
 the-graph-inports the-graph-port.route5  { background-color: hsl(120, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route5  { background-color: hsl(120, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route5  { background-color: hsl(120, 100%, 60%); }
 the-graph-outports the-graph-port.east.route5  { border-left-color: hsl(120, 100%, 60%); }
 the-graph-outports the-graph-port.south.route5  { border-top-color: hsl(120, 100%, 60%); }
 path.edge.route6  { stroke: hsl(150, 100%, 60%); }
 the-graph-inports the-graph-port.route6  { background-color: hsl(150, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route6  { background-color: hsl(150, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route6  { background-color: hsl(150, 100%, 60%); }
 the-graph-outports the-graph-port.east.route6  { border-left-color: hsl(150, 100%, 60%); }
 the-graph-outports the-graph-port.south.route6  { border-top-color: hsl(150, 100%, 60%); }
 path.edge.route7  { stroke: hsl(180, 100%, 60%); }
 the-graph-inports the-graph-port.route7  { background-color: hsl(180, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route7  { background-color: hsl(180, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route7  { background-color: hsl(180, 100%, 60%); }
 the-graph-outports the-graph-port.east.route7  { border-left-color: hsl(180, 100%, 60%); }
 the-graph-outports the-graph-port.south.route7  { border-top-color: hsl(180, 100%, 60%); }
 path.edge.route8  { stroke: hsl(210, 100%, 60%); }
 the-graph-inports the-graph-port.route8  { background-color: hsl(210, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route8  { background-color: hsl(210, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route8  { background-color: hsl(210, 100%, 60%); }
 the-graph-outports the-graph-port.east.route8  { border-left-color: hsl(210, 100%, 60%); }
 the-graph-outports the-graph-port.south.route8  { border-top-color: hsl(210, 100%, 60%); }
 path.edge.route9  { stroke: hsl(240, 100%, 60%); }
 the-graph-inports the-graph-port.route9  { background-color: hsl(240, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route9  { background-color: hsl(240, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route9  { background-color: hsl(240, 100%, 60%); }
 the-graph-outports the-graph-port.east.route9  { border-left-color: hsl(240, 100%, 60%); }
 the-graph-outports the-graph-port.south.route9  { border-top-color: hsl(240, 100%, 60%); }
 path.edge.route10 { stroke: hsl(270, 100%, 60%); }
 the-graph-inports the-graph-port.route10 { background-color: hsl(270, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route10  { background-color: hsl(270, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route10  { background-color: hsl(270, 100%, 60%); }
 the-graph-outports the-graph-port.east.route10  { border-left-color: hsl(270, 100%, 60%); }
 the-graph-outports the-graph-port.south.route10  { border-top-color: hsl(270, 100%, 60%); }
 path.edge.route11 { stroke: hsl(300, 100%, 60%); }
 the-graph-inports the-graph-port.route11 { background-color: hsl(300, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route11  { background-color: hsl(300, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route11  { background-color: hsl(300, 100%, 60%); }
 the-graph-outports the-graph-port.east.route11  { border-left-color: hsl(300, 100%, 60%); }
 the-graph-outports the-graph-port.south.route11  { border-top-color: hsl(300, 100%, 60%); }
 path.edge.route12 { stroke: hsl(330, 100%, 60%); }
 the-graph-inports the-graph-port.route12 { background-color: hsl(330, 100%, 60%); }
-the-graph-process.highlight the-graph-outports the-graph-port.route12  { background-color: hsl(330, 100%, 60%); }
+.the-graph-node.highlight the-graph-outports the-graph-port.route12  { background-color: hsl(330, 100%, 60%); }
 the-graph-outports the-graph-port.east.route12  { border-left-color: hsl(330, 100%, 60%); }
 the-graph-outports the-graph-port.south.route12  { border-top-color: hsl(330, 100%, 60%); }
