@@ -1,11 +1,11 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position component process highlight icon" lightdom>
+<polymer-element name="the-graph-process" attributes="label position component process highlight icon" class="the-graph-node" lightdom>
 
   <template>
-    <div class="the-graph-process-label">
-      <h1>{{label}}</h1>
-      <h2>
+    <div id="the-graph-node-label" class="the-graph-node-label">
+      <h1 class="the-graph-node-title">{{label}}</h1>
+      <h2 class="the-graph-node-subtitle">
         <template if="{{ label != component }}">
         {{component}}
         </template>
@@ -14,7 +14,7 @@
         </template>
       </h2>
     </div>
-    <i class="icon fa fa-{{icon}}"></i>
+    <i class="the-graph-node-icon fa fa-{{icon}}"></i>
     <the-graph-inports id="inports">
       <template repeat="{{port in inports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
@@ -322,7 +322,7 @@
         }.bind(this));
 
         // Update label
-        var label = this.getElementsByClassName('the-graph-process-label')[0];
+        var label = this.$["the-graph-node-label"];
         label.style.left = Math.round(diameter / 2 - label.clientWidth / 2) + 'px';
       },
       getPosition: function () {

@@ -426,6 +426,9 @@
         clearTimeout(this.enhanceTimeout);
         this.zoom = this.scale;
 
+        // Class for styling sizes
+        this.className = this.zoom >= 1.5 ? "big" : (this.zoom >= 0.8 ? "normal" : (this.zoom >= 0.5 ? "small" : "tiny"));
+
         // Transform offset to pan
         // this.panChanged sends the new zoom to nodes
         this.panned(this.scalePanD);
