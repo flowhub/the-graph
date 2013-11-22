@@ -232,6 +232,12 @@
           var process = this.getProcess();
           var graph = process.graph;
           graph.initials.splice(graph.initials.indexOf(iip), 1);
+        },
+        sendBang: function () {
+          this.fire('bang', {
+            process: this.getProcess().getAttribute('name'),
+            port: this.name
+          });
         }
       });
     })();
