@@ -577,6 +577,11 @@
                 this.fire('addedge', node);
                 break;
               case 'THE-GRAPH-INITIAL':
+                var target = node.getTarget();
+                node.targetNode = this.$.nodes.getProcessByName(target.node);
+                if (!node.targetNode) {
+                  node.parentNode.removeChild(node);
+                }
                 this.fire('changed', this);
                 this.fire('addinitial', node);
                 break;
