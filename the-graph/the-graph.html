@@ -608,7 +608,7 @@
         this.fire("mutated", mutations);
       },
       observe: function () {
-        if (!this.mutationObserver) {
+        if (this.mutationObserver) {
           return;
         }
         this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
