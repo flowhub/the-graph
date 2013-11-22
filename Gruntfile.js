@@ -42,6 +42,7 @@
         server: {
           options: {
             port: 3000,
+            hostname: '*', // Allow connection from mobile
             livereload: true
           }
         }
