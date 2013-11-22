@@ -266,6 +266,7 @@
 
         // Used to limit panning
         this.addEventListener('moved', this.calcMinMax.bind(this));
+        this.calcMinMax();
       },
       getPan: function () {
         return this._pan;
