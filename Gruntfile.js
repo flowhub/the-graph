@@ -38,19 +38,29 @@
           options: { force: true }
         }
       },
+      connect: {
+        server: {
+          options: {
+            port: 3000,
+            livereload: true
+          }
+        }
+      },
       watch: {
         scripts: {
           files: sources.scripts,
           tasks: ['jshint:force'],
           options: {
-            nospawn: true
+            nospawn: true,
+            livereload: true
           }
         },
         elements: {
           files: sources.elements,
           tasks: ['inlinelint:force'],
           options: {
-            nospawn: true
+            nospawn: true,
+            livereload: true
           }
         }
       }
@@ -64,7 +74,9 @@
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
+    this.loadNpmTasks('grunt-contrib-connect');
 
+    this.registerTask('dev', ['connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
     this.registerTask('default', ['test']);
   };
