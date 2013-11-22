@@ -140,7 +140,7 @@ the-graph.tiny .the-graph-node:before {
   cursor: auto;
 }
 
-.the-graph-node.highlight:before {
+the-graph .the-graph-node.highlight:before {
   border-radius: 400px;
   background-color: hsla(184, 8%, 0%, 0.55);
 }

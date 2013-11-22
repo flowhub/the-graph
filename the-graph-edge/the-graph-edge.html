@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-edge" attributes="source target route connection group sourceNode sourcePort targetNode">
+<polymer-element name="the-graph-edge" attributes="source target route connection group sourceNode sourcePort targetNode targetPort">
 
   <style>
     path.edge-touch {
@@ -122,7 +122,20 @@
       sourceNode: null,
       sourcePort: null,
       enteredView: function () {
-        this.group = this.parentNode.$.connections;
+        // Find graph in parents, since the-graph-export has an edge child as well
+        var graph = null;
+        var parent = this.parentNode;
+        while (parent && !graph) {
+          if (parent.nodeName === "THE-GRAPH") {
+            graph = parent;
+          }
+          parent = parent.parentNode;
+        }
+        if (!graph || !graph.$.edges || !graph.$.edges.$.connections) {
+          throw new Error('Wire element needs to have a "the-graph" ancestor.');
+        }
+
+        this.group = graph.$.edges.$.connections;
       },
       leftView: function () {
         if (!this.path) {

@@ -3,7 +3,7 @@
 <link rel="import" href="../the-graph-edge/the-graph-edge.html">
 
 
-<polymer-element name="the-graph-export" attributes="private public position label route snap" extends="the-graph-process">
+<polymer-element name="the-graph-export" attributes="private public position label route snap" class="the-graph-node" extends="the-graph-process">
 
   <script>
   /* jshint strict: false */
@@ -11,10 +11,17 @@
     // "use strict";
 
     Polymer('the-graph-export', {
-      private: '',
-      public: '',
+      "private": '',
+      "public": '',
       icon: '',
+      component: '',
+      portEl: null,
+      privateNodeEl: null,
+      privatePortEl: null,
+      edgeEl: null,
       directionalGestureEnabled: false,
+      inports: [],
+      outports: [],
       ready: function () {
         this.super();
 
@@ -26,6 +33,11 @@
       enteredView: function () {
         this.super();
         this.connect();
+      },
+      leftView: function () {
+        if (this.edgeEl && this.edgeEl.parentNode) {
+          this.edgeEl.parentNode.removeChild(this.edgeEl);
+        }
       },
       waitingForLibrary: false,
       connect: function () {
@@ -40,31 +52,70 @@
           // Wait for ports to change
           if (!this.waitingForLibrary) {
             node.addEventListener("ports", function(event){
+              // Defer this, since "ports" fires before the elements are added
               setTimeout(this.connect.bind(this), 100);
             }.bind(this));
             this.waitingForLibrary = true;
+            return;
           }
-          return;
+          throw new Error("Internal port not found. Node '" + pri.node + "' port '" + pri.port + "'");
         }
         if (inport && outport) {
           throw new Error("Ambiguous export '" + pri.port + "' ... please chime in at https://github.com/noflo/noflo/issues/118");
         }
 
         this.isImport = inport ? true : false;
+        this.privateNodeEl = node;
+        this.privatePortEl = inport ? inport : outport;
       },
       isImportChanged: function(){
-        this.icon = this.isImport ? 'sign-in' : 'sign-out';
-        this.component = this.isImport ? 'import' : 'export';
+        var sourceNode, sourcePort, targetNode, targetPort;
         if (this.isImport) {
           // Imports have one outport
-          this.inports = [];
-          this.outports = [{name:"import",type:"all"}];
+          // this.inports = [];
+          // this.outports = [{name:"import",type:"all"}];
+          this.portEl = document.createElement("the-graph-port");
+          this.portEl.setAttribute("name", "import");
+          this.portEl.setAttribute("type", "all");
+          this.$.outports.appendChild(this.portEl);
+          // Visual
+          this.icon = 'sign-in';
+          this.component = 'import';
+          // Wire
+          sourceNode = this;
+          sourcePort = this.portEl;
+          targetNode = this.privateNodeEl;
+          targetPort = this.privatePortEl;
         } else {
           // Exports have one inport
-          this.inports = [{name:"export",type:"all"}];
-          this.outports = [];
+          // this.inports = [{name:"export",type:"all"}];
+          // this.outports = [];
+          this.portEl = document.createElement("the-graph-port");
+          this.portEl.setAttribute("name", "export");
+          this.portEl.setAttribute("type", "all");
+          this.$.inports.appendChild(this.portEl);
+          // Visual
+          this.icon = 'sign-out';
+          this.component = 'export';
+          // Wire
+          sourceNode = this.privateNodeEl;
+          sourcePort = this.privatePortEl;
+          targetNode = this;
+          targetPort = this.portEl;
         }
         // TODO make wire
+        this.edgeEl = document.createElement('the-graph-edge');
+        this.edgeEl.sourceNode = sourceNode;
+        this.edgeEl.sourcePort = sourcePort;
+        this.edgeEl.targetNode = targetNode;
+        this.edgeEl.targetPort = targetPort;
+        this.appendChild(this.edgeEl);
+      },
+      inportsChanged: function () {
+        console.log("in", this.inports);
+      },
+      outportsChanged: function () {
+        console.log("out", this.outports);
       },
       getPrivate: function () {
         var split = this.private.split('.');

@@ -619,15 +619,19 @@
                 break;
               case 'THE-GRAPH-EDGE':
                 // Provide the edge with the information from DOM
-                var source = node.getSource();
-                node.sourceNode = this.$.nodes.getProcessByName(source.node);
-                if (node.sourceNode) {
-                  node.sourcePort = node.sourceNode.getOutportByName(source.port);
-                }
-                var target = node.getTarget();
-                node.targetNode = this.$.nodes.getProcessByName(target.node);
-                if (node.targetNode) {
-                  node.targetPort = node.targetNode.getInportByName(target.port);
+                if (!node.sourceNode) {
+                  var source = node.getSource();
+                  node.sourceNode = this.$.nodes.getProcessByName(source.node);
+                  if (node.sourceNode) {
+                    node.sourcePort = node.sourceNode.getOutportByName(source.port);
+                  }
+                } 
+                if (!node.targetNode) {
+                  var target = node.getTarget();
+                  node.targetNode = this.$.nodes.getProcessByName(target.node);
+                  if (node.targetNode) {
+                    node.targetPort = node.targetNode.getInportByName(target.port);
+                  }
                 }
                 this.fire('changed', this);
                 this.fire('addedge', node);
