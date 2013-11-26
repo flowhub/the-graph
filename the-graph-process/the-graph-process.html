@@ -61,7 +61,18 @@
         this._position = [pos.x, pos.y];
       },
       enteredView: function () {
-        var graph = this.parentNode.parentNode;
+        // Find graph in parents, since the-graph-export has a process child
+        var graph = null;
+        var parent = this.parentNode;
+        while (parent && !graph) {
+          if (parent.nodeName === "THE-GRAPH") {
+            graph = parent;
+          }
+          parent = parent.parentNode;
+        }
+        if (!graph) {
+          throw new Error('Process element needs to have a "the-graph" ancestor.');
+        }
         this.graph = graph;
 
         // Initial bump
@@ -325,6 +336,10 @@
         ports.forEach(function(port){
           port.graphZoom();
         }.bind(this));
+
+        // if (this.nodeName === "THE-GRAPH-EXPORT") {
+        //   console.log(zoom, ports);
+        // }
 
         // Update label
         var label = this.$["the-graph-node-label"];

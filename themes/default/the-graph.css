@@ -132,6 +132,10 @@ the-graph.tiny .the-graph-node:before {
   bottom: 1px;
 }
 
+the-graph-export .the-graph-node:before {
+  background-color: hsla(49, 97%, 54%, 0.55);
+}
+
 .the-graph-node.selected {
   box-shadow: 0 0 5px #b5cf44;
 }

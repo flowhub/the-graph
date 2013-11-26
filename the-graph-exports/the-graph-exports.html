@@ -15,7 +15,7 @@
       graphBumped: function (info) {
         var childNodes = this.getExports();
         childNodes.forEach(function (child) {
-          child.graphPanBumpZoom(info);
+          child.nodeEl.graphPanBumpZoom(info);
         });
       }
     });

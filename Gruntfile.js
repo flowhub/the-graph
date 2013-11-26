@@ -13,7 +13,8 @@
 
     var jshintOptions = { 
       strict: true,
-      newcap: false 
+      newcap: false,
+      "globals": { "Polymer": true }
     };
 
     this.initConfig({
@@ -67,17 +68,18 @@
       }
     });
 
-    // on watch events configure jshint:all to only run on changed file
+    // Only lint changed file
     // this.event.on('watch', function(action, filepath) {
     //   this.config('jshint.all.src', filepath);
-    // });
+    //   this.config('inlinelint.all.src', filepath);
+    // }.bind(this));
 
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
     this.loadNpmTasks('grunt-contrib-connect');
 
-    this.registerTask('dev', ['connect:server', 'watch']);
+    this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
     this.registerTask('default', ['test']);
   };

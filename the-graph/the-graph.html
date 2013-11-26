@@ -643,8 +643,8 @@
                 this.fire('addedge', node);
                 break;
               case 'THE-GRAPH-INITIAL':
-                var target = node.getTarget();
-                node.targetNode = this.$.nodes.getProcessByName(target.node);
+                var iTarget = node.getTarget();
+                node.targetNode = this.$.nodes.getProcessByName(iTarget.node);
                 if (!node.targetNode) {
                   node.parentNode.removeChild(node);
                 }
