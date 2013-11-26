@@ -165,14 +165,17 @@
             other.classList.add('selected');
             otherPort = other;
           }
-          if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode) {
+          if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode && other.directionalGestureEnabled) {
             // Deselect
             if (otherNode) {
               if (otherNode === other) {
                 return;
               }
               otherNode.highlight = '';
-              otherPort = null;
+              if (otherPort) {
+                otherPort.classList.remove("selected");
+                otherPort = null;
+              }
             }
             // Highlight other
             other.highlight = thisNode.highlight === "out" ? "in" : "out";
@@ -195,6 +198,13 @@
           }
           // Unhighlight
           thisNode.highlight = null;
+          if (thisPort) {
+            thisPort.classList.remove("selected");
+          }
+          if (otherPort) {
+            otherPort.classList.remove("selected");
+            otherPort = null;
+          }
           if (otherNode) {
             otherNode.highlight = null;
             otherNode = null;
