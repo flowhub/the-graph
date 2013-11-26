@@ -49,6 +49,7 @@
         x: 500,
         y: 500
       },
+      diameterBump: 0,
       snap: 30,
       width: 60,
       height: 60,
@@ -393,7 +394,7 @@
         this.bump.x = bump.x;
         this.bump.y = bump.y;
         var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+        theGraph.transform(this, position.x - this.diameterBump + this.bump.x, position.y - this.diameterBump + this.bump.y);
       },
       graphZoom: function (zoom) {
         this.zoom = zoom;
@@ -495,12 +496,13 @@
         if (this.highlight) {
           // Focus the node
           diameter = this.getHighlightDiameter();
+          this.diameterBump = diameter / 4;
           this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.zIndex = 11;
           this.style.borderRadius = diameter / 2 + "px";
-          theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
+          theGraph.transform(this, position.x - this.diameterBump + this.bump.x, position.y - this.diameterBump + this.bump.y);
 
           if (this.highlight === 'in') {
             this.$.inports.highlight = this.highlight;
@@ -512,6 +514,7 @@
         } else {
           // Unfocus the node
           diameter = this.getDiameter();
+          this.diameterBump = 0;
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.zIndex = 10;
