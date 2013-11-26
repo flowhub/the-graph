@@ -59,6 +59,16 @@
         var minY = Infinity;
         var maxX = -Infinity;
         var maxY = -Infinity;
+        Object.keys(graph.exports).forEach(function(key){
+          var exp = graph.exports[key];
+          if ( exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y) ) {
+            toDraw.push(exp);
+            minX = Math.min(minX, exp.metadata.x);
+            minY = Math.min(minY, exp.metadata.y);
+            maxX = Math.max(maxX, exp.metadata.x);
+            maxY = Math.max(maxY, exp.metadata.y);
+          }
+        }.bind(this));
         Object.keys(graph.processes).forEach(function(key){
           var process = graph.processes[key];
           if ( process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y) ) {
@@ -88,6 +98,40 @@
         var sizeHalf = size / 2;
         // Translate origin to match
         context.setTransform(1,0,0,1,0-minX*scale,0-minY*scale);
+
+        // Draw edges for exports
+        Object.keys(graph.exports).forEach(function(key){
+          var source = graph.exports[key];
+          var priv = source.private.split(".")[0];
+          // find internal, edge direction doesn't matter here (yet)
+          var target;
+          var nodeKeys = Object.keys(graph.processes);
+          for (var i=0; i<nodeKeys.length; i++) {
+            if (nodeKeys[i].toLowerCase() === priv.toLowerCase()) {
+              target = graph.processes[nodeKeys[i]];
+            }
+          }
+          if (!target) { return; }
+          // Draw path
+          try {
+            if (source.metadata && source.metadata.route) {
+              // Color if route defined
+              context.strokeStyle = this.edgeColors[source.metadata.route];
+            } else {
+              context.strokeStyle = this.edgeColors[0];
+            }
+            var fromX = Math.round(source.metadata.x*scale+sizeHalf)-0.5;
+            var fromY = Math.round(source.metadata.y*scale+sizeHalf)-0.5;
+            var toX = Math.round(target.metadata.x*scale+sizeHalf)-0.5;
+            var toY = Math.round(target.metadata.y*scale+sizeHalf)-0.5;
+            context.beginPath();
+            context.moveTo(fromX, fromY);
+            context.lineTo(toX, toY);
+            context.stroke();
+          } catch (error) {
+            return;
+          }
+        }.bind(this));
         // Draw edges
         Object.keys(graph.connections).forEach(function(key){
           var connection = graph.connections[key];
