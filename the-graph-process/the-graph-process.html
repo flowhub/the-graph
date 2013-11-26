@@ -148,13 +148,69 @@
           gestureRecognised = null;
         }.bind(this));
 
+        var thisNode = this;
+        var thisPort = null;
+        var otherNode = null;
+        var otherPort = null;
+        var startNewEdge = function (event) {
+          var other = event.relatedTarget;
+          if (other.nodeName==="THE-GRAPH-PORT") {
+            // Already selected
+            if (other===otherPort) { return; }
+            // Not other type
+            if (thisPort && other.isOutport()===thisPort.isOutport() ) { return; }
+            if (otherPort) {
+              otherPort.classList.remove('selected');
+            }
+            other.classList.add('selected');
+            otherPort = other;
+          }
+          if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode) {
+            // Deselect
+            if (otherNode) {
+              if (otherNode === other) {
+                return;
+              }
+              otherNode.highlight = '';
+              otherPort = null;
+            }
+            // Highlight other
+            other.highlight = thisNode.highlight === "out" ? "in" : "out";
+            otherNode = other;
+            // Select first outport
+            otherPort = other.getOutports()[0];
+            if (otherPort) {
+              otherPort.classList.add('selected');
+            }
+          }
+        };
+        var makeNewEdge = function (event) {
+          if (thisNode && thisPort && otherNode && otherPort) {
+            // Make the connection
+            if (thisPort.isOutport()) {
+              thisNode.graph.connect(thisNode, thisPort, otherNode, otherPort);
+            } else {
+              thisNode.graph.connect(otherNode, otherPort, thisNode, thisPort);
+            }
+          }
+          // Unhighlight
+          thisNode.highlight = null;
+          if (otherNode) {
+            otherNode.highlight = null;
+            otherNode = null;
+          }
+        };
+
         this.addEventListener("track", function(event){
           // Don't track when graph is pinching
           if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
 
-          if (gestureRecognised === "highlight") { return; }
+          if (gestureRecognised === "highlight") { 
+            startNewEdge(event);
+            return; 
+          }
 
           if (!this.directionalGestureEnabled) {
             gestureRecognised = "move";
@@ -167,7 +223,18 @@
             else if ( Math.abs(event.dx) > gestureThreshold ) {
               // Highlight it
               gestureRecognised = "highlight";
-              this.highlight = (event.dx > 0) ? "out" : "in";
+              var port;
+              if (event.dx > 0) {
+                this.highlight = "out";
+                port = this.getOutports()[0];
+              } else {
+                this.highlight = "in";
+                port = this.getInports()[0];
+              }
+              if (port) {
+                port.classList.add('selected');
+                thisPort = port;
+              }
               return;
             }
             else {
@@ -198,8 +265,7 @@
           event.stopPropagation();
           
           if (gestureRecognised === "highlight") { 
-            // Unhighlight
-            this.highlight = null;
+            makeNewEdge(event);
           }
           else if (gestureRecognised === "move") { 
             // Oh snap
@@ -337,10 +403,6 @@
           port.graphZoom();
         }.bind(this));
 
-        // if (this.nodeName === "THE-GRAPH-EXPORT") {
-        //   console.log(zoom, ports);
-        // }
-
         // Update label
         var label = this.$["the-graph-node-label"];
         label.style.left = Math.round(diameter / 2 - label.clientWidth / 2) + 'px';
@@ -385,10 +447,11 @@
       },
       getDiameter: function () {
         var diameter = Math.round(this.width * this.zoom);
-        if (diameter < 24) {
-          // Ensure sane touchable size
-          diameter = 24;
-        }
+        // Zoom is limited with the-graph.scaleMin
+        // if (diameter < 24) {
+        //   // Ensure sane touchable size
+        //   diameter = 24;
+        // }
         return diameter;
       },
       getHighlightDiameter: function () {
