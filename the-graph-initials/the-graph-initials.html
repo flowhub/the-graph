@@ -5,11 +5,15 @@
     <content select="the-graph-initial"></content>
   </template>
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-graph-initials', {
       getInitials: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-initial'));
       }
     });
+
+  })();
   </script>
-  
 </polymer-element>

@@ -11,6 +11,9 @@
   <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
 
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-graph-edges', {
       zoom: 1,
       enteredView: function () {
@@ -49,6 +52,8 @@
         this.$.connections.setAttribute("transform", "translate("+info.bump.x+","+info.bump.y+")");
       }
     });
+
+  })();
   </script>
   
 </polymer-element>

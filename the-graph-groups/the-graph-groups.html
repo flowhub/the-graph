@@ -5,11 +5,16 @@
     <content select="the-graph-group"></content>
   </template>
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-graph-groups', {
       getGroups: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-group'));
       }
     });
+
+  })();
   </script>
   
 </polymer-element>

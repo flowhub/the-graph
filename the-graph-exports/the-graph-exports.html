@@ -5,11 +5,22 @@
     <content select="the-graph-export"></content>
   </template>
   <script>
+  (function () {
+    "use strict";
+
     Polymer('the-graph-exports', {
       getExports: function () {
         return Array.prototype.slice.call(this.getElementsByTagName('the-graph-export'));
+      },
+      graphBumped: function (info) {
+        var childNodes = this.getExports();
+        childNodes.forEach(function (child) {
+          child.nodeEl.graphPanBumpZoom(info);
+        });
       }
     });
+
+  })();
   </script>
   
 </polymer-element>

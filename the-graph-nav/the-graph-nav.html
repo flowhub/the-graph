@@ -12,15 +12,16 @@
     }
   </style>
   <template>
-    <the-graph-map id="map" graph="{{graph}}" scale="{{scale}}" pan="{{pan}}" viewwidth="{{viewwidth}}" viewheight="{{viewheight}}" width="200" height="150"></the-graph-map>
+    <the-graph-map id="map" graph="{{graph}}" scale="{{scale}}" pan="{{pan}}" viewwidth="{{viewwidth}}" viewheight="{{viewheight}}" width="210" height="175"></the-graph-map>
     <div id="zoom">
-      <button id="zoomout"><i class="icon-minus"></i></button>
+      <button id="zoomout"><i class="fa fa-minus"></i></button>
       <input id="zoomrange" type="range" value="{{ scale }}" min=".25" max="2" step="0.05" style="width:110px;" />
-      <button id="zoomin"><i class="icon-plus"></i></button>
+      <button id="zoomin"><i class="fa fa-plus"></i></button>
     </div>
   </template>
   <script>
   (function () {
+    "use strict";
 
     Polymer('the-graph-nav', {
       enteredView: function () {
@@ -34,6 +35,14 @@
           this.scale = parseFloat(this.scale);
           this.scale = Math.max(this.scale-0.25, 0.25);
         }.bind(this));
+
+        // Don't track graph when using zoom slider
+        this.$.zoomrange.addEventListener("pointerdown", function (event) {
+          event.stopPropagation();
+        });
+        this.$.zoomrange.addEventListener("pointerup", function (event) {
+          event.stopPropagation();
+        });
       }
     });
 

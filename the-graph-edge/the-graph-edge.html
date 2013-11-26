@@ -1,17 +1,18 @@
-<polymer-element name="the-graph-edge" attributes="source target route connection group sourceNode sourcePort targetNode">
+<polymer-element name="the-graph-edge" attributes="source target route connection group sourceNode sourcePort targetNode targetPort">
 
   <style>
     path.edge-touch {
       fill: none;
       stroke: transparent;
-      stroke-width: 10px;
+      stroke-width: 15px;
     }
   </style>
 
   <script>
   (function(){
+    "use strict";
 
-    function determinePortSides(sourceX, sourceY, targetX, targetY) {
+    var determinePortSides = function (sourceX, sourceY, targetX, targetY) {
       var edgeType = ['east', 'west', 'R->L'];
       var xDiff = targetX - sourceX;
       var yDiff = targetY - sourceY;
@@ -48,7 +49,7 @@
       return edgeType;
     };
 
-    function makePath(sourcePos, targetPos, edgeType, scale){
+    var makePath = function (sourcePos, targetPos, edgeType, scale){
       var sourceX = sourcePos.left + sourcePos.width / 2;
       var sourceY = sourcePos.top + sourcePos.height / 2;
       var targetX = targetPos.left + targetPos.width / 2;
@@ -59,7 +60,7 @@
       var nodeH2 = 60 / 2;
 
       var startX = sourceX;
-      var startY = sourceY
+      var startY = sourceY;
       var endX = targetX;
       var endY = targetY;
       var c1X, c1Y, c2X, c2Y;
@@ -90,6 +91,7 @@
           c2Y = endY - nodeH;
           break;
         case "R->L":
+          /* falls through */
         default:
           // right to left
           c1X = startX + (endX - startX)/2;
@@ -107,7 +109,7 @@
       ];
 
       return d.join(" ");
-    }
+    };
 
     Polymer('the-graph-edge', {
       source: '',
@@ -120,7 +122,20 @@
       sourceNode: null,
       sourcePort: null,
       enteredView: function () {
-        this.group = this.parentNode.$.connections;
+        // Find graph in parents, since the-graph-export has an edge child
+        var graph = null;
+        var parent = this.parentNode;
+        while (parent && !graph) {
+          if (parent.nodeName === "THE-GRAPH") {
+            graph = parent;
+          }
+          parent = parent.parentNode;
+        }
+        if (!graph || !graph.$.edges || !graph.$.edges.$.connections) {
+          throw new Error('Wire element needs to have a "the-graph" ancestor.');
+        }
+
+        this.group = graph.$.edges.$.connections;
       },
       leftView: function () {
         if (!this.path) {
@@ -152,10 +167,7 @@
         this.pathTouch.setAttributeNS(null, "class", "edge-touch" );
 
         // Add event for touchable path
-        this.pathTouch.addEventListener("tap", function(event){
-          this.bringToTop();
-          this.fire("tapped", event);
-        }.bind(this));
+        this.pathTouch.addEventListener('click', this.onClick.bind(this), false);
 
         // Make visible path
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -259,10 +271,30 @@
       },
       targetMoved: function () {
         this.drawEdge();
+      },
+      onClick: function () {
+        this.fire('edgeclick', this);
+      },
+      toJSON: function () {
+        var edgeSource = this.getSource();
+        var edgeTarget = this.getTarget();
+        return {
+          src: {
+            process: edgeSource.node,
+            port: edgeSource.port
+          },
+          tgt: {
+            process: edgeTarget.node,
+            port: edgeTarget.port
+          },
+          metadata: {
+            route: this.route
+          }
+        };
       }
     });
 
-  })()
+  })();
   </script>
   
 </polymer-element>

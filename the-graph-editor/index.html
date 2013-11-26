@@ -4,21 +4,27 @@
     <title>Graph Editor</title>
     <meta charset="utf-8">
     <script src="../bower_components/polymer/polymer.min.js"></script>
-    <!-- <script src="../bower_components/gss/browser/gss.js"></script> -->
-    <link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html">
-    <!--<link rel="import" href="../bower_components/the-behavior/the-pointer-trail/the-pointer-trail.html">-->
+
+    <!-- <link rel="import" href="../bower_components/the-behavior/the-behaviors/the-behaviors.html"> -->
+    <!-- <link rel="import" href="../bower_components/the-behavior/the-pointer-trail/the-pointer-trail.html"> -->
+
     <link rel="import" href="the-graph-editor.html">
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
+    <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->
 
     <style>
       body {
-        background-color: #1d1d1d;
+        background-color: hsl(187, 50%, 7%);
+        font-family: 'Open Sans', verdana, sans-serif;
       }
       the-graph-editor {
         background-color: transparent;
       }
     </style>
+
   </head>
   <body>
     <!--<the-pointer-trail listento="html"></the-pointer-trail>-->
@@ -27,19 +33,11 @@
       <img src="loading.gif"/>
       <div id="loading-message">loading custom elements...</div>
     </div>
-
-    <!--
-    <style type="text/gss">
-      /* Ensure nodes are square and of touchable size */
-      [node-width] == 58 * [zoom];
-      /* Center process label */
-      .the-graph-process-label[left] == [node-width]/2 - .the-graph-process-label[intrinsic-width]/2;
-    </style>
-    -->
     <script type="text/javascript">
-      // GSS.worker = '../bower_components/gss/browser/gss-solver.min.js'
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('WebComponentsReady', function() {
+        "use strict";
+
         // Remove loading message
         var loadingMessage = document.getElementById("loading-message");
         loadingMessage.innerHTML = "loading graph data...";
@@ -52,17 +50,17 @@
           var editors = document.getElementsByTagName('the-graph-editor');
           editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
           // Debug
-          g = editors[0].$.graph;
+          window.g = editors[0];
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
         script.type = 'application/javascript';
         // Clock
-        script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
+        // script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
         // Gesture object building (lots of ports!)
-        //script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
+        script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
         // Gesture data gathering (big graph)
-        //script.src = 'https://api.github.com/gists/7022262?callback=loadGraph';
+        // script.src = 'https://api.github.com/gists/7022262?callback=loadGraph';
         // Edge algo test
         //script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
         body.appendChild(script);
@@ -75,9 +73,8 @@
         };
         window.addEventListener("resize", resize);
         resize();
-
       });
-
+      
     </script>
   </body>
 </html>

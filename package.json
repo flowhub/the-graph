@@ -1,0 +1,28 @@
+{
+  "name": "the-graph",
+  "version": "0.0.0",
+  "description": "polymer components for flow-based programming graph editing",
+  "main": "the-graph-editor/index.html",
+  "dependencies": {
+    "grunt-lint-inline": "~0.3.1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-lint-inline": "~0.3.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-connect": "~0.5.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/the-grid/the-graph.git"
+  },
+  "keywords": [
+    "graph"
+  ],
+  "author": "the-grid",
+  "license": "MIT"
+}

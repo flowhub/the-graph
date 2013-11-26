@@ -1,10 +1,22 @@
 <link rel="import" href="../the-graph-inports/the-graph-inports.html">
 <link rel="import" href="../the-graph-outports/the-graph-outports.html">
-<polymer-element name="the-graph-process" attributes="label position drag component process highlight icon" lightdom>
+<link rel="import" href="../the-graph-port/the-graph-port.html">
+
+<polymer-element name="the-graph-process" attributes="label position component process highlight icon" class="the-graph-node" lightdom>
 
   <template>
-    <h1 class="the-graph-process-label">{{label}}</h1>
-    <i class="icon icon-{{icon}}"></i>
+    <div id="the-graph-node-label" class="the-graph-node-label">
+      <h1 class="the-graph-node-title">{{label}}</h1>
+      <h2 class="the-graph-node-subtitle">
+        <template if="{{ label != component }}">
+        {{component}}
+        </template>
+        <template if="{{ label == component }}">
+        &nbsp;
+        </template>
+      </h2>
+    </div>
+    <i class="the-graph-node-icon fa fa-{{icon}}"></i>
     <the-graph-inports id="inports">
       <template repeat="{{port in inports}}">
         <the-graph-port name="{{port.name}}" type="{{port.type}}"></the-graph-port> 
@@ -21,13 +33,13 @@
 
   <script>
   (function(){
+    "use strict";
 
     Polymer('the-graph-process', {
       label: '',
       component: '',
       icon: '',
       position: '0 0',
-      drag: '',
       zoom: 1,
       pan: {
         x: 0,
@@ -37,24 +49,32 @@
         x: 500,
         y: 500
       },
-      snap: 35,
+      diameterBump: 0,
+      snap: 30,
       width: 60,
       height: 60,
       libraryComponent: null,
       inports: [],
       outports: [],
+      directionalGestureEnabled: true,
       ready: function () {
         var pos = this.getPosition();
         this._position = [pos.x, pos.y];
       },
       enteredView: function () {
-        var graph = this.parentNode.parentNode;
+        // Find graph in parents, since the-graph-export has a process child
+        var graph = null;
+        var parent = this.parentNode;
+        while (parent && !graph) {
+          if (parent.nodeName === "THE-GRAPH") {
+            graph = parent;
+          }
+          parent = parent.parentNode;
+        }
+        if (!graph) {
+          throw new Error('Process element needs to have a "the-graph" ancestor.');
+        }
         this.graph = graph;
-        
-        // Oh snap
-        this.addEventListener("pointerup", function(){
-          setTimeout(this.snapToGrid.bind(this), 100);
-        }.bind(this));
 
         // Initial bump
         this.bump.x = graph.padding;
@@ -62,6 +82,226 @@
 
         // Handle sizing
         this.graphZoom(this.zoom);
+
+        //
+        // Autopan when dragging nodes to edge
+        //
+
+        var autoPanThreshold = 20;
+        var autopanSpeed = 15;
+        var panX, panY;
+        var autopanInterval;
+        var lastEvent;
+
+        var panGraph = function () {
+          var x = this.graph._pan.x;
+          var y = this.graph._pan.y;
+          if (panX) { x += panX; }
+          if (panY) { y += panY; }
+          this.graph.pan = x + " " + y;
+        };
+
+        var checkPan = function (event) {
+          panX = null;
+          panY = null;
+          if (event.pageX < autoPanThreshold) {
+            panX = autopanSpeed;
+          }
+          else if (event.pageX > this.graph.width-autoPanThreshold) {
+            panX = -autopanSpeed;
+          }
+          if (event.pageY < autoPanThreshold) {
+            panY = autopanSpeed;
+          }
+          else if (event.pageY > this.graph.height-autoPanThreshold) {
+            panY = -autopanSpeed;
+          }
+          clearInterval(autopanInterval);
+          if (panX || panY) {
+            panGraph.call(this);
+            autopanInterval = setInterval( function(){
+              panGraph.call(this);
+              // Retrigger track to move the process (otherwise gets left behind)
+              this.dispatchEvent(event);
+            }.bind(this), 100 );
+          }
+        };
+        
+        //
+        // Gesture recognition for highlighting and moving
+        //
+
+        var dragStartX, dragStartY, dragStartPanX, dragStartPanY, gestureRecognised;
+        var gestureThreshold = 20;
+
+        // Move or highlight
+        this.addEventListener("trackstart", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
+          // Don't track the-graph
+          event.stopPropagation();
+
+          dragStartPanX = this.pan.x;
+          dragStartPanY = this.pan.y;
+          var pos = this.getPosition();
+          dragStartX = pos.x;
+          dragStartY = pos.y;
+          gestureRecognised = null;
+        }.bind(this));
+
+        var thisNode = this;
+        var thisPort = null;
+        var otherNode = null;
+        var otherPort = null;
+        var startNewEdge = function (event) {
+          var other = event.relatedTarget;
+          if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
+            // Select from port label
+            other = other.parentNode;
+          }
+          if (other.nodeName==="THE-GRAPH-PORT") {
+            // Already selected
+            if (other===otherPort) { return; }
+            // Change thisPort selection
+            if (other.parentNode.parentNode===thisNode && other.isOutport()===thisPort.isOutport()) {
+              if (thisPort) {
+                thisPort.classList.remove("selected");
+              }
+              thisPort = other;
+              thisPort.classList.add("selected");
+              return;
+            }
+            // Not other type
+            if (thisPort && other.isOutport()===thisPort.isOutport() ) { return; }
+            if (otherPort) {
+              otherPort.classList.remove('selected');
+            }
+            other.classList.add('selected');
+            otherPort = other;
+          }
+          if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode && other.directionalGestureEnabled) {
+            if (otherNode) {
+              // Already selected
+              if (otherNode === other) { return; }
+              // Deselect
+              otherNode.highlight = '';
+              if (otherPort) {
+                otherPort.classList.remove("selected");
+                otherPort = null;
+              }
+            }
+            // Highlight other
+            other.highlight = thisNode.highlight === "out" ? "in" : "out";
+            otherNode = other;
+            // Select first outport
+            otherPort = other.getOutports()[0];
+            if (otherPort) {
+              otherPort.classList.add('selected');
+            }
+          }
+        };
+        var makeNewEdge = function (event) {
+          if (thisNode && thisPort && otherNode && otherPort) {
+            // Make the connection
+            if (thisPort.isOutport()) {
+              thisNode.graph.connect(thisNode, thisPort, otherNode, otherPort);
+            } else {
+              thisNode.graph.connect(otherNode, otherPort, thisNode, thisPort);
+            }
+          }
+          // Unhighlight
+          thisNode.highlight = null;
+          if (thisPort) {
+            thisPort.classList.remove("selected");
+          }
+          if (otherPort) {
+            otherPort.classList.remove("selected");
+            otherPort = null;
+          }
+          if (otherNode) {
+            otherNode.highlight = null;
+            otherNode = null;
+          }
+        };
+
+        this.addEventListener("track", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
+          // Don't track the-graph
+          event.stopPropagation();
+
+          if (gestureRecognised === "highlight") { 
+            startNewEdge(event);
+            return; 
+          }
+
+          if (!this.directionalGestureEnabled) {
+            gestureRecognised = "move";
+          }
+
+          if (!gestureRecognised) {
+            if ( Math.abs(event.dy) > gestureThreshold ) {
+              gestureRecognised = "move";
+            }
+            else if ( Math.abs(event.dx) > gestureThreshold ) {
+              // Highlight it
+              gestureRecognised = "highlight";
+              var port;
+              if (event.dx > 0) {
+                this.highlight = "out";
+                port = this.getOutports()[0];
+              } else {
+                this.highlight = "in";
+                port = this.getInports()[0];
+              }
+              if (port) {
+                port.classList.add('selected');
+                thisPort = port;
+              }
+              return;
+            }
+            else {
+              // Gesture not far enough
+              return;
+            }
+          }
+
+          // Move it
+          if (gestureRecognised === "move") { 
+            // Calculate pan delta, if panning while moving
+            var dx = ( event.dx - (this.pan.x - dragStartPanX) ) / this.zoom;
+            var dy = ( event.dy - (this.pan.y - dragStartPanY) ) / this.zoom;
+            // New position
+            var x = dragStartX + dx;
+            var y = dragStartY + dy;
+            this.position = x + " " + y;
+
+            // Autopan?
+            checkPan.call(this, event);
+          }
+        }.bind(this));
+
+        this.addEventListener("trackend", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
+          // Don't track the-graph
+          event.stopPropagation();
+          
+          if (gestureRecognised === "highlight") { 
+            makeNewEdge(event);
+          }
+          else if (gestureRecognised === "move") { 
+            // Oh snap
+            this.snapToGrid();
+          }
+          gestureRecognised = null;
+          clearInterval(autopanInterval);
+        }.bind(this));
+
+        this.addEventListener('click', this.onClick.bind(this), false);
+      },
+      labelChanged: function () {
+        this.fire('label', this);
       },
       libraryComponentChanged: function () {
         this.icon = this.libraryComponent.icon;
@@ -166,7 +406,7 @@
         this.bump.x = bump.x;
         this.bump.y = bump.y;
         var position = this.getZoomedPosition();
-        theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
+        theGraph.transform(this, position.x - this.diameterBump + this.bump.x, position.y - this.diameterBump + this.bump.y);
       },
       graphZoom: function (zoom) {
         this.zoom = zoom;
@@ -185,13 +425,17 @@
         ports.forEach(function(port){
           port.graphZoom();
         }.bind(this));
+
+        // Update label
+        var label = this.$["the-graph-node-label"];
+        label.style.left = Math.round(diameter / 2 - label.clientWidth / 2) + 'px';
       },
       getPosition: function () {
         // return this._position;
         var position = this.position.split(' ');
         return {
-          x: parseInt(position[0]),
-          y: parseInt(position[1])
+          x: parseInt(position[0], 10),
+          y: parseInt(position[1], 10)
         };
       },
       getZoomedPosition: function () {
@@ -201,42 +445,17 @@
           y: Math.round(position.y*this.zoom)
         };
       },
-      getDrag: function () {
-        var drag = this.drag.split(' ');
-        return {
-          x: parseInt(drag[0]),
-          y: parseInt(drag[1])
-        };
-      },
-      dragChanged: function () {
-        if (this.highlight) {
-          return;
-        }
-        var drag = this.getDrag();
-        var x = drag.x / this.zoom - this.pan.x / this.zoom;
-        x -= this.clientWidth / 2;
-        x = Math.round(x);
-        var y = drag.y / this.zoom - this.pan.y / this.zoom;
-        y -= this.clientHeight / 2;
-        y = Math.round(y);
-
-        this.position = x + ' ' + y;
-      },
       snapToGrid: function () {
         // Called on pointerup with a short delay
-        var x = this._position[0];
-        var y = this._position[1];
-        x = Math.round(x / this.snap) * this.snap;
-        y = Math.round(y / this.snap) * this.snap;
+        var position = this.getPosition();
+        var x = Math.round(position.x / this.snap) * this.snap;
+        var y = Math.round(position.y / this.snap) * this.snap;
 
         this.position = x + ' ' + y;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
-      // _positionChanged: function () {
-      //   console.log(this._position);
-      // },
       positionChanged: function () {
         var position = this.getPosition();
         this._position[0] = position.x;
@@ -251,10 +470,11 @@
       },
       getDiameter: function () {
         var diameter = Math.round(this.width * this.zoom);
-        if (diameter < 24) {
-          // Ensure sane touchable size
-          return diameter = 24;
-        }
+        // Zoom is limited with the-graph.scaleMin
+        // if (diameter < 24) {
+        //   // Ensure sane touchable size
+        //   diameter = 24;
+        // }
         return diameter;
       },
       getHighlightDiameter: function () {
@@ -284,15 +504,17 @@
       },
       highlightChanged: function () {
         var position = this.getZoomedPosition();
+        var diameter;
         if (this.highlight) {
           // Focus the node
-          var diameter = this.getHighlightDiameter();
+          diameter = this.getHighlightDiameter();
+          this.diameterBump = diameter / 4;
           this.classList.add('highlight');
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.zIndex = 11;
           this.style.borderRadius = diameter / 2 + "px";
-          theGraph.transform(this, position.x - diameter / 4 + this.bump.x, position.y - diameter / 4 + this.bump.y);
+          theGraph.transform(this, position.x - this.diameterBump + this.bump.x, position.y - this.diameterBump + this.bump.y);
 
           if (this.highlight === 'in') {
             this.$.inports.highlight = this.highlight;
@@ -303,7 +525,8 @@
           }
         } else {
           // Unfocus the node
-          var diameter = this.getDiameter();
+          diameter = this.getDiameter();
+          this.diameterBump = 0;
           this.style.width = diameter + "px";
           this.style.height = diameter + "px";
           this.style.zIndex = 10;
@@ -318,9 +541,25 @@
           }
         }
         this.fire('highlight', this.highlight);
+      },
+      onClick: function () {
+        this.fire('nodeclick', this);
+      },
+      toJSON: function () {
+        var nodeId = this.getAttribute('name');
+        var nodePos = this.getPosition();
+        return {
+          id: nodeId,
+          component: this.component,
+          metadata: {
+            x: nodePos.x,
+            y: nodePos.y,
+            label: this.label
+          }
+        };
       }
     });
 
-  })()
+  })();
   </script>
 </polymer-element>

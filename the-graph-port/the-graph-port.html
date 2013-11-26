@@ -4,6 +4,8 @@
   </template>
   <script>
     (function () {
+      "use strict";
+
       var sides = {
         east: 45,
         south: 135,
@@ -11,15 +13,15 @@
         north: 315
       };
 
-      function getPortInSide (index, ports) {
+      var getPortInSide = function (index, ports) {
         return 360 / Object.keys(sides).length / (ports + 1) * (index + 1);
       };
 
-      function getPortDegrees (index, ports, side) {
+      var getPortDegrees = function (index, ports, side) {
         var inside = getPortInSide(index, ports);
         var absolute = sides[side] + inside;
         if (side==="west") {
-          absolute = sides["north"] - inside;
+          absolute = sides.north - inside;
         }
         if (absolute > 360) {
           absolute -= 360;
@@ -27,7 +29,7 @@
         return absolute;
       };
 
-      function distanceInSquare (degrees, radius) {
+      var distanceInSquare = function (degrees, radius) {
         var origDegrees = degrees;
         degrees = degrees % 90;
         if (degrees >= 45) {
@@ -38,11 +40,11 @@
         return adjacent / Math.cos(radians);
       };
 
-      function distanceInCircle (degrees, radius) {
+      var distanceInCircle = function (degrees, radius) {
         return radius;
       };
 
-      function getPortPosition (shape, degrees, parent, port) {
+      var getPortPosition = function (shape, degrees, parent, port) {
         var distance;
         //var radius = parent.width / 2;
         var radius = parent.offsetWidth / 2;
@@ -94,6 +96,18 @@
             return true;
           }
           return false;
+        },
+        isConnected: function () {
+          var process = this.getProcess();
+          var graph = process.graph;
+          var processName = process.getAttribute('name');
+          var connected = false;
+          graph.edges.forEach(function (edge) {
+            if (edge.target === processName + '.' + this.name) {
+              connected = true;
+            }
+          }.bind(this));
+          return connected;
         },
         getProcess: function () {
           if (this.process) {
@@ -149,7 +163,7 @@
           }
           var shape = 'square';
           var side = this.side;
-          if (this.getProcess().classList.contains('highlight')) {
+          if (this.getProcess().classList && this.getProcess().classList.contains('highlight')) {
             shape = 'circle';
             if (side === 'south') {
               side = 'east';
@@ -181,8 +195,54 @@
             }
           }
           this.fire('side', side);
+        },
+        getIIP: function () {
+          var process = this.getProcess();
+          var graph = process.graph;
+          var packet = null;
+          graph.initials.forEach(function (iip) {
+            if (iip.target === process.getAttribute('name') + '.' + this.name) {
+              packet = iip;
+            }
+          }.bind(this));
+          return packet;
+        },
+        getValue: function () {
+          var iip = this.getIIP();
+          if (iip) {
+            return iip.data;
+          }
+        },
+        setValue: function (value) {
+          var iip = this.getIIP();
+          if (iip) {
+            iip.data = value;
+            return;
+          }
+          var process = this.getProcess();
+          var graph = process.graph;
+          graph.initials.push({
+            target: process.getAttribute('name') + '.' + this.name,
+            data: value
+          });
+        },
+        removeValue: function () {
+          var iip = this.getIIP();
+          if (!iip) {
+            return;
+          }
+          var process = this.getProcess();
+          var graph = process.graph;
+          graph.initials.splice(graph.initials.indexOf(iip), 1);
+        },
+        sendBang: function () {
+          this.fire('bang', {
+            process: this.getProcess().getAttribute('name'),
+            port: this.name
+          });
         }
       });
+
     })();
   </script>
 </polymer-element>
