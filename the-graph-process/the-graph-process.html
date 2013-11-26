@@ -155,9 +155,22 @@
         var otherPort = null;
         var startNewEdge = function (event) {
           var other = event.relatedTarget;
+          if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
+            // Select from port label
+            other = other.parentNode;
+          }
           if (other.nodeName==="THE-GRAPH-PORT") {
             // Already selected
             if (other===otherPort) { return; }
+            // Change thisPort selection
+            if (other.parentNode.parentNode===thisNode && other.isOutport()===thisPort.isOutport()) {
+              if (thisPort) {
+                thisPort.classList.remove("selected");
+              }
+              thisPort = other;
+              thisPort.classList.add("selected");
+              return;
+            }
             // Not other type
             if (thisPort && other.isOutport()===thisPort.isOutport() ) { return; }
             if (otherPort) {
@@ -167,11 +180,10 @@
             otherPort = other;
           }
           if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode && other.directionalGestureEnabled) {
-            // Deselect
             if (otherNode) {
-              if (otherNode === other) {
-                return;
-              }
+              // Already selected
+              if (otherNode === other) { return; }
+              // Deselect
               otherNode.highlight = '';
               if (otherPort) {
                 otherPort.classList.remove("selected");
