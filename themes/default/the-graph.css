@@ -1,4 +1,6 @@
 the-graph-editor {
+  font-family: 'Source Code Pro', verdana, sans-serif;
+  
   margin: none;
   padding: none;
   color: white;
@@ -10,9 +12,7 @@ the-graph-editor {
   -ms-touch-action: none;
   touch-action: none;
   */
-}
 
-the-graph-editor {
   display: block;
   background-color: hsl(187, 50%, 7%);
   position: absolute;
@@ -266,7 +266,7 @@ the-graph.tiny .the-graph-node-label {
 .the-graph-node-title {
   display: inline;
   font-size: 12px;
-  font-weight: lighter;
+  font-weight: 200;
   padding: 2px;
   margin: 0px;
   color: white;
@@ -285,7 +285,7 @@ the-graph.tiny .the-graph-node-title {
 
 .the-graph-node-subtitle {
   display: block;
-  font-size: 8px;
+  font-size: 9px;
   margin: 0px;
   margin-top: 2px;
   padding: 0px;
@@ -299,7 +299,7 @@ the-graph.big .the-graph-node-subtitle {
   font-size: 12px;
 }
 the-graph.small .the-graph-node-subtitle {
-  font-size: 7px;
+  font-size: 8px;
 }
 the-graph.tiny .the-graph-node-subtitle {
   display: none;
