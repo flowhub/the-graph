@@ -155,11 +155,12 @@
         var otherPort = null;
         var startNewEdge = function (event) {
           var other = event.relatedTarget;
-          if (other && other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
+          if (!other) { return; }
+          if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
             // Select from port label
             other = other.parentNode;
           }
-          if (other && other.nodeName==="THE-GRAPH-PORT") {
+          if (other.nodeName==="THE-GRAPH-PORT") {
             // Already selected
             if (other===otherPort) { return; }
             // Change thisPort selection
@@ -179,22 +180,28 @@
             other.classList.add('selected');
             otherPort = other;
           }
-          if (other && other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode && other.directionalGestureEnabled) {
+          if (other.nodeName==="THE-GRAPH-PROCESS" && other!==thisNode && other.directionalGestureEnabled) {
             if (otherNode) {
               // Already selected
               if (otherNode === other) { return; }
               // Deselect
               otherNode.highlight = '';
-              if (otherPort) {
-                otherPort.classList.remove("selected");
-                otherPort = null;
-              }
             }
-            // Highlight other
-            other.highlight = thisNode.highlight === "out" ? "in" : "out";
+            // Deselect previous other port
+            if (otherPort) {
+              otherPort.classList.remove("selected");
+              otherPort = null;
+            }
             otherNode = other;
-            // Select first outport
-            otherPort = other.getOutports()[0];
+            // Highlight other
+            if (thisNode.highlight === "out") {
+              otherNode.highlight = "in";
+              otherPort = other.getInports()[0];
+            } else {
+              other.highlight = "out";
+              otherPort = other.getOutports()[0];
+            }
+            // Select first port
             if (otherPort) {
               otherPort.classList.add('selected');
             }
