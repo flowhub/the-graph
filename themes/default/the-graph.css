@@ -1,4 +1,6 @@
 the-graph-editor {
+  font-family: 'Source Code Pro', verdana, sans-serif;
+  
   margin: none;
   padding: none;
   color: white;
@@ -10,9 +12,7 @@ the-graph-editor {
   -ms-touch-action: none;
   touch-action: none;
   */
-}
 
-the-graph-editor {
   display: block;
   background-color: hsl(187, 50%, 7%);
   position: absolute;
