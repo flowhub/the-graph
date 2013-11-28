@@ -448,11 +448,17 @@
         }.bind(this));
       },
       connect: function (sourceNode, sourcePort, targetNode, targetPort) {
+        var route = 0;
+        if (sourcePort.route) { 
+          route = sourcePort.route; 
+        } else if (targetPort.route) { 
+          route = targetPort.route; 
+        }
         this.edges.push({
           source: sourcePort.getNodeName() + '.' + sourcePort.name,
           target: targetPort.getNodeName() + '.' + targetPort.name,
           metadata: {
-            route: 0
+            route: route
           }
         });
       },
