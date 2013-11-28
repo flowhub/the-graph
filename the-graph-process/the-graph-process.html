@@ -155,11 +155,11 @@
         var otherPort = null;
         var startNewEdge = function (event) {
           var other = event.relatedTarget;
-          if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
+          if (other && other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
             // Select from port label
             other = other.parentNode;
           }
-          if (other.nodeName==="THE-GRAPH-PORT") {
+          if (other && other.nodeName==="THE-GRAPH-PORT") {
             // Already selected
             if (other===otherPort) { return; }
             // Change thisPort selection
