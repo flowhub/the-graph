@@ -15,6 +15,7 @@ the-graph-editor {
 
   display: block;
   background-color: hsl(187, 50%, 7%);
+  background-color: black;
   position: absolute;
   left: 0; top: 0;
   overflow: hidden;
@@ -61,10 +62,11 @@ the-graph {
   -o-transform: translate3d(-500px,-500px,0px) scale(1);
   transform: translate3d(-500px,-500px,0px) scale(1);
 
+  background-color: hsl(189, 47%, 6%);
   background-image:
-    radial-gradient(circle 1px at 1px 1px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
-    linear-gradient(rgb(70,0,0) 1%, transparent 1%),
-    linear-gradient(90deg, rgb(70,0,0) 1%, transparent 1%);
+    radial-gradient(circle 1px at 1px 1px, hsla(189, 11%, 26%, 0.8) 0px, hsla(189, 11%, 26%, 0.8) 1px, transparent 2px),
+    linear-gradient(hsla(0, 100%, 14%, 0.8) 1%, transparent 1%),
+    linear-gradient(90deg, hsla(0, 100%, 14%, 0.8) 1%, transparent 1%);
   background-size: 60px 60px, 180px 180px, 180px 180px;
   background-position: 500px 500px;
 }
@@ -73,8 +75,8 @@ the-graph.tiny {
 
   background-image:
     radial-gradient(circle 0.5px at 0.5px 0.5px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
-    linear-gradient(rgb(70,0,0) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(70,0,0) 1px, transparent 1px);
+    linear-gradient(hsla(0, 100%, 14%, 0.8) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(0, 100%, 14%, 0.8) 1px, transparent 1px);
 
 }
 
@@ -132,8 +134,28 @@ the-graph.tiny .the-graph-node:before {
   bottom: 1px;
 }
 
+the-graph-export .the-graph-node {
+  border-color: hsla(145, 97%, 54%, 0.55);
+}
 the-graph-export .the-graph-node:before {
-  background-color: hsla(49, 97%, 54%, 0.55);
+  background-color: transparent;
+  border: 2px solid hsla(145, 97%, 54%, 0.55);
+}
+the-graph-export .the-graph-node .the-graph-node-icon {
+  color: hsla(145, 97%, 54%, 0.55);
+  font-size: 28px;
+  margin-top: -13px;
+  margin-left: -12px;
+}
+the-graph-export.import .the-graph-node {
+  border-color: hsla(205, 97%, 54%, 0.55);
+}
+the-graph-export.import .the-graph-node:before {
+  background-color: transparent;
+  border: 2px solid hsla(205, 97%, 54%, 0.55);
+}
+the-graph-export.import .the-graph-node .the-graph-node-icon {
+  color: hsla(205, 97%, 54%, 0.55);
 }
 
 .the-graph-node.selected {
@@ -270,7 +292,8 @@ the-graph.tiny .the-graph-node-label {
   padding: 2px;
   margin: 0px;
   color: white;
-  background-color: rgba(0,0,0, 0.35);
+  text-shadow: 0px 0px 3px hsl(189, 47%, 6%);
+  text-shadow: 0px 0px 1px hsl(189, 47%, 6%), 0px 0px 4px hsl(189, 47%, 6%);
   border-radius: 3px;
 }
 the-graph.big .the-graph-node-title {
@@ -292,7 +315,7 @@ the-graph.tiny .the-graph-node-title {
   font-weight: lighter;
   text-transform: uppercase;
   color: hsl(189, 11%, 36%);
-  background-color: rgba(0,0,0, 0.35);
+  text-shadow: 0px 0px 1px hsl(189, 47%, 6%), 0px 0px 4px hsl(189, 47%, 6%), 0px 0px 3px hsl(189, 47%, 6%);
   border-radius: 1px;
 }
 the-graph.big .the-graph-node-subtitle {

@@ -72,13 +72,14 @@
           // Imports have one outport
           this.nodeEl.outports = [{name:"import",type:"all"}];
           // Visual
-          this.nodeEl.icon = 'sign-in';
+          this.nodeEl.icon = 'circle-o';
           this.nodeEl.component = 'import';
+          this.classList.add('import');
         } else {
           // Exports have one inport
           this.nodeEl.inports = [{name:"export",type:"all"}];
           // Visual
-          this.nodeEl.icon = 'sign-out';
+          this.nodeEl.icon = 'dot-circle-o';
           this.nodeEl.component = 'export';
         }
         // Make wire (timeout since the port is made async)
