@@ -91,6 +91,7 @@ the-graph.tiny {
   border-radius: 12px;
   border: 2px hsla(180, 11%, 32%, 1) solid;
   cursor: move;
+  /* transition: width 0.3s ease-in-out, height 0.3s ease-in-out, margin-left 0.3s ease-in-out, margin-top 0.3s ease-in-out; */
 }
 the-graph.big .the-graph-node {
 }
