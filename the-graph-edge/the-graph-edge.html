@@ -196,6 +196,7 @@
           return;
         }
         this.path.setAttributeNS(null, "class", "edge route"+this.route );
+        this.fire('route', this);
       },
       drawEdge: function () {
         if (!this.path || !this.sourceNode || !this.targetNode || !this.sourcePort || !this.targetPort) {
