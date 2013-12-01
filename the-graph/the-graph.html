@@ -369,6 +369,10 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
+        if (this.envObserver) {
+          this.envObserver.close();
+          this.envObserver = null;
+        }
         this.observe();
         this.graphId = this.graph.id;
         this.nodes = [];
@@ -569,21 +573,31 @@
         }.bind(this));
         this.fire("mutated", mutations);
       },
+      handleEnv: function () {
+        this.fire('changed', this);
+      },
       observe: function () {
-        if (this.mutationObserver) {
-          return;
+        if (!this.mutationObserver) {
+          this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
+          this.mutationObserver.observe(this, {
+            subtree: true,
+            childList: true,
+            attributes: false,
+            characterData: false
+          });
         }
-        this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
-        this.mutationObserver.observe(this, {
-          subtree: true,
-          childList: true,
-          attributes: false,
-          characterData: false
-        });
+        if (!this.envObserver && this.graph) {
+          this.envObserver = new ObjectObserver(this.graph.properties.environment, this.handleEnv.bind(this));
+        }
       },
       leftView: function () {
         if (this.mutationObserver) {
           this.mutationObserver.disconnect();
+          this.mutationObserver = null;
+        }
+        if (this.envObserver) {
+          this.envObserver.close();
+          this.envObserver = null;
         }
       },
       toJSON: function () {
