@@ -293,6 +293,8 @@
           if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
+          // Don't click
+          event.preventTap();
           
           if (gestureRecognised === "highlight") { 
             makeNewEdge(event);
@@ -305,7 +307,7 @@
           clearInterval(autopanInterval);
         }.bind(this));
 
-        this.addEventListener('click', this.onClick.bind(this), false);
+        this.addEventListener('tap', this.onTap.bind(this), false);
       },
       labelChanged: function () {
         this.fire('label', this);
@@ -549,7 +551,7 @@
         }
         this.fire('highlight', this.highlight);
       },
-      onClick: function () {
+      onTap: function () {
         this.fire('nodeclick', this);
       },
       toJSON: function () {
