@@ -159,7 +159,13 @@ the-graph-export.import .the-graph-node .the-graph-node-icon {
 }
 
 .the-graph-node.selected {
-  box-shadow: 0 0 5px #b5cf44;
+  border-color: hsla(49, 97%, 33%, 1);
+}
+.the-graph-node.selected:before {
+  background-color: hsla(49, 97%, 54%, 0.55);
+}
+.the-graph-node.selected .the-graph-node-icon {
+  color: hsla(0, 0%, 100%, 0.25);
 }
 
 .the-graph-node.highlight {
