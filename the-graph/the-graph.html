@@ -97,6 +97,9 @@
         this.addEventListener('iip', function () {
           this.fire('changed', this);
         }.bind(this));
+        this.addEventListener('route', function () {
+          this.fire('changed', this);
+        }.bind(this));
 
         this.observe();
 
