@@ -317,9 +317,10 @@
           gestureRecognised = "hold";
           this.highlight = true;
         }.bind(this));
-        this.addEventListener("release", function(event){
+        this.addEventListener("pointerup", function(event){
           if (gestureRecognised === "hold") {
-            this.highlight = null;
+            gestureRecognised = null;
+            this.highlight = false;
           }
         }.bind(this));
 
