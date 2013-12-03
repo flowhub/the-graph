@@ -47,6 +47,7 @@
 
     Polymer('the-graph', {
       graphId: null,
+      projectId: '',
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
@@ -378,6 +379,7 @@
         }
         this.observe();
         this.graphId = this.graph.id;
+        this.projectId = this.graph.project;
         this.nodes = [];
         this.edges = [];
         this.initials = [];
@@ -606,6 +608,7 @@
       toJSON: function () {
         var definition = {
           id: this.graphId,
+          project: this.projectId,
           properties: this.graph.properties,
           exports: [],
           groups: [],
