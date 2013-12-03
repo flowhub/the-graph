@@ -17,9 +17,8 @@
 
     <style>
       body {
-        background-color: hsl(187, 50%, 7%);
-        font-family: 'Source Code Pro', verdana, sans-serif;
-        font-weight: 200;
+        background-color: hsl(189, 47%, 6%);
+        font-family: "SourceCodePro",Helvetica,Arial,sans-serif;
       }
       the-graph-editor {
         background-color: transparent;
@@ -49,7 +48,8 @@
           loading.parentNode.removeChild(loading);
           // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
-          editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
+          var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
+          editors[0].graph = graph;
           // Debug
           window.g = editors[0];
         };
@@ -58,8 +58,9 @@
         script.type = 'application/javascript';
         // Clock
         // script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
+        script.src = 'clock.json.js';
         // Gesture object building (lots of ports!)
-        script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
+        // script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
         // Gesture data gathering (big graph)
         // script.src = 'https://api.github.com/gists/7022262?callback=loadGraph';
         // Edge algo test

@@ -10,9 +10,9 @@
       graphjson: null,
       thumbscale: 1,
       nodeSize: 60,
-      fillStyle: "black",
-      strokeStyle: "white",
-      lineWidth: 1,
+      fillStyle: "hsl(184, 8%, 75%)",
+      strokeStyle: "hsl(180, 11%, 32%)",
+      lineWidth: 0.75,
       edgeColors: [
         "white",
         "hsl(  0, 100%, 60%)",
@@ -34,8 +34,6 @@
       enteredView: function () {
       },
       redrawGraph: function () {
-        // this.graph is the-graph custom element
-        // this.graph.graph is the bare graph object
         if (!this.graphjson || !this.graphjson.processes) { return; }
         var context = this.$.canvas.getContext("2d");
         if (!context) { 
@@ -43,10 +41,10 @@
           setTimeout( this.redrawGraph.bind(this), 500);
           return; 
         }
-        if (context.impl) {
-          // ???
-          context = context.impl;
-        }
+
+        // Need the actual context, not polymer-wrapped one
+        context = unwrap(context);
+
         var graph = this.graphjson;
         // Reset origin
         context.setTransform(1,0,0,1,0,0);
@@ -112,6 +110,7 @@
             }
           }
           if (!target) { return; }
+
           // Draw path
           try {
             if (source.metadata && source.metadata.route) {
@@ -120,10 +119,10 @@
             } else {
               context.strokeStyle = this.edgeColors[0];
             }
-            var fromX = Math.round(source.metadata.x*scale+sizeHalf)-0.5;
-            var fromY = Math.round(source.metadata.y*scale+sizeHalf)-0.5;
-            var toX = Math.round(target.metadata.x*scale+sizeHalf)-0.5;
-            var toY = Math.round(target.metadata.y*scale+sizeHalf)-0.5;
+            var fromX = Math.round(source.metadata.x*scale)-0.5;
+            var fromY = Math.round(source.metadata.y*scale)-0.5;
+            var toX = Math.round(target.metadata.x*scale)-0.5;
+            var toY = Math.round(target.metadata.y*scale)-0.5;
             context.beginPath();
             context.moveTo(fromX, fromY);
             context.lineTo(toX, toY);
@@ -132,6 +131,7 @@
             return;
           }
         }.bind(this));
+
         // Draw edges
         Object.keys(graph.connections).forEach(function(key){
           var connection = graph.connections[key];
@@ -146,10 +146,10 @@
             } else {
               context.strokeStyle = this.edgeColors[0];
             }
-            var fromX = Math.round(source.metadata.x*scale+sizeHalf)-0.5;
-            var fromY = Math.round(source.metadata.y*scale+sizeHalf)-0.5;
-            var toX = Math.round(target.metadata.x*scale+sizeHalf)-0.5;
-            var toY = Math.round(target.metadata.y*scale+sizeHalf)-0.5;
+            var fromX = Math.round(source.metadata.x*scale)-0.5;
+            var fromY = Math.round(source.metadata.y*scale)-0.5;
+            var toX = Math.round(target.metadata.x*scale)-0.5;
+            var toY = Math.round(target.metadata.y*scale)-0.5;
             context.beginPath();
             context.moveTo(fromX, fromY);
             context.lineTo(toX, toY);
@@ -157,15 +157,28 @@
           } catch (error) {
             return;
           }
-        }.bind(this));    
+        }.bind(this));
+
         // Draw nodes
-        context.strokeStyle = this.strokeStyle;
-        context.fillStyle = this.fillStyle;
         toDraw.forEach(function(node){
-          var x = Math.round(node.metadata.x * scale)-0.5;
-          var y = Math.round(node.metadata.y * scale)-0.5;
-          context.fillRect(x,y,size,size);
-          context.strokeRect(x,y,size,size);
+          var x = Math.round(node.metadata.x * scale);
+          var y = Math.round(node.metadata.y * scale);
+
+          // Outer circle
+          context.strokeStyle = this.strokeStyle;
+          context.fillStyle = "#000000";
+          context.beginPath();
+          context.arc(x, y, sizeHalf, 0, 2*Math.PI, false);
+          context.fill();
+          context.stroke();
+
+          // Inner circle
+          context.fillStyle = this.fillStyle;
+          context.beginPath();
+          var smallRadius = Math.max(sizeHalf-1.5, 1);
+          context.arc(x, y, smallRadius, 0, 2*Math.PI, false);
+          context.fill();
+
         }.bind(this));
       },
       graphjsonChanged: function () {

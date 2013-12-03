@@ -47,6 +47,7 @@
 
     Polymer('the-graph', {
       graphId: null,
+      projectId: '',
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
@@ -95,6 +96,9 @@
           this.fire('changed', this);
         }.bind(this));
         this.addEventListener('iip', function () {
+          this.fire('changed', this);
+        }.bind(this));
+        this.addEventListener('route', function () {
           this.fire('changed', this);
         }.bind(this));
 
@@ -184,10 +188,7 @@
         }.bind(this));
         this.addEventListener('trackend', function(event) {
           if (this.pinching) { return; }
-          this.panned({
-            x: this._pan.x + event.dx,
-            y: this._pan.y + event.dy
-          });
+          this.pan = (this._pan.x + event.dx) + " " + (this._pan.y + event.dy);
           this.tracking = false;
         }.bind(this));
 
@@ -201,12 +202,8 @@
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this.pan = Math.round(pan.x) + ' ' + Math.round(pan.y);
-      },
-      panChanged: function () {
-        var pan = this.pan.split(" ");
-        var x = parseInt(pan[0], 10);
-        var y = parseInt(pan[1], 10);
+        var x = pan.x;
+        var y = pan.y;
 
         // Don't pan beyond min/max
         var limitPan = false;
@@ -254,6 +251,13 @@
         this.$.edges.graphBumped(info); 
 
         theGraph.transform(this, x - this.bump.x, y - this.bump.y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        var x = parseInt(pan[0], 10);
+        var y = parseInt(pan[1], 10);
+
+        this.panned({x:x,y:y});
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -369,8 +373,13 @@
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
+        if (this.envObserver) {
+          this.envObserver.close();
+          this.envObserver = null;
+        }
         this.observe();
         this.graphId = this.graph.id;
+        this.projectId = this.graph.project;
         this.nodes = [];
         this.edges = [];
         this.initials = [];
@@ -569,25 +578,37 @@
         }.bind(this));
         this.fire("mutated", mutations);
       },
+      handleEnv: function () {
+        this.fire('changed', this);
+      },
       observe: function () {
-        if (this.mutationObserver) {
-          return;
+        if (!this.mutationObserver) {
+          this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
+          this.mutationObserver.observe(this, {
+            subtree: true,
+            childList: true,
+            attributes: false,
+            characterData: false
+          });
         }
-        this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
-        this.mutationObserver.observe(this, {
-          subtree: true,
-          childList: true,
-          attributes: false,
-          characterData: false
-        });
+        if (!this.envObserver && this.graph) {
+          this.envObserver = new ObjectObserver(this.graph.properties.environment, this.handleEnv.bind(this));
+        }
       },
       leftView: function () {
         if (this.mutationObserver) {
           this.mutationObserver.disconnect();
+          this.mutationObserver = null;
+        }
+        if (this.envObserver) {
+          this.envObserver.close();
+          this.envObserver = null;
         }
       },
       toJSON: function () {
         var definition = {
+          id: this.graphId,
+          project: this.projectId,
           properties: this.graph.properties,
           exports: [],
           groups: [],

@@ -20,3 +20,7 @@ Get these dependencies using [Bower](http://bower.io/):
 ## Running
 
 You need a local web server. Place these files into somewhere where they can be served, and access the `the-graph-editor/index.html` file with your browser.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/the-grid/the-graph/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
