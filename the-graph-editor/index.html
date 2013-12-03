@@ -48,7 +48,8 @@
           loading.parentNode.removeChild(loading);
           // Load graph
           var editors = document.getElementsByTagName('the-graph-editor');
-          editors[0].graph = JSON.parse(json.data.files['noflo.json'].content);
+          var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
+          editors[0].graph = graph;
           // Debug
           window.g = editors[0];
         };
@@ -56,7 +57,8 @@
         var script = document.createElement('script');
         script.type = 'application/javascript';
         // Clock
-        script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
+        // script.src = 'https://api.github.com/gists/7135158?callback=loadGraph';
+        script.src = 'clock.json.js';
         // Gesture object building (lots of ports!)
         // script.src = 'https://api.github.com/gists/7022120?callback=loadGraph';
         // Gesture data gathering (big graph)
