@@ -134,21 +134,6 @@
         var dragStartX, dragStartY, dragStartPanX, dragStartPanY, gestureRecognised;
         var gestureThreshold = 20;
 
-        // Move or highlight
-        this.addEventListener("trackstart", function(event){
-          // Don't track when graph is pinching
-          if (graph.pinching) { return; }
-          // Don't track the-graph
-          event.stopPropagation();
-
-          dragStartPanX = this.pan.x;
-          dragStartPanY = this.pan.y;
-          var pos = this.getPosition();
-          dragStartX = pos.x;
-          dragStartY = pos.y;
-          gestureRecognised = null;
-        }.bind(this));
-
         var thisNode = this;
         var thisPort = null;
         var otherNode = null;
@@ -231,48 +216,63 @@
           }
         };
 
+        // Move or highlight
+        this.addEventListener("trackstart", function(event){
+          // Don't track when graph is pinching
+          if (graph.pinching) { return; }
+          // Don't track the-graph
+          event.stopPropagation();
+
+          dragStartPanX = this.pan.x;
+          dragStartPanY = this.pan.y;
+          var pos = this.getPosition();
+          dragStartX = pos.x;
+          dragStartY = pos.y;
+        }.bind(this));
         this.addEventListener("track", function(event){
           // Don't track when graph is pinching
           if (graph.pinching) { return; }
           // Don't track the-graph
           event.stopPropagation();
 
-          if (gestureRecognised === "highlight") { 
-            startNewEdge(event);
-            return; 
-          }
-
           if (!this.directionalGestureEnabled) {
             gestureRecognised = "move";
           }
 
-          if (!gestureRecognised) {
-            if ( Math.abs(event.dy) > gestureThreshold ) {
-              gestureRecognised = "move";
-            }
-            else if ( Math.abs(event.dx) > gestureThreshold ) {
-              // Highlight it
-              gestureRecognised = "highlight";
+          if (gestureRecognised === "hold") { 
+            if (Math.abs(event.dx) > gestureThreshold) {
               var port;
+              var highlight;
               if (event.dx > 0) {
-                this.highlight = "out";
+                highlight = "out";
                 port = this.getOutports()[0];
               } else {
-                this.highlight = "in";
+                highlight = "in";
                 port = this.getInports()[0];
               }
               if (port) {
+                this.highlight = highlight;
+                gestureRecognised = "highlight";
                 port.classList.add('selected');
                 thisPort = port;
               }
-              return;
             }
-            else {
+            return; 
+          }
+
+          if (gestureRecognised === "highlight") {
+            startNewEdge(event);
+            return; 
+          }
+
+          if (!gestureRecognised) {
+            if ( Math.abs(event.dy) > gestureThreshold || Math.abs(event.dx) > gestureThreshold ) {
+              gestureRecognised = "move";
+            } else {
               // Gesture not far enough
               return;
             }
           }
-
           // Move it
           if (gestureRecognised === "move") { 
             // Calculate pan delta, if panning while moving
@@ -303,8 +303,24 @@
             // Oh snap
             this.snapToGrid();
           }
+          if (this.highlight) {
+            this.highlight = null;
+          }
           gestureRecognised = null;
           clearInterval(autopanInterval);
+        }.bind(this));
+
+        // Hold to connect
+        // Monkeypatch config
+        window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
+        this.addEventListener("hold", function(event){
+          gestureRecognised = "hold";
+          this.highlight = true;
+        }.bind(this));
+        this.addEventListener("release", function(event){
+          if (gestureRecognised === "hold") {
+            this.highlight = null;
+          }
         }.bind(this));
 
         this.addEventListener('tap', this.onTap.bind(this), false);
@@ -528,7 +544,7 @@
           if (this.highlight === 'in') {
             this.$.inports.highlight = this.highlight;
             this.$.outports.highlight = '';
-          } else {
+          } else if (this.highlight === 'out') {
             this.$.inports.highlight = '';
             this.$.outports.highlight = this.highlight;
           }
@@ -543,11 +559,8 @@
           this.classList.remove('highlight');
           theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
 
-          if (this.highlight === 'in') {
-            this.$.inports.highlight = '';
-          } else {
-            this.$.outports.highlight = '';
-          }
+          this.$.inports.highlight = '';
+          this.$.outports.highlight = '';
         }
         this.fire('highlight', this.highlight);
       },
