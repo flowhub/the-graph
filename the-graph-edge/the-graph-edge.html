@@ -5,13 +5,33 @@
       fill: none;
       stroke: transparent;
       stroke-width: 15px;
+      opacity: 0;
+      
     }
+    .selected path.edge-touch {
+      opacity: .1;      
+      stroke-dasharray: 10px .5px;
+    }
+    .selected path.edge {
+      opacity:.8;
+      
+    }
+    .edge {
+      fill: none;
+    }
+    
+
   </style>
 
   <script>
   (function(){
     "use strict";
-
+    
+    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                  window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                                  
+   
+    
     var determinePortSides = function (sourceX, sourceY, targetX, targetY) {
       var edgeType = ['east', 'west', 'R->L'];
       var xDiff = targetX - sourceX;
@@ -110,7 +130,7 @@
 
       return d.join(" ");
     };
-
+    var edgeCount = 0;
     Polymer('the-graph-edge', {
       source: '',
       target: '',
@@ -121,6 +141,10 @@
       targetPort: null,
       sourceNode: null,
       sourcePort: null,
+      ready: function () {
+        edgeCount++;
+        this.pathId = "edge" + edgeCount;
+      },
       enteredView: function () {
         // Find graph in parents, since the-graph-export has an edge child
         var graph = null;
@@ -134,7 +158,7 @@
         if (!graph || !graph.$.edges || !graph.$.edges.$.connections) {
           throw new Error('Wire element needs to have a "the-graph" ancestor.');
         }
-
+        
         this.group = graph.$.edges.$.connections;
       },
       leftView: function () {
@@ -164,28 +188,135 @@
         }
         // Make touchable path
         this.pathTouch = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        this.pathTouch.setAttributeNS(null, "class", "edge-touch" );
-
-        // Add event for touchable path
-        this.pathTouch.addEventListener('click', this.onClick.bind(this), false);
+        this.pathTouch.classList.add( "edge-touch" );
 
         // Make visible path
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.path.setAttributeNS(null, "class", "edge");        
+        this.path.setAttribute('id',this.pathId);
+        
+        
+        
+        // Add event for touchable path
+        this.pathTouch.addEventListener('click', this.onClick.bind(this), false);
+        this.path.addEventListener('click', this.onClick.bind(this), false);
+        
+        this.subgroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        
         this.routeChanged();
 
         // Add paths to main svg g
-        this.group.appendChild(this.path);
-        this.group.appendChild(this.pathTouch);
+             
+                
 
         // Render edge
         this.drawEdge();
+        
+        //
+        setTimeout(function(){
+          var g, apath, mpath,
+            circle1, circle2, circle3, circle4, circle5,
+            circle6, circle7, circle8, circle9, circle10;
+            
+          
+          
+          g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          //g.setAttributeNS(null, 'filter','url(#bulbfilter)')                 
+          
+          circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle1.setAttributeNS(null, "r", "2.5");        
+          //circle1.setAttributeNS(null, "fill", "red");
+          circle1.setAttributeNS(null, "opacity", ".8");
+          circle1.setAttributeNS(null, "transform", "translate(0 0)");
+          
+          circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle2.setAttributeNS(null, "r", "3");        
+          //circle2.setAttributeNS(null, "fill", "red");
+          circle2.setAttributeNS(null, "opacity", ".7");
+          circle2.setAttributeNS(null, "transform", "translate(-2 0)");
+          
+          circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle3.setAttributeNS(null, "r", "3");        
+          circle3.setAttributeNS(null, "fill", "red");
+          circle3.setAttributeNS(null, "opacity", ".5");
+          circle3.setAttributeNS(null, "transform", "translate(-4 0)");
+          
+          circle4 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle4.setAttributeNS(null, "r", "2.5");        
+          //circle4.setAttributeNS(null, "fill", "red");
+          circle4.setAttributeNS(null, "opacity", ".3");
+          circle4.setAttributeNS(null, "transform", "translate(-6 0)");
+          
+          circle5 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle5.setAttributeNS(null, "r", "2");        
+        //circle5.setAttributeNS(null, "fill", "red");
+          circle5.setAttributeNS(null, "opacity", ".3");
+          circle5.setAttributeNS(null, "transform", "translate(-6 0)");
+          
+          
+          
+          circle6 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle6.setAttributeNS(null, "r", "2");        
+        //circle6.setAttributeNS(null, "fill", "red");
+          circle6.setAttributeNS(null, "opacity", "1");
+          circle6.setAttributeNS(null, "transform", "translate(-8 0)");
+                
+          circle7 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle7.setAttributeNS(null, "r", "1");        
+        //circle7.setAttributeNS(null, "fill", "red");
+          circle7.setAttributeNS(null, "opacity", "1");
+          circle7.setAttributeNS(null, "transform", "translate(-10 0)");
+                
+          circle8 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle8.setAttributeNS(null, "r", ".9");        
+        //circle8.setAttributeNS(null, "fill", "red");
+          circle8.setAttributeNS(null, "opacity", "1");
+          circle8.setAttributeNS(null, "transform", "translate(-12 0)");
+                
+          circle9 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle9.setAttributeNS(null, "r", ".8");        
+        //circle9.setAttributeNS(null, "fill", "red");
+          circle9.setAttributeNS(null, "opacity", "1");
+          circle9.setAttributeNS(null, "transform", "translate(-14 0)");
+          
+   
+                  
+          apath = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+          apath.setAttributeNS(null, "dur", ".8s");        
+          apath.setAttributeNS(null, "repeatCount", "indefinite");     
+          apath.setAttributeNS(null, "rotate", "auto");     
+        
+          mpath = document.createElementNS("http://www.w3.org/2000/svg", "mpath");
+          var xlink = 'http://www.w3.org/1999/xlink';
+          mpath.setAttributeNS(xlink, 'xlink:href', '#' + this.pathId );        
+                                 
+          apath.appendChild(mpath);        
+          g.appendChild(apath); 
+          g.appendChild(circle1);
+          g.appendChild(circle2);
+          g.appendChild(circle3);
+          g.appendChild(circle4);
+          g.appendChild(circle5);
+          g.appendChild(circle6);
+          g.appendChild(circle7);
+          g.appendChild(circle8);
+          g.appendChild(circle9);
+
+          this.subgroup.appendChild(this.pathTouch);
+          this.subgroup.appendChild(this.path);
+          this.subgroup.appendChild(g);
+          this.group.appendChild(this.subgroup);
+        }.bind(this),16)
+       
       },
       bringToTop: function () {
         // Reappending is how to bring SVG element to top
-        this.group.appendChild(this.path);
-        this.group.appendChild(this.pathTouch);
+        this.group.appendChild(this.subgroup);
+        this.group.appendChild(this.subgroup);     
+        //this.group.appendChild(this.pathTouch);
+        //this.group.appendChild(this.path);        
       },
-      routeChanged: function () {
+      routeChanged: function (old, neue) {
         if (this.sourcePort) {
           this.sourcePort.route = this.route;
         }
@@ -195,7 +326,12 @@
         if (!this.path) {
           return;
         }
-        this.path.setAttributeNS(null, "class", "edge route"+this.route );
+        
+        this.subgroup.classList.remove("route"+old );
+        this.subgroup.classList.add("route"+this.route );
+        //this.pathTouch.classList.remove("route"+old );
+        //this.pathTouch.classList.add("route"+this.route );
+        
         this.fire('route', this);
       },
       drawEdge: function () {
@@ -275,6 +411,36 @@
       },
       onClick: function () {
         this.fire('edgeclick', this);
+      },
+      
+      _stroke_offset:0,
+      animatePath: function (timestamp) {        
+        this._stroke_offset = this._stroke_offset-.3;
+        this.pathTouch.style["stroke-dashoffset"] = this._stroke_offset +  "px";
+          if (this.selected) {
+            requestAnimationFrame(this.animatePath.bind(this));
+          }
+        },
+      
+      selectedChanged: function () {        
+        if (this.selected){
+          this.fire('selected',this);
+          
+          this.subgroup.classList.add('selected');
+          
+          //this.pathTouch.classList.add('selected');
+          //this.path.classList.add('selected');
+                    
+          
+          //this.path.classList.add('selected');
+          requestAnimationFrame(this.animatePath.bind(this));
+        }
+        else {
+          this.fire('deselected',this);
+          this.subgroup.classList.remove('selected');
+          //this.path.classList.remove('selected');
+          //this.pathTouch.classList.remove('selected');
+        }
       },
       toJSON: function () {
         var edgeSource = this.getSource();

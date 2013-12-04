@@ -44,7 +44,7 @@
   <script>
   (function(){
     "use strict";
-
+    
     Polymer('the-graph', {
       graphId: null,
       // The pan state attribute
@@ -75,6 +75,7 @@
       maxY: 500,
       grid: 70,
       snap: 30,
+      selectcount: 0,
       nodes: [],
       edges: [],
       initials: [],
@@ -100,6 +101,13 @@
         this.addEventListener('route', function () {
           this.fire('changed', this);
         }.bind(this));
+        this.addEventListener('selected', function () {
+          
+          this.selectcount++;
+        }.bind(this));
+        this.addEventListener('deselected', function () {
+          this.selectcount--;
+        }.bind(this));
 
         this.observe();
 
@@ -111,6 +119,15 @@
         this.calcBump();
         this.observe();
         this.setupGestures();
+      },
+      selectcountChanged: function () {
+        console.log(this.selectcount);
+        if (this.selectcount > 0) {
+          this.classList.add('selection');
+        }
+        else {
+          this.classList.remove('selection');
+        }
       },
       setupGestures: function () {
         // Zooming
