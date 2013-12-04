@@ -31,6 +31,7 @@
                                   window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
                                   
    
+
     
     var determinePortSides = function (sourceX, sourceY, targetX, targetY) {
       var edgeType = ['east', 'west', 'R->L'];
@@ -38,8 +39,8 @@
       var yDiff = targetY - sourceY;
 
       // TODO: Get from source node's clientHeight?
-      var nodeH = 60;
-      var nodeW = 60;
+      var nodeH = theGraph.nodeHeight;
+      var nodeW = theGraph.nodeWidth;
 
       if (Math.abs(xDiff) < Math.abs(yDiff)){
         if (sourceY < targetY) {
@@ -74,10 +75,10 @@
       var sourceY = sourcePos.top + sourcePos.height / 2;
       var targetX = targetPos.left + targetPos.width / 2;
       var targetY = targetPos.top + targetPos.height / 2;
-      var nodeW = 60;
-      var nodeW2 = 60 / 2;
-      var nodeH = 60;
-      var nodeH2 = 60 / 2;
+      var nodeW = theGraph.nodeWidth;
+      var nodeW2 = nodeW / 2;
+      var nodeH = theGraph.nodeHeight;
+      var nodeH2 = nodeH / 2;
 
       var startX = sourceX;
       var startY = sourceY;
@@ -222,33 +223,33 @@
           
           g = document.createElementNS("http://www.w3.org/2000/svg", "g");
           //g.setAttributeNS(null, 'filter','url(#bulbfilter)')                 
-          
+
           circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle1.setAttributeNS(null, "r", "2.5");        
+          circle1.setAttributeNS(null, "r", "1");        
           //circle1.setAttributeNS(null, "fill", "red");
           circle1.setAttributeNS(null, "opacity", ".8");
           circle1.setAttributeNS(null, "transform", "translate(0 0)");
           
           circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle2.setAttributeNS(null, "r", "3");        
+          circle2.setAttributeNS(null, "r", "1");        
           //circle2.setAttributeNS(null, "fill", "red");
           circle2.setAttributeNS(null, "opacity", ".7");
           circle2.setAttributeNS(null, "transform", "translate(-2 0)");
           
           circle3 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle3.setAttributeNS(null, "r", "3");        
+          circle3.setAttributeNS(null, "r", "1");        
           circle3.setAttributeNS(null, "fill", "red");
           circle3.setAttributeNS(null, "opacity", ".5");
           circle3.setAttributeNS(null, "transform", "translate(-4 0)");
           
           circle4 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle4.setAttributeNS(null, "r", "2.5");        
+          circle4.setAttributeNS(null, "r", "1");        
           //circle4.setAttributeNS(null, "fill", "red");
           circle4.setAttributeNS(null, "opacity", ".3");
           circle4.setAttributeNS(null, "transform", "translate(-6 0)");
           
           circle5 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle5.setAttributeNS(null, "r", "2");        
+          circle5.setAttributeNS(null, "r", "1");        
         //circle5.setAttributeNS(null, "fill", "red");
           circle5.setAttributeNS(null, "opacity", ".3");
           circle5.setAttributeNS(null, "transform", "translate(-6 0)");
@@ -256,7 +257,7 @@
           
           
           circle6 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle6.setAttributeNS(null, "r", "2");        
+          circle6.setAttributeNS(null, "r", "1");        
         //circle6.setAttributeNS(null, "fill", "red");
           circle6.setAttributeNS(null, "opacity", "1");
           circle6.setAttributeNS(null, "transform", "translate(-8 0)");
