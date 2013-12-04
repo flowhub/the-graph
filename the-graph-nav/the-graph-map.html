@@ -65,12 +65,32 @@
         var h = Math.round( this.viewrectangle[3] * this.thumbscale / this.scale );
 
         // Clip to bounds
-        if (x < 0) { w += x; }
-        if (y < 0) { h += y; }
-        x = theGraph.clip(x, 0, this.width);
-        y = theGraph.clip(y, 0, this.height);
-        w = theGraph.clip(w, 0, this.width-x);
-        h = theGraph.clip(h, 0, this.height-y);
+        if (x < 0) { 
+          w += x; 
+          x = 0;
+          this.$.viewrect.style.borderLeftColor = "#333";
+        } else {
+          this.$.viewrect.style.borderLeftColor = "#FFF";
+        }
+        if (y < 0) { 
+          h += y; 
+          y = 0;
+          this.$.viewrect.style.borderTopColor = "#333";
+        } else {
+          this.$.viewrect.style.borderTopColor = "#FFF";
+        }
+        if (w > this.width-x) { 
+          w = this.width-x;
+          this.$.viewrect.style.borderRightColor = "#333";
+        } else {
+          this.$.viewrect.style.borderRightColor = "#FFF";
+        }
+        if (h > this.height-y) { 
+          h = this.height-y;
+          this.$.viewrect.style.borderBottomColor = "#333";
+        } else {
+          this.$.viewrect.style.borderBottomColor = "#FFF";
+        }
 
         // Size and translate rect
         this.$.viewrect.style.width = w+"px";

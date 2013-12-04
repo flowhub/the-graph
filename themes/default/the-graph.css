@@ -96,7 +96,7 @@ the-graph.tiny {
   background-color: transparent;
   color: #000000;
   border-radius: 12px;
-  border: 2px solid hsl(188, 30%, 22%);
+  border: 2px hsl(180, 11%, 32%) solid;
   cursor: move;
   box-sizing: border-box;
   -moz-box-sizing: border-box;

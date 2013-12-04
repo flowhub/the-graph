@@ -47,6 +47,7 @@
     
     Polymer('the-graph', {
       graphId: null,
+      projectId: '',
       // The pan state attribute
       pan: '0 0',
       // The actual pan state
@@ -204,10 +205,7 @@
         }.bind(this));
         this.addEventListener('trackend', function(event) {
           if (this.pinching) { return; }
-          this.panned({
-            x: this._pan.x + event.dx,
-            y: this._pan.y + event.dy
-          });
+          this.pan = (this._pan.x + event.dx) + " " + (this._pan.y + event.dy);
           this.tracking = false;
         }.bind(this));
 
@@ -221,12 +219,8 @@
       },
       panned: function (pan) {
         // At the end of the pan gesture, elements actually move
-        this.pan = Math.round(pan.x) + ' ' + Math.round(pan.y);
-      },
-      panChanged: function () {
-        var pan = this.pan.split(" ");
-        var x = parseInt(pan[0], 10);
-        var y = parseInt(pan[1], 10);
+        var x = pan.x;
+        var y = pan.y;
 
         // Don't pan beyond min/max
         var limitPan = false;
@@ -274,6 +268,13 @@
         this.$.edges.graphBumped(info); 
 
         theGraph.transform(this, x - this.bump.x, y - this.bump.y);
+      },
+      panChanged: function () {
+        var pan = this.pan.split(" ");
+        var x = parseInt(pan[0], 10);
+        var y = parseInt(pan[1], 10);
+
+        this.panned({x:x,y:y});
       },
       calcBump: function () {
         // For expanding in -x -y direction
@@ -395,6 +396,7 @@
         }
         this.observe();
         this.graphId = this.graph.id;
+        this.projectId = this.graph.project;
         this.nodes = [];
         this.edges = [];
         this.initials = [];
@@ -622,6 +624,8 @@
       },
       toJSON: function () {
         var definition = {
+          id: this.graphId,
+          project: this.projectId,
           properties: this.graph.properties,
           exports: [],
           groups: [],
