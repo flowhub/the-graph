@@ -70,10 +70,10 @@ the-graph {
   linear-gradient(90deg, hsl(180, 51%, 5%) 0px, hsla(0, 0%, 0%, 0) 1px), 
   radial-gradient(1px at 0px 0px, hsla(210, 50%, 21%, 0.8) 0.5px, hsl(0, 0%, 0%) 1px, hsla(0, 0%, 0%, 0) 1.1px);
   background-size: 
-    60px 60px, 
-    180px 180px, 
-    180px 180px,
-    12px 12px !important;
+    70px 70px, 
+    210px 210px, 
+    210px 210px,
+    14px 14px !important;
 
 }
 
@@ -278,7 +278,8 @@ the-graph .the-graph-node.highlight:before {
 }
 
 .the-graph-node-icon {
-  color: hsl(190, 10%, 16%);
+  color: hsl(193, 11%, 16%);
+  font-size: 30px;
   position: absolute;
   overflow: hidden;
   top: 50%;
@@ -512,32 +513,32 @@ the-graph-outports the-graph-port.south.route12  { border-top-color: hsl(330, 10
 the-graph circle {fill:none;}
 
 the-graph g.route0  path, the-graph g.route0.selected  path { stroke: hsl( 10, 100%, 100%); }
-the-graph g.route1  path, the-graph g.route1.selected  path { stroke: hsl( 10, 100%, 61% ); }
-the-graph g.route2  path, the-graph g.route2.selected  path { stroke: hsl( 30, 100%, 60% ); }
-the-graph g.route3  path, the-graph g.route3.selected  path { stroke: hsl( 60, 100%, 60% ); }
-the-graph g.route4  path, the-graph g.route4.selected  path { stroke: hsl( 90, 100%, 60% ); }
-the-graph g.route5  path, the-graph g.route5.selected  path { stroke: hsl(120, 100%, 60% ); }
-the-graph g.route6  path, the-graph g.route6.selected  path { stroke: hsl(150, 100%, 60% ); }
-the-graph g.route7  path, the-graph g.route7.selected  path { stroke: hsl(180, 100%, 60% ); }
-the-graph g.route8  path, the-graph g.route8.selected  path { stroke: hsl(210, 100%, 60% ); }
-the-graph g.route9  path, the-graph g.route9.selected  path { stroke: hsl(240, 100%, 60% ); }
-the-graph g.route10 path, the-graph g.route10.selected path { stroke: hsl(270, 100%, 60% ); }
-the-graph g.route11 path, the-graph g.route11.selected path { stroke: hsl(300, 100%, 60% ); }
-the-graph g.route12 path, the-graph g.route12.selected path { stroke: hsl(330, 100%, 60% ); }
+the-graph g.route1  path, the-graph g.route1.selected  path { stroke: hsl( 10, 100%, 70% ); }
+the-graph g.route2  path, the-graph g.route2.selected  path { stroke: hsl( 30, 100%, 70% ); }
+the-graph g.route3  path, the-graph g.route3.selected  path { stroke: hsl( 60, 100%, 70% ); }
+the-graph g.route4  path, the-graph g.route4.selected  path { stroke: hsl( 90, 100%, 70% ); }
+the-graph g.route5  path, the-graph g.route5.selected  path { stroke: hsl(120, 100%, 70% ); }
+the-graph g.route6  path, the-graph g.route6.selected  path { stroke: hsl(150, 100%, 70% ); }
+the-graph g.route7  path, the-graph g.route7.selected  path { stroke: hsl(180, 100%, 70% ); }
+the-graph g.route8  path, the-graph g.route8.selected  path { stroke: hsl(210, 100%, 70% ); }
+the-graph g.route9  path, the-graph g.route9.selected  path { stroke: hsl(240, 100%, 70% ); }
+the-graph g.route10 path, the-graph g.route10.selected path { stroke: hsl(270, 100%, 70% ); }
+the-graph g.route11 path, the-graph g.route11.selected path { stroke: hsl(300, 100%, 70% ); }
+the-graph g.route12 path, the-graph g.route12.selected path { stroke: hsl(330, 100%, 70% ); }
 
 the-graph g.route0.selected  circle { fill: hsl( 10, 100%, 100%); }
-the-graph g.route1.selected  circle { fill: hsl( 10, 100%, 61% ); }
-the-graph g.route2.selected  circle { fill: hsl( 30, 100%, 60% ); }
-the-graph g.route3.selected  circle { fill: hsl( 60, 100%, 60% ); }
-the-graph g.route4.selected  circle { fill: hsl( 90, 100%, 60% ); }
-the-graph g.route5.selected  circle { fill: hsl(120, 100%, 60% ); }
-the-graph g.route6.selected  circle { fill: hsl(150, 100%, 60% ); }
-the-graph g.route7.selected  circle { fill: hsl(180, 100%, 60% ); }
-the-graph g.route8.selected  circle { fill: hsl(210, 100%, 60% ); }
-the-graph g.route9.selected  circle { fill: hsl(240, 100%, 60% ); }
-the-graph g.route10.selected circle { fill: hsl(270, 100%, 60% ); }
-the-graph g.route11.selected circle { fill: hsl(300, 100%, 60% ); }
-the-graph g.route12.selected circle { fill: hsl(330, 100%, 60% ); }
+the-graph g.route1.selected  circle { fill: hsl( 10, 100%, 75% ); }
+the-graph g.route2.selected  circle { fill: hsl( 30, 100%, 75% ); }
+the-graph g.route3.selected  circle { fill: hsl( 60, 100%, 75% ); }
+the-graph g.route4.selected  circle { fill: hsl( 90, 100%, 75% ); }
+the-graph g.route5.selected  circle { fill: hsl(120, 100%, 75% ); }
+the-graph g.route6.selected  circle { fill: hsl(150, 100%, 75% ); }
+the-graph g.route7.selected  circle { fill: hsl(180, 100%, 75% ); }
+the-graph g.route8.selected  circle { fill: hsl(210, 100%, 75% ); }
+the-graph g.route9.selected  circle { fill: hsl(240, 100%, 75% ); }
+the-graph g.route10.selected circle { fill: hsl(270, 100%, 75% ); }
+the-graph g.route11.selected circle { fill: hsl(300, 100%, 75% ); }
+the-graph g.route12.selected circle { fill: hsl(330, 100%, 75% ); }
 
 
 the-graph.selection g path {

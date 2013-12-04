@@ -97,17 +97,26 @@
           }
           return false;
         },
-        isConnected: function () {
+        getEdge: function () {
           var process = this.getProcess();
           var graph = process.graph;
           var processName = process.getAttribute('name');
-          var connected = false;
+          var connection = null;
           graph.edges.forEach(function (edge) {
             if (edge.target === processName + '.' + this.name) {
-              connected = true;
+              connection = edge;
+            }
+            if (edge.source === processName + '.' + this.name) {
+              connection = edge;
             }
           }.bind(this));
-          return connected;
+          return connection;
+        },
+        isConnected: function () {
+          if (this.getEdge()) {
+            return true;
+          }
+          return false;
         },
         getProcess: function () {
           if (this.process) {
@@ -156,6 +165,7 @@
         },
         routeChanged: function () {
           this.updateClass();
+          this.fire('portroute', this);
         },
         calculatePosition: function () {
           if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
@@ -207,10 +217,18 @@
           }.bind(this));
           return packet;
         },
-        getValue: function () {
+        getValue: function (includeEdge) {
           var iip = this.getIIP();
           if (iip) {
             return iip.data;
+          }
+          if (!includeEdge) {
+            return;
+          }
+          var edge = this.getEdge();
+          if (edge && edge.log) {
+            // TODO: Find last edge that has data
+            return edge.log.get(edge.log.length - 1)
           }
         },
         setValue: function (value) {
