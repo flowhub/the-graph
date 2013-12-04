@@ -282,32 +282,28 @@ the-graph .the-graph-node.highlight:before {
   position: absolute;
   overflow: hidden;
   top: 50%;
-  margin-top: -15px;
-  left: 50%;
-  margin-left: -13px;
-  font-size: 30px;
+  margin-top: -17px;
+  width: 100%;
+  text-align: center;
+  font-size: 35px;
 }
 the-graph.big .the-graph-node-icon {
   font-size: 50px;
   margin-top: -24px;
-  margin-left: -22px;
 }
 the-graph.small .the-graph-node-icon {
   font-size: 25px;
   margin-top: -12px;
-  margin-left: -10px;
 }
 the-graph.tiny .the-graph-node-icon {
   font-size: 16px;
   margin-top: -7px;
-  margin-left: -7px;
 }
 .highlight .the-graph-node-icon {
   color: hsla(180, 11%, 32%, 0.55);
   top: 20%;
   font-size: 20px;
   margin-top: -10px;
-  margin-left: -8px;
 }
 
 .the-graph-node-label {
