@@ -65,15 +65,21 @@ the-graph {
   /*background-color: hsl(189, 10%, 9%);*/
   background-color: hsl(0, 0%, 0%);
   background-image: 
-  radial-gradient(1px at 0px 0px, hsla(210, 50%, 60%, 0.6) 0.5px, hsl(0, 0%, 0%) 1px, hsla(0, 0%, 0%, 0) 1.1px), 
+  radial-gradient(1px at 0px 0px, hsla(210, 50%, 60%, 0.6) 0.5px, hsla(0, 0%, 0%, 0) 1px), 
+  radial-gradient(1px at 0px 0px, hsla(210, 50%, 21%, 0.8) 0.5px, hsla(0, 0%, 0%, 0) 1px),
   linear-gradient(hsla(340, 70%, 24%, 0) 0px, hsla(0, 0%, 0%, 0) 1px), 
-  linear-gradient(90deg, hsl(180, 51%, 5%) 0px, hsla(0, 0%, 0%, 0) 1px), 
-  radial-gradient(1px at 0px 0px, hsla(210, 50%, 21%, 0.8) 0.5px, hsl(0, 0%, 0%) 1px, hsla(0, 0%, 0%, 0) 1.1px);
+  linear-gradient(90deg, hsl(180, 51%, 5%) 0px, hsla(0, 0%, 0%, 0) 1px);
+  background-position: 
+    0px 0px, 
+    0px 0px,
+    0px 0px, 
+    0px 0px !important;
   background-size: 
-    70px 70px, 
-    210px 210px, 
-    210px 210px,
-    14px 14px !important;
+    72px calc(72px), 
+    calc(72px / 4) calc(72px / 4),
+    calc(72px * 3), 
+    calc(72px * 3)
+    !important;
 
 }
 
