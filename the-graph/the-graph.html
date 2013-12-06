@@ -384,7 +384,11 @@
       updateGridBg: function () {
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
-        this.style.backgroundSize = size+"px, "+Math.round(size/4)+"px, "+(size*3)+"px, "+(size*3)+"px";
+        var size1 = size+"px "+size+"px";
+        var size3 = (size*3)+"px "+(size*3)+"px";
+        var size4 = Math.round(this.grid*this.zoom/4);
+        size4 = size4+"px "+size4+"px";
+        this.style.backgroundSize = size1+", "+size4+", "+size3+", "+size3;;
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";
       },
       graphChanged: function () {
