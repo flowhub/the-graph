@@ -8,9 +8,9 @@ if (window.theGraph) {
 var theGraph = {};
 window.theGraph = theGraph;
 
-theGraph.nodeWidth  = 70;
-theGraph.nodeHeight = 70;
-theGraph.gridSize   = 70;
+theGraph.nodeWidth  = 72;
+theGraph.nodeHeight = 72;
+theGraph.gridSize   = 72;
 
 
 theGraph.origin = function (el, x, y) {

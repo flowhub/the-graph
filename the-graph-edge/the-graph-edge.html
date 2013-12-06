@@ -199,7 +199,9 @@
         if (!this.path) {
           return;
         }
-        this.group.removeChild(this.subgroup);
+        if (this.group && this.subgroup) {
+          this.group.removeChild(this.subgroup);
+        }
       },
       getSource: function () {
         var split = this.source.split('.');

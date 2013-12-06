@@ -74,8 +74,8 @@
       minY: 0,
       maxX: 500,
       maxY: 500,
-      grid: 70, // set by graph-editor
-      snap: 30,
+      grid: 72, // set by graph-editor
+      snap: 36,
       selectcount: 0,
       nodes: [],
       edges: [],
@@ -384,10 +384,8 @@
       updateGridBg: function () {
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
-        var size3 = (size*3)+"px "+(size*3)+"px";
-        var sizeSixth = Math.round(this.grid/6);
-        this.style.backgroundSize = size+"px "+size+"px, "+size3+", "+size3+", "+sizeSixth"px";
-        this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
+        this.style.backgroundSize = size+"px, "+Math.round(size/4)+"px, "+(size*3)+"px, "+(size*3)+"px";
+        this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";
       },
       graphChanged: function () {
         if (this.envObserver) {
