@@ -27,8 +27,8 @@
   (function(){
     "use strict";
     
-    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                                  window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    // window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+    //                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
                                   
     // Thanks bobnice http://stackoverflow.com/a/1583281/592125
 
@@ -240,14 +240,10 @@
         
         this.routeChanged();
 
-        // Add paths to main svg g
-             
-                
-
         // Render edge
         this.drawEdge();
         
-        //
+        
         setTimeout(function(){
           var g, apath, mpath,
             circle1, circle2, circle3, circle4, circle5,
@@ -255,7 +251,7 @@
             
           
           
-          g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          this.animationGroup = g = document.createElementNS("http://www.w3.org/2000/svg", "g");
           //g.setAttributeNS(null, 'filter','url(#bulbfilter)')                 
 
           circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -319,7 +315,7 @@
           apath = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
           apath.setAttributeNS(null, "dur", ".8s");        
           apath.setAttributeNS(null, "repeatCount", "indefinite");     
-          apath.setAttributeNS(null, "rotate", "auto");     
+          apath.setAttributeNS(null, "rotate", "auto");
         
           mpath = document.createElementNS("http://www.w3.org/2000/svg", "mpath");
           var xlink = 'http://www.w3.org/1999/xlink';
@@ -339,7 +335,7 @@
 
           this.subgroup.appendChild(this.pathTouch);
           this.subgroup.appendChild(this.path);
-          this.subgroup.appendChild(g);
+          //this.subgroup.appendChild(this.animationGroup);
           this.group.appendChild(this.subgroup);
         }.bind(this),16)
        
@@ -452,10 +448,10 @@
       animatePath: function (timestamp) {        
         this._stroke_offset = this._stroke_offset-.3;
         this.pathTouch.style["stroke-dashoffset"] = this._stroke_offset +  "px";
-          if (this.selected) {
-            requestAnimationFrame(this.animatePath.bind(this));
-          }
-        },
+        if (this.selected) {
+          requestAnimationFrame(this.animatePath.bind(this));
+        }
+      },
       
       selectedChanged: function () {        
         if (this.selected){
@@ -465,16 +461,24 @@
           
           //this.pathTouch.classList.add('selected');
           //this.path.classList.add('selected');
-                    
+          
+          this.subgroup.appendChild(this.animationGroup);
           
           //this.path.classList.add('selected');
-          requestAnimationFrame(this.animatePath.bind(this));
+          // requestAnimationFrame(this.animatePath.bind(this));
+
+          // animate
+
         }
         else {
           this.fire('deselected',this);
+          this.subgroup.removeChild(this.animationGroup);
           this.subgroup.classList.remove('selected');
           //this.path.classList.remove('selected');
           //this.pathTouch.classList.remove('selected');
+
+          // stop animation
+
         }
       },
       toJSON: function () {
