@@ -70,20 +70,19 @@ the-graph {
   linear-gradient(90deg, hsl(180, 51%, 5%) 0px, hsla(0, 0%, 0%, 0) 1px), 
   radial-gradient(1px at 0px 0px, hsla(210, 50%, 21%, 0.8) 0.5px, hsl(0, 0%, 0%) 1px, hsla(0, 0%, 0%, 0) 1.1px);
   background-size: 
-    70px 70px, 
-    210px 210px, 
-    210px 210px,
-    14px 14px !important;
-
+    72px 72px, 
+    216px 216px, 
+    216px 216px,
+    12px 12px;
 }
 
+the-graph.small,
 the-graph.tiny {
-
-  background-image:
-    radial-gradient(circle 0.5px at 0.5px 0.5px, rgb(71,71,71) 0px, rgb(71,71,71) 1px, transparent 2px),
-    linear-gradient(hsla(0, 100%, 14%, 0.8) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(0, 100%, 14%, 0.8) 1px, transparent 1px);
-
+  background-image: 
+  radial-gradient(1px at 0px 0px, hsla(210, 50%, 60%, 0.6) 0.5px, hsl(0, 0%, 0%) 1px, hsla(0, 0%, 0%, 0) 1.1px), 
+  linear-gradient(hsla(340, 70%, 24%, 0) 0px, hsla(0, 0%, 0%, 0) 1px), 
+  linear-gradient(90deg, hsl(180, 51%, 5%) 0px, hsla(0, 0%, 0%, 0) 1px), 
+  none;
 }
 
 

@@ -385,7 +385,8 @@
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
         var size3 = (size*3)+"px "+(size*3)+"px";
-        this.style.backgroundSize = size+"px "+size+"px, "+size3+", "+size3;
+        var sizeSixth = Math.round(this.grid/6);
+        this.style.backgroundSize = size+"px "+size+"px, "+size3+", "+size3+", "+sizeSixth"px";
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
       },
       graphChanged: function () {
