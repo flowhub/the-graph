@@ -9,15 +9,23 @@
     }
     #thumb {
       position: absolute;
-      top: 0; left: 0; 
-      background-color: hsl(189, 47%, 6%);
+      top: 0;
+      left: 0;
+      background-color: hsla(0, 0%, 0%, 0.9);
+      overflow: visible;
     }
     #viewrect {
+      box-shadow: hsla(190, 100%, 80%, 0.1) 0px 0px 36px inset, hsla(200, 100%, 70%, 0.2) 0px 0px 36px;
+      background-image: radial-gradient(1px at 0px 0px, hsl(210, 50%, 50%) 0.1px, hsla(0, 0%, 0%, 0) 1px);
+      background-size: calc(72px / 12) calc(72px / 12);
+      background-position: 0px;
       position: absolute;
-      top: 0; left: 0; 
-      width: 200px; 
-      height: 150px; 
-      border: 1px solid hsl(184, 40%, 89%);
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 150px;
+      border: 1px solid hsla(190, 100%, 80%, 0.4);
+      border-style: dotted;
     }
   </style>
   <template>
@@ -68,28 +76,28 @@
         if (x < 0) { 
           w += x; 
           x = 0;
-          this.$.viewrect.style.borderLeftColor = "#333";
+          this.$.viewrect.style.borderLeftColor = "hsla(10, 60%, 32%, 0.3)";
         } else {
-          this.$.viewrect.style.borderLeftColor = "#FFF";
+          this.$.viewrect.style.borderLeftColor = "hsla(190, 100%, 80%,.4)";
         }
         if (y < 0) { 
           h += y; 
           y = 0;
-          this.$.viewrect.style.borderTopColor = "#333";
+          this.$.viewrect.style.borderTopColor = "hsla(10, 60%, 32%, 0.3)";
         } else {
-          this.$.viewrect.style.borderTopColor = "#FFF";
+          this.$.viewrect.style.borderTopColor = "hsla(190, 100%, 80%,.4)";
         }
         if (w > this.width-x) { 
           w = this.width-x;
-          this.$.viewrect.style.borderRightColor = "#333";
+          this.$.viewrect.style.borderRightColor = "hsla(10, 60%, 32%, 0.3)";
         } else {
-          this.$.viewrect.style.borderRightColor = "#FFF";
+          this.$.viewrect.style.borderRightColor = "hsla(190, 100%, 80%,.4)";
         }
         if (h > this.height-y) { 
           h = this.height-y;
-          this.$.viewrect.style.borderBottomColor = "#333";
+          this.$.viewrect.style.borderBottomColor = "hsla(10, 60%, 32%, 0.3)";
         } else {
-          this.$.viewrect.style.borderBottomColor = "#FFF";
+          this.$.viewrect.style.borderBottomColor = "hsla(190, 100%, 80%,.4)";
         }
 
         // Size and translate rect
