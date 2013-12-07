@@ -337,7 +337,7 @@
           this.subgroup.appendChild(this.path);
           //this.subgroup.appendChild(this.animationGroup);
           this.group.appendChild(this.subgroup);
-        }.bind(this),16)
+        }.bind(this),16);
        
       },
       bringToTop: function () {
@@ -446,7 +446,7 @@
       
       _stroke_offset:0,
       animatePath: function (timestamp) {        
-        this._stroke_offset = this._stroke_offset-.3;
+        this._stroke_offset = this._stroke_offset-0.3;
         this.pathTouch.style["stroke-dashoffset"] = this._stroke_offset +  "px";
         if (this.selected) {
           requestAnimationFrame(this.animatePath.bind(this));

@@ -13,7 +13,7 @@
         </template>
         <template if="{{ label == component }}">
         &nbsp;
-        </template>
+        </template> 
       </h2>
     </div>
     <i class="the-graph-node-icon fa fa-{{icon}}"></i>
@@ -143,6 +143,9 @@
           if (!other) { return; }
           if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
             // Select from port label
+            other = other.parentNode;
+          } else if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PROCESS") {
+            // Select from icon
             other = other.parentNode;
           }
           if (other.nodeName==="THE-GRAPH-PORT") {
@@ -323,6 +326,11 @@
             this.highlight = false;
           }
         }.bind(this));
+
+        // Don't show context menu
+        this.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        }, false);
 
         this.addEventListener('tap', this.onTap.bind(this), false);
       },
