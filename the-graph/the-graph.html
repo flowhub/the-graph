@@ -384,7 +384,13 @@
       updateGridBg: function () {
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
-        this.style.backgroundSize = size+"px, "+Math.round(size/4)+"px, "+(size*3)+"px, "+(size*3)+"px";
+        var size4 = Math.round(size/4);        
+        var size3 = size*3;
+        // Note: must include both width & height, otherwise wont be square
+        this.style.backgroundSize =  size + "px " + size + "px, " 
+          + size4+"px " + size4+"px, " 
+          + size3+"px " + size+"px, " 
+          + size3+"px " + size3+"px ";
         this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";
       },
       graphChanged: function () {
