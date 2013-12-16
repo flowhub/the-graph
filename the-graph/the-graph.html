@@ -44,7 +44,7 @@
   <script>
   (function(){
     "use strict";
-
+    
     Polymer('the-graph', {
       graphId: null,
       projectId: '',
@@ -74,8 +74,9 @@
       minY: 0,
       maxX: 500,
       maxY: 500,
-      grid: 70,
-      snap: 30,
+      grid: 72, // set by graph-editor
+      snap: 36,
+      selectcount: 0,
       nodes: [],
       edges: [],
       initials: [],
@@ -101,6 +102,13 @@
         this.addEventListener('route', function () {
           this.fire('changed', this);
         }.bind(this));
+        this.addEventListener('selected', function () {
+          
+          this.selectcount++;
+        }.bind(this));
+        this.addEventListener('deselected', function () {
+          this.selectcount--;
+        }.bind(this));
 
         this.observe();
 
@@ -112,6 +120,14 @@
         this.calcBump();
         this.observe();
         this.setupGestures();
+      },
+      selectcountChanged: function () {
+        if (this.selectcount > 0) {
+          this.classList.add('selection');
+        }
+        else {
+          this.classList.remove('selection');
+        }
       },
       setupGestures: function () {
         // Zooming
@@ -368,9 +384,14 @@
       updateGridBg: function () {
         // Update CSS grid image
         var size = Math.round(this.grid*this.zoom);
-        var size3 = (size*3)+"px "+(size*3)+"px";
-        this.style.backgroundSize = size+"px "+size+"px, "+size3+", "+size3;
-        this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";        
+        var size4 = Math.round(size/4);        
+        var size3 = size*3;
+        // Note: must include both width & height, otherwise wont be square
+        this.style.backgroundSize =  size + "px " + size + "px, " +
+          size4+"px " + size4+"px, " +
+          size3+"px " + size+"px, " +
+          size3+"px " + size3+"px ";
+        this.style.backgroundPosition = (this.bump.x)+"px "+(this.bump.y)+"px";
       },
       graphChanged: function () {
         if (this.envObserver) {

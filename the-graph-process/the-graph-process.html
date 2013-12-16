@@ -13,7 +13,7 @@
         </template>
         <template if="{{ label == component }}">
         &nbsp;
-        </template>
+        </template> 
       </h2>
     </div>
     <i class="the-graph-node-icon fa fa-{{icon}}"></i>
@@ -50,9 +50,9 @@
         y: 500
       },
       diameterBump: 0,
-      snap: 30,
-      width: 60,
-      height: 60,
+      snap: 36,
+      width: 72,
+      height: 72,
       libraryComponent: null,
       inports: [],
       outports: [],
@@ -77,8 +77,8 @@
         this.graph = graph;
 
         // Initial bump
-        this.bump.x = graph.padding;
-        this.bump.y = graph.padding;
+        this.bump.x = graph.bump.x;
+        this.bump.y = graph.bump.y;
 
         // Handle sizing
         this.graphZoom(this.zoom);
@@ -143,6 +143,9 @@
           if (!other) { return; }
           if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PORT") {
             // Select from port label
+            other = other.parentNode;
+          } else if (other.parentNode && other.parentNode.nodeName==="THE-GRAPH-PROCESS") {
+            // Select from icon
             other = other.parentNode;
           }
           if (other.nodeName==="THE-GRAPH-PORT") {
@@ -323,6 +326,11 @@
             this.highlight = false;
           }
         }.bind(this));
+
+        // Don't show context menu
+        this.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        }, false);
 
         this.addEventListener('tap', this.onTap.bind(this), false);
       },
@@ -567,6 +575,23 @@
       },
       onTap: function () {
         this.fire('nodeclick', this);
+      },
+      selectedChanged: function () {        
+        if (this.selected){
+          this.fire('selected',this);
+          
+          this.classList.add('selected');
+          /*this.path.style["stroke-dasharray"] = "2px 3px";
+          this.path.style["stroke-linecap"] = "round";
+          this.path.style["stroke-width"] = "2px";*/
+          
+          //this.path.classList.add('selected');
+
+        }
+        else {
+          this.fire('deselected',this);
+          this.classList.remove('selected');
+        }
       },
       toJSON: function () {
         var nodeId = this.getAttribute('name');

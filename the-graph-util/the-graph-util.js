@@ -1,10 +1,19 @@
 (function (){
 "use strict";
 
-var util = {};
-window.theGraph = util;
+if (window.theGraph) {
+  return window.theGraph;
+}
 
-util.origin = function (el, x, y) {
+var theGraph = {};
+window.theGraph = theGraph;
+
+theGraph.nodeWidth  = 72;
+theGraph.nodeHeight = 72;
+theGraph.gridSize   = 72;
+
+
+theGraph.origin = function (el, x, y) {
   var origin = x+"px "+y+"px";
   
   // TODO prefix test
@@ -16,7 +25,7 @@ util.origin = function (el, x, y) {
   return el;
 };
 
-util.transform = function (el, x, y, scale) {
+theGraph.transform = function (el, x, y, scale) {
   if (scale === undefined) { scale = 1; }
   x = Math.round(x);
   y = Math.round(y);
@@ -32,7 +41,7 @@ util.transform = function (el, x, y, scale) {
   return el;
 };
 
-util.transformOrigin = function (el, x, y) {
+theGraph.transformOrigin = function (el, x, y) {
   x = Math.round(x);
   y = Math.round(y);
   var origin = x+"px "+y+"px";
@@ -46,7 +55,7 @@ util.transformOrigin = function (el, x, y) {
   return el;
 };
 
-util.clip = function (num, min, max) {
+theGraph.clip = function (num, min, max) {
   return Math.max(Math.min(num, max), min);
 };
 

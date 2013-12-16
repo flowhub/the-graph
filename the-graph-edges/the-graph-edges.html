@@ -2,8 +2,17 @@
 
 <polymer-element name="the-graph-edges" attributes="connections" lightdom>
   <template>
-    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
-      <g id="connections" transform="translate(500,500)"></g>
+    <svg 
+      xmlns:xlink="http://www.w3.org/1999/xlink" 
+      xmlns="http://www.w3.org/2000/svg"       
+      version="1.1">
+      <g id="connections" transform="translate(500,500)">
+      </g>
+      <defs>
+        <filter id="bulbfilter" x="0" y="0">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+        </filter>
+      </defs>
     </svg>
     <content select="the-graph-edge"></content>
   </template>
@@ -13,7 +22,6 @@
   <script>
   (function () {
     "use strict";
-
     Polymer('the-graph-edges', {
       zoom: 1,
       enteredView: function () {
