@@ -410,6 +410,12 @@
         for (var index in this.graph.processes) {
           var p = this.graph.processes[index];
           p.name = index;
+          if (!p.metadata) {
+            p.metadata = {
+              x: 0,
+              y: 0
+            };
+          }
           if (!p.metadata.label) {
             p.metadata.label = p.name;
           }
