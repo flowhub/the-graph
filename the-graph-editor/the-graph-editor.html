@@ -106,6 +106,13 @@
           this.registerComponent(component);
         }.bind(this));
       },
+      updateIcon: function (process, icon) {
+        var instance = this.$.graph.$.nodes.getProcessByName(process);
+        if (!instance) {
+          return;
+        }
+        instance.icon = icon;
+      },
       registerComponent: function (definition) {
         if (!this.library[definition.name]) {
           // New component, register
