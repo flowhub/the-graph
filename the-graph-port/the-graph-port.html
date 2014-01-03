@@ -144,6 +144,9 @@
           }
           this.className = side + ' route' + this.route + selected;
         },
+        nameChanged: function () {
+          this.setAttribute('title', this.name);
+        },
         sideChanged: function () {
           if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
             return;
