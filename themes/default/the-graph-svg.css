@@ -1,0 +1,44 @@
+svg.the-graph {
+}
+g.view {
+}
+rect.background {
+  /* works in ff, not chrome */
+  /*fill: url(http://localhost:3000/themes/default/grid.svg#gridpattern);*/
+}
+g.nodes rect {
+  fill: hsla(0, 0%, 0%, 0.75);
+  stroke: hsl(0, 0%, 50%);
+  stroke-width: 2px;
+}
+path.edge-bg {
+  fill: none;
+  stroke: black;
+  stroke-width: 4px;
+}
+path.edge-fg {
+  fill: none;
+  stroke: white;
+  stroke-width: 2px;
+}
+text {
+  font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
+  text-rendering: geometricPrecision; /* makes text scale smoothly */
+  font-size: 14px;
+  fill: white;
+  text-anchor: middle;
+}
+
+g.route0  path.edge-fg { stroke: hsl( 10, 100%, 100%); }
+g.route1  path.edge-fg { stroke: hsl( 10, 100%, 70% ); }
+g.route2  path.edge-fg { stroke: hsl( 30, 100%, 70% ); }
+g.route3  path.edge-fg { stroke: hsl( 60, 100%, 70% ); }
+g.route4  path.edge-fg { stroke: hsl( 90, 100%, 70% ); }
+g.route5  path.edge-fg { stroke: hsl(120, 100%, 70% ); }
+g.route6  path.edge-fg { stroke: hsl(150, 100%, 70% ); }
+g.route7  path.edge-fg { stroke: hsl(180, 100%, 70% ); }
+g.route8  path.edge-fg { stroke: hsl(210, 100%, 70% ); }
+g.route9  path.edge-fg { stroke: hsl(240, 100%, 70% ); }
+g.route10 path.edge-fg { stroke: hsl(270, 100%, 70% ); }
+g.route11 path.edge-fg { stroke: hsl(300, 100%, 70% ); }
+g.route12 path.edge-fg { stroke: hsl(330, 100%, 70% ); }

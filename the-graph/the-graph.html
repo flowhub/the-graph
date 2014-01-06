@@ -1,50 +1,46 @@
-<link rel="import" href="../the-graph-groups/the-graph-groups.html">
-<link rel="import" href="../the-graph-nodes/the-graph-nodes.html">
-<link rel="import" href="../the-graph-process/the-graph-process.html">
-<link rel="import" href="../the-graph-edges/the-graph-edges.html">
-<link rel="import" href="../the-graph-edge/the-graph-edge.html">
-<link rel="import" href="../the-graph-initials/the-graph-initials.html">
-<link rel="import" href="../the-graph-initial/the-graph-initial.html">
-<link rel="import" href="../the-graph-exports/the-graph-exports.html">
-<link rel="import" href="../the-graph-export/the-graph-export.html">
-
-<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" touch-action="none" lightdom>
+<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
 
   <template>
-    <!-- <content select="the-behavior"></content> -->
-    <the-graph-nodes id="nodes">
-      <template repeat="{{ node in nodes }}">
-        <the-graph-process name="{{node.name}}" position="{{node.metadata.x}} {{node.metadata.y}}" label="{{node.metadata.label}}" component="{{node.component}}"></the-graph-process>
-      </template>
-    </the-graph-nodes>
-    <the-graph-edges id="edges">
-      <template repeat="{{ edge in edges }}">
-        <the-graph-edge source="{{ edge.source }}" target="{{ edge.target }}" route="{{ edge.metadata.route }}"></the-graph-edge>
-      </template>
-    </the-graph-edges>
-    <the-graph-initials id="initials">
-      <template repeat="{{ initial in initials }}">
-        <the-graph-initial data="{{ initial.data }}" target="{{ initial.target }}"></the-graph-initial>
-      </template>
-    </the-graph-initials>
-    <the-graph-exports id="exports">
-      <template repeat="{{ export in exports }}">
-        <the-graph-export public="{{ export.public }}" private="{{ export.private }}" label="{{ export.public }}" position="{{export.metadata.x}} {{export.metadata.y}}" route="{{export.metadata.route}}"></the-graph-export>
-      </template>
-    </the-graph-exports>
-    <the-graph-groups id="groups">
-      <template repeat="{{ group in groups }}">
-      <the-graph-group name="{{ group.name }}" label="{{ group.metadata.label }}" nodes="{{ group.nodes }}"></the-graph-group>
-      </template>
-    </the-graph-groups>
+    <link rel="stylesheet" href="../themes/default/the-graph-svg.css">
+    <div id="svgcontainer"></div>
   </template>
 
-  <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script>
+  <!-- <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script> -->
+  <script type="text/javascript" src="./the-graph.js"></script>
+  <script type="text/javascript" src="./the-graph-node.js"></script>
+  <script type="text/javascript" src="./the-graph-edge.js"></script>
 
   <script>
   (function(){
     "use strict";
+
+    Polymer('the-graph', {
+      svgView: null,
+      ready: function () {
+      },
+      enteredView: function () {
+        this.addEventListener("pointermove", this.pointerMove.bind(this));
+      },
+      graphChanged: function () {
+        this.svgView = React.renderComponent(
+          window.TheGraph.Graph({
+            graph: this.graph,
+            width: this.width,
+            height: this.height
+          }),
+          this.$.svgcontainer
+        );
+      },
+      pointerMove: function (event) {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      },
+      toJSON: function () {
+        return {};
+      }
+    });
     
+    /*
     Polymer('the-graph', {
       graphId: null,
       projectId: '',
@@ -669,6 +665,8 @@
         return definition;
       }
     });
+
+    */
 
   })();
   </script>

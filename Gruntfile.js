@@ -8,7 +8,8 @@
 
     var sources = {
       scripts: ['Gruntfile.js', 'the-*/*.js'],
-      elements: ['the-*/*.html']
+      elements: ['the-*/*.html'],
+      styles: ['themes/default/*.css']
     };
 
     var jshintOptions = { 
@@ -53,7 +54,7 @@
           files: sources.scripts,
           tasks: ['jshint:force'],
           options: {
-            nospawn: true,
+            // nospawn: true,
             livereload: true
           }
         },
@@ -61,7 +62,14 @@
           files: sources.elements,
           tasks: ['inlinelint:force'],
           options: {
-            nospawn: true,
+            // nospawn: true,
+            livereload: true
+          }
+        },
+        styles: {
+          files: sources.styles,
+          options: {
+            // nospawn: true,
             livereload: true
           }
         }

@@ -56,13 +56,13 @@ the-graph {
   -o-transform-origin: top left;
   transform-origin: top left;
 
+  /*
   -webkit-transform: translate3d(-500px,-500px,0px) scale(1);
   -moz-transform: translate3d(-500px,-500px,0px) scale(1);
   -ms-transform: translate3d(-500px,-500px,0px) scale(1);
   -o-transform: translate3d(-500px,-500px,0px) scale(1);
   transform: translate3d(-500px,-500px,0px) scale(1);
 
-  /*background-color: hsl(189, 10%, 9%);*/
   background-color: hsl(0, 0%, 0%);
   background-image: 
   radial-gradient(1px at 0px 0px, hsla(210, 50%, 60%, 0.6) 0.5px, hsla(0, 0%, 0%, 0) 1px), 
@@ -76,6 +76,7 @@ the-graph {
     calc(72px / 4),
     calc(72px * 3), 
     calc(72px * 3);
+  */
 }
 
 the-graph.small,
@@ -512,7 +513,7 @@ the-graph-outports the-graph-port.south.route12  { border-top-color: hsl(330, 10
 
 
 the-graph circle {fill:none;}
-
+/*
 the-graph g.route0  path, the-graph g.route0.selected  path { stroke: hsl( 10, 100%, 100%); }
 the-graph g.route1  path, the-graph g.route1.selected  path { stroke: hsl( 10, 100%, 70% ); }
 the-graph g.route2  path, the-graph g.route2.selected  path { stroke: hsl( 30, 100%, 70% ); }
@@ -540,7 +541,7 @@ the-graph g.route9.selected  circle { fill: hsl(240, 100%, 75% ); }
 the-graph g.route10.selected circle { fill: hsl(270, 100%, 75% ); }
 the-graph g.route11.selected circle { fill: hsl(300, 100%, 75% ); }
 the-graph g.route12.selected circle { fill: hsl(330, 100%, 75% ); }
-
+*/
 
 the-graph.selection g path {
   stroke: hsla(180, 10%, 45%, 0.4980392156862745);

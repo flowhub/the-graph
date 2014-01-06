@@ -1,0 +1,266 @@
+<polymer-element name="the-graph-port" attributes="name type side route" lightdom>
+  <template>
+    <label>{{name}}</label>
+  </template>
+  <script>
+    (function () {
+      "use strict";
+
+      var sides = {
+        east: 45,
+        south: 135,
+        west: 225,
+        north: 315
+      };
+
+      var getPortInSide = function (index, ports) {
+        return 360 / Object.keys(sides).length / (ports + 1) * (index + 1);
+      };
+
+      var getPortDegrees = function (index, ports, side) {
+        var inside = getPortInSide(index, ports);
+        var absolute = sides[side] + inside;
+        if (side==="west") {
+          absolute = sides.north - inside;
+        }
+        if (absolute > 360) {
+          absolute -= 360;
+        }
+        return absolute;
+      };
+
+      var distanceInSquare = function (degrees, radius) {
+        var origDegrees = degrees;
+        degrees = degrees % 90;
+        if (degrees >= 45) {
+          degrees = 90 - degrees;
+        }
+        var radians = degrees * (Math.PI / 180);
+        var adjacent = radius;
+        return adjacent / Math.cos(radians);
+      };
+
+      var distanceInCircle = function (degrees, radius) {
+        return radius;
+      };
+
+      var getPortPosition = function (shape, degrees, parent, port) {
+        var distance;
+        //var radius = parent.width / 2;
+        var radius = parent.offsetWidth / 2;
+        if (!radius) {
+          radius = 30;
+        }
+        if (shape == 'circle') {
+          distance = distanceInCircle(degrees, radius);
+        } else {
+          distance = distanceInSquare(degrees, radius);
+        }
+        var radians = degrees * (Math.PI / 180);
+        var margin = port.offsetWidth / 2 + 6;
+        var x = Math.round(Math.cos(radians) * distance);
+        var y = Math.round(Math.sin(radians) * distance);
+        var posProps = {
+          right: null,
+          left: y + radius - margin,
+          top: null,
+          bottom: x + radius - margin
+        };
+        return posProps;
+      };
+
+      Polymer('the-graph-port', {
+        name: '',
+        route: 0,
+        type: 'all',
+        side: 'west',
+        enteredView: function () {
+          if (this.isOutport()) {
+            this.side = 'east';
+          }
+          setTimeout(function () {
+            this.sideChanged();
+          }.bind(this), 0);
+        },
+        getNodeName: function () {
+          return this.parentNode.parentNode.getAttribute('name');
+        },
+        isOutport: function () {
+          if (this.parentNode.nodeName === 'THE-GRAPH-OUTPORTS') {
+            return true;
+          }
+          return false;
+        },
+        canConnect: function (target) {
+          if (this.isOutport() !== target.isOutport()) {
+            return true;
+          }
+          return false;
+        },
+        getEdge: function () {
+          var process = this.getProcess();
+          var graph = process.graph;
+          var processName = process.getAttribute('name');
+          var connection = null;
+          graph.edges.forEach(function (edge) {
+            if (edge.target === processName + '.' + this.name) {
+              connection = edge;
+            }
+            if (edge.source === processName + '.' + this.name) {
+              connection = edge;
+            }
+          }.bind(this));
+          return connection;
+        },
+        isConnected: function () {
+          if (this.getEdge()) {
+            return true;
+          }
+          return false;
+        },
+        getProcess: function () {
+          if (this.process) {
+            return this.process;
+          }
+          this.process = this.parentNode.parentNode;
+          this.process.addEventListener('highlight', function () {
+            this.updateClass();
+            this.calculatePosition();
+          }.bind(this));
+          return this.process;
+        },
+        graphZoom: function () {
+          // Called sync from the-process.graphZoom
+          this.updateClass();
+          this.calculatePosition();
+        },
+        updateClass: function (side) {
+          var selected = '';
+          if (this.classList.contains('selected')) {
+            selected = ' selected';
+          }
+          if (!side) {
+            side = this.side;
+          }
+          this.className = side + ' route' + this.route + selected;
+        },
+        sideChanged: function () {
+          if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
+            return;
+          }
+          this.updateClass();
+          this.calculatePosition();
+
+          // Update the others as well
+          var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
+          childNodes.forEach(function (port) {
+            if (port.nodeName !== 'THE-GRAPH-PORT') {
+              return;
+            }
+            if (port === this) {
+              return;
+            }
+            port.calculatePosition();
+          }.bind(this));
+        },
+        routeChanged: function () {
+          this.updateClass();
+          this.fire('portroute', this);
+        },
+        calculatePosition: function () {
+          if (this.parentNode.parentNode.nodeName === 'THE-COMPONENT') {
+            return;
+          }
+          var shape = 'square';
+          var side = this.side;
+          if (this.getProcess().classList && this.getProcess().classList.contains('highlight')) {
+            shape = 'circle';
+            if (side === 'south') {
+              side = 'east';
+            }
+            if (side === 'north') {
+              side = 'west';
+            }
+            this.updateClass(side);
+          }
+          var onSameSide = [];
+          var childNodes = Array.prototype.slice.call(this.parentNode.childNodes);
+          childNodes.forEach(function (port) {
+            if (port.side === side || port === this) {
+              onSameSide.push(port);
+            }
+          }.bind(this));
+
+          var degrees = getPortDegrees(onSameSide.indexOf(this), onSameSide.length, side);
+
+          var position = getPortPosition(shape, degrees, this.getProcess(), this);
+          if (this.side == 'south') {
+            position.bottom -= 1;
+          }
+          for (var posSide in position) {
+            if (position[posSide] !== null) {
+              this.style[posSide] = position[posSide] + 'px';
+            } else {
+              this.style[posSide] = '';
+            }
+          }
+          this.fire('side', side);
+        },
+        getIIP: function () {
+          var process = this.getProcess();
+          var graph = process.graph;
+          var packet = null;
+          graph.initials.forEach(function (iip) {
+            if (iip.target === process.getAttribute('name') + '.' + this.name) {
+              packet = iip;
+            }
+          }.bind(this));
+          return packet;
+        },
+        getValue: function (includeEdge) {
+          var iip = this.getIIP();
+          if (iip) {
+            return iip.data;
+          }
+          if (!includeEdge) {
+            return;
+          }
+          var edge = this.getEdge();
+          if (edge && edge.log) {
+            // TODO: Find last edge that has data
+            return edge.log.get(edge.log.length - 1);
+          }
+        },
+        setValue: function (value) {
+          var iip = this.getIIP();
+          if (iip) {
+            iip.data = value;
+            return;
+          }
+          var process = this.getProcess();
+          var graph = process.graph;
+          graph.initials.push({
+            target: process.getAttribute('name') + '.' + this.name,
+            data: value
+          });
+        },
+        removeValue: function () {
+          var iip = this.getIIP();
+          if (!iip) {
+            return;
+          }
+          var process = this.getProcess();
+          var graph = process.graph;
+          graph.initials.splice(graph.initials.indexOf(iip), 1);
+        },
+        sendBang: function () {
+          this.fire('bang', {
+            process: this.getProcess().getAttribute('name'),
+            port: this.name
+          });
+        }
+      });
+
+    })();
+  </script>
+</polymer-element>
