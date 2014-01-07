@@ -53,7 +53,7 @@
           files: sources.scripts,
           tasks: ['jshint:force'],
           options: {
-            nospawn: true,
+            // nospawn: true,
             livereload: true
           }
         },
@@ -61,7 +61,7 @@
           files: sources.elements,
           tasks: ['inlinelint:force'],
           options: {
-            nospawn: true,
+            // nospawn: true,
             livereload: true
           }
         }
@@ -79,6 +79,7 @@
     this.loadNpmTasks('grunt-lint-inline');
     this.loadNpmTasks('grunt-contrib-connect');
 
+    // grunt dev makes a server that injects live-reload and watches for changes
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
     this.registerTask('default', ['test']);
