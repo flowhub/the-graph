@@ -206,15 +206,15 @@
       getSource: function () {
         var split = this.source.split('.');
         return {
-          node: split[0],
-          port: split[1]
+          node: split.shift(),
+          port: split.join('.')
         };
       },
       getTarget: function () {
         var split = this.target.split('.');
         return {
-          node: split[0],
-          port: split[1]
+          node: split.shift(),
+          port: split.join('.')
         };
       },
       groupChanged: function () {
