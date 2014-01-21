@@ -26,13 +26,23 @@
       iconChanged: function () {
         this.fire('icon', this.icon);
       },
+      inObserver: null,
       inportsChanged: function () {
-        this.inObserver = new ArrayObserver(this.inports, function () {
+        if (this.inObserver) {
+          this.inObserver.close();
+        }
+        this.inObserver = new ArrayObserver(this.inports);
+        this.inObserver.open(function () {
           this.fire('inports', this.inports);
         }.bind(this));
       },
+      outObserver: null,
       outportsChanged: function () {
-        this.outObserver = new ArrayObserver(this.outports, function () {
+        if (this.outObserver) {
+          this.outObserver.close();
+        }
+        this.outObserver = new ArrayObserver(this.outports);
+        this.outObserver.open(function () {
           this.fire('outports', this.outports);
         }.bind(this));
       },

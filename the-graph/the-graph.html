@@ -624,7 +624,8 @@
           });
         }
         if (!this.envObserver && this.graph) {
-          this.envObserver = new ObjectObserver(this.graph.properties.environment, this.handleEnv.bind(this));
+          this.envObserver = new ObjectObserver(this.graph.properties.environment);
+          this.envObserver.open(this.handleEnv.bind(this));
         }
       },
       leftView: function () {
