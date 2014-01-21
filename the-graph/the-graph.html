@@ -14,7 +14,7 @@
     <!-- <content select="the-behavior"></content> -->
     <the-graph-nodes id="nodes">
       <template repeat="{{ node in nodes }}">
-        <the-graph-process name="{{node.name}}" position="{{node.metadata.x}} {{node.metadata.y}}" label="{{node.metadata.label}}" component="{{node.component}}"></the-graph-process>
+      <the-graph-process name="{{node.name}}" position="{{ [node.metadata.x, node.metadata.y] }}" label="{{node.metadata.label}}" component="{{node.component}}"></the-graph-process>
       </template>
     </the-graph-nodes>
     <the-graph-edges id="edges">
