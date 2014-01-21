@@ -103,7 +103,6 @@
           this.fire('changed', this);
         }.bind(this));
         this.addEventListener('selected', function () {
-          
           this.selectcount++;
         }.bind(this));
         this.addEventListener('deselected', function () {
@@ -583,6 +582,9 @@
           removedNodes.forEach(function (node) {
             switch (node.nodeName) {
               case 'THE-GRAPH-PROCESS':
+                if (node.selected) {
+                  this.selectcount--;
+                }
                 var edges = this.$.edges.getEdges();
                 edges.forEach(function (edge) {
                   if (edge.sourceNode === node || edge.targetNode === node) {
@@ -593,6 +595,9 @@
                 this.fire('removenode', node);
                 break;
               case 'THE-GRAPH-EDGE':
+                if (node.selected) {
+                  this.selectcount--;
+                }
                 this.fire('changed', this);
                 this.fire('removeedge', node);
                 break;
