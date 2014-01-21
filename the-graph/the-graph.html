@@ -108,8 +108,7 @@
         this.addEventListener('deselected', function () {
           this.selectcount--;
         }.bind(this));
-
-        this.observe();
+        this.observeChanges();
 
         // Used to limit panning
         this.addEventListener('moved', this.calcMinMax.bind(this));
@@ -117,7 +116,7 @@
 
         // Initial w/h
         this.calcBump();
-        this.observe();
+        this.observeChanges();
         this.setupGestures();
       },
       selectcountChanged: function () {
@@ -397,7 +396,7 @@
           this.envObserver.close();
           this.envObserver = null;
         }
-        this.observe();
+        this.observeChanges();
         this.graphId = this.graph.id;
         this.projectId = this.graph.project;
         this.nodes = [];
@@ -613,7 +612,7 @@
       handleEnv: function () {
         this.fire('changed', this);
       },
-      observe: function () {
+      observeChanges: function () {
         if (!this.mutationObserver) {
           this.mutationObserver = new MutationObserver(this.handleMutations.bind(this));
           this.mutationObserver.observe(this, {
