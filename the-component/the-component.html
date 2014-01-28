@@ -26,33 +26,11 @@
       iconChanged: function () {
         this.fire('icon', this.icon);
       },
-      inObserver: null,
       inportsChanged: function () {
-        if (this.inObserver) {
-          this.inObserver.close();
-        }
-        this.inObserver = new ArrayObserver(this.inports);
-        this.inObserver.open(function () {
-          this.fire('inports', this.inports);
-        }.bind(this));
+        this.fire('inports', this.inports);
       },
-      outObserver: null,
       outportsChanged: function () {
-        if (this.outObserver) {
-          this.outObserver.close();
-        }
-        this.outObserver = new ArrayObserver(this.outports);
-        this.outObserver.open(function () {
-          this.fire('outports', this.outports);
-        }.bind(this));
-      },
-      leftView: function () {
-        if (this.inObserver) {
-          this.inObserver.close();
-        }
-        if (this.outObserver) {
-          this.outObserver.close();
-        }
+        this.fire('outports', this.outports);
       }
     });
     
