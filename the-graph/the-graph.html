@@ -427,8 +427,8 @@
               connection.metadata = {};
             }
             this.edges.push({
-              source: connection.src.process + '.' + connection.src.port,
-              target: connection.tgt.process + '.' + connection.tgt.port,
+              source: connection.src.process + '.' + connection.src.port.toLowerCase(),
+              target: connection.tgt.process + '.' + connection.tgt.port.toLowerCase(),
               metadata: {
                 route: connection.metadata.route ? connection.metadata.route : 0
               }
@@ -437,7 +437,7 @@
           }
           this.initials.push({
             data: connection.data,
-            target: connection.tgt.process + '.' + connection.tgt.port
+            target: connection.tgt.process + '.' + connection.tgt.port.toLowerCase()
           });
         }.bind(this));
 
@@ -489,8 +489,8 @@
           route = targetPort.route; 
         }
         this.edges.push({
-          source: sourcePort.getNodeName() + '.' + sourcePort.name,
-          target: targetPort.getNodeName() + '.' + targetPort.name,
+          source: sourcePort.getNodeName() + '.' + sourcePort.name.toLowerCase(),
+          target: targetPort.getNodeName() + '.' + targetPort.name.toLowerCase(),
           metadata: {
             route: route
           }
