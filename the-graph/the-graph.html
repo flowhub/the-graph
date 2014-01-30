@@ -1,14 +1,20 @@
 <polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
 
   <template>
-    <link rel="stylesheet" href="../themes/default/the-graph-svg.css">
+    <link rel="stylesheet" href="./the-graph-svg.css">
     <div id="svgcontainer"></div>
   </template>
 
   <!-- <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script> -->
   <script type="text/javascript" src="./the-graph.js"></script>
+  <script type="text/javascript" src="./font-awesome-unicode-map.js"></script>
+  <script type="text/javascript" src="./the-graph-app.js"></script>
+  <script type="text/javascript" src="./the-graph-graph.js"></script>
   <script type="text/javascript" src="./the-graph-node.js"></script>
+  <script type="text/javascript" src="./the-graph-port.js"></script>
   <script type="text/javascript" src="./the-graph-edge.js"></script>
+  <script type="text/javascript" src="./the-graph-group.js"></script>
+  <script type="text/javascript" src="./the-graph-tooltip.js"></script>
 
   <script>
   (function(){
@@ -23,7 +29,7 @@
       },
       graphChanged: function () {
         this.svgView = React.renderComponent(
-          window.TheGraph.Graph({
+          window.TheGraph.App({
             graph: this.graph,
             width: this.width,
             height: this.height

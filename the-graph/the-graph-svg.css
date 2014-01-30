@@ -1,0 +1,278 @@
+@font-face {
+  /* we want the svg version */
+  font-family: 'FontAwesome';
+  src: url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
+    url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
+    url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), 
+    url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+svg {
+  background-color: hsl(0, 0%, 0%);
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.view {
+}
+.click {
+  cursor: pointer;
+}
+.drag {
+  cursor: pointer;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.node-rect {
+  fill: hsla(0, 0%, 0%, 0.75);
+  stroke: hsl(0, 0%, 50%);
+  stroke-width: 2px;
+}
+.node:hover .node-rect {
+  fill: hsla(0, 0%, 20%, 0.75);
+}
+.small .node-rect {
+  fill: hsla(0, 0%, 10%, 0.9);
+  stroke: none;
+}
+.node-bg {
+  opacity: 0;
+}
+
+path {
+  fill: none;
+}
+.edge-bg {
+  stroke: black;
+  stroke-width: 4px;
+}
+.edge:hover .edge-bg {
+  stroke: gray;  
+}
+.edge-fg {
+  stroke: white;
+  stroke-width: 2px;
+
+  transition-property: stroke-width;
+  transition-duration: 0.5s;
+}
+.edge-touch {
+  stroke: white;
+  stroke-width: 10px;
+  opacity: 0;
+}
+.small .edge-bg {
+  stroke-width: 8px;
+}
+.small .edge-fg {
+  stroke-width: 4px;
+}
+
+text {
+  font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
+  text-rendering: geometricPrecision; /* makes text scale smoothly */
+  font-size: 14px;
+  fill: white;
+  text-anchor: start;
+}
+
+.node-label,
+.node-sublabel {
+  text-anchor: middle;
+}
+.small .node-label {
+  visibility: hidden;
+}
+
+.node-sublabel {
+  font-size: 9px;
+  visibility: hidden;
+}
+.big .node-sublabel {
+  visibility: visible;
+}
+
+
+
+/* Context menu - node */
+.context-modal-bg {
+  fill: rgba(0,0,0,0.5);
+}
+.context-node-rect {
+  fill: hsl(0, 0%, 10%);
+  stroke: hsl(0, 0%, 50%);
+  stroke-width: 0.5px;
+}
+.context-node-icon {
+  font-size: 30px;
+  fill: hsl(0, 0%, 100%);
+}
+.context-icon {
+  font-size: 20px;
+  fill: hsl(0, 0%, 100%);
+}
+.context-node-label {
+  text-anchor: middle;
+}
+.context-arc {
+  stroke-width: 72px;
+  stroke: hsla(211, 12%, 19%, 0.95);
+}
+.context-slice.click:hover .context-arc {
+  stroke: hsla(211, 12%, 40%, 0.95);
+}
+.context-circle {
+  stroke: hsl(0, 0%, 75%);
+  fill: none;
+  stroke-width: 1.5px;
+}
+.context-circle-x {
+  stroke: hsl(0, 0%, 50%);
+  fill: none;
+  stroke-width: 1px;
+}
+
+
+/* Context menu - port */
+.context-port-bg {
+  fill: hsla(211, 12%, 19%, 0.95);
+}
+.context-port-hole {
+  fill: hsla(211, 12%, 19%, 0.95);
+  stroke: hsl(0, 0%, 75%);
+}
+.context-port-path {
+  stroke: hsl(0, 0%, 75%);
+}
+.context-port-label {
+  fill: hsl(0, 0%, 75%);
+  dominant-baseline: central;
+}
+.context-port-in .context-port-label {
+  text-anchor: end;
+}
+.context-port-out .context-port-label {
+  text-anchor: start;
+}
+
+
+.tooltip {
+  opacity: 1.0;
+
+  transition-property: opacity;
+  transition-duration: 0.3s;
+}
+.tooltip.hidden {
+  opacity: 0;
+}
+.tooltip-bg {
+  fill: black;
+  opacity: 0.75;
+}
+.tooltip-label {
+  font-size: 10px;
+}
+
+.icon {
+  font-family: 'FontAwesome';
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.node-icon {
+  font-size: 40px;
+  fill: hsl(0, 0%, 75%);
+
+  transition-property: font-size, fill;
+  transition-duration: 0.5s,      0.3s;
+}
+.small .node-icon {
+  fill: hsl(0, 0%, 100%);
+  font-size: 68px;
+}
+.big .node-icon {
+  fill: hsl(0, 0%, 25%);
+}
+
+.port-circle {
+  fill: black;
+  stroke: hsl(0, 0%, 50%);
+  stroke-width: 1px;
+}
+.small .port-circle {
+  visibility: hidden;
+}
+.port-label {
+  visibility: hidden;
+  font-size: 6px;
+  /*alignment-baseline: middle;*/
+  dominant-baseline: central;
+}
+.port-label-8  { font-size: 5.8px; }
+.port-label-9  { font-size: 5.6px; }
+.port-label-10 { font-size: 5.4px; }
+.port-label-11 { font-size: 5.2px; }
+.port-label-12 { font-size: 5px; }
+
+.inports .port-label {
+  text-anchor: start;  
+}
+.outports .port-label {
+  text-anchor: end;  
+}
+.big .port-label {
+  visibility: visible;
+}
+
+
+.group-box {
+  fill: hsla(60, 100%, 20%, 0.25);
+
+  transition-property: fill;
+  transition-duration: 0.3s;
+}
+.group-box:hover {
+  fill: hsla(60, 100%, 30%, 0.25);
+}
+
+.group-label {
+  text-anchor: start;  
+  fill: white;
+  font-size: 20px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+.small .group-label {
+  font-size: 30px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+
+.group-description {
+  fill: hsl(0, 0%, 75%);
+  font-size: 12px;
+  text-anchor: start;  
+}
+.small .group-description {
+  visibility: hidden;
+}
+
+.route0  .edge-fg { stroke: hsl( 10, 100%, 100%); }
+.route1  .edge-fg { stroke: hsl( 10, 100%, 70% ); }
+.route2  .edge-fg { stroke: hsl( 30, 100%, 70% ); }
+.route3  .edge-fg { stroke: hsl( 60, 100%, 70% ); }
+.route4  .edge-fg { stroke: hsl( 90, 100%, 70% ); }
+.route5  .edge-fg { stroke: hsl(120, 100%, 70% ); }
+.route6  .edge-fg { stroke: hsl(150, 100%, 70% ); }
+.route7  .edge-fg { stroke: hsl(180, 100%, 70% ); }
+.route8  .edge-fg { stroke: hsl(210, 100%, 70% ); }
+.route9  .edge-fg { stroke: hsl(240, 100%, 70% ); }
+.route10 .edge-fg { stroke: hsl(270, 100%, 70% ); }
+.route11 .edge-fg { stroke: hsl(300, 100%, 70% ); }
+.route12 .edge-fg { stroke: hsl(330, 100%, 70% ); }
