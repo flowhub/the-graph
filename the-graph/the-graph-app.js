@@ -39,9 +39,9 @@
       this.zoomFactor += event.deltaY;
       this.zoomX = event.nativeEvent.pageX;
       this.zoomY = event.nativeEvent.pageY;
-      requestAnimationFrame(this.scheduleZoom);
+      requestAnimationFrame(this.scheduleWheelZoom);
     },
-    scheduleZoom: function () {
+    scheduleWheelZoom: function () {
       if (isNaN(this.zoomFactor)) { return; }
 
       var scale = this.state.scale + (this.state.scale * this.zoomFactor/500);
@@ -58,6 +58,31 @@
       var currentY = this.state.y;
       var oX = this.zoomX;
       var oY = this.zoomY;
+      var x = scaleD * (currentX - oX) + oX;
+      var y = scaleD * (currentY - oY) + oY;
+
+      this.setState({
+        scale: scale,
+        x: x,
+        y: y,
+        tooltipVisible: false
+      });
+    },
+    // FIXME: waiting for scale delta: https://github.com/Polymer/PointerGestures/issues/16#issuecomment-33697553
+    lastScale: 1,
+    onPinch: function (event) {
+      var ddScale = event.scale / this.lastScale;
+      this.lastScale = event.scale;
+
+      var scale = this.state.scale * ddScale;
+      scale = Math.max(scale, this.minZoom);
+
+      // Zoom and pan transform-origin equivalent
+      var scaleD = scale / this.state.scale;
+      var currentX = this.state.x;
+      var currentY = this.state.y;
+      var oX = event.centerX;
+      var oY = event.centerY;
       var x = scaleD * (currentX - oX) + oX;
       var y = scaleD * (currentY - oY) + oY;
 
@@ -125,6 +150,7 @@
     componentDidMount: function (rootNode) {
       // Pointer gesture events for pan/zoom
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      this.getDOMNode().addEventListener("pinch", this.onPinch);
 
       // Mouse listen to window for drag/release outside
 
