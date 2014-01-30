@@ -68,46 +68,19 @@
         tooltipVisible: false
       });
     },
-    mouseX: 0,
-    mouseY: 0,
-    onMouseDown: function (event) {
-      if (event.button !== 0) {
-        // Context menu
-        return;
-      }
-
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
-      this.mouseX = x;
-      this.mouseY = y;
-
-      this.getDOMNode().setPointerCapture(event.pointerId);
-      this.getDOMNode().addEventListener("pointermove", this.onMouseMove);
-      this.getDOMNode().addEventListener("pointerup", this.onMouseUp);
+    onTrackStart: function (event) {
+      this.getDOMNode().addEventListener("track", this.onTrack);
+      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
     },
-    onMouseMove: function (event) {
-      // Pan
-      var x = event.pageX;
-      var y = event.pageY;
-      var deltaX = x - this.mouseX;
-      var deltaY = y - this.mouseY;
+    onTrack: function (event) {
       this.setState({
-        x: this.state.x + deltaX,
-        y: this.state.y + deltaY
+        x: this.state.x + event.ddx,
+        y: this.state.y + event.ddy
       });
-      this.mouseX = x;
-      this.mouseY = y;
     },
-    onMouseUp: function (event) {
-      this.getDOMNode().releasePointerCapture(event.pointerId);
-      this.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
-      this.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
+    onTrackEnd: function (event) {
+      this.getDOMNode().removeEventListener("track", this.onTrack);
+      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
     showNodeContext: function (event) {
       this.setState({
@@ -150,8 +123,8 @@
     //   });
     // },
     componentDidMount: function (rootNode) {
-      // Pointer events for pan/zoom
-      this.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
+      // Pointer gesture events for pan/zoom
+      this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
 
       // Mouse listen to window for drag/release outside
 

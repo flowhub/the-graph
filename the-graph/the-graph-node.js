@@ -6,8 +6,10 @@
   // Font Awesome
   var faKeys = Object.keys(TheGraph.FONT_AWESOME);
 
-  // Node view
+  // Polymer monkeypatch
+  window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
 
+  // Node view
   TheGraph.Node = React.createClass({
     mixins: [
       TheGraph.mixins.Tooltip
@@ -19,49 +21,29 @@
       };
     },
     componentDidMount: function () {
-      // Mouse listen to window for drag/release outside
-      this.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
- 
-      // Right-click
+      // Dragging
+      this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+
+      // Context menu
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
-    mouseX: 0,
-    mouseY: 0,
-    onMouseDown: function (event) {
+    onTrackStart: function (event) {
       // Don't drag graph
       event.stopPropagation();
 
-      var x = event.pageX;
-      var y = event.pageY;
-
-      if (event.button !== 0) {
-        // Show context menu
-        return;
-      }
-
-      this.mouseX = x;
-      this.mouseY = y;
-
-      this.getDOMNode().setPointerCapture(event.pointerId);
-      this.getDOMNode().addEventListener("pointermove", this.onMouseMove);
-      this.getDOMNode().addEventListener("pointerup", this.onMouseUp);
+      this.getDOMNode().addEventListener("track", this.onTrack);
+      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
     },
-    onMouseMove: function (event) {
+    onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
-      var x = event.pageX;
-      var y = event.pageY;
-
       var scale = this.props.app.state.scale;
-
-      var deltaX = Math.round( (x - this.mouseX) / scale );
-      var deltaY = Math.round( (y - this.mouseY) / scale );
+      var deltaX = Math.round( event.ddx / scale );
+      var deltaY = Math.round( event.ddy / scale );
       this.props.process.metadata.x += deltaX;
       this.props.process.metadata.y += deltaY;
-      this.mouseX = x;
-      this.mouseY = y;
 
       var highlightEvent = new CustomEvent('the-graph-node-move', { 
         detail: null, 
@@ -69,13 +51,12 @@
       });
       this.getDOMNode().dispatchEvent(highlightEvent);
     },
-    onMouseUp: function (event) {
+    onTrackEnd: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
-      this.getDOMNode().releasePointerCapture(event.pointerId);
-      this.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
-      this.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
+      this.getDOMNode().removeEventListener("track", this.onTrack);
+      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
     triggerRemove: function () {
       var contextEvent = new CustomEvent('the-graph-node-remove', { 

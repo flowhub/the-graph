@@ -7,27 +7,12 @@
   // Group view
 
   TheGraph.Group = React.createClass({
-    mouseX: 0,
-    mouseY: 0,
-    onMouseDown: function (event) {
+    onTrackStart: function (event) {
       // Don't drag graph
       event.stopPropagation();
 
-      var x = event.pageX;
-      var y = event.pageY;
-
-      this.mouseX = x;
-      this.mouseY = y;
-
-      if (event.button !== 0) {
-        // Show context menu
-        this.highlight();
-        return;
-      }
-
-      this.refs.label.getDOMNode().setPointerCapture(event.pointerId);
-      this.refs.label.getDOMNode().addEventListener("pointermove", this.onMouseMove);
-      this.refs.label.getDOMNode().addEventListener("pointerup", this.onMouseUp);
+      this.refs.label.getDOMNode().addEventListener("track", this.onTrack);
+      this.refs.label.getDOMNode().addEventListener("trackend", this.onTrackEnd);
     },
     highlight: function () {
       var highlightEvent = new CustomEvent('the-graph-group-highlight', { 
@@ -40,17 +25,12 @@
       });
       this.getDOMNode().dispatchEvent(highlightEvent);
     },
-    onMouseMove: function (event) {
+    onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
-      var x = event.pageX;
-      var y = event.pageY;
-
-      var deltaX = Math.round( (x - this.mouseX) / this.props.scale );
-      var deltaY = Math.round( (y - this.mouseY) / this.props.scale );
-      this.mouseX = x;
-      this.mouseY = y;
+      var deltaX = Math.round( event.ddx / this.props.scale );
+      var deltaY = Math.round( event.ddy / this.props.scale );
 
       var moveEvent = new CustomEvent('the-graph-group-move', { 
         detail: {
@@ -62,17 +42,16 @@
       });
       this.getDOMNode().dispatchEvent(moveEvent);
     },
-    onMouseUp: function (event) {
+    onTrackEnd: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
-      this.refs.label.getDOMNode().releasePointerCapture(event.pointerId);
-      this.refs.label.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
-      this.refs.label.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
+      this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
+      this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
     componentDidMount: function (rootNode) {
       // Pointer events for pan/zoom
-      this.refs.label.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
+      this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
     },
     render: function() {
       var x = this.props.minX - TheGraph.nodeSize/2;
