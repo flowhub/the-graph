@@ -10,7 +10,6 @@
 
   TheGraph.Node = React.createClass({
     mixins: [
-      TheGraph.mixins.FakeMouse,
       TheGraph.mixins.Tooltip
     ],
     getInitialState: function() {
@@ -21,11 +20,11 @@
     },
     componentDidMount: function () {
       // Mouse listen to window for drag/release outside
-      // window.addEventListener("mousemove", this.onMouseMove);
-      // window.addEventListener("mouseup", this.onMouseUp);
-
+      this.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
+ 
       // Right-click
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
+      this.getDOMNode().addEventListener("hold", this.showContext);
     },
     mouseX: 0,
     mouseY: 0,
@@ -33,42 +32,27 @@
       // Don't drag graph
       event.stopPropagation();
 
-      // Touch to mouse
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
+      var x = event.pageX;
+      var y = event.pageY;
 
       if (event.button !== 0) {
         // Show context menu
-        // this.showContext();
         return;
       }
 
       this.mouseX = x;
       this.mouseY = y;
 
-      window.addEventListener("mousemove", this.onMouseMove);
-      window.addEventListener("mouseup", this.onMouseUp);
-
+      this.getDOMNode().setPointerCapture(event.pointerId);
+      this.getDOMNode().addEventListener("pointermove", this.onMouseMove);
+      this.getDOMNode().addEventListener("pointerup", this.onMouseUp);
     },
     onMouseMove: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
-      // Touch to mouse
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
+      var x = event.pageX;
+      var y = event.pageY;
 
       var scale = this.props.app.state.scale;
 
@@ -89,8 +73,9 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      window.removeEventListener("mousemove", this.onMouseMove);
-      window.removeEventListener("mouseup", this.onMouseUp);
+      this.getDOMNode().releasePointerCapture(event.pointerId);
+      this.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
+      this.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
     },
     triggerRemove: function () {
       var contextEvent = new CustomEvent('the-graph-node-remove', { 
@@ -183,8 +168,8 @@
             name: this.props.key,
             key: this.props.key,
             title: label,
-            transform: "translate("+x+","+y+")",
-            onMouseDown: this.onMouseDown
+            transform: "translate("+x+","+y+")"//,
+            // onMouseDown: this.onMouseDown
           },
           React.DOM.rect({
             className: "node-bg", // HACK to make the whole g draggable

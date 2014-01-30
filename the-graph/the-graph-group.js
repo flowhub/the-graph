@@ -13,15 +13,8 @@
       // Don't drag graph
       event.stopPropagation();
 
-      // Touch to mouse
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
+      var x = event.pageX;
+      var y = event.pageY;
 
       this.mouseX = x;
       this.mouseY = y;
@@ -32,9 +25,9 @@
         return;
       }
 
-      window.addEventListener("mousemove", this.onMouseMove);
-      window.addEventListener("mouseup", this.onMouseUp);
-
+      this.refs.label.getDOMNode().setPointerCapture(event.pointerId);
+      this.refs.label.getDOMNode().addEventListener("pointermove", this.onMouseMove);
+      this.refs.label.getDOMNode().addEventListener("pointerup", this.onMouseUp);
     },
     highlight: function () {
       var highlightEvent = new CustomEvent('the-graph-group-highlight', { 
@@ -51,15 +44,8 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      // Touch to mouse
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
+      var x = event.pageX;
+      var y = event.pageY;
 
       var deltaX = Math.round( (x - this.mouseX) / this.props.scale );
       var deltaY = Math.round( (y - this.mouseY) / this.props.scale );
@@ -80,8 +66,13 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      window.removeEventListener("mousemove", this.onMouseMove);
-      window.removeEventListener("mouseup", this.onMouseUp);
+      this.refs.label.getDOMNode().releasePointerCapture(event.pointerId);
+      this.refs.label.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
+      this.refs.label.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
+    },
+    componentDidMount: function (rootNode) {
+      // Pointer events for pan/zoom
+      this.refs.label.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
     },
     render: function() {
       var x = this.props.minX - TheGraph.nodeSize/2;
@@ -102,11 +93,11 @@
             height: this.props.maxY - this.props.minY + TheGraph.nodeSize*2
           }),
           React.DOM.text({
+            ref: "label",
             className: "group-label drag",
             x: x + TheGraph.nodeRadius,
             y: y,
-            children: this.props.label,
-            onMouseDown: this.onMouseDown
+            children: this.props.label
           }),
           React.DOM.text({
             className: "group-description",

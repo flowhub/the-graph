@@ -6,7 +6,6 @@
 
   TheGraph.App = React.createClass({
     minZoom: 0.15,
-    mixins: [TheGraph.mixins.FakeMouse],
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -88,19 +87,14 @@
       this.mouseX = x;
       this.mouseY = y;
 
-      window.addEventListener("mousemove", this.onMouseMove);
-      window.addEventListener("mouseup", this.onMouseUp);
+      this.getDOMNode().setPointerCapture(event.pointerId);
+      this.getDOMNode().addEventListener("pointermove", this.onMouseMove);
+      this.getDOMNode().addEventListener("pointerup", this.onMouseUp);
     },
     onMouseMove: function (event) {
       // Pan
-      var x, y;
-      if (event.touches) {
-        x = event.touches[0].pageX;
-        y = event.touches[0].pageY;
-      } else {
-        x = event.pageX;
-        y = event.pageY;
-      }
+      var x = event.pageX;
+      var y = event.pageY;
       var deltaX = x - this.mouseX;
       var deltaY = y - this.mouseY;
       this.setState({
@@ -111,8 +105,9 @@
       this.mouseY = y;
     },
     onMouseUp: function (event) {
-      window.removeEventListener("mousemove", this.onMouseMove);
-      window.removeEventListener("mouseup", this.onMouseUp);
+      this.getDOMNode().releasePointerCapture(event.pointerId);
+      this.getDOMNode().removeEventListener("pointermove", this.onMouseMove);
+      this.getDOMNode().removeEventListener("pointerup", this.onMouseUp);
     },
     showNodeContext: function (event) {
       this.setState({
@@ -156,7 +151,7 @@
     // },
     componentDidMount: function (rootNode) {
       // Pointer events for pan/zoom
-      // this.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
+      this.getDOMNode().addEventListener("pointerdown", this.onMouseDown);
 
       // Mouse listen to window for drag/release outside
 
@@ -209,7 +204,7 @@
           className: "the-graph " + scaleClass,
           name:"app", 
           onWheel: this.onWheel,
-          onMouseDown: this.onMouseDown,
+          // onMouseDown: this.onMouseDown,
           style: {
             width: this.state.width,
             height: this.state.height
