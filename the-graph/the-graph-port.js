@@ -31,6 +31,27 @@
   });
 
   TheGraph.PortMenu = React.createClass({
+    triggerStartEdge: function (event) {
+      var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
+        detail: {
+          isIn: this.props.isIn,
+          port: this.props.label,
+          process: this.props.processKey
+        },
+        bubbles: true
+      });
+      this.getDOMNode().dispatchEvent(edgeStartEvent);
+
+      // Hide self (overkill?)
+      var contextEvent = new CustomEvent('the-graph-context-hide', { 
+        detail: null, 
+        bubbles: true
+      });
+      this.getDOMNode().dispatchEvent(contextEvent);
+    },
+    componentDidMount: function () {
+      this.getDOMNode().addEventListener("tap", this.triggerStartEdge);
+    },
     render: function() {
       var path = [
         "M", this.props.ox, this.props.oy,

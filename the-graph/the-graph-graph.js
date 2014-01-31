@@ -10,13 +10,40 @@
     mixins: [TheGraph.mixins.FakeMouse],
     getInitialState: function() {
       return {
-        graph: this.props.graph
+        graph: this.props.graph,
+        edgePreview: null,
+        edgePreviewX: 0,
+        edgePreviewY: 0
       };
     },
     componentDidMount: function () {
       this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
       this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
       this.getDOMNode().addEventListener("the-graph-node-remove", this.removeNode);
+      this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
+    },
+    edgePreview: null,
+    edgeStart: function (event) {
+      var port = {
+        process: event.detail.process,
+        port: event.detail.port
+      };
+      var edge;
+      if (event.detail.isIn) {
+        edge = { tgt: port };
+      } else {
+        edge = { src: port };
+      }
+      this.setState({edgePreview: edge});
+      this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
+    },
+    renderPreviewEdge: function (event) {
+      var scale = this.props.app.state.scale;
+      this.setState({
+        edgePreviewX: (event.pageX - this.props.app.state.x) / scale,
+        edgePreviewY: (event.pageY - this.props.app.state.y) / scale
+      });
+      this.markDirty();
     },
     // triggerFit: function () {
     //   // Zoom to fit
@@ -206,6 +233,40 @@
           route: route
         });
       });
+
+      // Edge preview
+      var edgePreview = this.state.edgePreview;
+      if (edgePreview) {
+        var edgePreviewView;
+        if (edgePreview.src) {
+          var source = processes[edgePreview.src.process];
+          var sourcePort = this.getOutport(edgePreview.src.process, edgePreview.src.port);
+          edgePreviewView = TheGraph.Edge({
+            key: "edge-preview",
+            sX: source.metadata.x + TheGraph.nodeSize,
+            sY: source.metadata.y + sourcePort.y,
+            tX: this.state.edgePreviewX,
+            tY: this.state.edgePreviewY,
+            label: "",
+            route: 0
+          });
+        } else {
+          var target = processes[edgePreview.tgt.process];
+          var targetPort = this.getInport(edgePreview.tgt.process, edgePreview.tgt.port);
+          edgePreviewView = TheGraph.Edge({
+            key: "edge-preview",
+            sX: this.state.edgePreviewX,
+            sY: this.state.edgePreviewY,
+            tX: target.metadata.x,
+            tY: target.metadata.y + targetPort.y,
+            label: "",
+            route: 0
+          });
+        }
+        edges.push(edgePreviewView);
+      }
+      console.log(edges);
+      
 
       return React.DOM.g(
         {

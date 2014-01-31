@@ -86,6 +86,7 @@
         label: this.props.label,
         node: this,
         process: this.props.process,
+        processKey: this.props.key,
         x: x,
         y: y
       });
@@ -242,6 +243,7 @@
         var scale = this.props.node.props.app.state.scale;
 
         var ports = this.props.process.metadata.ports;
+        var processKey = this.props.processKey;
 
         var inkeys = Object.keys(ports.inports);
         var h = inkeys.length * TheGraph.contextPortSize;
@@ -252,6 +254,7 @@
           i++;
           return TheGraph.PortMenu({
             label: key,
+            processKey: processKey,
             isIn: true,
             ox: (inport.x - TheGraph.nodeSize/2) * scale,
             oy: (inport.y - TheGraph.nodeSize/2) * scale,
@@ -269,6 +272,7 @@
           i++;
           return TheGraph.PortMenu({
             label: key,
+            processKey: processKey,
             isIn: false,
             ox: (outport.x - TheGraph.nodeSize/2) * scale,
             oy: (outport.y - TheGraph.nodeSize/2) * scale,

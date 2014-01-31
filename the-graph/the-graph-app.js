@@ -158,6 +158,9 @@
       this.getDOMNode().addEventListener("the-graph-tooltip", this.changeTooltip);
       this.getDOMNode().addEventListener("the-graph-tooltip-hide", this.hideTooltip);
 
+      // Pass from context menus to graph
+      this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
+
       // Custom event listeners
       this.getDOMNode().addEventListener("the-graph-node-context", this.showNodeContext);
       // this.getDOMNode().addEventListener("the-graph-edge-context", this.showEdgeContext);
@@ -167,6 +170,10 @@
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( window.innerWidth/2 );
       this.mouseY = Math.floor( window.innerHeight/2 );
+    },
+    edgeStart: function (event) {
+      // Forward
+      this.refs.graph.edgeStart(event);
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
     },
@@ -203,7 +210,6 @@
           className: "the-graph " + scaleClass,
           name:"app", 
           onWheel: this.onWheel,
-          // onMouseDown: this.onMouseDown,
           style: {
             width: this.state.width,
             height: this.state.height
