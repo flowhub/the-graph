@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="pan drag scale grid snap width height" lightdom>
+<polymer-element name="the-graph" attributes="graph pan drag scale grid snap width height" lightdom>
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -11,7 +11,9 @@
   <script type="text/javascript" src="./the-graph-app.js"></script>
   <script type="text/javascript" src="./the-graph-graph.js"></script>
   <script type="text/javascript" src="./the-graph-node.js"></script>
+  <script type="text/javascript" src="./the-graph-node-menu.js"></script>
   <script type="text/javascript" src="./the-graph-port.js"></script>
+  <script type="text/javascript" src="./the-graph-port-menu.js"></script>
   <script type="text/javascript" src="./the-graph-edge.js"></script>
   <script type="text/javascript" src="./the-graph-group.js"></script>
   <script type="text/javascript" src="./the-graph-tooltip.js"></script>
@@ -21,27 +23,52 @@
     "use strict";
 
     Polymer('the-graph', {
-      svgView: null,
+      graph: null,
+      nofloGraph: null,
+      appView: null,
+      graphView: null,
       ready: function () {
       },
       enteredView: function () {
-        this.addEventListener("pointermove", this.pointerMove.bind(this));
       },
       graphChanged: function () {
-        this.svgView = React.renderComponent(
-          window.TheGraph.App({
-            graph: this.graph,
-            width: this.width,
-            height: this.height
-          }),
-          this.$.svgcontainer
-        );
+        // Setup app once
+        if (!this.appView) {
 
-        window.s = this.svgView;
+          this.nofloGraph = 
+
+          this.appView = React.renderComponent(
+            window.TheGraph.App({
+              graph: this.graph,
+              width: this.width,
+              height: this.height
+            }),
+            this.$.svgcontainer
+          );
+          this.graphView = this.appView.refs.graph;
+          return;
+        }
+
+        // Set graph within app and mark to rerender
+        this.graphView.setState({
+          graph: this.graph
+        });
+        this.rerender();
       },
-      pointerMove: function (event) {
-        event.stopPropagation();
-        event.stopImmediatePropagation();
+      widthChanged: function () {
+        if (!this.appView) { return; }
+        this.appView.setState({
+          width: this.width
+        });
+      },
+      heightChanged: function () {
+        if (!this.appView) { return; }
+        this.appView.setState({
+          height: this.height
+        });
+      },
+      rerender: function () {
+        this.graphView.markDirty();
       },
       toJSON: function () {
         return {};

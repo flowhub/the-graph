@@ -2,6 +2,8 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
 
+<script type="text/javascript" src="../bower_components/noflo/browser/noflo.js"></script>
+
 <polymer-element name="the-graph-editor" attributes="grid snap width height" lightdom touch-action="none">
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
@@ -30,21 +32,6 @@
         plugin.register(this);
       },
       enteredView: function () {
-        // var wheelEventName = "onwheel" in document.createElement("div") ? "wheel" :
-        //   (document.onmousewheel !== undefined ? "mousewheel" : undefined);
-
-        // if (!wheelEventName) { return; }
-
-        // this.addEventListener(wheelEventName, function (event) {
-        //   event.preventDefault();
-          
-        //   var pan = this.pan.split(" ");
-        //   var x = parseInt(pan[0], 10);
-        //   var y = parseInt(pan[1], 10);
-        //   x += event.wheelDeltaX !== undefined ? event.wheelDeltaX : event.deltaX ;
-        //   y += event.wheelDeltaY !== undefined ? event.wheelDeltaY : event.deltaY ;
-        //   this.pan = x + " " + y;
-        // });
       },
       leftView: function () {
         for (var name in this.plugins) {

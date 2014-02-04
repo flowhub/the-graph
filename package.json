@@ -4,7 +4,6 @@
   "description": "polymer components for flow-based programming graph editing",
   "main": "the-graph-editor/index.html",
   "dependencies": {
-    "grunt-lint-inline": "~0.3.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

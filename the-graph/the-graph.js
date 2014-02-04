@@ -56,6 +56,7 @@
         return;
       }
       var tooltipper = this.getTooltipTrigger();
+      tooltipper.addEventListener("tap", this.showTooltip);
       tooltipper.addEventListener("mouseenter", this.showTooltip);
       tooltipper.addEventListener("mouseleave", this.hideTooltip);
     }

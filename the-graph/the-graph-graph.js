@@ -35,7 +35,7 @@
         edge = { src: port };
       }
       this.setState({edgePreview: edge});
-      this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().addEventListener("track", this.renderPreviewEdge);
     },
     renderPreviewEdge: function (event) {
       var scale = this.props.app.state.scale;
@@ -144,9 +144,6 @@
       return this.dirty;
     },
     render: function() {
-      // console.timeEnd("Graph.render");
-      // console.time("Graph.render");
-
       this.dirty = false;
 
       var self = this;
@@ -265,8 +262,6 @@
         }
         edges.push(edgePreviewView);
       }
-      console.log(edges);
-      
 
       return React.DOM.g(
         {
