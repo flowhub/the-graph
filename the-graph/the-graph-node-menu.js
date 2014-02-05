@@ -31,7 +31,7 @@
       event.stopPropagation();
     },
     triggerRemove: function (event) {
-      this.props.node.triggerRemove();
+      this.props.graph.removeNode( this.props.processKey );
 
       // Hide self (overkill?)
       var contextEvent = new CustomEvent('the-graph-context-hide', { 
@@ -44,49 +44,47 @@
 
       var inports, outports;
 
-      if (this.props.process.metadata && this.props.process.metadata.ports) {
-        // HACK
-        var scale = this.props.node.props.app.state.scale;
+      // HACK
+      var scale = this.props.node.props.app.state.scale;
 
-        var ports = this.props.process.metadata.ports;
-        var processKey = this.props.processKey;
+      var ports = this.props.ports;
+      var processKey = this.props.processKey;
 
-        var inkeys = Object.keys(ports.inports);
-        var h = inkeys.length * TheGraph.contextPortSize;
-        var i = 0;
-        inports = inkeys.map( function (key) {
-          var inport = ports.inports[key];
-          var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
-          i++;
-          return TheGraph.PortMenu({
-            label: key,
-            processKey: processKey,
-            isIn: true,
-            ox: (inport.x - TheGraph.nodeSize/2) * scale,
-            oy: (inport.y - TheGraph.nodeSize/2) * scale,
-            x: -100,
-            y: y
-          });
+      var inkeys = Object.keys(ports.inports);
+      var h = inkeys.length * TheGraph.contextPortSize;
+      var i = 0;
+      inports = inkeys.map( function (key) {
+        var inport = ports.inports[key];
+        var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
+        i++;
+        return TheGraph.PortMenu({
+          label: key,
+          processKey: processKey,
+          isIn: true,
+          ox: (inport.x - TheGraph.nodeSize/2) * scale,
+          oy: (inport.y - TheGraph.nodeSize/2) * scale,
+          x: -100,
+          y: y
         });
+      });
 
-        var outkeys = Object.keys(ports.outports);
-        h = outkeys.length * TheGraph.contextPortSize;
-        i = 0;
-        outports = outkeys.map( function (key) {
-          var outport = ports.outports[key];
-          var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
-          i++;
-          return TheGraph.PortMenu({
-            label: key,
-            processKey: processKey,
-            isIn: false,
-            ox: (outport.x - TheGraph.nodeSize/2) * scale,
-            oy: (outport.y - TheGraph.nodeSize/2) * scale,
-            x: 100,
-            y: y
-          });
+      var outkeys = Object.keys(ports.outports);
+      h = outkeys.length * TheGraph.contextPortSize;
+      i = 0;
+      outports = outkeys.map( function (key) {
+        var outport = ports.outports[key];
+        var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
+        i++;
+        return TheGraph.PortMenu({
+          label: key,
+          processKey: processKey,
+          isIn: false,
+          ox: (outport.x - TheGraph.nodeSize/2) * scale,
+          oy: (outport.y - TheGraph.nodeSize/2) * scale,
+          x: 100,
+          y: y
         });
-      }
+      });
 
       return (
         React.DOM.g(

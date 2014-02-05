@@ -33,7 +33,7 @@
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
     edgeConnectOffer: function (event) {
-      console.log(event);
+      // console.log(event);
     },
     onTrackStart: function (event) {
       // Don't drag graph
@@ -49,14 +49,12 @@
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );
       var deltaY = Math.round( event.ddy / scale );
-      this.props.process.metadata.x += deltaX;
-      this.props.process.metadata.y += deltaY;
 
-      var highlightEvent = new CustomEvent('the-graph-node-move', { 
-        detail: null, 
-        bubbles: true
+      // Fires a changeNode event on graph
+      this.props.graph.setNodeMetadata(this.props.key, {
+        x: this.props.node.metadata.x + deltaX,
+        y: this.props.node.metadata.y + deltaY
       });
-      this.getDOMNode().dispatchEvent(highlightEvent);
     },
     onTrackEnd: function (event) {
       // Don't fire on graph
@@ -64,13 +62,6 @@
 
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
-    },
-    triggerRemove: function () {
-      var contextEvent = new CustomEvent('the-graph-node-remove', { 
-        detail: this.props.key,
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(contextEvent);
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -91,7 +82,9 @@
       return TheGraph.NodeMenu({
         key: "context." + this.props.key,
         label: this.props.label,
+        graph: this.props.graph,
         node: this,
+        ports: this.props.ports,
         process: this.props.process,
         processKey: this.props.key,
         x: x,
@@ -112,10 +105,10 @@
       );
     },
     render: function() {
-      var metadata = this.props.process.metadata;
+      var metadata = this.props.node.metadata;
 
       var label = this.props.label;
-      var sublabel = this.props.process.component;
+      var sublabel = this.props.node.component;
       if (sublabel === label) {
         sublabel = "";
       }
@@ -126,7 +119,7 @@
       var keys, count, index;
 
       // Inports
-      var inports = metadata.ports.inports;
+      var inports = this.props.ports.inports;
       keys = Object.keys(inports);
       count = keys.length;
       index = 0;
@@ -138,7 +131,7 @@
       });
 
       // Outports
-      var outports = metadata.ports.outports;
+      var outports = this.props.ports.outports;
       keys = Object.keys(outports);
       count = keys.length;
       index = 0;

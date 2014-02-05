@@ -17,7 +17,16 @@
       };
     },
     componentDidMount: function () {
-      this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
+      // Listen to noflo graph object's events
+      this.props.graph.on("addNode", this.markDirty);
+      this.props.graph.on("renameNode", this.markDirty);
+      this.props.graph.on("removeNode", this.markDirty);
+      this.props.graph.on("changeNode", this.markDirty);
+      this.props.graph.on("addEdge", this.markDirty);
+      this.props.graph.on("removeEdge", this.markDirty);
+      this.props.graph.on("changeEdge", this.markDirty);
+
+      // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
       this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
       this.getDOMNode().addEventListener("the-graph-node-remove", this.removeNode);
       this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
@@ -56,18 +65,31 @@
     // },
     moveGroup: function (event) {
       var graph = this.state.graph;
-      var group = graph.groups[ event.detail.index ];
-      var nodes = group.nodes;
+      var nodes = event.detail.nodes;
 
       // Move each group member
       var len = nodes.length;
       for (var i=0; i<len; i++) {
-        var node = graph.processes[ nodes[i] ];
-        node.metadata.x += event.detail.x;
-        node.metadata.y += event.detail.y;
+        var node = graph.getNode(nodes[i]);
+        if (node) {
+          graph.setNodeMetadata(node.id, {
+            x: node.metadata.x + event.detail.x,
+            y: node.metadata.y + event.detail.y
+          });
+        }
       }
-
-      this.markDirty();
+    },
+    portInfo: {},
+    getPorts: function (processName) {
+      var process = this.portInfo[processName];
+      if (!process) {
+        process = {
+          inports: {},
+          outports: {}
+        };
+        this.portInfo[processName] = process;
+      }
+      return process;
     },
     getOutport: function (processName, portName) {
       var ports = this.getPorts(processName);
@@ -93,51 +115,22 @@
       }
       return ports.inports[portName];
     },
-    getPorts: function (processName) {
-      var process = this.state.graph.processes[processName];
-      if (!process) {
-        throw new Error("No process in the current graph with key: "+ processName);
-      }
-      if (!process.metadata.ports) {
-        process.metadata.ports = {
-          inports: {},
-          outports: {}
-        };
-      }
-      return process.metadata.ports;
-    },
     removeNode: function (event) {
       var removeKey = event.detail;
-
-      // Remove from groups
-      var groups = this.state.graph.groups;
-      var filterOutKey = function (member) {
-        return (member !== removeKey);
-      };
-      for (var i=0; i<groups.length; i++) {
-        var nodes = groups[i].nodes;
-        var filtered = nodes.filter(filterOutKey);
-        groups[i].nodes = filtered;
-      }
-
-      // Remove related edges
-      var remainingEdges = this.state.graph.connections.filter( function (edge) {
-        var remove = (edge.tgt.process === removeKey || (edge.src && edge.src.process && edge.src.process === removeKey));
-        return !remove;
-      });
-      this.state.graph.connections = remainingEdges;
-
-      // Remove node
-      delete this.state.graph.processes[removeKey];
-
-      this.markDirty();
+      this.graph.removeNode( removeKey );
     },
     dirty: false,
-    markDirty: function () {
+    markDirty: function (event) {
+      window.requestAnimationFrame(this.triggerRender);
+    },
+    triggerRender: function (time) {
+      if (this.dirty) {
+        return;
+      }
+      this.dirty = true;
       this.setState({
         graph: this.state.graph
       });
-      this.dirty = true;
     },
     shouldComponentUpdate: function () {
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
@@ -148,77 +141,77 @@
 
       var self = this;
       var graph = this.state.graph;
-      var processes = graph.processes;
 
       // Nodes
-      var nodes = Object.keys(processes).map(function (key) {
-        var process = processes[key];
-        if (!process.metadata) {
-          process.metadata = {x:0, y:0};
+      var nodes = graph.nodes.map(function (node) {
+        var key = node.id;
+        if (!node.metadata) {
+          node.metadata = {};
         }
-        if (!process.metadata.label || process.metadata.label === "") {
-          process.metadata.label = key;
+        if (node.metadata.x === undefined) { node.metadata.x = 0; }
+        if (node.metadata.y === undefined) { node.metadata.y = 0; }
+        if (!node.metadata.label || node.metadata.label === "") {
+          node.metadata.label = key;
         }
         return TheGraph.Node({
           key: key,
-          x: process.metadata.x,
-          y: process.metadata.y,
-          label: process.metadata.label,
+          x: node.metadata.x,
+          y: node.metadata.y,
+          label: node.metadata.label,
           app: self.props.app,
-          process: process
+          graph: graph,
+          node: node,
+          ports: self.getPorts(key)
         });
       });
 
       // Groups
-      var index = 0;
       var groups = graph.groups.map(function (group) {
         if (group.nodes.length < 1) {
           return;
         }
         var limits = TheGraph.findMinMax(graph, group.nodes);
+        if (!limits) {
+          return;
+        }
         var g = TheGraph.Group({
-          index: index,
+          key: "group."+group.name,
           minX: limits.minX,
           minY: limits.minY,
           maxX: limits.maxX,
           maxY: limits.maxY,
           scale: self.props.scale,
           label: group.name,
+          nodes: group.nodes,
           description: group.metadata.description
         });
-        index++;
         return g;
       });
 
       // Edges
-      var connections = graph.connections;
-      var edges = connections.map(function (connection) {
-        if (connection.data !== undefined) {
-          // IIP
-          return;
-        }
-        var source = processes[connection.src.process];
-        var target = processes[connection.tgt.process];
+      var edges = graph.edges.map(function (edge) {
+        var source = graph.getNode(edge.from.node);
+        var target = graph.getNode(edge.to.node);
         if (!source || !target) {
-          throw new Error("Edge source or target not found.");
+          return;
         }
 
         // Initial ports from edges
-        var sourcePort = self.getOutport(connection.src.process, connection.src.port);
-        var targetPort = self.getInport(connection.tgt.process, connection.tgt.port);
+        var sourcePort = self.getOutport(edge.from.node, edge.from.port);
+        var targetPort = self.getInport(edge.to.node, edge.to.port);
 
         var route;
-        if (connection.metadata && connection.metadata.route) {
-          route = connection.metadata.route;
+        if (edge.metadata && edge.metadata.route !== undefined) {
+          route = edge.metadata.route;
         } else {
           route = 0;
         }
 
         // Label
-        var label = source.metadata.label + " " + connection.src.port.toUpperCase() + " -> " + 
-          connection.tgt.port.toUpperCase() + " " + target.metadata.label;
-        var key = connection.src.process + "() " + connection.src.port.toUpperCase() + " -> " + 
-          connection.tgt.port.toUpperCase() + " " + connection.tgt.process + "()";
+        var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
+          edge.to.port.toUpperCase() + " " + target.metadata.label;
+        var key = edge.from.node + "() " + edge.from.port.toUpperCase() + " -> " + 
+          edge.to.port.toUpperCase() + " " + edge.to.node + "()";
 
         return TheGraph.Edge({
           key: key,

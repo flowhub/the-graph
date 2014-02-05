@@ -64,7 +64,9 @@
 
   TheGraph.findMinMax = function (graph, nodes) {
     if (nodes === undefined) {
-      nodes = Object.keys(graph.processes);
+      nodes = graph.nodes.map( function (node) {
+        return node.id;
+      });
     }
     if (nodes.length < 1) {
       return undefined;
@@ -77,14 +79,15 @@
     var len = nodes.length;
     for (var i=0; i<len; i++) {
       var key = nodes[i];
-      var process = graph.processes[ key ];
-      if (!process) {
-        throw new Error("Didn't find process "+key);
+      var node = graph.getNode(key);
+      if (!node) {
+        continue;
+        // throw new Error("Didn't find node "+key);
       }
-      if (process.metadata.x < minX) { minX = process.metadata.x; }
-      if (process.metadata.y < minY) { minY = process.metadata.y; }
-      if (process.metadata.x > maxX) { maxX = process.metadata.x; }
-      if (process.metadata.y > maxY) { maxY = process.metadata.y; }
+      if (node.metadata.x < minX) { minX = node.metadata.x; }
+      if (node.metadata.y < minY) { minY = node.metadata.y; }
+      if (node.metadata.x > maxX) { maxX = node.metadata.x; }
+      if (node.metadata.y > maxY) { maxY = node.metadata.y; }
     }
     if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
       minX = 0;

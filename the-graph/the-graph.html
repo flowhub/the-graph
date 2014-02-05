@@ -5,7 +5,8 @@
     <div id="svgcontainer"></div>
   </template>
 
-  <!-- <script type="text/javascript" src="../the-graph-util/the-graph-util.js"></script> -->
+  <script type="text/javascript" src="../bower_components/noflo/browser/noflo.js"></script>
+
   <script type="text/javascript" src="./the-graph.js"></script>
   <script type="text/javascript" src="./font-awesome-unicode-map.js"></script>
   <script type="text/javascript" src="./the-graph-app.js"></script>
@@ -24,7 +25,6 @@
 
     Polymer('the-graph', {
       graph: null,
-      nofloGraph: null,
       appView: null,
       graphView: null,
       ready: function () {
@@ -32,10 +32,11 @@
       enteredView: function () {
       },
       graphChanged: function () {
+        console.log(this.graph);
+        window.g = this.graph;
+
         // Setup app once
         if (!this.appView) {
-
-          this.nofloGraph = 
 
           this.appView = React.renderComponent(
             window.TheGraph.App({
@@ -68,6 +69,7 @@
         });
       },
       rerender: function () {
+        if (!this.graphView) { return; }
         this.graphView.markDirty();
       },
       toJSON: function () {

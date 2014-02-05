@@ -25,6 +25,7 @@
       scale: 1,
       pan: "0 0",
       plugins: {},
+      nofloGraph: null,
       ready: function () {
       },
       addPlugin: function (name, plugin) {
@@ -46,15 +47,17 @@
         this.style.height = this.height + "px";
       },
       graphChanged: function () {
-        this.buildInitialLibrary();
+        // this.buildInitialLibrary();
 
-        var graphEl = this.$.graph;
-        graphEl.graph = this.graph;
-        graphEl.library = this.$.library;
+        var nf = require('noflo');
+        var self = this;
+        nf.graph.loadJSON(this.graph, function(nofloGraph){
+          self.nofloGraph = nofloGraph;
+          self.$.graph.graph = nofloGraph;
+        });
 
-        // Reference the graph element
-        // this.$.nav.graph = graphEl;
       },
+      /*
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {
           var node = this.graph.processes[id];
@@ -143,8 +146,9 @@
           });
         });
       },
+      */
       toJSON: function () {
-        return this.$.graph.toJSON();
+        return this.nofloGraph.toJSON();
       }
     });
 

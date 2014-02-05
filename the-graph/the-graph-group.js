@@ -34,7 +34,7 @@
 
       var moveEvent = new CustomEvent('the-graph-group-move', { 
         detail: {
-          index: this.props.index,
+          nodes: this.props.nodes,
           x: deltaX,
           y: deltaY
         },
