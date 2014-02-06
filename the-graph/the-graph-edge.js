@@ -10,7 +10,10 @@
   // Edge view
 
   TheGraph.Edge = React.createClass({
-    mixins: [TheGraph.mixins.Tooltip],
+    mixins: [
+      TheGraph.mixins.Tooltip,
+      TheGraph.mixins.SavePointer
+    ],
     componentWillMount: function() {
     },
     componentDidMount: function () {
@@ -22,11 +25,19 @@
       // Don't show native context menu
       event.preventDefault();
 
+      var x = event.pageX;
+      var y = event.pageY;
+
+      if (x === undefined) {
+        x = this.pointerX;
+        y = this.pointerY;
+      }
+
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
-          x: event.pageX,
-          y: event.pageY
+          x: x,
+          y: y
         }, 
         bubbles: true
       });
