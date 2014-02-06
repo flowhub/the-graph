@@ -96,6 +96,7 @@
 
       return TheGraph.NodeMenu({
         key: "context." + this.props.key,
+        modal: true,
         label: this.props.label,
         graph: this.props.graph,
         node: this,
@@ -134,6 +135,7 @@
 
       // Ports
       var keys, count, index;
+      var processKey = this.props.key;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -144,6 +146,8 @@
         index++;
         var info = inports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.processKey = processKey;
+        info.isIn = true;
         return TheGraph.Port(info);
       });
 
@@ -156,6 +160,8 @@
         index++;
         var info = outports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.processKey = processKey;
+        info.isIn = false;
         return TheGraph.Port(info);
       });
 

@@ -46,6 +46,7 @@
     getContext: function (x, y) {
       return TheGraph.EdgeMenu({
         key: "context." + this.props.key,
+        modal: true,
         graph: this.props.graph,
         edge: this.props.edge,
         label: this.props.label,

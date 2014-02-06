@@ -149,6 +149,11 @@
     //     scale: event.detail.scale
     //   });
     // },
+    edgeStart: function (event) {
+      // Listened from PortMenu.edgeStart()
+      this.refs.graph.edgeStart(event);
+      this.hideContext();
+    },
     componentDidMount: function (rootNode) {
       // Pointer gesture events for pan/zoom
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
@@ -160,20 +165,14 @@
       this.getDOMNode().addEventListener("the-graph-tooltip", this.changeTooltip);
       this.getDOMNode().addEventListener("the-graph-tooltip-hide", this.hideTooltip);
 
-      // Pass from context menus to graph
-      this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
-
-      // Custom event listeners
+      // Context menu listeners
       this.getDOMNode().addEventListener("the-graph-context-show", this.showNodeContext);
       this.getDOMNode().addEventListener("the-graph-context-hide", this.hideContext);
+      this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
 
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( window.innerWidth/2 );
       this.mouseY = Math.floor( window.innerHeight/2 );
-    },
-    edgeStart: function (event) {
-      // Forward
-      this.refs.graph.edgeStart(event);
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
     },
@@ -194,15 +193,21 @@
         contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY);
       }
       if (contextMenu) {
-        contextModal = [ 
-          React.DOM.rect({
-            className: "context-modal-bg",
-            width: this.state.width,
-            height: this.state.height,
-            onMouseDown: this.hideContext
-          }),
-          contextMenu 
-        ];
+        if (contextMenu.props.modal) {
+          // Include modal backgroud
+          contextModal = [ 
+            React.DOM.rect({
+              className: "context-modal-bg",
+              width: this.state.width,
+              height: this.state.height,
+              onMouseDown: this.hideContext
+            }),
+            contextMenu 
+          ];
+        } else {
+          // No modal background
+          contextModal = contextMenu;
+        }
       }
 
       return React.DOM.div(

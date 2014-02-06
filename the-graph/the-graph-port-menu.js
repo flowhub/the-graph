@@ -5,7 +5,10 @@
 
 
   TheGraph.PortMenu = React.createClass({
-    edgeTrackStart: function (event) {
+    componentDidMount: function () {
+      this.getDOMNode().addEventListener("tap", this.edgeStart);
+    },
+    edgeStart: function (event) {
       // Don't drag graph
       event.stopPropagation();
 
@@ -18,35 +21,6 @@
         bubbles: true
       });
       this.getDOMNode().dispatchEvent(edgeStartEvent);
-
-      // Hide node context menu
-      // var contextHideEvent = new CustomEvent('the-graph-context-hide', { 
-      //   detail: null, 
-      //   bubbles: true
-      // });
-      // this.getDOMNode().dispatchEvent(contextHideEvent);
-
-      // Show compatible ports
-
-      // Move preview
-      this.getDOMNode().addEventListener("track", this.edgeTrack);
-      this.getDOMNode().addEventListener("trackend", this.edgeTrackEnd);
-    },
-    edgeTrack: function (event) {
-      // Don't drag graph
-      event.stopPropagation();
-
-      console.log(event);
-    },
-    edgeTrackEnd: function (event) {
-      event.stopPropagation();
-
-      console.log(event);
-      this.getDOMNode().removeEventListener("track", this.edgeTrack);
-      this.getDOMNode().removeEventListener("trackend", this.edgeTrackEnd);
-    },
-    componentDidMount: function () {
-      this.getDOMNode().addEventListener("trackstart", this.edgeTrackStart);
     },
     render: function() {
       var path = [
