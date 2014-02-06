@@ -9,9 +9,9 @@
   TheGraph.Port = React.createClass({
     componentDidMount: function () {
       // Context menu
-      this.getDOMNode().addEventListener("tap", this.startEdge);
+      this.getDOMNode().addEventListener("tap", this.edgeStart);
     },
-    startEdge: function (event) {
+    edgeStart: function (event) {
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
         detail: {
           isIn: this.props.isIn,
