@@ -20,7 +20,7 @@
         tooltipX: 0,
         tooltipY: 0,
         tooltipVisible: false,
-        nodeContext: null
+        contextElement: null
       };
     },
     zoomFactor: 0,
@@ -109,13 +109,15 @@
     },
     showNodeContext: function (event) {
       this.setState({
-        nodeContext: event.detail,
+        contextElement: event.detail.element,
+        contextX: event.detail.x,
+        contextY: event.detail.y,
         tooltipVisible: false
       });
     },
     hideContext: function (event) {
       this.setState({
-        nodeContext: null
+        contextElement: null
       });
     },
     changeTooltip: function (event) {
@@ -162,9 +164,7 @@
       this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
 
       // Custom event listeners
-      this.getDOMNode().addEventListener("the-graph-node-context", this.showNodeContext);
-      // this.getDOMNode().addEventListener("the-graph-edge-context", this.showEdgeContext);
-      // this.getDOMNode().addEventListener("the-graph-group-context", this.showGroupContext);
+      this.getDOMNode().addEventListener("the-graph-context-show", this.showNodeContext);
       this.getDOMNode().addEventListener("the-graph-context-hide", this.hideContext);
 
       // Start zoom from middle if zoom before mouse move
@@ -190,8 +190,8 @@
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
       var contextMenu, contextModal;
-      if ( this.state.nodeContext ) {
-        contextMenu = this.state.nodeContext.getContext();
+      if ( this.state.contextElement ) {
+        contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY);
       }
       if (contextMenu) {
         contextModal = [ 

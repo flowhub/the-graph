@@ -67,18 +67,24 @@
       // Don't show native context menu
       event.preventDefault();
 
-      var contextEvent = new CustomEvent('the-graph-node-context', { 
-        detail: this, 
+      var contextEvent = new CustomEvent('the-graph-context-show', { 
+        detail: {
+          element: this,
+          x: event.pageX,
+          y: event.pageY
+        },
         bubbles: true
       });
       this.getDOMNode().dispatchEvent(contextEvent);
     },
-    getContext: function () {
+    getContext: function (x, y) {
+      // Absolute position of node
       var scale = this.props.app.state.scale;
       var appX = this.props.app.state.x;
       var appY = this.props.app.state.y;
-      var x = (this.props.x + TheGraph.nodeSize/2) * scale + appX;
-      var y = (this.props.y + TheGraph.nodeSize/2) * scale + appY;
+      var nodeX = (this.props.x + TheGraph.nodeSize/2) * scale + appX;
+      var nodeY = (this.props.y + TheGraph.nodeSize/2) * scale + appY;
+
       return TheGraph.NodeMenu({
         key: "context." + this.props.key,
         label: this.props.label,
@@ -88,7 +94,9 @@
         process: this.props.process,
         processKey: this.props.key,
         x: x,
-        y: y
+        y: y,
+        deltaX: nodeX - x,
+        deltaY: nodeY - y
       });
     },
     getTooltipTrigger: function () {

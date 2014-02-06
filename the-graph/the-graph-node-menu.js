@@ -6,26 +6,6 @@
 
   TheGraph.NodeMenu = React.createClass({
     radius: 72,
-    arcs: (function(){
-      var angleToX = function (percent, radius) {
-        return radius * Math.cos(2*Math.PI * percent);
-      };
-      var angleToY = function (percent, radius) {
-        return radius * Math.sin(2*Math.PI * percent);
-      };
-      var makeArcPath = function (startPercent, endPercent, radius) {
-        return [ 
-          "M", angleToX(startPercent, radius), angleToY(startPercent, radius),
-          "A", radius, radius, 0, 0, 0, angleToX(endPercent, radius), angleToY(endPercent, radius)
-        ].join(" ");
-      };
-      return {
-        label: makeArcPath(7/8, 5/8, 36),
-        ins: makeArcPath(5/8, 3/8, 36),
-        outs: makeArcPath(1/8, -1/8, 36),
-        remove: makeArcPath(3/8, 1/8, 36)
-      };
-    })(),
     stopPropagation: function (event) {
       // Don't drag graph
       event.stopPropagation();
@@ -41,14 +21,12 @@
       this.getDOMNode().dispatchEvent(contextEvent);
     },
     render: function() {
-
-      var inports, outports;
-
-      // HACK
       var scale = this.props.node.props.app.state.scale;
-
       var ports = this.props.ports;
       var processKey = this.props.processKey;
+      var deltaX = this.props.deltaX;
+      var deltaY = this.props.deltaY;
+      var inports, outports;
 
       var inkeys = Object.keys(ports.inports);
       var h = inkeys.length * TheGraph.contextPortSize;
@@ -61,8 +39,8 @@
           label: key,
           processKey: processKey,
           isIn: true,
-          ox: (inport.x - TheGraph.nodeSize/2) * scale,
-          oy: (inport.y - TheGraph.nodeSize/2) * scale,
+          ox: (inport.x - TheGraph.nodeSize/2) * scale + deltaX,
+          oy: (inport.y - TheGraph.nodeSize/2) * scale + deltaY,
           x: -100,
           y: y
         });
@@ -79,8 +57,8 @@
           label: key,
           processKey: processKey,
           isIn: false,
-          ox: (outport.x - TheGraph.nodeSize/2) * scale,
-          oy: (outport.y - TheGraph.nodeSize/2) * scale,
+          ox: (outport.x - TheGraph.nodeSize/2) * scale + deltaX,
+          oy: (outport.y - TheGraph.nodeSize/2) * scale + deltaY,
           x: 100,
           y: y
         });
@@ -108,11 +86,11 @@
           }),
           React.DOM.path({
             className: "context-arc context-node-ins-bg",
-            d: this.arcs.ins
+            d: TheGraph.arcs.w4
           }),
           React.DOM.path({
             className: "context-arc context-node-outs-bg",
-            d: this.arcs.outs
+            d: TheGraph.arcs.e4
           }),
           React.DOM.g(
             {
@@ -122,7 +100,7 @@
             },
             React.DOM.path({
               className: "context-arc context-node-info-bg",
-              d: this.arcs.label
+              d: TheGraph.arcs.n4
             }),
             React.DOM.text({
               className: "icon context-icon context-node-info-icon",
@@ -139,7 +117,7 @@
             },
             React.DOM.path({
               className: "context-arc context-node-delete-bg",
-              d: this.arcs.remove
+              d: TheGraph.arcs.s4
             }),
             React.DOM.text({
               className: "icon context-icon context-node-delete-icon",

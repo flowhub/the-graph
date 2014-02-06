@@ -12,7 +12,35 @@
   TheGraph.Edge = React.createClass({
     mixins: [TheGraph.mixins.Tooltip],
     componentWillMount: function() {
-      // Todo: listen for source/target moving; change state
+    },
+    componentDidMount: function () {
+      // Context menu
+      this.getDOMNode().addEventListener("contextmenu", this.showContext);
+      this.getDOMNode().addEventListener("hold", this.showContext);
+    },
+    showContext: function (event) {
+      // Don't show native context menu
+      event.preventDefault();
+
+      var contextEvent = new CustomEvent('the-graph-context-show', { 
+        detail: {
+          element: this,
+          x: event.pageX,
+          y: event.pageY
+        }, 
+        bubbles: true
+      });
+      this.getDOMNode().dispatchEvent(contextEvent);
+    },
+    getContext: function (x, y) {
+      return TheGraph.EdgeMenu({
+        key: "context." + this.props.key,
+        graph: this.props.graph,
+        edge: this.props.edge,
+        label: this.props.label,
+        x: x,
+        y: y
+      });
     },
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
