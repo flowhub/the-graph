@@ -163,6 +163,17 @@ text {
 }
 
 
+/* Context menu - edge */
+.context-edge-label-out {
+  text-anchor: end;
+  dominant-baseline: central;
+}
+.context-edge-label-in {
+  text-anchor: start;
+  dominant-baseline: central;
+}
+
+
 .tooltip {
   opacity: 1.0;
 

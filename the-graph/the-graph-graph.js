@@ -215,6 +215,7 @@
 
         return TheGraph.Edge({
           key: key,
+          graph: graph,
           edge: edge,
           sX: source.metadata.x + TheGraph.nodeSize,
           sY: source.metadata.y + sourcePort.y,
