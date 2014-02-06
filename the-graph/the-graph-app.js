@@ -150,7 +150,7 @@
     //   });
     // },
     edgeStart: function (event) {
-      // Listened from PortMenu.edgeStart()
+      // Listened from PortMenu.edgeStart() and Port.edgeStart()
       this.refs.graph.edgeStart(event);
       this.hideContext();
     },

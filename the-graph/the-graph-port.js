@@ -7,9 +7,18 @@
   // Port view
 
   TheGraph.Port = React.createClass({
+    mixins: [
+      TheGraph.mixins.Tooltip
+    ],
     componentDidMount: function () {
       // Context menu
       this.getDOMNode().addEventListener("tap", this.edgeStart);
+    },
+    getTooltipTrigger: function () {
+      return this.getDOMNode();
+    },
+    shouldShowTooltip: function () {
+      return (this.props.app.state.scale < TheGraph.zbpBig);
     },
     edgeStart: function (event) {
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
@@ -26,7 +35,7 @@
       return (
         React.DOM.g(
           {
-            className: "port"
+            className: "port arrow"
           },
           React.DOM.circle({
             className: "port-circle",

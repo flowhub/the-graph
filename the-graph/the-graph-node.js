@@ -136,6 +136,7 @@
       // Ports
       var keys, count, index;
       var processKey = this.props.key;
+      var app = this.props.app;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -147,6 +148,7 @@
         var info = inports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
         info.processKey = processKey;
+        info.app = app;
         info.isIn = true;
         return TheGraph.Port(info);
       });
@@ -161,6 +163,7 @@
         var info = outports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
         info.processKey = processKey;
+        info.app = app;
         info.isIn = false;
         return TheGraph.Port(info);
       });

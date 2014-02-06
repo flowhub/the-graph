@@ -21,6 +21,9 @@ svg {
 }
 .view {
 }
+.arrow {
+  cursor: default;
+}
 .click {
   cursor: pointer;
 }
