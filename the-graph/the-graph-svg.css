@@ -95,7 +95,7 @@ text {
 .node-sublabel {
   text-anchor: middle;
 }
-.small .node-label {
+.small .node-label-bg {
   visibility: hidden;
 }
 

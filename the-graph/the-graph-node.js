@@ -215,6 +215,7 @@
             children: outportViews
           }),
           TheGraph.TextBG({
+            className: "node-label-bg",
             textClassName: "node-label",
             height: 14,
             halign: "center",
