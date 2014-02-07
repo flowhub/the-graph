@@ -18,7 +18,10 @@
       return this.getDOMNode();
     },
     shouldShowTooltip: function () {
-      return (this.props.app.state.scale < TheGraph.zbpBig);
+      return (
+        this.props.app.state.scale < TheGraph.zbpBig ||
+        this.props.label.length > 8
+      );
     },
     edgeStart: function (event) {
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
@@ -32,6 +35,11 @@
       this.getDOMNode().dispatchEvent(edgeStartEvent);      
     },
     render: function() {
+      var style;
+      if (this.props.label.length > 7) {
+        var fontSize = 6 * (30 / (4 * this.props.label.length));
+        style = { "font-size": fontSize+"px" };
+      }
       return (
         React.DOM.g(
           {
@@ -44,9 +52,10 @@
             r: 4
           }),
           React.DOM.text({
-            className: "port-label port-label-"+this.props.label.length,
+            className: "port-label",
             x: this.props.x + (this.props.isIn ? 5 : -5),
             y: this.props.y,
+            style: style,
             children: this.props.label
           })
         )

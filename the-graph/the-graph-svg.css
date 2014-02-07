@@ -228,11 +228,6 @@ text {
   /*alignment-baseline: middle;*/
   dominant-baseline: central;
 }
-.port-label-8  { font-size: 5.8px; }
-.port-label-9  { font-size: 5.6px; }
-.port-label-10 { font-size: 5.4px; }
-.port-label-11 { font-size: 5.2px; }
-.port-label-12 { font-size: 5px; }
 
 .inports .port-label {
   text-anchor: start;  

@@ -119,7 +119,9 @@
       // Only rerender if moved
       return (
         nextProps.x !== this.props.x || 
-        nextProps.y !== this.props.y
+        nextProps.y !== this.props.y ||
+        nextProps.ports.inports.length !== this.props.ports.inports.length ||
+        nextProps.ports.outports.length !== this.props.ports.outports.length
       );
     },
     render: function() {
