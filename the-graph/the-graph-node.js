@@ -30,11 +30,10 @@
       // this.getDOMNode().addEventListener("pointerleave", this.showContext);
 
       // Context menu
+      this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
+      this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
       this.getDOMNode().addEventListener("hold", this.showContext);
-    },
-    edgeConnectOffer: function (event) {
-      // console.log(event);
     },
     onTrackStart: function (event) {
       // Don't drag graph
@@ -64,9 +63,18 @@
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
+    stopPropagation: function (event) {
+      // HACK to keep context menu from cancelling preview edge
+      if (event.buttons && event.buttons===2) {
+        event.stopPropagation();
+      }
+    },
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
+      // Don't tap graph on hold event
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
 
       var x = event.pageX;
       var y = event.pageY;

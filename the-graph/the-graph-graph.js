@@ -48,7 +48,7 @@
           halfEdge.from = port;
         }
         this.addEdge(halfEdge);
-        this.setState({edgePreview: null});
+        this.cancelPreviewEdge();
         return;
       }
 
@@ -59,8 +59,17 @@
         edge = { from: port };
       }
       edge.isIn = event.detail.isIn;
-      this.setState({edgePreview: edge});
       this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
+      // TODO tap to add new node here
+      this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
+
+      this.setState({edgePreview: edge});
+    },
+    cancelPreviewEdge: function (event) {
+      this.props.app.getDOMNode().removeEventListener("pointermove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
+      this.setState({edgePreview: null});
+      this.markDirty();
     },
     renderPreviewEdge: function (event) {
       var scale = this.props.app.state.scale;

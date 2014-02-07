@@ -159,8 +159,6 @@
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       this.getDOMNode().addEventListener("pinch", this.onPinch);
 
-      // Mouse listen to window for drag/release outside
-
       // Tooltip listener
       this.getDOMNode().addEventListener("the-graph-tooltip", this.changeTooltip);
       this.getDOMNode().addEventListener("the-graph-tooltip-hide", this.hideTooltip);

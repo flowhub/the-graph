@@ -24,6 +24,9 @@
       );
     },
     edgeStart: function (event) {
+      // Don't tap graph
+      event.stopPropagation();
+      
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
         detail: {
           isIn: this.props.isIn,

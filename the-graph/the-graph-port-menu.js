@@ -9,7 +9,7 @@
       this.getDOMNode().addEventListener("tap", this.edgeStart);
     },
     edgeStart: function (event) {
-      // Don't drag graph
+      // Don't tap graph
       event.stopPropagation();
 
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
