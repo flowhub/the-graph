@@ -214,17 +214,22 @@
             className: "outports",
             children: outportViews
           }),
-          React.DOM.text({
-            className: "node-label",
+          TheGraph.TextBG({
+            textClassName: "node-label",
+            height: 14,
+            halign: "center",
             x: TheGraph.nodeSize/2,
             y: TheGraph.nodeSize + 20,
-            children: label
+            text: label
           }),
-          React.DOM.text({
-            className: "node-sublabel",
+          TheGraph.TextBG({
+            className: "node-sublabel-bg",
+            textClassName: "node-sublabel",
+            height: 9,
+            halign: "center",
             x: TheGraph.nodeSize/2,
             y: TheGraph.nodeSize + 35,
-            children: sublabel
+            text: sublabel
           })
         )
       );

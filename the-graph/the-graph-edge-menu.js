@@ -95,17 +95,21 @@
             className: "icon context-node-icon",
             children: TheGraph.FONT_AWESOME["long-arrow-right"]
           }),
-          React.DOM.text({
-            className: "context-edge-label-out",
+          TheGraph.TextBG({
+            textClassName: "context-edge-label-out",
+            height: 14,
+            halign: "right",
             x: 0 - 30,
             y: 0,
-            children: labelOut
+            text: labelOut
           }),
-          React.DOM.text({
-            className: "context-edge-label-in",
+          TheGraph.TextBG({
+            textClassName: "context-edge-label-in",
+            height: 14,
+            halign: "left",
             x: 0 + 30,
             y: 0,
-            children: labelIn
+            text: labelIn
           })
         )
       );
