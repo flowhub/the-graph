@@ -50,6 +50,7 @@
         graph: this.props.graph,
         edge: this.props.edge,
         label: this.props.label,
+        route: this.props.route,
         x: x,
         y: y
       });

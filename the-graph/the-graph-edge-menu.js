@@ -92,7 +92,7 @@
             ry: TheGraph.nodeRadius
           }),
           React.DOM.text({
-            className: "icon context-node-icon",
+            className: "icon context-node-icon fill route"+this.props.route,
             children: TheGraph.FONT_AWESOME["long-arrow-right"]
           }),
           TheGraph.TextBG({
