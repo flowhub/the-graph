@@ -48,7 +48,9 @@
       var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(tooltipEvent);
+      if (this._lifeCycleState === "MOUNTED") {
+        this.getDOMNode().dispatchEvent(tooltipEvent);
+      }
     },
     componentDidMount: function (rootNode) {
       if (navigator && navigator.userAgent.indexOf("Firefox") !== -1) {

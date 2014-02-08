@@ -13,6 +13,7 @@
     componentDidMount: function () {
       // Context menu
       this.getDOMNode().addEventListener("tap", this.edgeStart);
+      this.getDOMNode().addEventListener("trackstart", this.edgeStart);
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -38,6 +39,14 @@
       });
       this.getDOMNode().dispatchEvent(edgeStartEvent);      
     },
+    componentDidUpdate: function (prevProps, prevState, rootNode) {
+      // HACK til 0.9.0
+      if (prevProps.route !== this.props.route) {
+        var c = "port-circle-small fill route"+this.props.route;
+        this.refs.circleSmall.getDOMNode().setAttribute("class", c);
+        console.log(this);
+      }
+    },
     render: function() {
       var style;
       if (this.props.label.length > 7) {
@@ -56,6 +65,7 @@
             r: 4
           }),
           React.DOM.circle({
+            ref: "circleSmall",
             className: "port-circle-small fill route"+this.props.route,
             cx: this.props.x,
             cy: this.props.y,
