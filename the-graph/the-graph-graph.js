@@ -63,7 +63,7 @@
         route = this.getOutport(port.node, port.port).route;
       }
       edge.isIn = event.detail.isIn;
-      console.log(edge.metadata);
+      edge.metadata = {route:route};
       this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
       // TODO tap to add new node here
       this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
