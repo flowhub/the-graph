@@ -16,7 +16,8 @@
         detail: {
           isIn: this.props.isIn,
           port: this.props.label,
-          process: this.props.processKey
+          process: this.props.processKey,
+          route: this.props.route
         },
         bubbles: true
       });

@@ -54,16 +54,14 @@
         return;
       }
 
-      var edge, route;
+      var edge;
       if (event.detail.isIn) {
         edge = { to: port };
-        route = this.getInport(port.node, port.port).route;
       } else {
         edge = { from: port };
-        route = this.getOutport(port.node, port.port).route;
       }
       edge.isIn = event.detail.isIn;
-      edge.metadata = {route:route};
+      edge.metadata = { route: event.detail.route };
       this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
       // TODO tap to add new node here
       this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
