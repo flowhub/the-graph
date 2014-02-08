@@ -54,6 +54,12 @@
             cy: this.props.y,
             r: 4
           }),
+          React.DOM.circle({
+            className: "port-circle-small route"+this.props.route,
+            cx: this.props.x,
+            cy: this.props.y,
+            r: 2.5
+          }),
           React.DOM.text({
             className: "port-label",
             x: this.props.x + (this.props.isIn ? 5 : -5),

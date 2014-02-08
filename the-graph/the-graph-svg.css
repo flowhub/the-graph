@@ -291,3 +291,17 @@ text {
 .route10 .edge-fg { stroke: hsl(270, 100%, 70% ); }
 .route11 .edge-fg { stroke: hsl(300, 100%, 70% ); }
 .route12 .edge-fg { stroke: hsl(330, 100%, 70% ); }
+
+.port-circle-small.route0  { fill: hsl( 10, 100%, 100%); }
+.port-circle-small.route1  { fill: hsl( 10, 100%, 70% ); }
+.port-circle-small.route2  { fill: hsl( 30, 100%, 70% ); }
+.port-circle-small.route3  { fill: hsl( 60, 100%, 70% ); }
+.port-circle-small.route4  { fill: hsl( 90, 100%, 70% ); }
+.port-circle-small.route5  { fill: hsl(120, 100%, 70% ); }
+.port-circle-small.route6  { fill: hsl(150, 100%, 70% ); }
+.port-circle-small.route7  { fill: hsl(180, 100%, 70% ); }
+.port-circle-small.route8  { fill: hsl(210, 100%, 70% ); }
+.port-circle-small.route9  { fill: hsl(240, 100%, 70% ); }
+.port-circle-small.route10 { fill: hsl(270, 100%, 70% ); }
+.port-circle-small.route11 { fill: hsl(300, 100%, 70% ); }
+.port-circle-small.route12 { fill: hsl(330, 100%, 70% ); }

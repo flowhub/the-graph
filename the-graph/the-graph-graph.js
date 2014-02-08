@@ -119,7 +119,7 @@
       }
       return process;
     },
-    getOutport: function (processName, portName) {
+    getOutport: function (processName, portName, route) {
       var ports = this.getPorts(processName);
       if ( !ports.outports[portName] ) {
         ports.outports[portName] = {
@@ -129,9 +129,12 @@
         };
         this.dirty = true;
       }
-      return ports.outports[portName];
+      var port = ports.outports[portName];
+      // Port will have top edge's color
+      port.route = route;
+      return port;
     },
-    getInport: function (processName, portName) {
+    getInport: function (processName, portName, route) {
       var ports = this.getPorts(processName);
       if ( !ports.inports[portName] ) {
         ports.inports[portName] = {
@@ -141,7 +144,10 @@
         };
         this.dirty = true;
       }
-      return ports.inports[portName];
+      var port = ports.inports[portName];
+      // Port will have top edge's color
+      port.route = route;
+      return port;
     },
     removeNode: function (event) {
       var removeKey = event.detail;
@@ -178,16 +184,14 @@
           return;
         }
 
-        // Initial ports from edges
-        var sourcePort = self.getOutport(edge.from.node, edge.from.port);
-        var targetPort = self.getInport(edge.to.node, edge.to.port);
-
-        var route;
+        var route = 0;
         if (edge.metadata && edge.metadata.route !== undefined) {
           route = edge.metadata.route;
-        } else {
-          route = 0;
         }
+
+        // Initial ports from edges, and give port top edge color
+        var sourcePort = self.getOutport(edge.from.node, edge.from.port, route);
+        var targetPort = self.getInport(edge.to.node, edge.to.port, route);
 
         // Label
         var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
