@@ -139,6 +139,7 @@
     },
     hideTooltip: function (event) {
       this.setState({
+        tooltip: "",
         tooltipVisible: false
       });
     },

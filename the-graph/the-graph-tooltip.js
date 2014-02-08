@@ -27,7 +27,7 @@
           React.DOM.rect({
             className: "tooltip-bg",
             x: 0,
-            y: -14,
+            y: -7,
             rx: 3,
             ry: 3,
             height: 16,
