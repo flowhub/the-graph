@@ -42,7 +42,8 @@
           ox: (inport.x - TheGraph.nodeSize/2) * scale + deltaX,
           oy: (inport.y - TheGraph.nodeSize/2) * scale + deltaY,
           x: -100,
-          y: y
+          y: y,
+          route: inport.route
         });
       });
 
@@ -60,7 +61,8 @@
           ox: (outport.x - TheGraph.nodeSize/2) * scale + deltaX,
           oy: (outport.y - TheGraph.nodeSize/2) * scale + deltaY,
           x: 100,
-          y: y
+          y: y,
+          route: outport.route
         });
       });
 

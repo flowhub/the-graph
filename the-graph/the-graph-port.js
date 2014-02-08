@@ -55,7 +55,7 @@
             r: 4
           }),
           React.DOM.circle({
-            className: "port-circle-small route"+this.props.route,
+            className: "port-circle-small fill route"+this.props.route,
             cx: this.props.x,
             cy: this.props.y,
             r: 2.5

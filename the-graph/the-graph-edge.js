@@ -103,7 +103,7 @@
       return (
         React.DOM.g(
           {
-            className: "edge route"+this.props.route,
+            className: "edge route",
             title: this.props.label
           },
           React.DOM.path({
@@ -111,7 +111,7 @@
             d: path
           }),
           React.DOM.path({
-            className: "edge-fg",
+            className: "edge-fg stroke route"+this.props.route,
             d: path
           }),
           React.DOM.path({

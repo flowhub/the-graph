@@ -47,13 +47,19 @@
             height: TheGraph.contextPortSize-1
           }),
           React.DOM.circle({
-            className: "context-port-hole",
+            className: "context-port-hole stroke route"+this.props.route,
             cx: this.props.x,
             cy: this.props.y,
             r: 10
           }),
+          // React.DOM.circle({
+          //   className: "fill route"+this.props.route,
+          //   cx: this.props.x,
+          //   cy: this.props.y,
+          //   r: 5
+          // }),
           React.DOM.text({
-            className: "context-port-label",
+            className: "context-port-label fill route"+this.props.route,
             x: this.props.x + (this.props.isIn ? -20 : 20),
             y: this.props.y,
             children: this.props.label
