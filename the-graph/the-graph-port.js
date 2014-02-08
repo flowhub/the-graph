@@ -41,11 +41,8 @@
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
       // HACK til 0.9.0
-      if (prevProps.route !== this.props.route) {
-        var c = "port-circle-small fill route"+this.props.route;
-        this.refs.circleSmall.getDOMNode().setAttribute("class", c);
-        console.log(this);
-      }
+      var c = "port-circle-small fill route"+this.props.route;
+      this.refs.circleSmall.getDOMNode().setAttribute("class", c);
     },
     render: function() {
       var style;

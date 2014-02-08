@@ -157,6 +157,7 @@
         index++;
         var info = inports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.key = processKey + ".in." + info.label;
         info.processKey = processKey;
         info.app = app;
         info.isIn = true;
@@ -172,6 +173,7 @@
         index++;
         var info = outports[key];
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.key = processKey + ".out." + info.label;
         info.processKey = processKey;
         info.app = app;
         info.isIn = false;
