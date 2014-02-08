@@ -220,7 +220,7 @@
             height: 14,
             halign: "center",
             x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + 20,
+            y: TheGraph.nodeSize + 15,
             text: label
           }),
           TheGraph.TextBG({
@@ -229,7 +229,7 @@
             height: 9,
             halign: "center",
             x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + 35,
+            y: TheGraph.nodeSize + 30,
             text: sublabel
           })
         )

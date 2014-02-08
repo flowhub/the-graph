@@ -170,6 +170,44 @@
       var self = this;
       var graph = this.state.graph;
 
+      // Edges
+      var edges = graph.edges.map(function (edge) {
+        var source = graph.getNode(edge.from.node);
+        var target = graph.getNode(edge.to.node);
+        if (!source || !target) {
+          return;
+        }
+
+        // Initial ports from edges
+        var sourcePort = self.getOutport(edge.from.node, edge.from.port);
+        var targetPort = self.getInport(edge.to.node, edge.to.port);
+
+        var route;
+        if (edge.metadata && edge.metadata.route !== undefined) {
+          route = edge.metadata.route;
+        } else {
+          route = 0;
+        }
+
+        // Label
+        var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
+          edge.to.port.toUpperCase() + " " + target.metadata.label;
+        var key = edge.from.node + "() " + edge.from.port.toUpperCase() + " -> " + 
+          edge.to.port.toUpperCase() + " " + edge.to.node + "()";
+
+        return TheGraph.Edge({
+          key: key,
+          graph: graph,
+          edge: edge,
+          sX: source.metadata.x + TheGraph.nodeSize,
+          sY: source.metadata.y + sourcePort.y,
+          tX: target.metadata.x,
+          tY: target.metadata.y + targetPort.y,
+          label: label,
+          route: route
+        });
+      });
+
       // Nodes
       var nodes = graph.nodes.map(function (node) {
         var key = node.id;
@@ -214,44 +252,6 @@
           description: group.metadata.description
         });
         return g;
-      });
-
-      // Edges
-      var edges = graph.edges.map(function (edge) {
-        var source = graph.getNode(edge.from.node);
-        var target = graph.getNode(edge.to.node);
-        if (!source || !target) {
-          return;
-        }
-
-        // Initial ports from edges
-        var sourcePort = self.getOutport(edge.from.node, edge.from.port);
-        var targetPort = self.getInport(edge.to.node, edge.to.port);
-
-        var route;
-        if (edge.metadata && edge.metadata.route !== undefined) {
-          route = edge.metadata.route;
-        } else {
-          route = 0;
-        }
-
-        // Label
-        var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
-          edge.to.port.toUpperCase() + " " + target.metadata.label;
-        var key = edge.from.node + "() " + edge.from.port.toUpperCase() + " -> " + 
-          edge.to.port.toUpperCase() + " " + edge.to.node + "()";
-
-        return TheGraph.Edge({
-          key: key,
-          graph: graph,
-          edge: edge,
-          sX: source.metadata.x + TheGraph.nodeSize,
-          sY: source.metadata.y + sourcePort.y,
-          tX: target.metadata.x,
-          tY: target.metadata.y + targetPort.y,
-          label: label,
-          route: route
-        });
       });
 
       // Edge preview
