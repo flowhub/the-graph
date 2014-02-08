@@ -34,11 +34,13 @@
     edgeStart: function (event) {
       // Forwarded from App.edgeStart()
 
+      // Port that triggered this
       var port = {
         node: event.detail.process,
         port: event.detail.port
       };
 
+      // Complete edge if this is the second tap and ports are compatible
       if (this.state.edgePreview && this.state.edgePreview.isIn !== event.detail.isIn) {
         // TODO also check compatible types
         var halfEdge = this.state.edgePreview;
@@ -52,13 +54,16 @@
         return;
       }
 
-      var edge;
+      var edge, route;
       if (event.detail.isIn) {
         edge = { to: port };
+        route = this.getInport(port.node, port.port).route;
       } else {
         edge = { from: port };
+        route = this.getOutport(port.node, port.port).route;
       }
       edge.isIn = event.detail.isIn;
+      console.log(edge.metadata);
       this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
       // TODO tap to add new node here
       this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
@@ -80,7 +85,7 @@
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.node, edge.from.port, edge.to.node, edge.to.port);
+      this.state.graph.addEdge(edge.from.node, edge.from.port, edge.to.node, edge.to.port, edge.metadata);
     },
     // triggerFit: function () {
     //   // Zoom to fit
@@ -131,7 +136,9 @@
       }
       var port = ports.outports[portName];
       // Port will have top edge's color
-      port.route = route;
+      if (route !== undefined) {
+        port.route = route;
+      }
       return port;
     },
     getInport: function (processName, portName, route) {
@@ -146,7 +153,9 @@
       }
       var port = ports.inports[portName];
       // Port will have top edge's color
-      port.route = route;
+      if (route !== undefined) {
+        port.route = route;
+      }
       return port;
     },
     removeNode: function (event) {
@@ -272,7 +281,7 @@
             tX: this.state.edgePreviewX,
             tY: this.state.edgePreviewY,
             label: "",
-            route: 0
+            route: edgePreview.metadata.route
           });
         } else {
           var target = graph.getNode(edgePreview.to.node);
@@ -284,7 +293,7 @@
             tX: target.metadata.x,
             tY: target.metadata.y + targetPort.y,
             label: "",
-            route: 0
+            route: edgePreview.metadata.route
           });
         }
         edges.push(edgePreviewView);
