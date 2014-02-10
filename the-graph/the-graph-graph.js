@@ -236,6 +236,7 @@
           y: node.metadata.y,
           label: node.metadata.label,
           app: self.props.app,
+          graphView: self,
           graph: graph,
           node: node,
           ports: self.getPorts(key)

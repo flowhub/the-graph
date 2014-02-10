@@ -107,6 +107,7 @@
         modal: true,
         label: this.props.label,
         graph: this.props.graph,
+        graphView: this.props.graphView,
         node: this,
         ports: this.props.ports,
         process: this.props.process,

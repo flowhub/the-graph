@@ -169,6 +169,10 @@
       this.getDOMNode().addEventListener("the-graph-context-hide", this.hideContext);
       this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
 
+      if (this.refs.modalBG) {
+        console.log( this.refs.modalBG );
+      }
+
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( window.innerWidth/2 );
       this.mouseY = Math.floor( window.innerHeight/2 );
@@ -196,10 +200,11 @@
           // Include modal backgroud
           contextModal = [ 
             React.DOM.rect({
+              ref: "modalBG",
               className: "context-modal-bg",
               width: this.state.width,
               height: this.state.height,
-              onMouseDown: this.hideContext
+              onClick: this.hideContext
             }),
             contextMenu 
           ];

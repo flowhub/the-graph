@@ -28,50 +28,72 @@
       var deltaY = this.props.deltaY;
       var inports, outports;
 
-      var inkeys = Object.keys(ports.inports);
-      var h = inkeys.length * TheGraph.contextPortSize;
-      var i = 0;
-      inports = inkeys.map( function (key) {
-        var inport = ports.inports[key];
-        var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
-        i++;
-        return TheGraph.PortMenu({
-          label: key,
-          processKey: processKey,
-          isIn: true,
-          ox: (inport.x - TheGraph.nodeSize/2) * scale + deltaX,
-          oy: (inport.y - TheGraph.nodeSize/2) * scale + deltaY,
-          x: -100,
-          y: y,
-          route: inport.route
-        });
-      });
+      // If there is a preview edge started, only show connectable ports
+      var onlyShow;
+      if (this.props.graphView.state.edgePreview) {
+        onlyShow = this.props.graphView.state.edgePreview.isIn ? "out" : "in";
+      }
 
-      var outkeys = Object.keys(ports.outports);
-      h = outkeys.length * TheGraph.contextPortSize;
-      i = 0;
-      outports = outkeys.map( function (key) {
-        var outport = ports.outports[key];
-        var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
-        i++;
-        return TheGraph.PortMenu({
-          label: key,
-          processKey: processKey,
-          isIn: false,
-          ox: (outport.x - TheGraph.nodeSize/2) * scale + deltaX,
-          oy: (outport.y - TheGraph.nodeSize/2) * scale + deltaY,
-          x: 100,
-          y: y,
-          route: outport.route
+      if (!onlyShow || onlyShow === "in") {
+        var inkeys = Object.keys(ports.inports);
+        var h = inkeys.length * TheGraph.contextPortSize;
+        var i = 0;
+        inports = inkeys.map( function (key) {
+          var inport = ports.inports[key];
+          var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
+          i++;
+          return TheGraph.PortMenu({
+            label: key,
+            processKey: processKey,
+            isIn: true,
+            ox: (inport.x - TheGraph.nodeSize/2) * scale + deltaX,
+            oy: (inport.y - TheGraph.nodeSize/2) * scale + deltaY,
+            x: -100,
+            y: y,
+            route: inport.route
+          });
         });
-      });
+      }
 
-      return (
-        React.DOM.g(
-          {
-            className: "context-node",
-            transform: "translate("+this.props.x+","+this.props.y+")"
-          },
+      if (!onlyShow || onlyShow === "out") {
+        var outkeys = Object.keys(ports.outports);
+        h = outkeys.length * TheGraph.contextPortSize;
+        i = 0;
+        outports = outkeys.map( function (key) {
+          var outport = ports.outports[key];
+          var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
+          i++;
+          return TheGraph.PortMenu({
+            label: key,
+            processKey: processKey,
+            isIn: false,
+            ox: (outport.x - TheGraph.nodeSize/2) * scale + deltaX,
+            oy: (outport.y - TheGraph.nodeSize/2) * scale + deltaY,
+            x: 100,
+            y: y,
+            route: outport.route
+          });
+        });
+      }
+
+      var children = [];
+      if (onlyShow === "in") {
+        children.push(
+          React.DOM.g({
+            className: "context-inports",
+            children: inports
+          })
+        );
+      } else if (onlyShow === "out") {
+        children.push(
+          React.DOM.g({
+            className: "context-outports",
+            children: outports
+          })
+        );
+      } else {
+        // Full context menu
+        children = [
           React.DOM.text({
             className: "context-node-label",
             x: 0,
@@ -97,8 +119,6 @@
           React.DOM.g(
             {
               className: "context-slice context-node-info click"
-              // onMouseDown: this.stopPropagation,
-              // onClick: this.triggerRemove
             },
             React.DOM.path({
               className: "context-arc context-node-info-bg",
@@ -149,6 +169,16 @@
             className: "icon context-node-icon",
             children: TheGraph.FONT_AWESOME[this.props.node.state.icon]
           })
+        ];
+      }
+
+      return (
+        React.DOM.g(
+          {
+            className: "context-node",
+            transform: "translate("+this.props.x+","+this.props.y+")",
+            children: children
+          }
         )
       );
     }
