@@ -196,8 +196,8 @@
         contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY);
       }
       if (contextMenu) {
-        if (contextMenu.props.modal) {
-          // Include modal backgroud
+        // if (contextMenu.props.modal) {
+        //   // Include modal backgroud
           contextModal = [ 
             React.DOM.rect({
               ref: "modalBG",
@@ -208,10 +208,10 @@
             }),
             contextMenu 
           ];
-        } else {
-          // No modal background
-          contextModal = contextMenu;
-        }
+        // } else {
+        //   // No modal background
+        //   contextModal = contextMenu;
+        // }
       }
 
       return React.DOM.div(

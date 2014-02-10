@@ -24,20 +24,11 @@
       this.getDOMNode().dispatchEvent(edgeStartEvent);
     },
     render: function() {
-      var path = [
-        "M", this.props.ox, this.props.oy,
-        "L", this.props.x, this.props.y
-      ].join(" ");
-
       return (
         React.DOM.g(
           {
             className: "context-port click context-port-"+(this.props.isIn ? "in" : "out")
           },
-          React.DOM.path({
-            className: "context-port-path",
-            d: path
-          }),
           React.DOM.rect({
             className: "context-port-bg",
             rx: TheGraph.nodeRadius,

@@ -101,7 +101,41 @@
       var appY = this.props.app.state.y;
       var nodeX = (this.props.x + TheGraph.nodeSize/2) * scale + appX;
       var nodeY = (this.props.y + TheGraph.nodeSize/2) * scale + appY;
+      var deltaX = nodeX - x;
+      var deltaY = nodeY - y;
+      var ports = this.props.ports;
+      var processKey = this.props.key;
 
+      // If there is a preview edge started, only show connectable ports
+      if (this.props.graphView.state.edgePreview) {
+        if (this.props.graphView.state.edgePreview.isIn) {
+          // Show outputs
+          return TheGraph.PortsMenu({
+            ports: ports.outports,
+            isIn: false,
+            scale: scale,
+            processKey: processKey,
+            deltaX: deltaX,
+            deltaY: deltaY,
+            translateX: x,
+            translateY: y
+          });
+        } else {
+          // Show inputs
+          return TheGraph.PortsMenu({
+            ports: ports.inports,
+            isIn: true,
+            scale: scale,
+            processKey: processKey,
+            deltaX: deltaX,
+            deltaY: deltaY,
+            translateX: x,
+            translateY: y
+          });
+        }
+      }
+
+      // Default, show whole node menu
       return TheGraph.NodeMenu({
         key: "context." + this.props.key,
         modal: true,
@@ -109,13 +143,13 @@
         graph: this.props.graph,
         graphView: this.props.graphView,
         node: this,
-        ports: this.props.ports,
+        ports: ports,
         process: this.props.process,
-        processKey: this.props.key,
+        processKey: processKey,
         x: x,
         y: y,
-        deltaX: nodeX - x,
-        deltaY: nodeY - y
+        deltaX: deltaX,
+        deltaY: deltaY
       });
     },
     getTooltipTrigger: function () {
@@ -188,8 +222,7 @@
             name: this.props.key,
             key: this.props.key,
             title: label,
-            transform: "translate("+x+","+y+")"//,
-            // onMouseDown: this.onMouseDown
+            transform: "translate("+x+","+y+")"
           },
           React.DOM.rect({
             className: "node-bg", // HACK to make the whole g draggable
