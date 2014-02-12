@@ -1,5 +1,5 @@
+/* Need to add this to the .html with correct paths to get the svg version
 @font-face {
-  /* we want the svg version */
   font-family: 'FontAwesomeSVG';
   src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
     url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
@@ -8,6 +8,7 @@
   font-weight: normal;
   font-style: normal;
 }
+*/
 
 svg {
   background-color: hsl(0, 0%, 0%);
