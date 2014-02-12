@@ -32,9 +32,6 @@
       enteredView: function () {
       },
       graphChanged: function () {
-        console.log(this.graph);
-        window.g = this.graph;
-
         // Setup app once
         if (!this.appView) {
 
@@ -71,6 +68,16 @@
       rerender: function () {
         if (!this.graphView) { return; }
         this.graphView.markDirty();
+      },
+      addNode: function (id, component, metadata) {
+        if (!this.graph) { return; }
+        this.graph.addNode(id, component, metadata);
+      },
+      getPan: function () {
+        if (!this.appView) { 
+          return [0, 0]; 
+        }
+        return [this.appView.state.x, this.appView.state.y];
       },
       toJSON: function () {
         return {};

@@ -3,9 +3,6 @@
 
   var TheGraph = context.TheGraph;
 
-  // Font Awesome
-  var faKeys = Object.keys(TheGraph.FONT_AWESOME);
-
   // Polymer monkeypatch
   window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
 
@@ -17,8 +14,7 @@
     ],
     getInitialState: function() {
       return {
-        // Random icon just for fun
-        icon: faKeys[ Math.floor(Math.random()*faKeys.length) ]
+        icon: (this.props.icon ? this.props.icon : "cog")
       };
     },
     componentDidMount: function () {

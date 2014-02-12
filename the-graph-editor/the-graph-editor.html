@@ -45,7 +45,7 @@
         this.style.height = this.height + "px";
       },
       graphChanged: function () {
-        // this.buildInitialLibrary();
+        this.buildInitialLibrary();
 
         var nf = require('noflo');
         var self = this;
@@ -55,7 +55,6 @@
         });
 
       },
-      /*
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {
           var node = this.graph.processes[id];
@@ -144,7 +143,6 @@
           });
         });
       },
-      */
       toJSON: function () {
         return this.nofloGraph.toJSON();
       }
