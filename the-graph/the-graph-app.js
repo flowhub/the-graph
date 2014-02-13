@@ -238,7 +238,8 @@
               ref: "graph",
               graph: this.props.graph,
               scale: this.state.scale,
-              app: this
+              app: this,
+              library: this.props.library
             })
           ),
           TheGraph.Tooltip({

@@ -27,11 +27,13 @@
         this.fire('icon', this.icon);
       },
       inportsChanged: function () {
+        // CAVEAT doesn't fire when one port type changes
         this.inObserver = new ArrayObserver(this.inports, function () {
           this.fire('inports', this.inports);
         }.bind(this));
       },
       outportsChanged: function () {
+        // CAVEAT doesn't fire when one port type changes
         this.outObserver = new ArrayObserver(this.outports, function () {
           this.fire('outports', this.outports);
         }.bind(this));

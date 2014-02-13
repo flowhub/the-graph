@@ -110,20 +110,78 @@
         }
       }
     },
-    portInfo: {},
-    getPorts: function (processName) {
-      var process = this.portInfo[processName];
-      if (!process) {
-        process = {
-          inports: {},
-          outports: {}
-        };
-        this.portInfo[processName] = process;
+    listenComponentChanges: function (componentName) {
+      var componentEl = document.querySelector("the-component[name='"+componentName+"']");
+      // Listen for component changes
+      if (componentEl) {
+        // Info/library object is already updated from out there
+        componentEl.addEventListener('icon', this.markDirty);
+        
+        // var self = this;
+        // TODO update related portInfo.inports
+        // componentEl.addEventListener('inports', function (event) {
+        //   self.markDirty();
+        // });
+        // TODO update related portInfo.outports
+        // componentEl.addEventListener('outports', function (event) {
+        //   self.markDirty();
+        // });
       }
-      return process;
     },
-    getOutport: function (processName, portName, route) {
-      var ports = this.getPorts(processName);
+    componentInfo: {},
+    getComponentInfo: function (componentName) {
+      var component = this.componentInfo[componentName];
+      if (!component && this.props.library) {
+        component = this.props.library[componentName];
+        if (component) {
+          this.componentInfo[componentName] = component;
+          // Only attach this once
+          this.listenComponentChanges(componentName);
+        }
+      }
+      return component;
+    },
+    portInfo: {},
+    getPorts: function (processName, componentName) {
+      var ports = this.portInfo[processName];
+      if (!ports) {
+        var inports = {};
+        var outports = {};
+        if (componentName && this.props.library) {
+          // Copy ports from library object
+          var component = this.getComponentInfo(componentName);
+          var i, port;
+          for (i=0; i<component.outports.length; i++) {
+            port = component.outports[i];
+            if (!port.name) { continue; }
+            outports[port.name] = {
+              label: port.name,
+              type: port.type,
+              x: TheGraph.nodeSize,
+              y: TheGraph.nodeSize/2
+            };
+          }
+          for (i=0; i<component.inports.length; i++) {
+            port = component.inports[i];
+            if (!port.name) { continue; }
+            inports[port.name] = {
+              label: port.name,
+              type: port.type,
+              x: 0,
+              y: TheGraph.nodeSize/2
+            };
+          }
+        }
+        ports = {
+          inports: inports,
+          outports: outports
+        };
+        this.portInfo[processName] = ports;
+      }
+      return ports;
+    },
+    getOutport: function (processName, portName, route, componentName) {
+      var ports = this.getPorts(processName, componentName);
       if ( !ports.outports[portName] ) {
         ports.outports[portName] = {
           label: portName,
@@ -139,8 +197,8 @@
       }
       return port;
     },
-    getInport: function (processName, portName, route) {
-      var ports = this.getPorts(processName);
+    getInport: function (processName, portName, route, componentName) {
+      var ports = this.getPorts(processName, componentName);
       if ( !ports.inports[portName] ) {
         ports.inports[portName] = {
           label: portName,
@@ -182,6 +240,34 @@
 
       var self = this;
       var graph = this.state.graph;
+      var library = this.props.library;
+
+      // Nodes
+      var nodes = graph.nodes.map(function (node) {
+        var key = node.id;
+        if (!node.metadata) {
+          node.metadata = {};
+        }
+        if (node.metadata.x === undefined) { node.metadata.x = 0; }
+        if (node.metadata.y === undefined) { node.metadata.y = 0; }
+        if (!node.metadata.label || node.metadata.label === "") {
+          node.metadata.label = key;
+        }
+        var componentInfo = self.getComponentInfo(node.component);
+        var icon = (componentInfo && componentInfo.icon ? componentInfo.icon : "cog");
+        return TheGraph.Node({
+          key: key,
+          x: node.metadata.x,
+          y: node.metadata.y,
+          label: node.metadata.label,
+          app: self.props.app,
+          graphView: self,
+          graph: graph,
+          node: node,
+          icon: icon,
+          ports: self.getPorts(key, node.component)
+        });
+      });
 
       // Edges
       var edges = graph.edges.map(function (edge) {
@@ -196,9 +282,9 @@
           route = edge.metadata.route;
         }
 
-        // Initial ports from edges, and give port top edge color
-        var sourcePort = self.getOutport(edge.from.node, edge.from.port, route);
-        var targetPort = self.getInport(edge.to.node, edge.to.port, route);
+        // Initial ports from edges, and give port top/last edge color
+        var sourcePort = self.getOutport(edge.from.node, edge.from.port, route, source.component);
+        var targetPort = self.getInport(edge.to.node, edge.to.port, route, target.component);
 
         // Label
         var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
@@ -216,30 +302,6 @@
           tY: target.metadata.y + targetPort.y,
           label: label,
           route: route
-        });
-      });
-
-      // Nodes
-      var nodes = graph.nodes.map(function (node) {
-        var key = node.id;
-        if (!node.metadata) {
-          node.metadata = {};
-        }
-        if (node.metadata.x === undefined) { node.metadata.x = 0; }
-        if (node.metadata.y === undefined) { node.metadata.y = 0; }
-        if (!node.metadata.label || node.metadata.label === "") {
-          node.metadata.label = key;
-        }
-        return TheGraph.Node({
-          key: key,
-          x: node.metadata.x,
-          y: node.metadata.y,
-          label: node.metadata.label,
-          app: self.props.app,
-          graphView: self,
-          graph: graph,
-          node: node,
-          ports: self.getPorts(key)
         });
       });
 

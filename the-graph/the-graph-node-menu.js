@@ -109,7 +109,7 @@
         }),
         React.DOM.text({
           className: "icon context-node-icon",
-          children: TheGraph.FONT_AWESOME[this.props.node.state.icon]
+          children: TheGraph.FONT_AWESOME[this.props.icon]
         })
       ];
 

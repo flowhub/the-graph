@@ -46,6 +46,7 @@
       },
       graphChanged: function () {
         this.buildInitialLibrary();
+        this.$.graph.library = this.library;
 
         var nf = require('noflo');
         var self = this;
@@ -60,6 +61,7 @@
           var node = this.graph.processes[id];
           var component = {
             name: node.component,
+            icon: 'cog',
             description: '',
             inports: [],
             outports: []
