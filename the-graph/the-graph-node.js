@@ -168,7 +168,7 @@
         // Make sure icon exists
         var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
         if (!icon) { 
-          icon = TheGraph.FONT_AWESOME["cog"];
+          icon = TheGraph.FONT_AWESOME.cog;
         }
         this.refs.icon.getDOMNode().textContent = icon;
       }
@@ -226,7 +226,7 @@
       // Make sure icon exists
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
       if (!icon) { 
-        icon = TheGraph.FONT_AWESOME["cog"];
+        icon = TheGraph.FONT_AWESOME.cog;
       }
 
       return (
