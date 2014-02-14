@@ -28,8 +28,8 @@ loadGraph({
       "public": 'image',
       "private": 'core/Split_xyb8x.out',
       "metadata": {
-        "x": 900,
-        "y": 900
+        "x": 2000,
+        "y": 1000
       }
     }
   ],

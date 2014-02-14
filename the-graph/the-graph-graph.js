@@ -260,6 +260,7 @@
           x: node.metadata.x,
           y: node.metadata.y,
           label: node.metadata.label,
+          sublabel: node.component,
           app: self.props.app,
           graphView: self,
           graph: graph,
@@ -303,6 +304,78 @@
           label: label,
           route: route
         });
+      });
+
+      // Exports
+      var exports = graph.exports.map(function (exp) {
+        // Makes a node with export prop and an edge
+        var split = exp.private.split(".");
+        var nodeKey = split[0];
+        var portKey = split[1];
+        var label = exp.public;
+        var metadata = exp.metadata;
+        if (!metadata) { metadata = exp.metadata = {x:0, y:0}; }
+        if (!metadata.x) { metadata.x = 0; }
+        if (!metadata.y) { metadata.y = 0; }
+        // Figure out if this is an in or out export 
+        // Ambuguity due to https://github.com/noflo/noflo/issues/118
+        var portInfo = self.portInfo[nodeKey];
+        if (!portInfo) {
+          // WTF https://github.com/noflo/noflo/issues/140
+          var keys = Object.keys(self.portInfo);
+          for (var i=0; i<keys.length; i++) {
+            var key = keys[i];
+            if (key.toLowerCase() === nodeKey) {
+              portInfo = self.portInfo[key];
+              break;
+            }
+          }
+        }
+        if (!portInfo) {
+          console.warn("Didn't find node "+ nodeKey);
+          return;
+        }
+        var inport = portInfo.inports[portKey];
+        var outport = portInfo.outports[portKey];
+        if (inport && outport) { 
+          console.warn("In/out ambiguity for "+exp.private+", going with in. https://github.com/noflo/noflo/issues/118");
+        }
+        var expNode = {
+          export: exp,
+          x: metadata.x,
+          y: metadata.y,
+          label: label,
+          app: self.props.app,
+          graphView: self,
+          graph: graph,
+          node: {},
+          ports: {inports:{}, outports:{}}
+        };
+        if (inport) {
+          expNode.isIn = true;
+          expNode.ports.outports[label] = {
+            label: label,
+            type: "all",
+            x: TheGraph.nodeSize,
+            y: TheGraph.nodeSize/2
+          };
+          expNode.icon = "sign-in";
+          return TheGraph.Node(expNode);
+        }
+        if (outport) {
+          expNode.isIn = false;
+          expNode.ports.inports[label] = {
+            label: label,
+            type: "all",
+            x: 0,
+            y: TheGraph.nodeSize/2
+          };
+          expNode.icon = "sign-out";
+          return TheGraph.Node(expNode);
+        }
+        // Else no port found
+        console.warn("Didn't find private port "+exp.private);
+        return;
       });
 
       // Groups
@@ -376,6 +449,10 @@
         React.DOM.g({
           className: "nodes", 
           children: nodes
+        }),
+        React.DOM.g({
+          className: "exports", 
+          children: exports
         })
       );
     }

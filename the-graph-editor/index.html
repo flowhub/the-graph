@@ -59,6 +59,7 @@
         loadingMessage.innerHTML = "loading graph data...";
 
         window.loadGraph = function (json) {
+          console.log("window.loadGraph");
           // Remove loading message
           var loading = document.getElementById("loading");
           loading.parentNode.removeChild(loading);

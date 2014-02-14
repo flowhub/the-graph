@@ -14,7 +14,7 @@
     "use strict";
 
     Polymer('the-graph-editor', {
-      graph: {},
+      graph: null,
       library: {},
       grid: 72,
       snap: 36,
@@ -31,6 +31,10 @@
         plugin.register(this);
       },
       enteredView: function () {
+        console.log("the-graph-editor.enteredView");
+        if (this.graph) {
+          this.graphChanged();
+        }
       },
       leftView: function () {
         for (var name in this.plugins) {
@@ -45,6 +49,7 @@
         this.style.height = this.height + "px";
       },
       graphChanged: function () {
+        console.log("the-graph-editor.graphChanged");
         this.buildInitialLibrary();
         this.$.graph.library = this.library;
 

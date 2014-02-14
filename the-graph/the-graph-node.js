@@ -43,11 +43,22 @@
       var deltaX = Math.round( event.ddx / scale );
       var deltaY = Math.round( event.ddy / scale );
 
-      // Fires a changeNode event on graph
-      this.props.graph.setNodeMetadata(this.props.key, {
-        x: this.props.node.metadata.x + deltaX,
-        y: this.props.node.metadata.y + deltaY
-      });
+      // Fires a change event on graph, which triggers redraw
+      if (this.props.export) {
+        this.props.graph.setExportMetadata(
+          this.props.export.public, 
+          this.props.export.private,
+          {
+            x: this.props.export.metadata.x + deltaX,
+            y: this.props.export.metadata.y + deltaY
+          }
+        );
+      } else {
+        this.props.graph.setNodeMetadata(this.props.key, {
+          x: this.props.node.metadata.x + deltaX,
+          y: this.props.node.metadata.y + deltaY
+        });
+      }
     },
     onTrackEnd: function (event) {
       // Don't fire on graph
@@ -176,11 +187,11 @@
     render: function() {
       this.dirty = false;
 
-      var metadata = this.props.node.metadata;
+      // var metadata = this.props.node.metadata;
 
       var label = this.props.label;
-      var sublabel = this.props.node.component;
-      if (sublabel === label) {
+      var sublabel = this.props.sublabel;
+      if (!sublabel || sublabel === label) {
         sublabel = "";
       }
       var x = this.props.x;
