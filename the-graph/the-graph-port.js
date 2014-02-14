@@ -14,6 +14,8 @@
       // Context menu
       this.getDOMNode().addEventListener("tap", this.edgeStart);
       this.getDOMNode().addEventListener("trackstart", this.edgeStart);
+      this.getDOMNode().addEventListener("trackend", this.triggerDropOnTarget);
+      this.getDOMNode().addEventListener("the-graph-edge-drop", this.edgeStart);
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -38,6 +40,15 @@
         bubbles: true
       });
       this.getDOMNode().dispatchEvent(edgeStartEvent);      
+    },
+    triggerDropOnTarget: function (event) {
+      // If dropped on a child element will bubble up to port
+      if (!event.relatedTarget) { return; }
+      var dropEvent = new CustomEvent('the-graph-edge-drop', { 
+        detail: null,
+        bubbles: true
+      });
+      event.relatedTarget.dispatchEvent(dropEvent);      
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
       // HACK til 0.9.0
