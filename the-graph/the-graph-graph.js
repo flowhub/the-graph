@@ -25,6 +25,9 @@
       this.props.graph.on("addEdge", this.markDirty);
       this.props.graph.on("removeEdge", this.markDirty);
       this.props.graph.on("changeEdge", this.markDirty);
+      this.props.graph.on("addExport", this.markDirty);
+      this.props.graph.on("removeExport", this.markDirty);
+      this.props.graph.on("changeExport", this.markDirty);
 
       // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
       this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
@@ -313,8 +316,10 @@
         var nodeKey = split[0];
         var portKey = split[1];
         var label = exp.public;
+        if (!exp.metadata) { 
+          exp.metadata = {x:0, y:0}; 
+        }
         var metadata = exp.metadata;
-        if (!metadata) { metadata = exp.metadata = {x:0, y:0}; }
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
         // Figure out if this is an in or out export 

@@ -31,7 +31,6 @@
         plugin.register(this);
       },
       enteredView: function () {
-        console.log("the-graph-editor.enteredView");
         if (this.graph) {
           this.graphChanged();
         }
@@ -49,7 +48,6 @@
         this.style.height = this.height + "px";
       },
       graphChanged: function () {
-        console.log("the-graph-editor.graphChanged");
         this.buildInitialLibrary();
         this.$.graph.library = this.library;
 

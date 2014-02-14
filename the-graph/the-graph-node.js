@@ -45,14 +45,10 @@
 
       // Fires a change event on graph, which triggers redraw
       if (this.props.export) {
-        this.props.graph.setExportMetadata(
-          this.props.export.public, 
-          this.props.export.private,
-          {
-            x: this.props.export.metadata.x + deltaX,
-            y: this.props.export.metadata.y + deltaY
-          }
-        );
+        this.props.graph.setExportMetadata(this.props.export.private, this.props.export.public, {
+          x: this.props.export.metadata.x + deltaX,
+          y: this.props.export.metadata.y + deltaY
+        });
       } else {
         this.props.graph.setNodeMetadata(this.props.key, {
           x: this.props.node.metadata.x + deltaX,
