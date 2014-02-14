@@ -69,8 +69,8 @@
       event.stopPropagation();
       if (event.preventTap) { event.preventTap(); }
 
-      var x = event.pageX;
-      var y = event.pageY;
+      var x = event.clientX;
+      var y = event.clientY;
 
       if (x === undefined) {
         x = this.pointerX;

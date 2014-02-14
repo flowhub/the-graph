@@ -37,8 +37,8 @@
       }
 
       this.zoomFactor += event.deltaY;
-      this.zoomX = event.nativeEvent.pageX;
-      this.zoomY = event.nativeEvent.pageY;
+      this.zoomX = event.nativeEvent.clientX;
+      this.zoomY = event.nativeEvent.clientY;
       requestAnimationFrame(this.scheduleWheelZoom);
     },
     scheduleWheelZoom: function () {

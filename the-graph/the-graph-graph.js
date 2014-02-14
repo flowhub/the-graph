@@ -77,8 +77,8 @@
     renderPreviewEdge: function (event) {
       var scale = this.props.app.state.scale;
       this.setState({
-        edgePreviewX: (event.pageX - this.props.app.state.x) / scale,
-        edgePreviewY: (event.pageY - this.props.app.state.y) / scale
+        edgePreviewX: (event.clientX - this.props.app.state.x) / scale,
+        edgePreviewY: (event.clientY - this.props.app.state.y) / scale
       });
       this.markDirty();
     },

@@ -35,8 +35,8 @@
       var tooltipEvent = new CustomEvent('the-graph-tooltip', { 
         detail: {
           tooltip: this.props.label,
-          x: event.pageX,
-          y: event.pageY
+          x: event.clientX,
+          y: event.clientY
         }, 
         bubbles: true
       });
@@ -73,8 +73,8 @@
     pointerX: 0,
     pointerY: 0,
     savePointerPosition: function (event) {
-      this.pointerX = event.pageX;
-      this.pointerY = event.pageY;
+      this.pointerX = event.clientX;
+      this.pointerY = event.clientY;
     },
   };  
 
