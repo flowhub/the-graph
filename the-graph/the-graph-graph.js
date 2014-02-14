@@ -371,7 +371,7 @@
         };
         if (inport) {
           // Edge view
-          expEdge.label = "export." + exp.public + " -> " + exp.private;
+          expEdge.label = "export in " + exp.public.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label;
           expEdge.sX = expNode.x + TheGraph.nodeSize;
           expEdge.sY = expNode.y + TheGraph.nodeSize/2;
           expEdge.tX = privateNode.metadata.x + inport.x;
@@ -390,7 +390,7 @@
         }
         if (outport) {
           // Edge view
-          expEdge.label = exp.private + " -> export." + exp.public;
+          expEdge.label = privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + exp.public.toUpperCase() + " export out";
           expEdge.sX = privateNode.metadata.x + outport.x;
           expEdge.sY = privateNode.metadata.y + outport.y;
           expEdge.tX = expNode.x;

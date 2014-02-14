@@ -74,8 +74,15 @@
       }
     },
     showContext: function (event) {
+      // Don't show context menu
+      if (this.props.export) {
+        // TODO show export context menu
+        return;
+      }
+
       // Don't show native context menu
       event.preventDefault();
+
       // Don't tap graph on hold event
       event.stopPropagation();
       if (event.preventTap) { event.preventTap(); }
