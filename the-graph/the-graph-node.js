@@ -197,13 +197,14 @@
       count = keys.length;
       index = 0;
       var inportViews = keys.map(function(key){
-        index++;
         var info = inports[key];
-        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
         info.key = processKey + ".in." + info.label;
         info.processKey = processKey;
         info.app = app;
+        info.r = Math.min(4, TheGraph.nodeSide/(count*2+2));
         info.isIn = true;
+        index++;
         return TheGraph.Port(info);
       });
 
@@ -213,13 +214,14 @@
       count = keys.length;
       index = 0;
       var outportViews = keys.map(function(key){
-        index++;
         var info = outports[key];
-        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * index);
+        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
         info.key = processKey + ".out." + info.label;
         info.processKey = processKey;
         info.app = app;
+        info.r = Math.min(4, TheGraph.nodeSide/(count*2+2));
         info.isIn = false;
+        index++;
         return TheGraph.Port(info);
       });
 
