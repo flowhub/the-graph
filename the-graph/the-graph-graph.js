@@ -319,14 +319,16 @@
         if (!metadata.y) { metadata.y = 0; }
         // Figure out if this is an in or out export 
         // Ambuguity due to https://github.com/noflo/noflo/issues/118
+        var capsNodeKey = nodeKey;
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
-          // WTF https://github.com/noflo/noflo/issues/140
+          // WTF lowercased key https://github.com/noflo/noflo/issues/140
           var keys = Object.keys(self.portInfo);
           for (var i=0; i<keys.length; i++) {
             var key = keys[i];
             if (key.toLowerCase() === nodeKey) {
               portInfo = self.portInfo[key];
+              capsNodeKey = key;
               break;
             }
           }
@@ -340,7 +342,15 @@
         if (inport && outport) { 
           console.warn("In/out ambiguity for "+exp.private+", going with in. https://github.com/noflo/noflo/issues/118");
         }
+        // Actual graph node
+        var privateNode = graph.getNode(capsNodeKey);
+        if (!privateNode) {
+          console.warn("Didn't find node "+ capsNodeKey);
+          return;
+        }
+        // Node view
         var expNode = {
+          key: "export.node."+exp.private,
           export: exp,
           x: metadata.x,
           y: metadata.y,
@@ -351,7 +361,23 @@
           node: {},
           ports: {inports:{}, outports:{}}
         };
+        // Edge view
+        var expEdge = {
+          key: "export.edge."+exp.private,
+          export: exp,
+          graph: graph,
+          edge: {},
+          route: (exp.metadata.route ? exp.metadata.route : 0)
+        };
         if (inport) {
+          // Edge view
+          expEdge.label = "export." + exp.public + " -> " + exp.private;
+          expEdge.sX = expNode.x + TheGraph.nodeSize;
+          expEdge.sY = expNode.y + TheGraph.nodeSize/2;
+          expEdge.tX = privateNode.metadata.x + inport.x;
+          expEdge.tY = privateNode.metadata.y + inport.y;
+          edges.push(TheGraph.Edge(expEdge));
+          // Node view
           expNode.isIn = true;
           expNode.ports.outports[label] = {
             label: label,
@@ -363,6 +389,14 @@
           return TheGraph.Node(expNode);
         }
         if (outport) {
+          // Edge view
+          expEdge.label = exp.private + " -> export." + exp.public;
+          expEdge.sX = privateNode.metadata.x + outport.x;
+          expEdge.sY = privateNode.metadata.y + outport.y;
+          expEdge.tX = expNode.x;
+          expEdge.tY = expNode.y + TheGraph.nodeSize/2;
+          edges.push(TheGraph.Edge(expEdge));
+          // Node view
           expNode.isIn = false;
           expNode.ports.inports[label] = {
             label: label,
@@ -373,7 +407,7 @@
           expNode.icon = "sign-out";
           return TheGraph.Node(expNode);
         }
-        // Else no port found
+        // Else no private port found
         console.warn("Didn't find private port "+exp.private);
         return;
       });
