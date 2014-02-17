@@ -79,10 +79,13 @@
   };  
 
   TheGraph.findMinMax = function (graph, nodes) {
+    var exports;
     if (nodes === undefined) {
       nodes = graph.nodes.map( function (node) {
         return node.id;
       });
+      // Only look at exports when calculating the whole graph
+      exports = graph.exports;
     }
     if (nodes.length < 1) {
       return undefined;
@@ -92,19 +95,32 @@
     var maxX = -Infinity;
     var maxY = -Infinity;
 
+    // Loop through nodes
     var len = nodes.length;
     for (var i=0; i<len; i++) {
       var key = nodes[i];
       var node = graph.getNode(key);
-      if (!node) {
+      if (!node || !node.metadata) {
         continue;
-        // throw new Error("Didn't find node "+key);
       }
       if (node.metadata.x < minX) { minX = node.metadata.x; }
       if (node.metadata.y < minY) { minY = node.metadata.y; }
       if (node.metadata.x > maxX) { maxX = node.metadata.x; }
       if (node.metadata.y > maxY) { maxY = node.metadata.y; }
     }
+    // Loop through exports
+    if (exports) {
+      len = exports.length;
+      for (i=0; i<len; i++) {
+        var exp = exports[i];
+        if (!exp.metadata) { continue; }
+        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      }
+    }
+
     if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
       minX = 0;
       minY = 0;

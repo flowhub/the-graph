@@ -20,8 +20,7 @@ loadGraph({
       "public": 'next',
       "private": 'routers/KickRouter_bzaiw.next',
       "metadata": {
-        "x": 90,
-        "y": 0
+        "x": 90
       }
     },
     {
