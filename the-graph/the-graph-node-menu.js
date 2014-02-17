@@ -34,7 +34,7 @@
           y: 0 - this.radius - 25,
           children: this.props.label
         }),
-        TheGraph.PortsMenu({
+        TheGraph.NodeMenuPorts({
           ports: ports.inports,
           isIn: true,
           scale: scale,
@@ -42,7 +42,7 @@
           deltaX: deltaX,
           deltaY: deltaY
         }),
-        TheGraph.PortsMenu({
+        TheGraph.NodeMenuPorts({
           ports: ports.outports,
           isIn: false,
           scale: scale,

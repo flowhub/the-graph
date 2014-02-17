@@ -122,7 +122,7 @@
       if (this.props.graphView.state.edgePreview) {
         if (this.props.graphView.state.edgePreview.isIn) {
           // Show outputs
-          return TheGraph.PortsMenu({
+          return TheGraph.NodeMenuPorts({
             ports: ports.outports,
             isIn: false,
             scale: scale,
@@ -134,7 +134,7 @@
           });
         } else {
           // Show inputs
-          return TheGraph.PortsMenu({
+          return TheGraph.NodeMenuPorts({
             ports: ports.inports,
             isIn: true,
             scale: scale,

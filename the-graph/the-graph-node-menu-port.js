@@ -4,7 +4,7 @@
   var TheGraph = context.TheGraph;
 
 
-  TheGraph.PortMenu = React.createClass({
+  TheGraph.NodeMenuPort = React.createClass({
     componentDidMount: function () {
       this.getDOMNode().addEventListener("tap", this.edgeStart);
     },

@@ -4,7 +4,7 @@
   var TheGraph = context.TheGraph;
 
 
-  TheGraph.PortsMenu = React.createClass({
+  TheGraph.NodeMenuPorts = React.createClass({
     render: function() {
       var portViews = [];
       var lines = [];
@@ -31,7 +31,7 @@
           d: [ "M", ox, oy, "L", x, y ].join(" ")
         });
 
-        var portView = TheGraph.PortMenu({
+        var portView = TheGraph.NodeMenuPort({
           label: key,
           processKey: this.props.processKey,
           isIn: this.props.isIn,
