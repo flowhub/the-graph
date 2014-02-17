@@ -8,14 +8,20 @@
 
   TheGraph.Port = React.createClass({
     mixins: [
-      TheGraph.mixins.Tooltip
+      TheGraph.mixins.Tooltip,
+      TheGraph.mixins.SavePointer
     ],
     componentDidMount: function () {
-      // Context menu
+      // Preview edge start
       this.getDOMNode().addEventListener("tap", this.edgeStart);
       this.getDOMNode().addEventListener("trackstart", this.edgeStart);
+      // Make edge
       this.getDOMNode().addEventListener("trackend", this.triggerDropOnTarget);
       this.getDOMNode().addEventListener("the-graph-edge-drop", this.edgeStart);
+
+      // Show context menu
+      this.getDOMNode().addEventListener("contextmenu", this.showContext);
+      this.getDOMNode().addEventListener("hold", this.showContext);
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -25,6 +31,44 @@
         this.props.app.state.scale < TheGraph.zbpBig ||
         this.props.label.length > 8
       );
+    },
+    showContext: function (event) {
+      // Don't show native context menu
+      event.preventDefault();
+
+      // Don't tap graph on hold event
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
+
+      // Get mouse position
+      var x = event.clientX;
+      var y = event.clientY;
+      if (x === undefined) {
+        x = this.pointerX;
+        y = this.pointerY;
+      }
+
+      var contextEvent = new CustomEvent('the-graph-context-show', { 
+        detail: {
+          element: this,
+          x: x,
+          y: y
+        },
+        bubbles: true
+      });
+      this.getDOMNode().dispatchEvent(contextEvent);
+    },
+    getContext: function (x, y) {
+      return TheGraph.PortMenu({
+        graph: this.props.graph,
+        isIn: this.props.isIn,
+        processKey: this.props.processKey,
+        portKey: this.props.label,
+        portX: this.props.nodeX + this.props.x,
+        portY: this.props.nodeY + this.props.y,
+        x: x,
+        y: y
+      });
     },
     edgeStart: function (event) {
       // Don't tap graph

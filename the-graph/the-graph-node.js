@@ -209,6 +209,7 @@
       var keys, count, index;
       var processKey = this.props.key;
       var app = this.props.app;
+      var graph = this.props.graph;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -217,7 +218,11 @@
       index = 0;
       var inportViews = keys.map(function(key){
         var info = inports[key];
-        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
+        info.graph = graph;
+        // info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
+        info.y = TheGraph.nodeSize / (count+1) * (index+1);
+        info.nodeX = x;
+        info.nodeY = y;
         info.key = processKey + ".in." + info.label;
         info.processKey = processKey;
         info.app = app;
@@ -234,7 +239,10 @@
       index = 0;
       var outportViews = keys.map(function(key){
         var info = outports[key];
+        info.graph = graph;
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
+        info.nodeX = x;
+        info.nodeY = y;
         info.key = processKey + ".out." + info.label;
         info.processKey = processKey;
         info.app = app;
