@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph pan drag scale grid snap width height" lightdom>
+<polymer-element name="the-graph" attributes="graph library width height" lightdom>
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -11,6 +11,7 @@
   <script type="text/javascript" src="./the-graph-graph.js"></script>
   <script type="text/javascript" src="./the-graph-node.js"></script>
   <script type="text/javascript" src="./the-graph-node-menu.js"></script>
+  <script type="text/javascript" src="./the-graph-export-menu.js"></script>
   <script type="text/javascript" src="./the-graph-port.js"></script>
   <script type="text/javascript" src="./the-graph-ports-menu.js"></script>
   <script type="text/javascript" src="./the-graph-port-menu.js"></script>
@@ -25,6 +26,9 @@
 
     Polymer('the-graph', {
       graph: null,
+      library: null,
+      width: 800,
+      height: 600,
       appView: null,
       graphView: null,
       ready: function () {
@@ -81,7 +85,8 @@
         return [this.appView.state.x, this.appView.state.y];
       },
       toJSON: function () {
-        return {};
+        if (!this.graph) { return {}; }
+        return this.graph.toJSON();
       }
     });
     

@@ -43,7 +43,7 @@
       var deltaX = Math.round( event.ddx / scale );
       var deltaY = Math.round( event.ddy / scale );
 
-      // Fires a change event on graph, which triggers redraw
+      // Fires a change event on noflo graph, which triggers redraw
       if (this.props.export) {
         this.props.graph.setExportMetadata(this.props.export.private, this.props.export.public, {
           x: this.props.export.metadata.x + deltaX,
@@ -70,12 +70,6 @@
       }
     },
     showContext: function (event) {
-      // Don't show context menu
-      if (this.props.export) {
-        // TODO show export context menu
-        return;
-      }
-
       // Don't show native context menu
       event.preventDefault();
 
@@ -83,9 +77,9 @@
       event.stopPropagation();
       if (event.preventTap) { event.preventTap(); }
 
+      // Get mouse position
       var x = event.clientX;
       var y = event.clientY;
-
       if (x === undefined) {
         x = this.pointerX;
         y = this.pointerY;
@@ -102,6 +96,17 @@
       this.getDOMNode().dispatchEvent(contextEvent);
     },
     getContext: function (x, y) {
+      // If this node is an export
+      if (this.props.export) {
+        return TheGraph.ExportMenu({
+          graph: this.props.graph,
+          export: this.props.export,
+          isIn: this.props.isIn,
+          x: x,
+          y: y
+        });
+      }
+
       // Absolute position of node
       var scale = this.props.app.state.scale;
       var appX = this.props.app.state.x;

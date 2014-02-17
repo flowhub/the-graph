@@ -6,8 +6,7 @@
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-library id="library"></the-library>
-    <the-graph id="graph" name="{{ graph.properties.name }}" snap="{{snap}}" grid="{{grid}}" scale="{{scale}}" pan="{{pan}}" width="{{width}}" height="{{height}}"></the-graph>
-    <!-- <the-graph-nav id="nav" scale="{{scale}}" pan="{{pan}}" viewwidth="{{width}}" viewheight="{{height}}"></the-graph-nav> -->
+    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" library="{{library}}" width="{{width}}" height="{{height}}"></the-graph>
   </template>
   <script>
   (function () {
@@ -21,7 +20,7 @@
       width: 800,
       height: 600,
       scale: 1,
-      pan: "0 0",
+      pan: [0, 0],
       plugins: {},
       nofloGraph: null,
       ready: function () {
@@ -49,13 +48,13 @@
       },
       graphChanged: function () {
         this.buildInitialLibrary();
-        this.$.graph.library = this.library;
+        // this.$.graph.library = this.library;
 
         var nf = require('noflo');
         var self = this;
         nf.graph.loadJSON(this.graph, function(nofloGraph){
           self.nofloGraph = nofloGraph;
-          self.$.graph.graph = nofloGraph;
+          // self.$.graph.graph = nofloGraph;
         });
 
       },

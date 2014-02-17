@@ -44,12 +44,6 @@
             cy: this.props.y,
             r: 10
           }),
-          // React.DOM.circle({
-          //   className: "fill route"+this.props.route,
-          //   cx: this.props.x,
-          //   cy: this.props.y,
-          //   r: 5
-          // }),
           React.DOM.text({
             className: "context-port-label fill route"+this.props.route,
             x: this.props.x + (this.props.isIn ? -20 : 20),
