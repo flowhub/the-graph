@@ -22,12 +22,6 @@
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
     showContext: function (event) {
-      // Don't show context menu
-      if (this.props.export) {
-        // TODO show export context menu
-        return;
-      }
-
       // Don't show native context menu
       event.preventDefault();
 
@@ -50,6 +44,17 @@
       this.getDOMNode().dispatchEvent(contextEvent);
     },
     getContext: function (x, y) {
+      // If this edge represents an export
+      if (this.props.export) {
+        return TheGraph.ExportMenu({
+          graph: this.props.graph,
+          export: this.props.export,
+          isIn: this.props.isIn,
+          x: x,
+          y: y
+        });
+      }
+
       return TheGraph.EdgeMenu({
         key: "context." + this.props.key,
         modal: true,
