@@ -33,6 +33,10 @@
       );
     },
     showContext: function (event) {
+      // Don't show port menu on export node port
+      if (this.props.isExport) {
+        return;
+      }
       // Don't show native context menu
       event.preventDefault();
 
@@ -71,6 +75,10 @@
       });
     },
     edgeStart: function (event) {
+      // Don't start edge on export node port
+      if (this.props.isExport) {
+        return;
+      }
       // Don't tap graph
       event.stopPropagation();
       

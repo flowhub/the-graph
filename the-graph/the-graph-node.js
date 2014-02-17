@@ -210,6 +210,7 @@
       var processKey = this.props.key;
       var app = this.props.app;
       var graph = this.props.graph;
+      var isExport = (this.props.export !== undefined);
 
       // Inports
       var inports = this.props.ports.inports;
@@ -219,6 +220,7 @@
       var inportViews = keys.map(function(key){
         var info = inports[key];
         info.graph = graph;
+        info.isExport = isExport;
         // info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
         info.y = TheGraph.nodeSize / (count+1) * (index+1);
         info.nodeX = x;
@@ -240,6 +242,7 @@
       var outportViews = keys.map(function(key){
         var info = outports[key];
         info.graph = graph;
+        info.isExport = isExport;
         info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
         info.nodeX = x;
         info.nodeY = y;
