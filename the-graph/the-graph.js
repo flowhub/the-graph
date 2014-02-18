@@ -79,13 +79,14 @@
   };  
 
   TheGraph.findMinMax = function (graph, nodes) {
-    var exports;
+    var inports, outports;
     if (nodes === undefined) {
       nodes = graph.nodes.map( function (node) {
         return node.id;
       });
       // Only look at exports when calculating the whole graph
-      exports = graph.exports;
+      inports = graph.inports;
+      outports = graph.outports;
     }
     if (nodes.length < 1) {
       return undefined;
@@ -109,10 +110,24 @@
       if (node.metadata.y > maxY) { maxY = node.metadata.y; }
     }
     // Loop through exports
-    if (exports) {
-      len = exports.length;
+    var keys, exp;
+    if (inports) {
+      keys = Object.keys(inports);
+      len = keys.length;
       for (i=0; i<len; i++) {
-        var exp = exports[i];
+        exp = inports[keys[i]];
+        if (!exp.metadata) { continue; }
+        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      }
+    }
+    if (outports) {
+      keys = Object.keys(outports);
+      len = keys.length;
+      for (i=0; i<len; i++) {
+        exp = outports[keys[i]];
         if (!exp.metadata) { continue; }
         if (exp.metadata.x < minX) { minX = exp.metadata.x; }
         if (exp.metadata.y < minY) { minY = exp.metadata.y; }

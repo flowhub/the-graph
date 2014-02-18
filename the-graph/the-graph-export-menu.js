@@ -12,9 +12,13 @@
     },
     triggerRemove: function (event) {
       // TODO in/out ambiguity
-      this.props.graph.removeExport( this.props.export.public );
+      if (this.props.isIn) {
+        this.props.graph.removeInport( this.props.exportKey );
+      } else {
+        this.props.graph.removeOutport( this.props.exportKey );
+      }
 
-      // Hide self (overkill?)
+      // Hide self
       var contextEvent = new CustomEvent('the-graph-context-hide', { 
         detail: null, 
         bubbles: true
@@ -24,8 +28,8 @@
     render: function() {
       var exp = this.props.export;
 
-      var labelOut = (this.props.isIn ? exp.public : exp.private);
-      var labelIn = (this.props.isIn ? exp.private : exp.public);
+      var labelOut = (this.props.isIn ? this.props.exportKey : exp.process+"."+exp.port);
+      var labelIn = (this.props.isIn ? exp.process+"."+exp.port : this.props.exportKey);
 
       return (
         React.DOM.g(

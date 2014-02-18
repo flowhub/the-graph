@@ -11,28 +11,30 @@ loadGraph({
       "content": "    <video id=\"vid\" autoplay loop width=\"640\" height=\"480\" style=\"display:none;\"></video>\n    <canvas id=\"out\" width=\"640\" height=\"480\" style=\"max-width:100%;\"></canvas>\n\n<input id=\"slider\" type=\"range\" min=\"0\" max=\"1\" value=\"0.5\" step=\"0.01\"></input>\n    <button id=\"start\">start camera</button>\n    <button id=\"prev\">prev</button>\n    <button id=\"next\">next</button>\n    <button id=\"save\">save</button>\n\n<style>\n  #saved img { width: 160px; height: 120px;}\n</style>\n<div id=\"saved\"></div>"
     }
   },
-  "exports": [
-    {
-      "public": 'prev',
-      "private": 'routers/KickRouter_bzaiw.prev'
-    },
-    {
-      "public": 'next',
-      "private": 'routers/KickRouter_bzaiw.next',
+  "inports": { 
+    prev: {
+      "process": 'routers/KickRouter_bzaiw',
+      "port": "prev",
       "metadata": {
-        "x": 90,
+        "x": 0,
         "y": 0
       }
     },
-    {
-      "public": 'image',
-      "private": 'core/Split_xyb8x.out',
+    next: {
+      "process": 'routers/KickRouter_bzaiw',
+      "port": "next"
+    }
+  },
+  "outports": {
+    "image": {
+      "process": 'core/Split_xyb8x',
+      "port": "out",
       "metadata": {
         "x": 2000,
         "y": 1000
       }
     }
-  ],
+  },
   "groups": [
     {
       "name": "elements", 

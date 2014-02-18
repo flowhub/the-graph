@@ -18,16 +18,26 @@
     },
     componentDidMount: function () {
       // Listen to noflo graph object's events
-      this.props.graph.on("addNode", this.markDirty);
-      this.props.graph.on("renameNode", this.markDirty);
-      this.props.graph.on("removeNode", this.markDirty);
-      this.props.graph.on("changeNode", this.markDirty);
-      this.props.graph.on("addEdge", this.markDirty);
-      this.props.graph.on("removeEdge", this.markDirty);
-      this.props.graph.on("changeEdge", this.markDirty);
-      this.props.graph.on("addExport", this.markDirty);
-      this.props.graph.on("removeExport", this.markDirty);
-      this.props.graph.on("changeExport", this.markDirty);
+      var graph = this.props.graph;
+      graph.on("addNode", this.markDirty);
+      graph.on("renameNode", this.markDirty);
+      graph.on("removeNode", this.markDirty);
+      graph.on("changeNode", this.markDirty);
+      graph.on("addEdge", this.markDirty);
+      graph.on("removeEdge", this.markDirty);
+      graph.on("changeEdge", this.markDirty);
+      graph.on("addExport", this.markDirty);
+      graph.on("removeExport", this.markDirty);
+      graph.on("renameExport", this.markDirty);
+      graph.on("changeExport", this.markDirty);
+      graph.on("addInport", this.markDirty);
+      graph.on("removeInport", this.markDirty);
+      graph.on("renameInport", this.markDirty);
+      graph.on("changeInport", this.markDirty);
+      graph.on("addOutport", this.markDirty);
+      graph.on("removeOutport", this.markDirty);
+      graph.on("renameOutport", this.markDirty);
+      graph.on("changeOutport", this.markDirty);
 
       // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
       this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
@@ -273,6 +283,7 @@
         });
       });
 
+
       // Edges
       var edges = graph.edges.map(function (edge) {
         var source = graph.getNode(edge.from.node);
@@ -309,54 +320,42 @@
         });
       });
 
-      // Exports
-      var exports = graph.exports.map(function (exp) {
-        // Makes a node with export prop and an edge
-        var split = exp.private.split(".");
-        var nodeKey = split[0];
-        var portKey = split[1];
-        var label = exp.public;
-        if (!exp.metadata) { 
-          exp.metadata = {x:0, y:0}; 
+
+      // Inport exports
+      var inports = Object.keys(graph.inports).map(function (key) {
+        var inport = graph.inports[key];
+        // Export info
+        var label = key;
+        var nodeKey = inport.process;
+        var portKey = inport.port;
+        if (!inport.metadata) { 
+          inport.metadata = {x:0, y:0}; 
         }
-        var metadata = exp.metadata;
+        var metadata = inport.metadata;
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
-        // Figure out if this is an in or out export 
-        // Ambuguity due to https://github.com/noflo/noflo/issues/118
-        var capsNodeKey = nodeKey;
+        // Private port info
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
-          // WTF lowercased key https://github.com/noflo/noflo/issues/140
-          var keys = Object.keys(self.portInfo);
-          for (var i=0; i<keys.length; i++) {
-            var key = keys[i];
-            if (key.toLowerCase() === nodeKey) {
-              portInfo = self.portInfo[key];
-              capsNodeKey = key;
-              break;
-            }
-          }
-        }
-        if (!portInfo) {
-          console.warn("Didn't find node "+ nodeKey);
+          console.warn("Node "+nodeKey+" not found for graph inport "+label);
           return;
         }
-        var inport = portInfo.inports[portKey];
-        var outport = portInfo.outports[portKey];
-        if (inport && outport) { 
-          console.warn("In/out ambiguity for "+exp.private+", going with in. https://github.com/noflo/noflo/issues/118");
+        var privatePort = portInfo.inports[portKey];
+        if (!privatePort) {
+          console.warn("Port "+nodeKey+"."+portKey+" not found for graph inport "+label);
+          return;
         }
-        // Actual graph node
-        var privateNode = graph.getNode(capsNodeKey);
+        // Private node
+        var privateNode = graph.getNode(nodeKey);
         if (!privateNode) {
-          console.warn("Didn't find node "+ capsNodeKey);
+          console.warn("Node "+nodeKey+" not found for graph inport "+label);
           return;
         }
         // Node view
         var expNode = {
-          key: "export.node."+exp.private,
-          export: exp,
+          key: "inport.node."+key,
+          export: inport,
+          exportKey: key,
           x: metadata.x,
           y: metadata.y,
           label: label,
@@ -364,60 +363,109 @@
           graphView: self,
           graph: graph,
           node: {},
-          ports: {inports:{}, outports:{}}
+          ports: {inports:{}, outports:{}},
+          isIn: true,
+          icon: "sign-in"
         };
         // Edge view
         var expEdge = {
-          key: "export.edge."+exp.private,
-          export: exp,
+          key: "inport.edge."+key,
+          export: inport,
+          exportKey: key,
           graph: graph,
           edge: {},
-          route: (exp.metadata.route ? exp.metadata.route : 0)
+          route: (metadata.route ? metadata.route : 0),
+          isIn: true,
+          label: "export in " + label.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label,
+          sX: expNode.x + TheGraph.nodeSize,
+          sY: expNode.y + TheGraph.nodeSize/2,
+          tX: privateNode.metadata.x + privatePort.x,
+          tY: privateNode.metadata.y + privatePort.y
         };
-        if (inport) {
-          // Edge view
-          expEdge.isIn = true;
-          expEdge.label = "export in " + exp.public.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label;
-          expEdge.sX = expNode.x + TheGraph.nodeSize;
-          expEdge.sY = expNode.y + TheGraph.nodeSize/2;
-          expEdge.tX = privateNode.metadata.x + inport.x;
-          expEdge.tY = privateNode.metadata.y + inport.y;
-          edges.push(TheGraph.Edge(expEdge));
-          // Node view
-          expNode.isIn = true;
-          expNode.ports.outports[label] = {
-            label: label,
-            type: "all",
-            x: TheGraph.nodeSize,
-            y: TheGraph.nodeSize/2
-          };
-          expNode.icon = "sign-in";
-          return TheGraph.Node(expNode);
-        }
-        if (outport) {
-          // Edge view
-          expEdge.isIn = false;
-          expEdge.label = privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + exp.public.toUpperCase() + " export out";
-          expEdge.sX = privateNode.metadata.x + outport.x;
-          expEdge.sY = privateNode.metadata.y + outport.y;
-          expEdge.tX = expNode.x;
-          expEdge.tY = expNode.y + TheGraph.nodeSize/2;
-          edges.push(TheGraph.Edge(expEdge));
-          // Node view
-          expNode.isIn = false;
-          expNode.ports.inports[label] = {
-            label: label,
-            type: "all",
-            x: 0,
-            y: TheGraph.nodeSize/2
-          };
-          expNode.icon = "sign-out";
-          return TheGraph.Node(expNode);
-        }
-        // Else no private port found
-        console.warn("Didn't find private port "+exp.private);
-        return;
+        edges.push(TheGraph.Edge(expEdge));
+        // Node view
+        expNode.ports.outports[label] = {
+          label: label,
+          type: "all",
+          x: TheGraph.nodeSize,
+          y: TheGraph.nodeSize/2
+        };
+        return TheGraph.Node(expNode);
       });
+
+
+      // Outport exports
+      var outports = Object.keys(graph.outports).map(function (key) {
+        var outport = graph.outports[key];
+        // Export info
+        var label = key;
+        var nodeKey = outport.process;
+        var portKey = outport.port;
+        if (!outport.metadata) { 
+          outport.metadata = {x:0, y:0}; 
+        }
+        var metadata = outport.metadata;
+        if (!metadata.x) { metadata.x = 0; }
+        if (!metadata.y) { metadata.y = 0; }
+        // Private port info
+        var portInfo = self.portInfo[nodeKey];
+        if (!portInfo) {
+          console.warn("Node "+nodeKey+" not found for graph outport "+label);
+          return;
+        }
+        var privatePort = portInfo.outports[portKey];
+        if (!privatePort) {
+          console.warn("Port "+nodeKey+"."+portKey+" not found for graph outport "+label);
+          return;
+        }
+        // Private node
+        var privateNode = graph.getNode(nodeKey);
+        if (!privateNode) {
+          console.warn("Node "+nodeKey+" not found for graph outport "+label);
+          return;
+        }
+        // Node view
+        var expNode = {
+          key: "outport.node."+key,
+          export: outport,
+          exportKey: key,
+          x: metadata.x,
+          y: metadata.y,
+          label: label,
+          app: self.props.app,
+          graphView: self,
+          graph: graph,
+          node: {},
+          ports: {inports:{}, outports:{}},
+          isIn: false,
+          icon: "sign-out"
+        };
+        // Edge view
+        var expEdge = {
+          key: "outport.edge."+key,
+          export: outport,
+          exportKey: key,
+          graph: graph,
+          edge: {},
+          route: (metadata.route ? metadata.route : 0),
+          isIn: false,
+          label: privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + label.toUpperCase() + " export out",
+          sX: privateNode.metadata.x + privatePort.x,
+          sY: privateNode.metadata.y + privatePort.y,
+          tX: expNode.x,
+          tY: expNode.y + TheGraph.nodeSize/2
+        };
+        edges.push(TheGraph.Edge(expEdge));
+        // Node view
+        expNode.ports.inports[label] = {
+          label: label,
+          type: "all",
+          x: 0,
+          y: TheGraph.nodeSize/2
+        };
+        return TheGraph.Node(expNode);
+      });
+
 
       // Groups
       var groups = graph.groups.map(function (group) {
@@ -441,6 +489,7 @@
         });
         return g;
       });
+
 
       // Edge preview
       var edgePreview = this.state.edgePreview;
@@ -474,6 +523,7 @@
         edges.push(edgePreviewView);
       }
 
+
       return React.DOM.g(
         {
           className: "graph"//,
@@ -492,8 +542,12 @@
           children: nodes
         }),
         React.DOM.g({
-          className: "exports", 
-          children: exports
+          className: "ex-inports", 
+          children: inports
+        }),
+        React.DOM.g({
+          className: "ex-outports", 
+          children: outports
         })
       );
     }

@@ -45,10 +45,15 @@
 
       // Fires a change event on noflo graph, which triggers redraw
       if (this.props.export) {
-        this.props.graph.setExportMetadata(this.props.export.private, this.props.export.public, {
+        var newPos = {
           x: this.props.export.metadata.x + deltaX,
           y: this.props.export.metadata.y + deltaY
-        });
+        };
+        if (this.props.isIn) {
+          this.props.graph.setInportMetadata(this.props.exportKey, newPos);
+        } else {
+          this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
+        }
       } else {
         this.props.graph.setNodeMetadata(this.props.key, {
           x: this.props.node.metadata.x + deltaX,
@@ -101,6 +106,7 @@
         return TheGraph.ExportMenu({
           graph: this.props.graph,
           export: this.props.export,
+          exportKey: this.props.exportKey,
           isIn: this.props.isIn,
           x: x,
           y: y

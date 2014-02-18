@@ -11,19 +11,25 @@
       event.stopPropagation();
     },
     exportThisPort: function () {
-      var pri = this.props.processKey + "." + this.props.portKey;
+      var graph = this.props.graph;
+      var collection = this.props.isIn ? graph.inports : graph.outports;
+
       var pub = this.props.portKey;
       var count = 0;
-      // Make public unique
-      while (this.props.graph.getExportByPublic(pub)) {
+      // Make sure public is unique
+      while (collection[pub]) {
         pub = this.props.portKey + count;
         count++;
       } 
       var metadata = {
-        x: this.props.portX + (this.props.isIn ? -100 : 100),
-        y: this.props.portY
+        x: this.props.portX + (this.props.isIn ? -144 : 72),
+        y: this.props.portY - TheGraph.nodeSize/2
       };
-      this.props.graph.addExport(pri, pub, metadata);
+      if (this.props.isIn) {
+        this.props.graph.addInport(pub, this.props.processKey, this.props.portKey, metadata);
+      } else {
+        this.props.graph.addOutport(pub, this.props.processKey, this.props.portKey, metadata);
+      }
 
       // Hide self
       var contextEvent = new CustomEvent('the-graph-context-hide', { 

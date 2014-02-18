@@ -49,6 +49,7 @@
         return TheGraph.ExportMenu({
           graph: this.props.graph,
           export: this.props.export,
+          exportKey: this.props.exportKey,
           isIn: this.props.isIn,
           x: x,
           y: y
