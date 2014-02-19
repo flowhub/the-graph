@@ -43,17 +43,23 @@
         this.style.height = this.height + "px";
       },
       graphChanged: function () {
-        this.buildInitialLibrary();
-
-        var nf = require('noflo');
-        var self = this;
-        nf.graph.loadJSON(this.graph, function(nofloGraph){
-          self.nofloGraph = nofloGraph;
-        });
+        if (typeof this.graph.addNode === 'function') {
+          this.nofloGraph = this.graph;
+          this.buildInitialLibrary();
+          return;
+        }
+        require('noflo').graph.loadJSON(this.graph, function(nofloGraph){
+          this.nofloGraph = nofloGraph;
+          this.buildInitialLibrary();
+        }.bind(this));
       },
       buildInitialLibrary: function () {
-        Object.keys(this.graph.processes).forEach(function (id) {
-          var node = this.graph.processes[id];
+        if (Object.keys(this.library).length !== 0) {
+          // We already have a library, skip
+          return;
+        }
+
+        this.nofloGraph.nodes.forEach(function (node) {
           var component = {
             name: node.component,
             icon: 'cog',
@@ -62,27 +68,41 @@
             outports: []
           };
 
-          this.graph.connections.forEach(function (edge) {
-            var i;
-            if (edge.src && edge.src.process === id) {
-              for (i = 0; i < component.outports.length; i++) {
-                if (component.outports[i].name === edge.src.port) {
-                  return;
-                }
-              }
-              component.outports.push({
-                name: edge.src.port,
-                type: 'all'
-              });
-            }
-            if (edge.tgt.process === id) {
-              for (i = 0; i < component.inports.length; i++) {
-                if (component.inports[i].name === edge.tgt.port) {
+          this.nofloGraph.initializers.forEach(function (iip) {
+            if (iip.to.node === node.id) {
+              for (var i = 0; i < component.inports.length; i++) {
+                if (component.inports[i].name === iip.to.port) {
                   return;
                 }
               }
               component.inports.push({
-                name: edge.tgt.port,
+                name: iip.to.port,
+                type: 'all'
+              });
+            }
+          });
+
+          this.nofloGraph.edges.forEach(function (edge) {
+            var i;
+            if (edge.from.node === node.id) {
+              for (i = 0; i < component.outports.length; i++) {
+                if (component.outports[i].name === edge.from.port) {
+                  return;
+                }
+              }
+              component.outports.push({
+                name: edge.from.port,
+                type: 'all'
+              });
+            }
+            if (edge.to.node === node.id) {
+              for (i = 0; i < component.inports.length; i++) {
+                if (component.inports[i].name === edge.to.port) {
+                  return;
+                }
+              }
+              component.inports.push({
+                name: edge.to.port,
                 type: 'all'
               });
             }
