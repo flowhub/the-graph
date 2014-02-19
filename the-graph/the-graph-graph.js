@@ -18,26 +18,7 @@
     },
     componentDidMount: function () {
       // Listen to noflo graph object's events
-      var graph = this.props.graph;
-      graph.on("addNode", this.markDirty);
-      graph.on("renameNode", this.markDirty);
-      graph.on("removeNode", this.markDirty);
-      graph.on("changeNode", this.markDirty);
-      graph.on("addEdge", this.markDirty);
-      graph.on("removeEdge", this.markDirty);
-      graph.on("changeEdge", this.markDirty);
-      graph.on("addExport", this.markDirty);
-      graph.on("removeExport", this.markDirty);
-      graph.on("renameExport", this.markDirty);
-      graph.on("changeExport", this.markDirty);
-      graph.on("addInport", this.markDirty);
-      graph.on("removeInport", this.markDirty);
-      graph.on("renameInport", this.markDirty);
-      graph.on("changeInport", this.markDirty);
-      graph.on("addOutport", this.markDirty);
-      graph.on("removeOutport", this.markDirty);
-      graph.on("renameOutport", this.markDirty);
-      graph.on("changeOutport", this.markDirty);
+      this.props.graph.on("endTransaction", this.markDirty);
 
       // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
       this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);

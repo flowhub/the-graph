@@ -36,25 +36,7 @@
       },
       graphChanged: function () {
         // Listen for graph changes
-        this.graph.on("addNode", this.fireChanged.bind(this));
-        this.graph.on("renameNode", this.fireChanged.bind(this));
-        this.graph.on("removeNode", this.fireChanged.bind(this));
-        this.graph.on("changeNode", this.fireChanged.bind(this));
-        this.graph.on("addEdge", this.fireChanged.bind(this));
-        this.graph.on("removeEdge", this.fireChanged.bind(this));
-        this.graph.on("changeEdge", this.fireChanged.bind(this));
-        this.graph.on("addExport", this.fireChanged.bind(this));
-        this.graph.on("removeExport", this.fireChanged.bind(this));
-        this.graph.on("renameExport", this.fireChanged.bind(this));
-        this.graph.on("changeExport", this.fireChanged.bind(this));
-        this.graph.on("addInport", this.fireChanged.bind(this));
-        this.graph.on("removeInport", this.fireChanged.bind(this));
-        this.graph.on("renameInport", this.fireChanged.bind(this));
-        this.graph.on("changeInport", this.fireChanged.bind(this));
-        this.graph.on("addOutport", this.fireChanged.bind(this));
-        this.graph.on("removeOutport", this.fireChanged.bind(this));
-        this.graph.on("renameOutport", this.fireChanged.bind(this));
-        this.graph.on("changeOutport", this.fireChanged.bind(this));
+        this.graph.on("endTransaction", this.fireChanged.bind(this));
 
         // Setup app
         this.$.svgcontainer.innerHTML = "";

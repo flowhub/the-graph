@@ -13,8 +13,6 @@
       TheGraph.mixins.Tooltip,
       TheGraph.mixins.SavePointer
     ],
-    getInitialState: function() {
-    },
     componentDidMount: function () {
       // Dragging
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
@@ -234,7 +232,7 @@
         info.key = processKey + ".in." + info.label;
         info.processKey = processKey;
         info.app = app;
-        info.r = Math.min(4, TheGraph.nodeSide/(count*2+2));
+        info.r = Math.min(4, TheGraph.nodeSide/(count*2));
         info.isIn = true;
         index++;
         return TheGraph.Port(info);
@@ -249,13 +247,13 @@
         var info = outports[key];
         info.graph = graph;
         info.isExport = isExport;
-        info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
+        info.y = TheGraph.nodeSize / (count+1) * (index+1);
         info.nodeX = x;
         info.nodeY = y;
         info.key = processKey + ".out." + info.label;
         info.processKey = processKey;
         info.app = app;
-        info.r = Math.min(4, TheGraph.nodeSide/(count*2+2));
+        info.r = Math.min(4, TheGraph.nodeSide/(count*2));
         info.isIn = false;
         index++;
         return TheGraph.Port(info);

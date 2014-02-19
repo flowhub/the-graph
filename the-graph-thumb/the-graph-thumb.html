@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-thumb" attributes="graphjson width height thumbscale thumbrectangle" lightdom>
+<polymer-element name="the-graph-thumb" attributes="graphjson width height thumbscale thumbrectangle">
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}"></canvas>
   </template>
@@ -57,16 +57,31 @@
         var minY = Infinity;
         var maxX = -Infinity;
         var maxY = -Infinity;
-        Object.keys(graph.exports).forEach(function(key){
-          var exp = graph.exports[key];
-          if ( exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y) ) {
-            toDraw.push(exp);
-            minX = Math.min(minX, exp.metadata.x);
-            minY = Math.min(minY, exp.metadata.y);
-            maxX = Math.max(maxX, exp.metadata.x);
-            maxY = Math.max(maxY, exp.metadata.y);
-          }
-        }.bind(this));
+        var exp;
+        if (graph.inports) {
+          Object.keys(graph.inports).forEach(function(key){
+            exp = graph.inports[key];
+            if ( exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y) ) {
+              toDraw.push(exp);
+              minX = Math.min(minX, exp.metadata.x);
+              minY = Math.min(minY, exp.metadata.y);
+              maxX = Math.max(maxX, exp.metadata.x);
+              maxY = Math.max(maxY, exp.metadata.y);
+            }
+          }.bind(this));
+        }
+        if (graph.outports) {
+          Object.keys(graph.outports).forEach(function(key){
+            exp = graph.outports[key];
+            if ( exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y) ) {
+              toDraw.push(exp);
+              minX = Math.min(minX, exp.metadata.x);
+              minY = Math.min(minY, exp.metadata.y);
+              maxX = Math.max(maxX, exp.metadata.x);
+              maxY = Math.max(maxY, exp.metadata.y);
+            }
+          }.bind(this));
+        }
         Object.keys(graph.processes).forEach(function(key){
           var process = graph.processes[key];
           if ( process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y) ) {
