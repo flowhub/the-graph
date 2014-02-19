@@ -52,7 +52,7 @@
         this.getDOMNode().dispatchEvent(tooltipEvent);
       }
     },
-    componentDidMount: function (rootNode) {
+    componentDidMount: function () {
       if (navigator && navigator.userAgent.indexOf("Firefox") !== -1) {
         // HACK Ff does native tooltips on svg elements
         return;
@@ -67,7 +67,7 @@
   // Working around hold event not having x y
   // https://github.com/Polymer/PointerGestures/issues/23
   TheGraph.mixins.SavePointer = {
-    componentDidMount: function (rootNode) {
+    componentDidMount: function () {
       this.getDOMNode().addEventListener("pointerdown", this.savePointerPosition);
     },
     pointerX: 0,

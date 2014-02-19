@@ -153,7 +153,7 @@
       this.refs.graph.edgeStart(event);
       this.hideContext();
     },
-    componentDidMount: function (rootNode) {
+    componentDidMount: function () {
       // Pointer gesture events for pan/zoom
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       this.getDOMNode().addEventListener("pinch", this.onPinch);
@@ -184,8 +184,6 @@
     },
     renderGraph: function () {
       this.refs.graph.markDirty();
-    },
-    componentDidUpdate: function (prevProps, prevState, rootNode) {
     },
     render: function() {
       // console.timeEnd("App.render");

@@ -7,11 +7,8 @@
   // Port view
 
   TheGraph.Tooltip = React.createClass({
-    componentDidUpdate: function (prevProps, prevState, rootNode) {
-      // HACK til 0.9.0
-      if (prevProps.label != this.props.label) {
-        this.refs.label.getDOMNode().textContent = this.props.label;
-      }
+    componentDidUpdate: function (prevProps, prevState) {
+      // HACK to change SVG class
       if (prevProps.visible != this.props.visible) {
         var c = "tooltip" + (this.props.visible ? "" : " hidden");
         this.getDOMNode().setAttribute("class", c);

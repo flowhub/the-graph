@@ -49,7 +49,7 @@
       this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
       this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
-    componentDidMount: function (rootNode) {
+    componentDidMount: function () {
       // Pointer events for pan/zoom
       this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
     },

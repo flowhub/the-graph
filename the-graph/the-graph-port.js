@@ -102,8 +102,8 @@
       });
       event.relatedTarget.dispatchEvent(dropEvent);      
     },
-    componentDidUpdate: function (prevProps, prevState, rootNode) {
-      // HACK til 0.9.0
+    componentDidUpdate: function (prevProps, prevState) {
+      // HACK to change SVG class
       var c = "port-circle-small fill route"+this.props.route;
       this.refs.circleSmall.getDOMNode().setAttribute("class", c);
     },

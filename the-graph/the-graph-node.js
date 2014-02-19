@@ -185,17 +185,6 @@
         nextProps.y !== this.props.y
       );
     },
-    componentDidUpdate: function (prevProps, prevState, rootNode) {
-      // HACK til 0.9.0
-      if (prevProps.icon != this.props.icon) {
-        // Make sure icon exists
-        var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
-        if (!icon) { 
-          icon = TheGraph.FONT_AWESOME.cog;
-        }
-        this.refs.icon.getDOMNode().textContent = icon;
-      }
-    },
     render: function() {
       this.dirty = false;
 
