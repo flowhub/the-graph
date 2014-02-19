@@ -18,8 +18,16 @@
     },
     componentDidMount: function () {
       // Context menu
+      this.getDOMNode().addEventListener("pointerdown", this.stopPropagationSecondary);
+      this.getDOMNode().addEventListener("pointerup", this.stopPropagationSecondary);
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
       this.getDOMNode().addEventListener("hold", this.showContext);
+    },
+    stopPropagationSecondary: function (event) {
+      // HACK to not tap graph
+      if (event.buttons && event.buttons===2) {
+        event.stopPropagation();
+      }
     },
     showContext: function (event) {
       // Don't show native context menu

@@ -205,6 +205,7 @@ text {
   opacity: 0.75;
 }
 .tooltip-label {
+  text-anchor: start;
   font-size: 10px;
 }
 

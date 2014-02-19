@@ -27,8 +27,6 @@
     zoomX: 0,
     zoomY: 0,
     onWheel: function (event) {
-      // TODO: fast transform3d here?
-
       // Don't bounce
       event.preventDefault();
 
@@ -37,14 +35,14 @@
       }
 
       this.zoomFactor += event.deltaY;
-      this.zoomX = event.nativeEvent.clientX;
-      this.zoomY = event.nativeEvent.clientY;
+      this.zoomX = event.clientX;
+      this.zoomY = event.clientY;
       requestAnimationFrame(this.scheduleWheelZoom);
     },
     scheduleWheelZoom: function () {
       if (isNaN(this.zoomFactor)) { return; }
 
-      var scale = this.state.scale + (this.state.scale * this.zoomFactor/500);
+      var scale = this.state.scale + (this.state.scale * this.zoomFactor/-500);
       this.zoomFactor = 0;
 
       if (scale < this.minZoom) { 
@@ -160,6 +158,12 @@
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       this.getDOMNode().addEventListener("pinch", this.onPinch);
 
+      // Wheel to zoom
+      this.getDOMNode().addEventListener("wheel", this.onWheel);
+
+      // Tap to clear modal
+      this.getDOMNode().addEventListener("tap", this.hideContext);
+
       // Tooltip listener
       this.getDOMNode().addEventListener("the-graph-tooltip", this.changeTooltip);
       this.getDOMNode().addEventListener("the-graph-tooltip-hide", this.hideTooltip);
@@ -169,13 +173,9 @@
       this.getDOMNode().addEventListener("the-graph-context-hide", this.hideContext);
       this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
 
-      if (this.refs.modalBG) {
-        console.log( this.refs.modalBG );
-      }
-
       // Start zoom from middle if zoom before mouse move
-      this.mouseX = Math.floor( window.innerWidth/2 );
-      this.mouseY = Math.floor( window.innerHeight/2 );
+      this.mouseX = Math.floor( this.props.width/2 );
+      this.mouseY = Math.floor( this.props.height/2 );
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
     },
@@ -196,29 +196,20 @@
         contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY);
       }
       if (contextMenu) {
-        // if (contextMenu.props.modal) {
-        //   // Include modal backgroud
-          contextModal = [ 
-            React.DOM.rect({
-              ref: "modalBG",
-              className: "context-modal-bg",
-              width: this.state.width,
-              height: this.state.height,
-              onClick: this.hideContext
-            }),
-            contextMenu 
-          ];
-        // } else {
-        //   // No modal background
-        //   contextModal = contextMenu;
-        // }
+        contextModal = [ 
+          React.DOM.rect({
+            className: "context-modal-bg",
+            width: this.state.width,
+            height: this.state.height
+          }),
+          contextMenu 
+        ];
       }
 
       return React.DOM.div(
         {
           className: "the-graph " + scaleClass,
           name:"app", 
-          onWheel: this.onWheel,
           style: {
             width: this.state.width,
             height: this.state.height

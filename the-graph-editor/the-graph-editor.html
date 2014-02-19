@@ -2,7 +2,7 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height" lightdom touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height" touch-action="none">
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-library id="library"></the-library>
@@ -23,22 +23,18 @@
       pan: [0, 0],
       plugins: {},
       nofloGraph: null,
-      ready: function () {
-      },
-      addPlugin: function (name, plugin) {
-        this.plugins[name] = plugin;
-        plugin.register(this);
-      },
-      enteredView: function () {
-        if (this.graph) {
-          this.graphChanged();
-        }
-      },
-      leftView: function () {
+      created: function () {},
+      ready: function () {},
+      attached: function () {},
+      detached: function () {
         for (var name in this.plugins) {
           this.plugins[name].unregister(this);
           delete this.plugins[name];
         }
+      },
+      addPlugin: function (name, plugin) {
+        this.plugins[name] = plugin;
+        plugin.register(this);
       },
       widthChanged: function () {
         this.style.width = this.width + "px";
@@ -48,15 +44,12 @@
       },
       graphChanged: function () {
         this.buildInitialLibrary();
-        // this.$.graph.library = this.library;
 
         var nf = require('noflo');
         var self = this;
         nf.graph.loadJSON(this.graph, function(nofloGraph){
           self.nofloGraph = nofloGraph;
-          // self.$.graph.graph = nofloGraph;
         });
-
       },
       buildInitialLibrary: function () {
         Object.keys(this.graph.processes).forEach(function (id) {

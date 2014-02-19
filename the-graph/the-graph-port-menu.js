@@ -10,6 +10,9 @@
       // Don't drag graph
       event.stopPropagation();
     },
+    componentDidMount: function () {
+      this.refs.north.getDOMNode().addEventListener("tap", this.exportThisPort);
+    },
     exportThisPort: function () {
       var graph = this.props.graph;
       var collection = this.props.isIn ? graph.inports : graph.outports;
@@ -30,13 +33,6 @@
       } else {
         this.props.graph.addOutport(pub, this.props.processKey, this.props.portKey, metadata);
       }
-
-      // Hide self
-      var contextEvent = new CustomEvent('the-graph-context-hide', { 
-        detail: null, 
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(contextEvent);
     },
     render: function() {
       return (
@@ -55,9 +51,9 @@
           }),
           React.DOM.g(
             {
+              ref: "north",
               className: "context-slice context-node-info click",
-              onMouseDown: this.stopPropagation,
-              onClick: this.exportThisPort
+              onMouseDown: this.stopPropagation
             },
             React.DOM.path({
               className: "context-arc context-node-info-bg",

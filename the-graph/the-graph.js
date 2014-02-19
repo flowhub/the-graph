@@ -209,8 +209,12 @@
   // Reusable React classes
   TheGraph.TextBG = React.createClass({
     render: function() {
+      var text = this.props.text;
+      if (!text) {
+        text = "";
+      }
       var height = this.props.height;
-      var width = this.props.text.length * this.props.height * 2/3;
+      var width = text.length * this.props.height * 2/3;
       var radius = this.props.height/2;
 
       var textAnchor = "start";
@@ -244,12 +248,7 @@
           className: (this.props.textClassName ? this.props.textClassName : "text-bg-text"),
           x: this.props.x,
           y: this.props.y,
-          children: this.props.text//,
-          // style: {
-          //   fontSize: this.props.height+"px",
-          //   textAnchor: textAnchor,
-          //   dominantBaseline: dominantBaseline
-          // }
+          children: text
         })
       );
     }

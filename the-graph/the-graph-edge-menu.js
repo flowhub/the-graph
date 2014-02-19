@@ -12,13 +12,9 @@
     },
     triggerRemove: function (event) {
       this.props.graph.removeEdge( this.props.edge.from.node, this.props.edge.from.port, this.props.edge.to.node, this.props.edge.to.port );
-
-      // Hide self (overkill?)
-      var contextEvent = new CustomEvent('the-graph-context-hide', { 
-        detail: null, 
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(contextEvent);
+    },
+    componentDidMount: function () {
+      this.refs.south.getDOMNode().addEventListener("tap", this.triggerRemove);
     },
     render: function() {
       var ports = this.props.ports;
@@ -59,9 +55,9 @@
           ),
           React.DOM.g(
             {
+              ref: "south",
               className: "context-slice context-node-delete click",
-              onMouseDown: this.stopPropagation,
-              onClick: this.triggerRemove
+              onMouseDown: this.stopPropagation
             },
             React.DOM.path({
               className: "context-arc context-node-delete-bg",

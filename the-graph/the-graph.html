@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph library width height" lightdom>
+<polymer-element name="the-graph" attributes="graph library width height">
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -34,30 +34,44 @@
       graphView: null,
       ready: function () {
       },
-      enteredView: function () {
-      },
       graphChanged: function () {
-        // Setup app once
-        if (!this.appView) {
+        // Listen for graph changes
+        this.graph.on("addNode", this.fireChanged.bind(this));
+        this.graph.on("renameNode", this.fireChanged.bind(this));
+        this.graph.on("removeNode", this.fireChanged.bind(this));
+        this.graph.on("changeNode", this.fireChanged.bind(this));
+        this.graph.on("addEdge", this.fireChanged.bind(this));
+        this.graph.on("removeEdge", this.fireChanged.bind(this));
+        this.graph.on("changeEdge", this.fireChanged.bind(this));
+        this.graph.on("addExport", this.fireChanged.bind(this));
+        this.graph.on("removeExport", this.fireChanged.bind(this));
+        this.graph.on("renameExport", this.fireChanged.bind(this));
+        this.graph.on("changeExport", this.fireChanged.bind(this));
+        this.graph.on("addInport", this.fireChanged.bind(this));
+        this.graph.on("removeInport", this.fireChanged.bind(this));
+        this.graph.on("renameInport", this.fireChanged.bind(this));
+        this.graph.on("changeInport", this.fireChanged.bind(this));
+        this.graph.on("addOutport", this.fireChanged.bind(this));
+        this.graph.on("removeOutport", this.fireChanged.bind(this));
+        this.graph.on("renameOutport", this.fireChanged.bind(this));
+        this.graph.on("changeOutport", this.fireChanged.bind(this));
 
-          this.appView = React.renderComponent(
-            window.TheGraph.App({
-              graph: this.graph,
-              width: this.width,
-              height: this.height,
-              library: this.library
-            }),
-            this.$.svgcontainer
-          );
-          this.graphView = this.appView.refs.graph;
-          return;
-        }
+        // Setup app
+        this.$.svgcontainer.innerHTML = "";
+        this.appView = React.renderComponent(
+          window.TheGraph.App({
+            graph: this.graph,
+            width: this.width,
+            height: this.height,
+            library: this.library
+          }),
+          this.$.svgcontainer
+        );
+        this.graphView = this.appView.refs.graph;
 
-        // Set graph within app and mark to rerender
-        this.graphView.setState({
-          graph: this.graph
-        });
-        this.rerender();
+      },
+      fireChanged: function (event) {
+        this.fire("changed", this);
       },
       widthChanged: function () {
         if (!this.appView) { return; }
