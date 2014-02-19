@@ -176,6 +176,14 @@
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
+
+      // Rerender graph once to fix edges
+      setTimeout(function () {
+        this.renderGraph();
+      }.bind(this), 500);
+    },
+    renderGraph: function () {
+      this.refs.graph.markDirty();
     },
     componentDidUpdate: function (prevProps, prevState, rootNode) {
     },
