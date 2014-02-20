@@ -309,8 +309,9 @@
         var tX = target.metadata.x;
         var tY = target.metadata.y + targetPort.y;
 
-        var type = typeof iip.from.data;
-        var label = type === "number" || type === "string" ? iip.from.data : type;
+        var data = iip.from.data;
+        var type = typeof data;
+        var label = data === true || data === false || type === "number" || type === "string" ? data : type;
 
         return TheGraph.IIP({
           graph: graph,
