@@ -44,6 +44,11 @@
         // Listen for graph changes
         this.graph.on("endTransaction", this.fireChanged.bind(this));
 
+        if (this.appView) {
+          // Remove previous instance
+          React.unmountComponentAtNode(this.$.svgcontainer);
+        }
+
         // Setup app
         this.$.svgcontainer.innerHTML = "";
         this.appView = React.renderComponent(

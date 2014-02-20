@@ -208,6 +208,9 @@
       window.requestAnimationFrame(this.triggerRender);
     },
     triggerRender: function (time) {
+      if (!this.isMounted()) {
+        return;
+      }
       if (this.dirty) {
         return;
       }
