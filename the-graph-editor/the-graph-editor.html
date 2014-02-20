@@ -44,22 +44,23 @@
       },
       graphChanged: function () {
         if (typeof this.graph.addNode === 'function') {
+          this.buildInitialLibrary(this.graph);
           this.nofloGraph = this.graph;
-          this.buildInitialLibrary();
           return;
         }
         require('noflo').graph.loadJSON(this.graph, function(nofloGraph){
+          this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
-          this.buildInitialLibrary();
         }.bind(this));
       },
-      buildInitialLibrary: function () {
+      buildInitialLibrary: function (nofloGraph) {
         if (Object.keys(this.library).length !== 0) {
           // We already have a library, skip
+          // TODO what about loading a new graph? Are we making a new editor?
           return;
         }
 
-        this.nofloGraph.nodes.forEach(function (node) {
+        nofloGraph.nodes.forEach(function (node) {
           var component = {
             name: node.component,
             icon: 'cog',
@@ -68,7 +69,7 @@
             outports: []
           };
 
-          this.nofloGraph.initializers.forEach(function (iip) {
+          nofloGraph.initializers.forEach(function (iip) {
             if (iip.to.node === node.id) {
               for (var i = 0; i < component.inports.length; i++) {
                 if (component.inports[i].name === iip.to.port) {
@@ -82,7 +83,7 @@
             }
           });
 
-          this.nofloGraph.edges.forEach(function (edge) {
+          nofloGraph.edges.forEach(function (edge) {
             var i;
             if (edge.from.node === node.id) {
               for (i = 0; i < component.outports.length; i++) {
