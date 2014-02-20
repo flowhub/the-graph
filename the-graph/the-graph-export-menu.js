@@ -10,6 +10,13 @@
       // Don't drag graph
       event.stopPropagation();
     },
+    componentDidMount: function () {
+      // Prevent context menu
+      this.getDOMNode().addEventListener("contextmenu", function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }, false);
+    },
     triggerRemove: function (event) {
       // TODO in/out ambiguity
       if (this.props.isIn) {

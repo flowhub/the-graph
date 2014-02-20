@@ -12,6 +12,12 @@
     },
     componentDidMount: function () {
       this.refs.north.getDOMNode().addEventListener("tap", this.exportThisPort);
+
+      // Prevent context menu
+      this.getDOMNode().addEventListener("contextmenu", function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }, false);
     },
     exportThisPort: function () {
       var graph = this.props.graph;

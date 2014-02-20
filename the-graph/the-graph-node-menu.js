@@ -15,6 +15,12 @@
     },
     componentDidMount: function () {
       this.refs.south.getDOMNode().addEventListener("tap", this.triggerRemove);
+
+      // Prevent context menu
+      this.getDOMNode().addEventListener("contextmenu", function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }, false);
     },
     render: function() {
       var scale = this.props.node.props.app.state.scale;
