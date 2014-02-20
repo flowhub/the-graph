@@ -44,6 +44,7 @@
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
+          type: "edge",
           x: x,
           y: y
         }, 
@@ -51,7 +52,7 @@
       });
       this.getDOMNode().dispatchEvent(contextEvent);
     },
-    getContext: function (x, y) {
+    getContext: function (x, y, menu) {
       // If this edge represents an export
       if (this.props.export) {
         return TheGraph.ExportMenu({
@@ -64,13 +65,21 @@
         });
       }
 
-      return TheGraph.EdgeMenu({
-        key: "context." + this.props.key,
-        modal: true,
+      // return TheGraph.EdgeMenu({
+      //   key: "context." + this.props.key,
+      //   modal: true,
+      //   graph: this.props.graph,
+      //   edge: this.props.edge,
+      //   label: this.props.label,
+      //   route: this.props.route,
+      //   x: x,
+      //   y: y
+      // });
+
+      return TheGraph.Menu({
         graph: this.props.graph,
-        edge: this.props.edge,
-        label: this.props.label,
-        route: this.props.route,
+        item: this.props.edge,
+        menu: menu,
         x: x,
         y: y
       });

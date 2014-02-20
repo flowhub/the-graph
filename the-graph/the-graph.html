@@ -21,6 +21,7 @@
   <script type="text/javascript" src="./the-graph-iip.js"></script>
   <script type="text/javascript" src="./the-graph-group.js"></script>
   <script type="text/javascript" src="./the-graph-tooltip.js"></script>
+  <script type="text/javascript" src="./the-graph-menu.js"></script>
 
   <script>
   (function(){
@@ -33,6 +34,7 @@
       height: 600,
       appView: null,
       graphView: null,
+      editable: true,
       ready: function () {
       },
       graphChanged: function () {
@@ -46,12 +48,33 @@
             graph: this.graph,
             width: this.width,
             height: this.height,
-            library: this.library
+            library: this.library,
+            editable: this.editable
           }),
           this.$.svgcontainer
         );
         this.graphView = this.appView.refs.graph;
 
+        this.setupMenus(this.appView);
+      },
+      setupMenus: function (app) {
+        app.addMenu("edge", {
+          icon: "long-arrow-right"
+        });
+        app.addMenuAction("edge", "s4", {
+          icon: "trash-o",
+          iconLabel: "delete",
+          action: function (graph, itemKey, item) {
+            graph.removeEdge( item.from.node, item.from.port, item.to.node, item.to.port );
+          }
+        });
+        app.addMenuAction("edge", "n4", {
+          icon: "info",
+          iconLabel: "info",
+          action: function (graph, itemKey, item) {
+            console.log("edge info", graph, itemKey, item);
+          }
+        });
       },
       fireChanged: function (event) {
         this.fire("changed", this);
