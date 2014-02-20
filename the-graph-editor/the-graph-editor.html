@@ -99,11 +99,11 @@
         }.bind(this));
       },
       buildInitialLibrary: function (nofloGraph) {
-        if (Object.keys(this.$.graph.library).length !== 0) {
+        /*if (Object.keys(this.$.graph.library).length !== 0) {
           // We already have a library, skip
           // TODO what about loading a new graph? Are we making a new editor?
           return;
-        }
+        }*/
 
         nofloGraph.nodes.forEach(function (node) {
           var component = {
