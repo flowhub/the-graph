@@ -122,18 +122,8 @@
         // });
       }
     },
-    componentInfo: {},
     getComponentInfo: function (componentName) {
-      var component = this.componentInfo[componentName];
-      if (!component && this.props.library) {
-        component = this.props.library[componentName];
-        if (component) {
-          this.componentInfo[componentName] = component;
-          // Only attach this once
-          this.listenComponentChanges(componentName);
-        }
-      }
-      return component;
+      return this.props.library[componentName];
     },
     portInfo: {},
     getPorts: function (processName, componentName) {
