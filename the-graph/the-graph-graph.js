@@ -313,12 +313,11 @@
         var label = type === "number" || type === "string" ? iip.from.data : type;
 
         return TheGraph.IIP({
-          key: "iip."+iip.to.node+"."+iip.to.port,
           graph: graph,
-          x: tX,
-          y: tY,
+          key: "iip."+iip.to.node+"."+iip.to.port,
           label: label,
-          route: 0
+          x: tX,
+          y: tY
         });
 
       });

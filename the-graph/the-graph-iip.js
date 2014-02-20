@@ -27,9 +27,11 @@
         "L", x-10, y
       ].join(" ");
 
+      // Make a string
       var label = this.props.label+"";
+      // TODO make this smarter with ZUI
       if (label.length > 12) {
-        label = label.slice(0, 9) + "..."
+        label = label.slice(0, 9) + "...";
       }
 
       return (
