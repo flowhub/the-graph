@@ -114,6 +114,9 @@
       getComponent: function (name) {
         return this.$.graph.getComponent(name);
       },
+      getLibrary: function () {
+        return this.$.graph.library;
+      },
       toJSON: function () {
         return this.nofloGraph.toJSON();
       }
