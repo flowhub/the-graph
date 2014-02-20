@@ -111,6 +111,22 @@ text {
 }
 
 
+/* IIPs */
+.iip-path {
+  stroke-width: 1px;
+  stroke: white;
+}
+.iip-info {
+  visibility: hidden;
+}
+.iip-info .text-bg-text {
+  font-size: 5px;
+  text-anchor: end;
+}
+.big .iip-info {
+  visibility: visible;
+}
+
 
 /* Context menu - node */
 .context-modal-bg {

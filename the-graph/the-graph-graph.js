@@ -301,6 +301,28 @@
         });
       });
 
+      // IIPs
+      var iips = graph.initializers.map(function (iip) {
+
+        var target = graph.getNode(iip.to.node);
+        var targetPort = self.getInport(iip.to.node, iip.to.port, 0, target.component);
+        var tX = target.metadata.x;
+        var tY = target.metadata.y + targetPort.y;
+
+        var type = typeof iip.from.data;
+        var label = type === "number" || type === "string" ? iip.from.data : type;
+
+        return TheGraph.IIP({
+          key: "iip."+iip.to.node+"."+iip.to.port,
+          graph: graph,
+          x: tX,
+          y: tY,
+          label: label,
+          route: 0
+        });
+
+      });
+
 
       // Inport exports
       var inports = Object.keys(graph.inports).map(function (key) {
@@ -517,6 +539,10 @@
         React.DOM.g({
           className: "edges",
           children: edges
+        }),
+        React.DOM.g({
+          className: "iips",
+          children: iips
         }),
         React.DOM.g({
           className: "nodes", 
