@@ -29,7 +29,7 @@
 
     Polymer('the-graph', {
       graph: null,
-      library: null,
+      library: {},
       width: 800,
       height: 600,
       appView: null,
@@ -105,6 +105,58 @@
           return [0, 0]; 
         }
         return [this.appView.state.x, this.appView.state.y];
+      },
+      registerComponent: function (definition) {
+        if (!this.library[definition.name]) {
+          // New component, register
+          this.library[definition.name] = definition;
+          return;
+        }
+        // Update existing
+        var component = this.library[definition.name];
+        if (definition.description) {
+          component.description = definition.description;
+        }
+        if (definition.icon) {
+          component.icon = definition.icon;
+        }
+        definition.inports.forEach(function (defPort) {
+          var port = null;
+          component.inports.forEach(function (p) {
+            if (p.name === defPort.name) {
+              port = p;
+            }
+          });
+          if (port) {
+            port.type = defPort.type;
+            return;
+          }
+          component.inports.push({
+            name: defPort.name,
+            type: defPort.type,
+            array: defPort.array
+          });
+        });
+        definition.outports.forEach(function (defPort) {
+          var port = null;
+          component.outports.forEach(function (p) {
+            if (p.name === defPort.name) {
+              port = p;
+            }
+          });
+          if (port) {
+            port.type = defPort.type;
+            return;
+          }
+          component.outports.push({
+            name: defPort.name,
+            type: defPort.type,
+            array: defPort.array
+          });
+        });
+      },
+      getComponent: function (name) {
+        return this.library[name];
       },
       toJSON: function () {
         if (!this.graph) { return {}; }

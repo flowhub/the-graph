@@ -68,6 +68,18 @@
           editors[0].graph = graph;
           // Debug
           window.g = editors[0];
+
+          // Simulate a library update
+          setTimeout(function () {
+            console.log('updating');
+            var component = JSON.parse(JSON.stringify(editors[0].getComponent('core/Split')));
+            component.icon = 'github';
+            component.inports.push({
+              name: 'foo',
+              type: 'boolean'
+            });
+            editors[0].registerComponent(component);
+          }, 1000);
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
@@ -91,6 +103,7 @@
           editor.setAttribute("height", window.innerHeight);
         };
         window.addEventListener("resize", resize);
+
         resize();
       });
       

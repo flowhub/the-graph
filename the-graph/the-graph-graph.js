@@ -144,6 +144,7 @@
         if (componentName && this.props.library) {
           // Copy ports from library object
           var component = this.getComponentInfo(componentName);
+          
           var i, port;
           for (i=0; i<component.outports.length; i++) {
             port = component.outports[i];
@@ -263,7 +264,6 @@
           ports: self.getPorts(key, node.component)
         });
       });
-
 
       // Edges
       var edges = graph.edges.map(function (edge) {
