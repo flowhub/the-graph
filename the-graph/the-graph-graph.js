@@ -293,8 +293,9 @@
 
       // IIPs
       var iips = graph.initializers.map(function (iip) {
-
         var target = graph.getNode(iip.to.node);
+        if (!target) { return; }
+        
         var targetPort = self.getInport(iip.to.node, iip.to.port, 0, target.component);
         var tX = target.metadata.x;
         var tY = target.metadata.y + targetPort.y;

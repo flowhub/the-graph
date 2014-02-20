@@ -65,17 +65,6 @@
         });
       }
 
-      // return TheGraph.EdgeMenu({
-      //   key: "context." + this.props.key,
-      //   modal: true,
-      //   graph: this.props.graph,
-      //   edge: this.props.edge,
-      //   label: this.props.label,
-      //   route: this.props.route,
-      //   x: x,
-      //   y: y
-      // });
-
       return TheGraph.Menu({
         graph: this.props.graph,
         item: this.props.edge,

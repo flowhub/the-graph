@@ -4,7 +4,7 @@
 <polymer-element name="the-graph-editor" attributes="grid snap width height" touch-action="none">
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" width="{{width}}" height="{{height}}"></the-graph>
+    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}"></the-graph>
   </template>
   <script>
   (function () {
@@ -20,7 +20,44 @@
       pan: [0, 0],
       plugins: {},
       nofloGraph: null,
-      created: function () {},
+      menus: null,
+      created: function () {
+        this.menus = {
+          edge: {
+            icon: "long-arrow-right",
+            n4: {
+              icon: "info-circle",
+              iconLabel: "info",
+              action: function (graph, itemKey, item) {
+                console.log("edge info", graph, itemKey, item);
+              }
+            },
+            s4: {
+              icon: "trash-o",
+              iconLabel: "delete",
+              action: function (graph, itemKey, item) {
+                graph.removeEdge( item.from.node, item.from.port, item.to.node, item.to.port );
+              }
+            }
+          },
+          node: {
+            n4: {
+              icon: "info-circle",
+              iconLabel: "info",
+              action: function (graph, itemKey, item) {
+                console.log("node info", graph, itemKey, item);
+              }
+            },
+            s4: {
+              icon: "trash-o",
+              iconLabel: "delete",
+              action: function (graph, itemKey, item) {
+                graph.removeNode( itemKey );
+              }
+            }
+          }
+        };
+      },
       ready: function () {},
       attached: function () {},
       detached: function () {
@@ -32,6 +69,17 @@
       addPlugin: function (name, plugin) {
         this.plugins[name] = plugin;
         plugin.register(this);
+      },
+      addMenu: function (type, options) {
+        // options: icon, label
+        this.menus[type] = options;
+      },
+      addMenuAction: function (type, direction, options) {
+        if (!this.menus[type]) {
+          this.menus[type] = {};
+        }
+        var menu = this.menus[type];
+        menu[direction] = options;
       },
       widthChanged: function () {
         this.style.width = this.width + "px";
@@ -110,6 +158,9 @@
       },
       registerComponent: function (definition) {
         this.$.graph.registerComponent(definition);
+      },
+      rerender: function () {
+        this.$.graph.rerender();
       },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);

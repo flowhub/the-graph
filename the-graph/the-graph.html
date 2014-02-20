@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph library width height">
+<polymer-element name="the-graph" attributes="graph menus library width height">
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -29,12 +29,16 @@
 
     Polymer('the-graph', {
       graph: null,
-      library: {},
+      library: null,
+      menus: null,
       width: 800,
       height: 600,
       appView: null,
       graphView: null,
       editable: true,
+      created: function () {
+        this.library = {};
+      },
       ready: function () {
       },
       graphChanged: function () {
@@ -49,32 +53,12 @@
             width: this.width,
             height: this.height,
             library: this.library,
+            menus: this.menus,
             editable: this.editable
           }),
           this.$.svgcontainer
         );
         this.graphView = this.appView.refs.graph;
-
-        this.setupMenus(this.appView);
-      },
-      setupMenus: function (app) {
-        app.addMenu("edge", {
-          icon: "long-arrow-right"
-        });
-        app.addMenuAction("edge", "s4", {
-          icon: "trash-o",
-          iconLabel: "delete",
-          action: function (graph, itemKey, item) {
-            graph.removeEdge( item.from.node, item.from.port, item.to.node, item.to.port );
-          }
-        });
-        app.addMenuAction("edge", "n4", {
-          icon: "info",
-          iconLabel: "info",
-          action: function (graph, itemKey, item) {
-            console.log("edge info", graph, itemKey, item);
-          }
-        });
       },
       fireChanged: function (event) {
         this.fire("changed", this);
@@ -105,6 +89,12 @@
           return [0, 0]; 
         }
         return [this.appView.state.x, this.appView.state.y];
+      },
+      menusChanged: function () {
+        // Only if the object itself changes, 
+        // otherwise builds menu from reference every time menu shown
+        if (!this.appView) { return; }
+        this.appView.setProps({menus: this.menus});
       },
       registerComponent: function (definition) {
         if (!this.library[definition.name]) {
@@ -154,6 +144,9 @@
             array: defPort.array
           });
         });
+
+        // So changes stick
+        this.rerender();
       },
       getComponent: function (name) {
         return this.library[name];

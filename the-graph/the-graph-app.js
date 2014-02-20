@@ -24,20 +24,6 @@
         contextType: null
       };
     },
-    contextMenus: {},
-    addMenu: function (type, options) {
-      this.contextMenus[type] = options;
-    },
-    addMenuAction: function (type, direction, options) {
-      // type: port, group, node, edge, inport, outport, iip
-      // direction: n4, s4, e4, w4
-      // options: label, icon, iconLabel, action
-      if (!this.contextMenus[type]) {
-        this.contextMenus[type] = {};
-      }
-      var menu = this.contextMenus[type];
-      menu[direction] = options;
-    },
     zoomFactor: 0,
     zoomX: 0,
     zoomY: 0,
@@ -215,8 +201,8 @@
 
       var contextMenu, contextModal;
       if ( this.state.contextElement ) {
-        var menuDef = this.contextMenus[ this.state.contextType ];
-        contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY, menuDef);
+        var menus = this.props.menus[ this.state.contextType ];
+        contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY, menus);
       }
       if (contextMenu) {
         contextModal = [ 

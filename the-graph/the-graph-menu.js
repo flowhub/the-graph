@@ -3,6 +3,25 @@
 
   var TheGraph = context.TheGraph;
 
+  var positions = {
+    n4IconX: 0,
+    n4IconY: -52,
+    n4LabelX: 0,
+    n4LabelY: -35,
+    s4IconX: 0,
+    s4IconY: 52,
+    s4LabelX: 0,
+    s4LabelY: 35,
+    e4IconX: 52,
+    e4IconY: 0,
+    e4LabelX: 52,
+    e4LabelY: 10,
+    w4IconX: -52,
+    w4IconY: 0,
+    w4LabelX: -52,
+    w4LabelY: 10
+  };
+
 
   TheGraph.Menu = React.createClass({
     radius: 72,
@@ -60,8 +79,8 @@
           children.push(
             React.DOM.text({
               className: "icon context-icon context-node-info-icon",
-              x: 0,
-              y: 52,
+              x: positions[direction+"IconX"],
+              y: positions[direction+"IconY"],
               children: TheGraph.FONT_AWESOME[ slice.icon ]
             })
           );
@@ -70,8 +89,8 @@
           children.push(
             React.DOM.text({
               className: "context-arc-icon-label",
-              x: 0,
-              y: 35,
+              x: positions[direction+"LabelX"],
+              y: positions[direction+"LabelY"],
               children: slice.iconLabel
             })
           );
@@ -102,9 +121,20 @@
           r: this.radius
         }),
       ];
+      // Menu label
+      if (this.props.label) {
+        children.push(
+          React.DOM.text({
+            className: "context-node-label",
+            x: 0,
+            y: 0 - this.radius - 15,
+            children: this.props.label
+          })
+        );
+      }
       // Middle icon
       var menu = this.props.menu;
-      if (menu.icon) {
+      if (this.props.icon || menu.icon) {
         children.push(
           React.DOM.rect({
             className: "context-node-rect",
@@ -117,7 +147,7 @@
           }),
           React.DOM.text({
             className: "icon context-node-icon",
-            children: TheGraph.FONT_AWESOME[ menu.icon ]
+            children: TheGraph.FONT_AWESOME[ (this.props.icon ? this.props.icon : menu.icon) ]
           })
         );
       }

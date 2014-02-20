@@ -91,6 +91,7 @@
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
+          type: "node",
           x: x,
           y: y
         },
@@ -98,7 +99,7 @@
       });
       this.getDOMNode().dispatchEvent(contextEvent);
     },
-    getContext: function (x, y) {
+    getContext: function (x, y, menu) {
       // If this node is an export
       if (this.props.export) {
         return TheGraph.ExportMenu({
@@ -159,6 +160,7 @@
         graph: this.props.graph,
         graphView: this.props.graphView,
         node: this,
+        menu: menu,
         icon: this.props.icon,
         ports: ports,
         process: this.props.process,
