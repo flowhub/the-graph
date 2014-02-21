@@ -114,6 +114,34 @@
             outports: []
           };
 
+          Object.keys(nofloGraph.inports).forEach(function (pub) {
+            var exported = nofloGraph.inports[pub];
+            if (exported.process === node.id) {
+              for (var i = 0; i < component.inports.length; i++) {
+                if (component.inports[i].name === exported.port) {
+                  return;
+                }
+              }
+              component.inports.push({
+                name: exported.port,
+                type: 'all'
+              });
+            }
+          });
+          Object.keys(nofloGraph.outports).forEach(function (pub) {
+            var exported = nofloGraph.outports[pub];
+            if (exported.process === node.id) {
+              for (var i = 0; i < component.outports.length; i++) {
+                if (component.outports[i].name === exported.port) {
+                  return;
+                }
+              }
+              component.outports.push({
+                name: exported.port,
+                type: 'all'
+              });
+            }
+          });
           nofloGraph.initializers.forEach(function (iip) {
             if (iip.to.node === node.id) {
               for (var i = 0; i < component.inports.length; i++) {
