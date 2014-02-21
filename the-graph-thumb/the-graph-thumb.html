@@ -187,15 +187,24 @@
           context.strokeStyle = this.strokeStyle;
           context.fillStyle = "#000000";
           context.beginPath();
-          context.arc(x, y, sizeHalf, 0, 2*Math.PI, false);
+          if (node.process && !node.component) {
+            context.arc(x, y, sizeHalf / 2, 0, 2*Math.PI, false);
+          } else {
+            context.arc(x, y, sizeHalf, 0, 2*Math.PI, false);
+          }
           context.fill();
           context.stroke();
 
           // Inner circle
-          context.fillStyle = this.fillStyle;
           context.beginPath();
           var smallRadius = Math.max(sizeHalf-1.5, 1);
-          context.arc(x, y, smallRadius, 0, 2*Math.PI, false);
+          if (node.process && !node.component) {
+            // Exported port
+            context.arc(x, y, smallRadius / 2, 0, 2*Math.PI, false);
+          } else {
+            // Regular node
+            context.arc(x, y, smallRadius, 0, 2*Math.PI, false);
+          }
           context.fill();
 
         }.bind(this));
