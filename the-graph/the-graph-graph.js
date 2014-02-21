@@ -92,6 +92,8 @@
       var graph = this.state.graph;
       var nodes = event.detail.nodes;
 
+      graph.startTransaction('movegroup');
+
       // Move each group member
       var len = nodes.length;
       for (var i=0; i<len; i++) {
@@ -103,6 +105,8 @@
           });
         }
       }
+
+      graph.endTransaction('movegroup');
     },
     listenComponentChanges: function (componentName) {
       var componentEl = document.querySelector("the-component[name='"+componentName+"']");
@@ -208,6 +212,9 @@
       window.requestAnimationFrame(this.triggerRender);
     },
     triggerRender: function (time) {
+      if (!this.isMounted()) {
+        return;
+      }
       if (this.dirty) {
         return;
       }
@@ -368,7 +375,7 @@
           exportKey: key,
           graph: graph,
           edge: {},
-          route: (metadata.route ? metadata.route : 0),
+          route: (metadata.route ? metadata.route : 2),
           isIn: true,
           label: "export in " + label.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label,
           sX: expNode.x + TheGraph.nodeSize,
@@ -441,7 +448,7 @@
           exportKey: key,
           graph: graph,
           edge: {},
-          route: (metadata.route ? metadata.route : 0),
+          route: (metadata.route ? metadata.route : 5),
           isIn: false,
           label: privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + label.toUpperCase() + " export out",
           sX: privateNode.metadata.x + privatePort.x,
