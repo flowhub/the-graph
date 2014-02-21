@@ -39,6 +39,12 @@ svg {
   stroke: hsl(0, 0%, 50%);
   stroke-width: 2px;
 }
+.ex-inports .node-rect {
+  stroke: hsl(30, 60%, 60%);
+}
+.ex-outports .node-rect {
+  stroke: hsl(120, 60%, 60%);
+}
 .node:hover .node-rect {
   fill: hsla(0, 0%, 20%, 0.75);
 }
@@ -244,6 +250,20 @@ text {
 .big .node-icon {
   fill: hsl(0, 0%, 25%);
 }
+.ex-inports .node-icon {
+  stroke: hsl(30, 60%, 60%);
+  fill: hsl(30, 60%, 60%);
+}
+.small .ex-inports .node-icon {
+  fill: hsl(30, 60%, 60%);
+}
+.ex-outports .node-icon {
+  stroke: hsl(120, 60%, 60%);
+  fill: hsl(120, 60%, 60%);
+}
+.small .ex-outports .node-icon {
+  fill: hsl(120, 60%, 60%);
+}
 
 .port-circle {
   fill: black;
@@ -268,7 +288,10 @@ text {
 .big .port-label {
   visibility: visible;
 }
-
+.big .ex-inports .port-label,
+.big .ex-outports .port-label {
+  visibility: hidden;
+}
 
 .group-box {
   fill: hsla(60, 100%, 20%, 0.25);
