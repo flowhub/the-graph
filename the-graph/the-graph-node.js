@@ -91,7 +91,7 @@
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
-          type: "node",
+          type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "node"),
           x: x,
           y: y
         },
@@ -102,11 +102,12 @@
     getContext: function (x, y, menu) {
       // If this node is an export
       if (this.props.export) {
-        return TheGraph.ExportMenu({
+        return TheGraph.Menu({
           graph: this.props.graph,
-          export: this.props.export,
-          exportKey: this.props.exportKey,
-          isIn: this.props.isIn,
+          label: this.props.exportKey,
+          menu: menu,
+          itemKey: this.props.exportKey,
+          item: this.props.export,
           x: x,
           y: y
         });
@@ -225,6 +226,8 @@
         info.app = app;
         info.r = Math.min(4, TheGraph.nodeSide/(count*2));
         info.isIn = true;
+        // FIXME
+        info.port = {node:processKey, port:info.label};
         index++;
         return TheGraph.Port(info);
       });
@@ -246,6 +249,8 @@
         info.app = app;
         info.r = Math.min(4, TheGraph.nodeSide/(count*2));
         info.isIn = false;
+        // FIXME
+        info.port = {node:processKey, port:info.label};
         index++;
         return TheGraph.Port(info);
       });

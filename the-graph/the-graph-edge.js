@@ -69,6 +69,7 @@
         graph: this.props.graph,
         item: this.props.edge,
         menu: menu,
+        label: this.props.label,
         x: x,
         y: y
       });

@@ -48,7 +48,7 @@
           item: this.props.process,
           menu: this.props.menu,
           icon: this.props.icon,
-          label: this.props.processKey
+          label: this.props.label
         })
       ];
 

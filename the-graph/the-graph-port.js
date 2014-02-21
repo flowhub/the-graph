@@ -55,6 +55,7 @@
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
+          type: (this.props.isIn ? "nodeInport" : "nodeOutport"),
           x: x,
           y: y
         },
@@ -62,14 +63,11 @@
       });
       this.getDOMNode().dispatchEvent(contextEvent);
     },
-    getContext: function (x, y) {
-      return TheGraph.PortMenu({
+    getContext: function (x, y, menu) {
+      return TheGraph.Menu({
+        menu: menu,
         graph: this.props.graph,
-        isIn: this.props.isIn,
-        processKey: this.props.processKey,
-        portKey: this.props.label,
-        portX: this.props.nodeX + this.props.x,
-        portY: this.props.nodeY + this.props.y,
+        item: this.props.port,
         x: x,
         y: y
       });

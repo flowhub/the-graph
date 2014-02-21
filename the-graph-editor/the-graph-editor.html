@@ -55,6 +55,66 @@
                 graph.removeNode( itemKey );
               }
             }
+          },
+          nodeInport: {
+            w4: {
+              icon: "sign-in",
+              iconLabel: "export",
+              action: function (graph, itemKey, item) {
+                var pub = item.port;
+                var count = 0;
+                // Make sure public is unique
+                while (graph.inports[pub]) {
+                  count++;
+                  pub = item.port + count;
+                } 
+                var metadata = {x:0, y:0};
+                graph.addInport(pub, item.node, item.port, metadata);
+              }
+            }
+          },
+          nodeOutport: {
+            e4: {
+              icon: "sign-out",
+              iconLabel: "export",
+              action: function (graph, itemKey, item) {
+                var pub = item.port;
+                var count = 0;
+                // Make sure public is unique
+                while (graph.outports[pub]) {
+                  count++;
+                  pub = item.port + count;
+                } 
+                var metadata = {x:1000, y:0};
+                graph.addOutport(pub, item.node, item.port, metadata);
+              }
+            }
+          },
+          graphInport: {
+            icon: "sign-in",
+            n4: {
+              label: "inport"
+            },
+            s4: {
+              icon: "trash-o",
+              iconLabel: "delete",
+              action: function (graph, itemKey, item) {
+                graph.removeInport(itemKey);
+              }
+            }
+          },
+          graphOutport: {
+            icon: "sign-out",
+            n4: {
+              label: "outport"
+            },
+            s4: {
+              icon: "trash-o",
+              iconLabel: "delete",
+              action: function (graph, itemKey, item) {
+                graph.removeOutport(itemKey);
+              }
+            }
           }
         };
       },

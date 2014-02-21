@@ -12,14 +12,14 @@
     s4IconY: 52,
     s4LabelX: 0,
     s4LabelY: 35,
-    e4IconX: 52,
-    e4IconY: 0,
-    e4LabelX: 52,
-    e4LabelY: 10,
-    w4IconX: -52,
-    w4IconY: 0,
-    w4LabelX: -52,
-    w4LabelY: 10
+    e4IconX: 45,
+    e4IconY: -5,
+    e4LabelX: 45,
+    e4LabelY: 15,
+    w4IconX: -45,
+    w4IconY: -5,
+    w4LabelX: -45,
+    w4LabelY: 15
   };
 
 
@@ -85,6 +85,16 @@
             })
           );
         }
+        if (slice.label) {
+          children.push(
+            React.DOM.text({
+              className: "context-arc-label",
+              x: positions[direction+"IconX"],
+              y: positions[direction+"IconY"],
+              children: slice.label
+            })
+          );
+        }
         if (slice.iconLabel) {
           children.push(
             React.DOM.text({
@@ -105,6 +115,8 @@
       );
     },
     render: function() {
+      var menu = this.props.menu;
+
       var children = [
         // Directional slices
         this.renderSlice("n4"),
@@ -122,18 +134,17 @@
         }),
       ];
       // Menu label
-      if (this.props.label) {
+      if (this.props.label || menu.icon) {
         children.push(
           React.DOM.text({
             className: "context-node-label",
             x: 0,
             y: 0 - this.radius - 15,
-            children: this.props.label
+            children: (this.props.label ? this.props.label : menu.label)
           })
         );
       }
       // Middle icon
-      var menu = this.props.menu;
       if (this.props.icon || menu.icon) {
         children.push(
           React.DOM.rect({
