@@ -398,6 +398,7 @@
       // Outport exports
       var outports = Object.keys(graph.outports).map(function (key) {
         var outport = graph.outports[key];
+        console.log(key, outport);
         // Export info
         var label = key;
         var nodeKey = outport.process;

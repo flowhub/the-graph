@@ -65,8 +65,9 @@
     },
     getContext: function (x, y, menu) {
       return TheGraph.Menu({
-        menu: menu,
         graph: this.props.graph,
+        menu: menu,
+        label: this.props.label,        
         item: this.props.port,
         x: x,
         y: y
