@@ -45,7 +45,7 @@
           y: 0,
           graph: this.props.graph,
           itemKey: this.props.processKey,
-          item: this.props.process,
+          item: this.props.graph.getNode(this.props.processKey),
           menu: this.props.menu,
           icon: this.props.icon,
           label: this.props.processKey
