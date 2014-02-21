@@ -92,6 +92,8 @@
       var graph = this.state.graph;
       var nodes = event.detail.nodes;
 
+      graph.startTransaction('movegroup');
+
       // Move each group member
       var len = nodes.length;
       for (var i=0; i<len; i++) {
@@ -103,6 +105,8 @@
           });
         }
       }
+
+      graph.endTransaction('movegroup');
     },
     listenComponentChanges: function (componentName) {
       var componentEl = document.querySelector("the-component[name='"+componentName+"']");

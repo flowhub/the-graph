@@ -32,6 +32,8 @@
 
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+
+      //this.props.graph.startTransaction('movenode');
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -65,6 +67,7 @@
 
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      //this.props.graph.endTransaction('movenode');
     },
     stopPropagation: function (event) {
       // HACK to keep context menu from cancelling preview edge
