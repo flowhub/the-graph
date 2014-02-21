@@ -35,7 +35,8 @@
         this.zoomFactor = 0;
       }
 
-      this.zoomFactor += event.deltaY;
+      // Safari is wheelDeltaY
+      this.zoomFactor += event.deltaY ? event.deltaY : 0-event.wheelDeltaY;
       this.zoomX = event.clientX;
       this.zoomY = event.clientY;
       requestAnimationFrame(this.scheduleWheelZoom);
@@ -43,7 +44,10 @@
     scheduleWheelZoom: function () {
       if (isNaN(this.zoomFactor)) { return; }
 
-      var scale = this.state.scale + (this.state.scale * this.zoomFactor/-500);
+      // Speed limit
+      var zoomFactor = this.zoomFactor/-500;
+      zoomFactor = Math.min(0.5, Math.max(-0.5, zoomFactor));
+      var scale = this.state.scale + (this.state.scale * zoomFactor);
       this.zoomFactor = 0;
 
       if (scale < this.minZoom) { 
@@ -156,24 +160,32 @@
       this.hideContext();
     },
     componentDidMount: function () {
+      var domNode = this.getDOMNode();
+
       // Pointer gesture events for pan/zoom
-      this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
-      this.getDOMNode().addEventListener("pinch", this.onPinch);
+      domNode.addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("pinch", this.onPinch);
 
       // Wheel to zoom
-      this.getDOMNode().addEventListener("wheel", this.onWheel);
+      if (domNode.onwheel!==undefined) {
+        // Chrome and Firefox
+        domNode.addEventListener("wheel", this.onWheel);
+      } else if (domNode.onmousewheel!==undefined) {
+        // Safari
+        domNode.addEventListener("mousewheel", this.onWheel);
+      }
 
       // Tap to clear modal
-      this.getDOMNode().addEventListener("tap", this.hideContext);
+      domNode.addEventListener("tap", this.hideContext);
 
       // Tooltip listener
-      this.getDOMNode().addEventListener("the-graph-tooltip", this.changeTooltip);
-      this.getDOMNode().addEventListener("the-graph-tooltip-hide", this.hideTooltip);
+      domNode.addEventListener("the-graph-tooltip", this.changeTooltip);
+      domNode.addEventListener("the-graph-tooltip-hide", this.hideTooltip);
 
       // Context menu listeners
-      this.getDOMNode().addEventListener("the-graph-context-show", this.showNodeContext);
-      this.getDOMNode().addEventListener("the-graph-context-hide", this.hideContext);
-      this.getDOMNode().addEventListener("the-graph-edge-start", this.edgeStart);
+      domNode.addEventListener("the-graph-context-show", this.showNodeContext);
+      domNode.addEventListener("the-graph-context-hide", this.hideContext);
+      domNode.addEventListener("the-graph-edge-start", this.edgeStart);
 
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( this.props.width/2 );
