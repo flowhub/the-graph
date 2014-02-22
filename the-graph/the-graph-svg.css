@@ -325,8 +325,8 @@ text {
   visibility: hidden;
 }
 
-.stroke.route0  { stroke: hsl( 10, 100%, 100%); }
-.stroke.route1  { stroke: hsl( 10, 100%, 70% ); }
+.stroke.route0  { stroke: hsl(  0, 100%, 100%); }
+.stroke.route1  { stroke: hsl(  0, 100%, 70% ); }
 .stroke.route2  { stroke: hsl( 30, 100%, 70% ); }
 .stroke.route3  { stroke: hsl( 60, 100%, 70% ); }
 .stroke.route4  { stroke: hsl( 90, 100%, 70% ); }
@@ -339,8 +339,8 @@ text {
 .stroke.route11 { stroke: hsl(300, 100%, 70% ); }
 .stroke.route12 { stroke: hsl(330, 100%, 70% ); }
 
-.fill.route0  { fill: hsl( 10, 100%, 100%); }
-.fill.route1  { fill: hsl( 10, 100%, 70% ); }
+.fill.route0  { fill: hsl(  0, 100%, 100%); }
+.fill.route1  { fill: hsl(  0, 100%, 70% ); }
 .fill.route2  { fill: hsl( 30, 100%, 70% ); }
 .fill.route3  { fill: hsl( 60, 100%, 70% ); }
 .fill.route4  { fill: hsl( 90, 100%, 70% ); }

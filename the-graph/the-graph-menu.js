@@ -146,6 +146,11 @@
       }
       // Middle icon
       if (this.props.icon || menu.icon) {
+        var iconColor = (this.props.iconColor ? this.props.iconColor : menu.iconColor);
+        var iconStyle = "";
+        if (iconColor) {
+          iconStyle = " fill route"+iconColor;
+        }
         children.push(
           React.DOM.rect({
             className: "context-node-rect",
@@ -157,7 +162,7 @@
             ry: TheGraph.nodeRadius
           }),
           React.DOM.text({
-            className: "icon context-node-icon",
+            className: "icon context-node-icon"+iconStyle,
             children: TheGraph.FONT_AWESOME[ (this.props.icon ? this.props.icon : menu.icon) ]
           })
         );

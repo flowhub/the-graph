@@ -71,6 +71,7 @@
         item: this.props.edge,
         menu: menu,
         label: this.props.label,
+        iconColor: this.props.route,
         x: x,
         y: y
       });
