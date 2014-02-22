@@ -30,6 +30,9 @@
       // Don't drag graph
       event.stopPropagation();
 
+      // Don't drag under menu
+      if (this.props.app.menuShown) { return; }
+
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
 

@@ -220,9 +220,11 @@
             height: this.state.height,
             app: this,
             children: contextMenu
-          })//,
-          // contextMenu 
+          })
         ];
+        this.menuShown = true;
+      } else {
+        this.menuShown = false;
       }
 
       return React.DOM.div(
