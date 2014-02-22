@@ -44,7 +44,7 @@
       var contextEvent = new CustomEvent('the-graph-context-show', { 
         detail: {
           element: this,
-          type: "edge",
+          type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "edge"),
           x: x,
           y: y
         }, 
@@ -55,11 +55,12 @@
     getContext: function (x, y, menu) {
       // If this edge represents an export
       if (this.props.export) {
-        return TheGraph.ExportMenu({
+        return TheGraph.Menu({
           graph: this.props.graph,
-          export: this.props.export,
-          exportKey: this.props.exportKey,
-          isIn: this.props.isIn,
+          label: this.props.exportKey,
+          menu: menu,
+          itemKey: this.props.exportKey,
+          item: this.props.export,
           x: x,
           y: y
         });
