@@ -146,7 +146,7 @@
       }
       // Middle icon
       if (this.props.icon || menu.icon) {
-        var iconColor = (this.props.iconColor ? this.props.iconColor : menu.iconColor);
+        var iconColor = (this.props.iconColor!==undefined ? this.props.iconColor : menu.iconColor);
         var iconStyle = "";
         if (iconColor) {
           iconStyle = " fill route"+iconColor;
