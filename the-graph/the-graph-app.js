@@ -175,9 +175,6 @@
         domNode.addEventListener("mousewheel", this.onWheel);
       }
 
-      // Tap to clear modal
-      domNode.addEventListener("tap", this.hideContext);
-
       // Tooltip listener
       domNode.addEventListener("the-graph-tooltip", this.changeTooltip);
       domNode.addEventListener("the-graph-tooltip-hide", this.hideTooltip);
@@ -218,12 +215,13 @@
       }
       if (contextMenu) {
         contextModal = [ 
-          React.DOM.rect({
-            className: "context-modal-bg",
+          TheGraph.ModalBG({
             width: this.state.width,
-            height: this.state.height
-          }),
-          contextMenu 
+            height: this.state.height,
+            app: this,
+            children: contextMenu
+          })//,
+          // contextMenu 
         ];
       }
 

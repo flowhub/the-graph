@@ -171,4 +171,38 @@
   });
 
 
+  TheGraph.ModalBG = React.createClass({
+    componentDidMount: function () {
+      var domNode = this.getDOMNode();
+      var rectNode = this.refs.rect.getDOMNode();
+
+      // Right-click on another item will show its menu
+      domNode.addEventListener("pointerdown", function (event) {
+        // Only if outside of menu
+        if (event.target===rectNode) {
+          this.hideModal();
+        }
+      }.bind(this));
+
+      // Hide menu tapping on any menu button
+      domNode.addEventListener("tap", this.hideModal);
+    },
+    hideModal: function (event) {
+      this.props.app.hideContext();
+    },
+    render: function () {
+      return React.DOM.g(
+        {},
+        React.DOM.rect({
+          ref: "rect",
+          className: "context-modal-bg",
+          width: this.props.width,
+          height: this.props.height
+        }),
+        this.props.children
+      );
+    }
+  });
+
+
 })(this);
