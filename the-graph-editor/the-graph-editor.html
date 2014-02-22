@@ -67,8 +67,9 @@
                 while (graph.inports[pub]) {
                   count++;
                   pub = item.port + count;
-                } 
-                var metadata = {x:0, y:0};
+                }
+                var priNode = graph.getNode(item.node);
+                var metadata = {x:priNode.metadata.x-144, y:priNode.metadata.y};
                 graph.addInport(pub, item.node, item.port, metadata);
               }
             }
@@ -85,7 +86,8 @@
                   count++;
                   pub = item.port + count;
                 } 
-                var metadata = {x:1000, y:0};
+                var priNode = graph.getNode(item.node);
+                var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
                 graph.addOutport(pub, item.node, item.port, metadata);
               }
             }
