@@ -114,6 +114,12 @@
         if (componentName && this.props.library) {
           // Copy ports from library object
           var component = this.getComponentInfo(componentName);
+          if (!component) {
+            return {
+              inports: inports,
+              outports: outports
+            };
+          }
           
           var i, port;
           for (i=0; i<component.outports.length; i++) {
