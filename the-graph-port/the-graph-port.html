@@ -103,11 +103,14 @@
           var processName = process.getAttribute('name');
           var connection = null;
           graph.edges.forEach(function (edge) {
-            if (edge.target === processName + '.' + this.name) {
-              connection = edge;
-            }
-            if (edge.source === processName + '.' + this.name) {
-              connection = edge;
+            if (!this.isOutport()) {
+              if (edge.target === processName + '.' + this.name) {
+                connection = edge;
+              }
+            } else {
+              if (edge.source === processName + '.' + this.name) {
+                connection = edge;
+              }
             }
           }.bind(this));
           return connection;

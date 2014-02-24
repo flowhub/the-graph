@@ -39,7 +39,7 @@
       label: '',
       component: '',
       icon: '',
-      position: '0 0',
+      position: [0, 0],
       zoom: 1,
       pan: {
         x: 0,
@@ -59,7 +59,6 @@
       directionalGestureEnabled: true,
       ready: function () {
         var pos = this.getPosition();
-        this._position = [pos.x, pos.y];
       },
       enteredView: function () {
         // Find graph in parents, since the-graph-export has a process child
@@ -284,7 +283,8 @@
             // New position
             var x = dragStartX + dx;
             var y = dragStartY + dy;
-            this.position = x + " " + y;
+            this.position[0] = x;
+            this.position[1] = y;
 
             // Autopan?
             checkPan.call(this, event);
@@ -422,7 +422,8 @@
         this.component = this.process.component;
         this.name = this.process.name;
         if (this.process.metadata) {
-          this.position = this.process.metadata.x + ' ' + this.process.metadata.y;
+          this.position[0] = this.process.metadata.x;
+          this.position[1] = this.process.metadata.y;
         }
         if (!this.label) {
           this.label = this.name;
@@ -465,11 +466,9 @@
         label.style.left = Math.round(diameter / 2 - label.clientWidth / 2) + 'px';
       },
       getPosition: function () {
-        // return this._position;
-        var position = this.position.split(' ');
         return {
-          x: parseInt(position[0], 10),
-          y: parseInt(position[1], 10)
+          x: this.position[0],
+          y: this.position[1]
         };
       },
       getZoomedPosition: function () {
@@ -485,16 +484,14 @@
         var x = Math.round(position.x / this.snap) * this.snap;
         var y = Math.round(position.y / this.snap) * this.snap;
 
-        this.position = x + ' ' + y;
+        this.position[0] = x;
+        this.position[1] = y;
       },
       nameChanged: function () {
         this.setAttribute('name', this.name);
       },
       positionChanged: function () {
         var position = this.getPosition();
-        this._position[0] = position.x;
-        this._position[1] = position.y;
-
         position = this.getZoomedPosition();
         theGraph.transform(this, position.x + this.bump.x, position.y + this.bump.y);
         this.fire('moved', {

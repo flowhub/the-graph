@@ -67,8 +67,12 @@
 
         // Reference the graph element
         this.$.nav.graph = graphEl;
+        this.fire('graph', this.graph);
       },
       buildInitialLibrary: function () {
+        if (!this.graph.processes) {
+          return;
+        }
         Object.keys(this.graph.processes).forEach(function (id) {
           var node = this.graph.processes[id];
           var component = {

@@ -27,22 +27,10 @@
         this.fire('icon', this.icon);
       },
       inportsChanged: function () {
-        this.inObserver = new ArrayObserver(this.inports, function () {
-          this.fire('inports', this.inports);
-        }.bind(this));
+        this.fire('inports', this.inports);
       },
       outportsChanged: function () {
-        this.outObserver = new ArrayObserver(this.outports, function () {
-          this.fire('outports', this.outports);
-        }.bind(this));
-      },
-      leftView: function () {
-        if (this.inObserver) {
-          this.inObserver.close();
-        }
-        if (this.outObserver) {
-          this.outObserver.close();
-        }
+        this.fire('outports', this.outports);
       }
     });
     
