@@ -138,7 +138,7 @@
             d: path
           }),
           React.DOM.path({
-            ref: "route"
+            ref: "route",
             className: "edge-fg stroke route"+this.props.route,
             d: path
           }),
