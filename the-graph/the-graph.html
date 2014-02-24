@@ -77,10 +77,10 @@
           height: this.height
         });
       },
-      rerender: function () {
+      rerender: function (options) {
         // This is throttled with rAF internally
         if (!this.graphView) { return; }
-        this.graphView.markDirty();
+        this.graphView.markDirty(options);
       },
       addNode: function (id, component, metadata) {
         if (!this.graph) { return; }
@@ -102,6 +102,8 @@
         if (!this.library[definition.name]) {
           // New component, register
           this.library[definition.name] = definition;
+          // So changes are rendered
+          this.rerender({libraryDirty:true});
           return;
         }
         // Update existing
@@ -147,8 +149,8 @@
           });
         });
 
-        // So changes stick
-        this.rerender();
+        // So changes are rendered
+        this.rerender({libraryDirty:true});
       },
       getComponent: function (name) {
         return this.library[name];

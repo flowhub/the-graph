@@ -197,12 +197,13 @@
     },
     dirty: false,
     shouldComponentUpdate: function (nextProps, nextState) {
-      // Only rerender if moved
+      // Only rerender if changed
       return (
         this.dirty ||
         nextProps.icon !== this.props.icon ||
         nextProps.x !== this.props.x || 
-        nextProps.y !== this.props.y
+        nextProps.y !== this.props.y ||
+        nextProps.ports !== this.props.ports
       );
     },
     render: function() {
@@ -219,7 +220,7 @@
       var y = this.props.y;
 
       // Ports
-      var keys, count, index;
+      var keys, count;
       var processKey = this.props.key;
       var app = this.props.app;
       var graph = this.props.graph;
@@ -229,47 +230,48 @@
       var inports = this.props.ports.inports;
       keys = Object.keys(inports);
       count = keys.length;
-      index = 0;
       var inportViews = keys.map(function(key){
         var info = inports[key];
-        info.graph = graph;
-        info.isExport = isExport;
-        // info.y = TheGraph.nodeRadius + (TheGraph.nodeSide / (count+1) * (index+1));
-        info.y = TheGraph.nodeSize / (count+1) * (index+1);
-        info.nodeX = x;
-        info.nodeY = y;
-        info.key = processKey + ".in." + info.label;
-        info.processKey = processKey;
-        info.app = app;
-        info.r = Math.min(4, TheGraph.nodeSide/(count*2));
-        info.isIn = true;
-        // FIXME
-        info.port = {node:processKey, port:info.label};
-        index++;
-        return TheGraph.Port(info);
+        var props = {
+          app: app,
+          graph: graph,
+          key: processKey + ".in." + info.label,
+          label: info.label,
+          processKey: processKey,
+          isIn: true,
+          isExport: isExport,
+          nodeX: x,
+          nodeY: y,
+          x: info.x,
+          y: info.y,
+          port: {node:processKey, port:info.label},
+          route: info.route
+        };
+        return TheGraph.Port(props);
       });
 
       // Outports
       var outports = this.props.ports.outports;
       keys = Object.keys(outports);
       count = keys.length;
-      index = 0;
       var outportViews = keys.map(function(key){
         var info = outports[key];
-        info.graph = graph;
-        info.isExport = isExport;
-        info.y = TheGraph.nodeSize / (count+1) * (index+1);
-        info.nodeX = x;
-        info.nodeY = y;
-        info.key = processKey + ".out." + info.label;
-        info.processKey = processKey;
-        info.app = app;
-        info.r = Math.min(4, TheGraph.nodeSide/(count*2));
-        info.isIn = false;
-        // FIXME
-        info.port = {node:processKey, port:info.label};
-        index++;
-        return TheGraph.Port(info);
+        var props = {
+          app: app,
+          graph: graph,
+          key: processKey + ".out." + info.label,
+          label: info.label,
+          processKey: processKey,
+          isIn: false,
+          isExport: isExport,
+          nodeX: x,
+          nodeY: y,
+          x: info.x,
+          y: info.y,
+          port: {node:processKey, port:info.label},
+          route: info.route
+        };
+        return TheGraph.Port(props);
       });
 
       // Make sure icon exists

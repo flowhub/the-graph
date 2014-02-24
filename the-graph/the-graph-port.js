@@ -112,6 +112,7 @@
         var fontSize = 6 * (30 / (4 * this.props.label.length));
         style = { "font-size": fontSize+"px" };
       }
+      var r = 4;
       return (
         React.DOM.g(
           {
@@ -121,14 +122,14 @@
             className: "port-circle",
             cx: this.props.x,
             cy: this.props.y,
-            r: this.props.r
+            r: r
           }),
           React.DOM.circle({
             ref: "circleSmall",
             className: "port-circle-small fill route"+this.props.route,
             cx: this.props.x,
             cy: this.props.y,
-            r: this.props.r * 5/8
+            r: r * 5/8
           }),
           React.DOM.text({
             className: "port-label",
