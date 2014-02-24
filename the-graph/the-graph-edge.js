@@ -92,6 +92,11 @@
     shouldShowTooltip: function () {
       return true;
     },
+    componentDidUpdate: function (prevProps, prevState) {
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      var c = "edge-fg stroke route"+this.props.route;
+      this.refs.route.getDOMNode().setAttribute("class", c);
+    },
     render: function () {
       var sourceX = this.props.sX;
       var sourceY = this.props.sY;
@@ -133,6 +138,7 @@
             d: path
           }),
           React.DOM.path({
+            ref: "route"
             className: "edge-fg stroke route"+this.props.route,
             d: path
           }),

@@ -102,7 +102,7 @@
       event.relatedTarget.dispatchEvent(dropEvent);      
     },
     componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
       var c = "port-circle-small fill route"+this.props.route;
       this.refs.circleSmall.getDOMNode().setAttribute("class", c);
     },
