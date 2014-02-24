@@ -36,7 +36,12 @@
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
 
-      //this.props.graph.startTransaction('movenode');
+      // Moving a node should only be a single transaction
+      if (this.props.export) {
+        this.props.graph.startTransaction('moveexport');
+      } else {
+        this.props.graph.startTransaction('movenode');
+      }
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -70,7 +75,13 @@
 
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
-      //this.props.graph.endTransaction('movenode');
+
+      // Moving a node should only be a single transaction
+      if (this.props.export) {
+        this.props.graph.endTransaction('moveexport');
+      } else {
+        this.props.graph.endTransaction('movenode');
+      }
     },
     stopPropagation: function (event) {
       // HACK to keep context menu from cancelling preview edge
