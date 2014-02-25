@@ -4,7 +4,7 @@
   var TheGraph = context.TheGraph;
 
   // Const
-  var CURVE = 50;
+  var CURVE = TheGraph.nodeSize;
 
 
   // Edge view
@@ -104,12 +104,20 @@
       var targetY = this.props.tY;
 
       var c1X, c1Y, c2X, c2Y;
-      if (targetX < sourceX+CURVE && Math.abs(targetY-sourceY) > TheGraph.nodeSize) {
-        // Stick out some
-        c1X = sourceX + CURVE;
-        c1Y = sourceY;
-        c2X = targetX - CURVE;
-        c2Y = targetY;
+      if (targetX < sourceX) {
+        if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
+          // Loopback
+          c1X = sourceX + CURVE;
+          c1Y = sourceY - CURVE;
+          c2X = targetX - CURVE;
+          c2Y = targetY - CURVE;
+        } else {
+          // Stick out some
+          c1X = sourceX + CURVE;
+          c1Y = sourceY + (targetY > sourceY ? CURVE : -CURVE);
+          c2X = targetX - CURVE;
+          c2Y = targetY + (targetY > sourceY ? -CURVE : CURVE);
+        }
       } else {
         // Controls halfway between
         c1X = sourceX + (targetX - sourceX)/2;
