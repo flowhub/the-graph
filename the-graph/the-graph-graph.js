@@ -354,7 +354,6 @@
 
         return TheGraph.IIP({
           graph: graph,
-          key: "iip."+iip.to.node+"."+iip.to.port,
           label: label,
           x: tX,
           y: tY
