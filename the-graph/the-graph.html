@@ -142,6 +142,12 @@
         }
         return [this.appView.state.x, this.appView.state.y];
       },
+      getScale: function () {
+        if (!this.appView) { 
+          return 1; 
+        }
+        return this.appView.state.scale;
+      },
       menusChanged: function () {
         // Only if the object itself changes, 
         // otherwise builds menu from reference every time menu shown
