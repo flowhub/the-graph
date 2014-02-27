@@ -1,10 +1,10 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout" touch-action="none">
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}"></the-graph>
+    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}"></the-graph>
   </template>
   <script>
   (function () {
@@ -21,6 +21,7 @@
       plugins: {},
       nofloGraph: null,
       menus: null,
+      autolayout: false,
       created: function () {
         this.menus = {
           edge: {

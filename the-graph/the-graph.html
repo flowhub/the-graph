@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout">
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -33,6 +33,7 @@
       appView: null,
       graphView: null,
       editable: true,
+      autolayout: false,
       created: function () {
         this.library = {};
       },
@@ -64,6 +65,42 @@
       },
       fireChanged: function (event) {
         this.fire("changed", this);
+      },
+      autolayoutChanged: function () {
+        // Only listen to changes that affect layout
+        if (this.autolayout) {
+          this.graph.on('addNode', this.triggerAutolayout.bind(this));
+          this.graph.on('removeNode', this.triggerAutolayout.bind(this));
+          this.graph.on('addInport', this.triggerAutolayout.bind(this));
+          this.graph.on('removeInport', this.triggerAutolayout.bind(this));
+          this.graph.on('addOutport', this.triggerAutolayout.bind(this));
+          this.graph.on('removeOutport', this.triggerAutolayout.bind(this));
+          this.graph.on('addEdge', this.triggerAutolayout.bind(this));
+          this.graph.on('removeEdge', this.triggerAutolayout.bind(this));
+        } else {
+          this.graph.removeListener('addNode', this.triggerAutolayout);
+          this.graph.removeListener('removeNode', this.triggerAutolayout);
+          this.graph.removeListener('addInport', this.triggerAutolayout);
+          this.graph.removeListener('removeInport', this.triggerAutolayout);
+          this.graph.removeListener('addOutport', this.triggerAutolayout);
+          this.graph.removeListener('removeOutport', this.triggerAutolayout);
+          this.graph.removeListener('addEdge', this.triggerAutolayout);
+          this.graph.removeListener('removeEdge', this.triggerAutolayout);
+        }
+      },
+      triggerAutolayout: function (event) {
+        // Call autolayout algo, callback this.applyAutolayout.bind(this)
+      },
+      applyAutolayout: function () {
+        // This is for the journal/undo
+        this.graph.startTransaction("autolayout");
+
+        // Autolayout changes go here, use
+        // this.graph.setNodeMetadata(id, {x:, y:});
+        // this.graph.setInportMetadata(id, {x:, y:});
+        // this.graph.setOutportMetadata(id, {x:, y:});
+
+        this.graph.endTransaction("autolayout");
       },
       widthChanged: function () {
         if (!this.appView) { return; }
