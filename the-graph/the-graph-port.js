@@ -116,7 +116,8 @@
       return (
         React.DOM.g(
           {
-            className: "port arrow"
+            className: "port arrow",
+            title: this.props.label
           },
           React.DOM.circle({
             className: "port-circle",
