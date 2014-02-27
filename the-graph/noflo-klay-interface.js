@@ -1,5 +1,5 @@
-function klayinit () {
-  "use strict";
+//function klayinit () {
+//  "use strict";
 
   Array.prototype.clean = function() {
     for (var i = 0; i < this.length; i++) {
@@ -123,58 +123,24 @@ function klayinit () {
     return kGraph;
   };
 
-  // Encode the original NoFlo graph and annotate it with layout information from
-  // the autolayouted KIELER graph
-  var toNoFlo = function (oGraph, kGraph) {
-    // Update original graph nodes with the new coordinates from KIELER graph
-    var nodes = oGraph.nodes;
-    nodes.map(function (node) {
-      var children = kGraph.children;
-
-      var kNode = children.filter(function (el) {
-        if (el.id === node.id)
-          return el;
-        // TODO: too ugly! we need a recursive method
-        if (el.children) {
-          // We have a child node (subgraph member)
-          var grandchildren = el.children;
-          var foo = grandchildren.filter(function (ell) {
-            if (ell.id === node.id) {
-              // We should add mom's coords to the child
-              node.metadata.x = ell.x + el.x;
-              node.metadata.y = ell.y + el.y;
-              return ell;
-            }
-          })[0];
-          return foo; 
-        }
-      })[0];
-
-      if (kNode) {
-        if (!kNode.children) {
-          node.metadata.x = kNode.x;
-          node.metadata.y = kNode.y;
-        }
-      }
-    });
-    // TODO: update oGraph edges (and ports) as well
-    return oGraph;
-  };
-
   // Main interface for now: apply KLayJS layout algorithm and call the render
-  window.klay = function (graph, render) {
+  var klay = function (graph, render) {
+    // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph);
+    
     // Define some preset options to KLayJS
     var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
                    "layoutHierarchy": true};
-    
+
+    // TODO: send as {option: } when implemented on KLayJS
+    kGraph.properties = options;
+
     $klay.layout({graph: kGraph,
                   success: function (layouted) {
-                    var nofloGraph = toNoFlo(graph, layouted);
-                    render(nofloGraph);
+                    render(layouted);
                   },
                   error: function (error) {
-                    console.log(error);
+                    console.log("$klay.layout error:", error);
                   }});
   };
-}
+//}
