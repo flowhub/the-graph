@@ -121,25 +121,25 @@
             };
           }
           
-          var i, port;
-          for (i=0; i<component.outports.length; i++) {
+          var i, port, len;
+          for (i=0, len=component.outports.length; i<len; i++) {
             port = component.outports[i];
             if (!port.name) { continue; }
             outports[port.name] = {
               label: port.name,
               type: port.type,
               x: TheGraph.nodeSize,
-              y: TheGraph.nodeSize/2
+              y: TheGraph.nodeSize / (len+1) * (i+1)
             };
           }
-          for (i=0; i<component.inports.length; i++) {
+          for (i=0, len=component.inports.length; i<len; i++) {
             port = component.inports[i];
             if (!port.name) { continue; }
             inports[port.name] = {
               label: port.name,
               type: port.type,
               x: 0,
-              y: TheGraph.nodeSize/2
+              y: TheGraph.nodeSize / (len+1) * (i+1)
             };
           }
         }
@@ -252,27 +252,6 @@
       if (this.libraryDirty) {
         this.libraryDirty = false;
         this.portInfo = {};
-        // Calc port positions (needed for nodes and edges)
-        var i, l;
-        for (i=0, l=graph.nodes.length; i<l; i++) {
-          var node = graph.nodes[i];
-          var ports = this.getPorts(node.id, node.component);
-          var j, port, len, keys;
-          keys = Object.keys(ports.inports);
-          len = keys.length;
-          for (j=0; j<len; j++) {
-            port = ports.inports[keys[j]];
-            port.x = 0;
-            port.y = TheGraph.nodeSize / (len+1) * (j+1);
-          }
-          keys = Object.keys(ports.outports);
-          len = keys.length;
-          for (j=0; j<len; j++) {
-            port = ports.outports[keys[j]];
-            port.x = TheGraph.nodeSize;
-            port.y = TheGraph.nodeSize / (len+1) * (j+1);
-          }
-        }
       }
 
       // Nodes
