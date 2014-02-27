@@ -9,7 +9,7 @@
   "dependencies": {
     "polymer": "~0.1.4",
     "font-awesome": "~4.0.3",
-    "react": "~0.9.0-rc1"
+    "react": "~0.9.0"
   },
   "license": "MIT",
   "ignore": [
