@@ -43,6 +43,18 @@
         // Listen for graph changes
         this.graph.on("endTransaction", this.fireChanged.bind(this));
 
+        // Listen for autolayout changes
+        if (this.autolayout) {
+          this.graph.on('addNode', this.triggerAutolayout.bind(this));
+          this.graph.on('removeNode', this.triggerAutolayout.bind(this));
+          this.graph.on('addInport', this.triggerAutolayout.bind(this));
+          this.graph.on('removeInport', this.triggerAutolayout.bind(this));
+          this.graph.on('addOutport', this.triggerAutolayout.bind(this));
+          this.graph.on('removeOutport', this.triggerAutolayout.bind(this));
+          this.graph.on('addEdge', this.triggerAutolayout.bind(this));
+          this.graph.on('removeEdge', this.triggerAutolayout.bind(this));
+        }
+
         if (this.appView) {
           // Remove previous instance
           React.unmountComponentAtNode(this.$.svgcontainer);
@@ -67,6 +79,7 @@
         this.fire("changed", this);
       },
       autolayoutChanged: function () {
+        if (!this.graph) { return; }
         // Only listen to changes that affect layout
         if (this.autolayout) {
           this.graph.on('addNode', this.triggerAutolayout.bind(this));
