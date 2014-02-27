@@ -18,9 +18,9 @@
     },
     componentDidMount: function () {
       // To change port colors
-      this.props.graph.on("changeEdge", this.resetPortRoute);
-      this.props.graph.on("removeEdge", this.resetPortRoute);
-      this.props.graph.on("removeInitial", this.resetPortRoute);
+      // this.props.graph.on("changeEdge", this.resetPortRoute);
+      // this.props.graph.on("removeEdge", this.resetPortRoute);
+      // this.props.graph.on("removeInitial", this.resetPortRoute);
 
       // Listen to noflo graph object's events
       this.props.graph.on("changeNode", this.markDirty);
@@ -190,16 +190,17 @@
       }
       return port;
     },
-    resetPortRoute: function (event) {
-      if (event.from && event.from.node) {
-        var outport = this.getNodeOutport(event.from.node, event.from.port);
-        outport.route = null;
-      }
-      if (event.to && event.to.node) {
-        var inport = this.getNodeInport(event.to.node, event.to.port);
-        inport.route = null;
-      }
-    },
+    // Broke ff?
+    // resetPortRoute: function (event) {
+    //   if (event.from && event.from.node) {
+    //     var outport = this.getNodeOutport(event.from.node, event.from.port);
+    //     outport.route = null;
+    //   }
+    //   if (event.to && event.to.node) {
+    //     var inport = this.getNodeInport(event.to.node, event.to.port);
+    //     inport.route = null;
+    //   }
+    // },
     graphOutports: {},
     getGraphOutport: function (key) {
       var exp = this.graphOutports[key];

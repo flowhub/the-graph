@@ -195,19 +195,19 @@
     shouldShowTooltip: function () {
       return (this.props.app.state.scale < TheGraph.zbpNormal);
     },
-    // dirty: false,
-    // shouldComponentUpdate: function (nextProps, nextState) {
-    //   // Only rerender if changed
-    //   return (
-    //     this.dirty ||
-    //     nextProps.icon !== this.props.icon ||
-    //     nextProps.x !== this.props.x || 
-    //     nextProps.y !== this.props.y ||
-    //     nextProps.ports !== this.props.ports
-    //   );
-    // },
+    dirty: false,
+    shouldComponentUpdate: function (nextProps, nextState) {
+      // Only rerender if changed
+      return (
+        this.dirty ||
+        nextProps.icon !== this.props.icon ||
+        nextProps.x !== this.props.x || 
+        nextProps.y !== this.props.y ||
+        nextProps.ports !== this.props.ports
+      );
+    },
     render: function() {
-      // this.dirty = false;
+      this.dirty = false;
 
       var label = this.props.label;
       var sublabel = this.props.sublabel;
