@@ -127,7 +127,7 @@
           }),
           React.DOM.circle({
             ref: "circleSmall",
-            className: "port-circle-small fill route"+this.props.route,
+            // className: "port-circle-small fill route"+this.props.route,
             cx: this.props.x,
             cy: this.props.y,
             r: r * 5/8

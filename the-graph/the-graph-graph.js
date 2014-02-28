@@ -18,9 +18,9 @@
     },
     componentDidMount: function () {
       // To change port colors
-      // this.props.graph.on("changeEdge", this.resetPortRoute);
-      // this.props.graph.on("removeEdge", this.resetPortRoute);
-      // this.props.graph.on("removeInitial", this.resetPortRoute);
+      this.props.graph.on("changeEdge", this.resetPortRoute);
+      this.props.graph.on("removeEdge", this.resetPortRoute);
+      this.props.graph.on("removeInitial", this.resetPortRoute);
 
       // Listen to noflo graph object's events
       this.props.graph.on("changeNode", this.markDirty);
@@ -190,17 +190,29 @@
       }
       return port;
     },
-    // Broke ff?
-    // resetPortRoute: function (event) {
-    //   if (event.from && event.from.node) {
-    //     var outport = this.getNodeOutport(event.from.node, event.from.port);
-    //     outport.route = null;
-    //   }
-    //   if (event.to && event.to.node) {
-    //     var inport = this.getNodeInport(event.to.node, event.to.port);
-    //     inport.route = null;
-    //   }
-    // },
+    resetPortRoute: function (event) {
+      // Trigger nodes with changed ports to rerender
+      if (event.from && event.from.node) {
+        var fromNode = this.portInfo[event.from.node];
+        if (fromNode) {
+          fromNode.dirty = true;
+          var outport = fromNode.outports[event.from.port];
+          if (outport) {
+            outport.route = null;
+          }
+        }
+      }
+      if (event.to && event.to.node) {
+        var toNode = this.portInfo[event.to.node];
+        if (toNode) {
+          toNode.dirty = true;
+          var inport = toNode.inports[event.to.port];
+          if (inport) {
+            inport.route = null;
+          }
+        }
+      }
+    },
     graphOutports: {},
     getGraphOutport: function (key) {
       var exp = this.graphOutports[key];
@@ -418,7 +430,7 @@
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y
         };
-        edges.push(TheGraph.Edge(expEdge));
+        edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
       });
 
@@ -484,7 +496,7 @@
           tX: expNode.x,
           tY: expNode.y + TheGraph.nodeSize/2
         };
-        edges.push(TheGraph.Edge(expEdge));
+        edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
       });
 

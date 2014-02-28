@@ -195,19 +195,21 @@
     shouldShowTooltip: function () {
       return (this.props.app.state.scale < TheGraph.zbpNormal);
     },
-    dirty: false,
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
       return (
-        this.dirty ||
         nextProps.icon !== this.props.icon ||
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
-        nextProps.ports !== this.props.ports
+        nextProps.ports !== this.props.ports ||
+        nextProps.ports.dirty
       );
     },
     render: function() {
-      this.dirty = false;
+      if (this.props.ports.dirty) {
+        // This tag is set when an edge or iip changes port colors
+        this.props.ports.dirty = false;
+      }
 
       var label = this.props.label;
       var sublabel = this.props.sublabel;
