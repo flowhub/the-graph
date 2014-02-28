@@ -306,7 +306,8 @@
           graph: graph,
           node: node,
           icon: icon,
-          ports: self.getPorts(key, node.component)
+          ports: self.getPorts(key, node.component),
+          onNodeSelection: self.props.onNodeSelection
         });
       });
 
@@ -342,7 +343,8 @@
           tX: target.metadata.x,
           tY: target.metadata.y + targetPort.y,
           label: label,
-          route: route
+          route: route,
+          onEdgeSelection: self.props.onEdgeSelection
         });
       });
 

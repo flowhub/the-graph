@@ -18,13 +18,21 @@
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
 
       // Hover/tap when edge preview is active
-      this.getDOMNode().addEventListener("mouseenter", this.edgeConnectOffer);
+      // this.getDOMNode().addEventListener("mouseenter", this.edgeConnectOffer);
+
+      // Tap to select
+      if (this.props.onNodeSelection) {
+        this.getDOMNode().addEventListener("tap", this.onNodeSelection);
+      }
 
       // Context menu
       this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
       this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
       this.getDOMNode().addEventListener("hold", this.showContext);
+    },
+    onNodeSelection: function (event) {
+      this.props.onNodeSelection(this.props.graph, this.props.key, this.props.process, event);
     },
     onTrackStart: function (event) {
       // Don't drag graph

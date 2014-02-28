@@ -17,11 +17,19 @@
     componentWillMount: function() {
     },
     componentDidMount: function () {
+      // Tap to select
+      if (this.props.onEdgeSelection) {
+        this.getDOMNode().addEventListener("tap", this.onEdgeSelection);
+      }
+
       // Context menu
       this.getDOMNode().addEventListener("pointerdown", this.stopPropagationSecondary);
       this.getDOMNode().addEventListener("pointerup", this.stopPropagationSecondary);
       this.getDOMNode().addEventListener("contextmenu", this.showContext);
       this.getDOMNode().addEventListener("hold", this.showContext);
+    },
+    onEdgeSelection: function (event) {
+      this.props.onEdgeSelection(this.props.graph, this.props.key, this.props.edge, event);
     },
     stopPropagationSecondary: function (event) {
       // HACK to not tap graph

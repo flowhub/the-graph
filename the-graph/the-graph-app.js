@@ -251,7 +251,9 @@
               graph: this.props.graph,
               scale: this.state.scale,
               app: this,
-              library: this.props.library
+              library: this.props.library,
+              onNodeSelection: this.props.onNodeSelection,
+              onEdgeSelection: this.props.onEdgeSelection
             })
           ),
           TheGraph.Tooltip({

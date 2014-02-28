@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout selectedNodes selectedEdges">
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -34,6 +34,8 @@
       graphView: null,
       editable: true,
       autolayout: false,
+      selectedNodes: [],
+      selectedEdges: [],
       created: function () {
         this.library = {};
       },
@@ -69,11 +71,19 @@
             height: this.height,
             library: this.library,
             menus: this.menus,
-            editable: this.editable
+            editable: this.editable,
+            onEdgeSelection: this.onEdgeSelection.bind(this),
+            onNodeSelection: this.onNodeSelection.bind(this)
           }),
           this.$.svgcontainer
         );
         this.graphView = this.appView.refs.graph;
+      },
+      onEdgeSelection: function (graph, itemKey, item, event) {
+        console.log(graph, itemKey, item, event);
+      },
+      onNodeSelection: function (graph, itemKey, item, event) {
+        console.log(graph, itemKey, item, event);
       },
       fireChanged: function (event) {
         this.fire("changed", this);
