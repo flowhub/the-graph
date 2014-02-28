@@ -154,12 +154,22 @@
         if (!this.appView) { return; }
         this.appView.setProps({menus: this.menus});
       },
+      debounceLibraryRefeshTimer: null,
+      debounceLibraryRefesh: function () {
+        // Breaking the "no debounce" rule, this fixes #76 for subgraphs
+        if (this.debounceLibraryRefeshTimer) {
+          clearTimeout(this.debounceLibraryRefeshTimer);
+        }
+        this.debounceLibraryRefeshTimer = setTimeout(function () {
+          this.rerender({libraryDirty:true});
+        }.bind(this), 200);
+      },
       registerComponent: function (definition) {
         if (!this.library[definition.name]) {
           // New component, register
           this.library[definition.name] = definition;
           // So changes are rendered
-          this.rerender({libraryDirty:true});
+          this.debounceLibraryRefesh();
           return;
         }
         // Update existing
@@ -206,7 +216,7 @@
         });
 
         // So changes are rendered
-        this.rerender({libraryDirty:true});
+        this.debounceLibraryRefesh();
       },
       getComponent: function (name) {
         return this.library[name];

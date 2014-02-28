@@ -226,10 +226,12 @@
       var graph = this.props.graph;
       var isExport = (this.props.export !== undefined);
 
+
       // Inports
       var inports = this.props.ports.inports;
       keys = Object.keys(inports);
       count = keys.length;
+      // Make views
       var inportViews = keys.map(function(key){
         var info = inports[key];
         var props = {
