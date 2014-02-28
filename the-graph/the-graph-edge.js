@@ -104,7 +104,7 @@
       var targetY = this.props.tY;
 
       var c1X, c1Y, c2X, c2Y;
-      if (targetX < sourceX) {
+      if (targetX-5 < sourceX) {
         if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
           // Loopback
           c1X = sourceX + CURVE;

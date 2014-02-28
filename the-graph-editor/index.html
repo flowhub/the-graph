@@ -52,7 +52,7 @@
     </div>
     <script type="text/javascript">
       Polymer.veiledElements = ["the-graph-editor"];
-      window.addEventListener('WebComponentsReady', function() {
+      window.addEventListener('polymer-ready', function() {
         "use strict";
 
         // Remove loading message
@@ -64,22 +64,25 @@
           var loading = document.getElementById("loading");
           loading.parentNode.removeChild(loading);
           // Load graph
-          var editors = document.getElementsByTagName('the-graph-editor');
+          var editor = document.getElementById('editor');
           var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
-          editors[0].graph = graph;
-          // Debug
-          window.g = editors[0];
+          editor.graph = graph;
 
           // Simulate a library update
           setTimeout(function () {
             console.log('updating');
-            var component = JSON.parse(JSON.stringify(editors[0].getComponent('core/Split')));
+            var originalComponent = editor.getComponent('core/Split');
+            if (!originalComponent) {
+              console.warn("Didn't find component. Something is amiss.");
+              return;
+            }
+            var component = JSON.parse(JSON.stringify(originalComponent));
             component.icon = 'github';
             component.inports.push({
               name: 'foo',
               type: 'boolean'
             });
-            editors[0].registerComponent(component);
+            editor.registerComponent(component);
           }, 1000);
         };
         var body = document.querySelector('body');
