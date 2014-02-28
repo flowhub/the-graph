@@ -8,7 +8,7 @@
 
   TheGraph.Tooltip = React.createClass({
     componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
       if (prevProps.visible != this.props.visible) {
         var c = "tooltip" + (this.props.visible ? "" : " hidden");
         this.getDOMNode().setAttribute("class", c);
@@ -18,7 +18,7 @@
       return (
         React.DOM.g(
           {
-            className: "tooltip" + (this.props.visible ? "" : " hidden"),
+            // className: "tooltip" + (this.props.visible ? "" : " hidden"),  // See componentDidUpdate
             transform: "translate("+this.props.x+","+this.props.y+")",
           },
           React.DOM.rect({

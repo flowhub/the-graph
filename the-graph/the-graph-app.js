@@ -107,6 +107,9 @@
       });
     },
     onTrackEnd: function (event) {
+      // Don't click app (unselect)
+      event.stopPropagation();
+
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
@@ -162,6 +165,11 @@
     componentDidMount: function () {
       var domNode = this.getDOMNode();
 
+      // Unselect edges and nodes
+      if (this.props.onNodeSelection) {
+        domNode.addEventListener("click", this.unselectAll);
+      }
+
       // Pointer gesture events for pan/zoom
       domNode.addEventListener("trackstart", this.onTrackStart);
       domNode.addEventListener("pinch", this.onPinch);
@@ -192,6 +200,11 @@
       setTimeout(function () {
         this.renderGraph();
       }.bind(this), 500);
+    },
+    unselectAll: function (event) {
+      // No arguments = clear selection
+      this.props.onNodeSelection();
+      this.props.onEdgeSelection();
     },
     renderGraph: function () {
       this.refs.graph.markDirty();

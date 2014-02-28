@@ -13,7 +13,9 @@
         graph: this.props.graph,
         edgePreview: null,
         edgePreviewX: 0,
-        edgePreviewY: 0
+        edgePreviewY: 0,
+        selectedNodes: [],
+        selectedEdges: []
       };
     },
     componentDidMount: function () {
@@ -245,6 +247,13 @@
       }
       return exp;
     },
+    setSelection: function (nodes, edges) {
+      this.setState({
+        selectedNodes: nodes,
+        selectedEdges: edges
+      });
+      this.markDirty();
+    },
     dirty: false,
     libraryDirty: false,
     markDirty: function (event) {
@@ -261,9 +270,7 @@
         return;
       }
       this.dirty = true;
-      this.setState({
-        graph: this.state.graph
-      });
+      this.setState({});
     },
     shouldComponentUpdate: function () {
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
@@ -307,7 +314,8 @@
           node: node,
           icon: icon,
           ports: self.getPorts(key, node.component),
-          onNodeSelection: self.props.onNodeSelection
+          onNodeSelection: self.props.onNodeSelection,
+          selected: (self.state.selectedNodes.indexOf(node) !== -1)
         });
       });
 
@@ -344,7 +352,8 @@
           tY: target.metadata.y + targetPort.y,
           label: label,
           route: route,
-          onEdgeSelection: self.props.onEdgeSelection
+          onEdgeSelection: self.props.onEdgeSelection,
+          selected: (self.state.selectedEdges.indexOf(edge) !== -1)
         });
       });
 

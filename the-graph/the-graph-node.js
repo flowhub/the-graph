@@ -17,12 +17,10 @@
       // Dragging
       this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
 
-      // Hover/tap when edge preview is active
-      // this.getDOMNode().addEventListener("mouseenter", this.edgeConnectOffer);
-
       // Tap to select
       if (this.props.onNodeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onNodeSelection);
+        // Needs to be click (not tap) to get event.shiftKey
+        this.getDOMNode().addEventListener("click", this.onNodeSelection);
       }
 
       // Context menu
@@ -32,7 +30,10 @@
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
     onNodeSelection: function (event) {
-      this.props.onNodeSelection(this.props.graph, this.props.key, this.props.process, event);
+      // Don't click app
+      event.stopPropagation();
+
+      this.props.onNodeSelection(this.props.key, this.props.node, event);
     },
     onTrackStart: function (event) {
       // Don't drag graph
@@ -189,7 +190,7 @@
         menu: menu,
         icon: this.props.icon,
         ports: ports,
-        process: this.props.process,
+        process: this.props.node,
         processKey: processKey,
         x: x,
         y: y,
@@ -210,8 +211,14 @@
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
         nextProps.ports !== this.props.ports ||
+        nextProps.selected !== this.props.selected ||
         nextProps.ports.dirty
       );
+    },
+    componentDidUpdate: function (prevProps, prevState) {
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      var groupClass = "node drag"+(this.props.selected ? " selected" : "");
+      this.getDOMNode().setAttribute("class", groupClass);
     },
     render: function() {
       if (this.props.ports.dirty) {
@@ -293,7 +300,7 @@
       return (
         React.DOM.g(
           {
-            className: "node drag",
+            className: "node drag", // See componentDidUpdate
             name: this.props.key,
             key: this.props.key,
             title: label,

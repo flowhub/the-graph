@@ -79,11 +79,59 @@
         );
         this.graphView = this.appView.refs.graph;
       },
-      onEdgeSelection: function (graph, itemKey, item, event) {
-        console.log(graph, itemKey, item, event);
+      onEdgeSelection: function (itemKey, item, event) {
+        if (itemKey === undefined) {
+          if (this.selectedEdges.length>0) {
+            this.selectedEdges = [];
+          }
+          return;
+        }
+        if (event.shiftKey) {
+          var index = this.selectedEdges.indexOf(item);
+          var isSelected = (index !== -1);
+          // Easier to test changes in React
+          var shallowClone = this.selectedEdges.slice();
+          if (isSelected) {
+            shallowClone.splice(index, 1);
+            this.selectedEdges = shallowClone;
+          } else {
+            shallowClone.push(item);
+            this.selectedEdges = shallowClone;
+          }
+        } else {
+          this.selectedEdges = [item];
+        }
       },
-      onNodeSelection: function (graph, itemKey, item, event) {
-        console.log(graph, itemKey, item, event);
+      onNodeSelection: function (itemKey, item, event) {
+        if (itemKey === undefined) {
+          if (this.selectedNodes.length>0) {
+            this.selectedNodes = [];
+          }
+          return;
+        }
+        if (event.shiftKey) {
+          var index = this.selectedNodes.indexOf(item);
+          var isSelected = (index !== -1);
+          // Easier to test changes in React
+          var shallowClone = this.selectedNodes.slice();
+          if (isSelected) {
+            shallowClone.splice(index, 1);
+            this.selectedNodes = shallowClone;
+          } else {
+            shallowClone.push(item);
+            this.selectedNodes = shallowClone;
+          }
+        } else {
+          this.selectedNodes = [item];
+        }
+      },
+      selectedNodesChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setSelection(this.selectedNodes, this.selectedEdges);
+      },
+      selectedEdgesChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setSelection(this.selectedNodes, this.selectedEdges);
       },
       fireChanged: function (event) {
         this.fire("changed", this);

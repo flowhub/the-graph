@@ -17,9 +17,10 @@
     componentWillMount: function() {
     },
     componentDidMount: function () {
-      // Tap to select
+
       if (this.props.onEdgeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onEdgeSelection);
+        // Needs to be click (not tap) to get event.shiftKey
+        this.getDOMNode().addEventListener("click", this.onEdgeSelection);
       }
 
       // Context menu
@@ -29,7 +30,9 @@
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
     onEdgeSelection: function (event) {
-      this.props.onEdgeSelection(this.props.graph, this.props.key, this.props.edge, event);
+      // Don't click app
+      event.stopPropagation();
+      this.props.onEdgeSelection(this.props.key, this.props.edge, event);
     },
     stopPropagationSecondary: function (event) {
       // HACK to not tap graph
@@ -91,6 +94,7 @@
         nextProps.sY !== this.props.sY ||
         nextProps.tX !== this.props.tX || 
         nextProps.tY !== this.props.tY ||
+        nextProps.selected !== this.props.selected ||
         nextProps.route !== this.props.route
       );
     },
@@ -102,8 +106,10 @@
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "edge-fg stroke route"+this.props.route;
-      this.refs.route.getDOMNode().setAttribute("class", c);
+      var groupClass = "edge"+(this.props.selected ? " selected" : "");
+      this.getDOMNode().setAttribute("class", groupClass);
+      var fgClass = "edge-fg stroke route"+this.props.route;
+      this.refs.route.getDOMNode().setAttribute("class", fgClass);
     },
     render: function () {
       var sourceX = this.props.sX;
@@ -146,7 +152,7 @@
       return (
         React.DOM.g(
           {
-            className: "edge route",
+            className: "edge",  // See componentDidUpdate
             title: this.props.label
           },
           React.DOM.path({
@@ -155,7 +161,7 @@
           }),
           React.DOM.path({
             ref: "route",
-            className: "edge-fg stroke route"+this.props.route,
+            className: "edge-fg stroke route"+this.props.route,  // See componentDidUpdate
             d: path
           }),
           React.DOM.path({
