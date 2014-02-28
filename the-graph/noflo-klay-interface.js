@@ -132,10 +132,8 @@
     var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
                    "layoutHierarchy": true};
 
-    // TODO: send as {option: } when implemented on KLayJS
-    kGraph.properties = options;
-
     $klay.layout({graph: kGraph,
+                  options: options,
                   success: function (layouted) {
                     render(layouted);
                   },

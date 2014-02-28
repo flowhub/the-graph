@@ -106,11 +106,13 @@
       },
       triggerAutolayout: function (event) {
         if (klay !== undefined) {
-          klay(this.graph, this.applyAutolayout.bind(this));
+          setTimeout(function () {
+            klay(this.graph, this.applyAutolayout.bind(this));
+          }.bind(this), 50);
         }
       },
       applyAutolayout: function (layoutedKGraph) {
-        //this.graph.startTransaction("autolayout");
+        this.graph.startTransaction("autolayout");
   
         // Update original graph nodes with the new coordinates from KIELER graph
         var nodes = this.graph.nodes;
@@ -127,7 +129,7 @@
           }
         }
 
-        //this.graph.endTransaction("autolayout");
+        this.graph.endTransaction("autolayout");
       },
       widthChanged: function () {
         if (!this.appView) { return; }
@@ -224,7 +226,7 @@
       },
       getComponent: function (name) {
         return this.library[name];
-      },
+  },
       toJSON: function () {
         if (!this.graph) { return {}; }
         return this.graph.toJSON();
