@@ -9,7 +9,8 @@
   "dependencies": {
     "polymer": "~0.2.0",
     "font-awesome": "~4.0.3",
-    "react": "~0.9.0"
+    "react": "~0.9.0",
+    "klay-js": "~0.0.1"
   },
   "license": "MIT",
   "ignore": [

@@ -5,6 +5,8 @@
     <div id="svgcontainer"></div>
   </template>
 
+  <script type="text/javascript" src="./noflo-klay-interface.js"></script>
+  
   <script type="text/javascript" src="./the-graph.js"></script>
   <script type="text/javascript" src="./font-awesome-unicode-map.js"></script>
   <script type="text/javascript" src="./the-graph-app.js"></script>
@@ -160,16 +162,29 @@
         }
       },
       triggerAutolayout: function (event) {
-        // Call autolayout algo, callback this.applyAutolayout.bind(this)
+        if (klay !== undefined) {
+          setTimeout(function () {
+            window.klay(this.graph, this.applyAutolayout.bind(this));
+          }.bind(this), 5);
+        }
       },
-      applyAutolayout: function () {
-        // This is for the journal/undo
+      applyAutolayout: function (layoutedKGraph) {
         this.graph.startTransaction("autolayout");
-
-        // Autolayout changes go here, use
-        // this.graph.setNodeMetadata(id, {x:, y:});
-        // this.graph.setInportMetadata(id, {x:, y:});
-        // this.graph.setOutportMetadata(id, {x:, y:});
+  
+        // Update original graph nodes with the new coordinates from KIELER graph
+        var nodes = this.graph.nodes;
+        var children = layoutedKGraph.children.slice();
+  
+        for (var i in nodes) {
+          var node = nodes[i];
+          for (var j in children) {
+            var child = children[j];
+            if (child.id === node.id) {
+              this.graph.setNodeMetadata(node.id, {x: child.x,
+                                                   y: child.y});
+            }
+          }
+        }
 
         this.graph.endTransaction("autolayout");
       },
