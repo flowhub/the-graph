@@ -37,6 +37,10 @@
       if (this.props.isExport) {
         return;
       }
+      // Click on label, pass context menu to node
+      if (event && (event.target === this.refs.label.getDOMNode())) {
+        return;
+      }
       // Don't show native context menu
       event.preventDefault();
 
@@ -133,6 +137,7 @@
             r: r * 5/8
           }),
           React.DOM.text({
+            ref: "label",
             className: "port-label",
             x: this.props.x + (this.props.isIn ? 5 : -5),
             y: this.props.y,
