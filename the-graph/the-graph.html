@@ -164,7 +164,8 @@
       triggerAutolayout: function (event) {
         if (klay !== undefined) {
           setTimeout(function () {
-            window.klay(this.graph, this.applyAutolayout.bind(this));
+            var portInfo = this.graphView ? this.graphView.portInfo : null;
+            window.klay(this.graph, portInfo, this.applyAutolayout.bind(this));
           }.bind(this), 5);
         }
       },
@@ -172,20 +173,36 @@
         this.graph.startTransaction("autolayout");
   
         // Update original graph nodes with the new coordinates from KIELER graph
-        var nodes = this.graph.nodes;
         var children = layoutedKGraph.children.slice();
-  
-        for (var i in nodes) {
-          var node = nodes[i];
-          for (var j in children) {
-            var child = children[j];
-            if (child.id === node.id) {
-              this.graph.setNodeMetadata(node.id, {x: child.x,
-                                                   y: child.y});
+
+        var i, len;
+        for (i=0, len = children.length; i<len; i++) {
+          var klayNode = children[i];
+          var nofloNode = this.graph.getNode(klayNode.id);
+          if (nofloNode) {
+            this.graph.setNodeMetadata(klayNode.id, {
+              x: klayNode.x,
+              y: klayNode.y
+            });
+          } else {
+            // Find inport or outport
+            var idSplit = klayNode.id.split(":::");
+            var expDirection = idSplit[0];
+            var expKey = idSplit[1];
+            if (expDirection==="inport" && this.graph.inports[expKey]) {
+              this.graph.setInportMetadata(expKey, {
+                x: klayNode.x,
+                y: klayNode.y
+              });
+            } else if (expDirection==="outport" && this.graph.outports[expKey]) {
+              this.graph.setOutportMetadata(expKey, {
+                x: klayNode.x,
+                y: klayNode.y
+              });
             }
           }
         }
-
+  
         this.graph.endTransaction("autolayout");
       },
       widthChanged: function () {
