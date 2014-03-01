@@ -130,7 +130,8 @@
     
     // Define some preset options to KLayJS
     var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
-                   "layoutHierarchy": true};
+                   "layoutHierarchy": true,
+                   "spacing": 50};
 
     $klay.layout({graph: kGraph,
                   options: options,

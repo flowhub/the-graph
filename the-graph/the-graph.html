@@ -36,7 +36,7 @@
       appView: null,
       graphView: null,
       editable: true,
-      autolayout: true,
+      autolayout: false,
       created: function () {
         this.library = {};
       },
@@ -48,6 +48,7 @@
 
         // Listen for autolayout changes
         if (this.autolayout) {
+          this.graph.on('applyAutolayout', this.triggerAutolayout.bind(this))
           this.graph.on('addNode', this.triggerAutolayout.bind(this));
           this.graph.on('removeNode', this.triggerAutolayout.bind(this));
           this.graph.on('addInport', this.triggerAutolayout.bind(this));
@@ -108,7 +109,7 @@
         if (klay !== undefined) {
           setTimeout(function () {
             klay(this.graph, this.applyAutolayout.bind(this));
-          }.bind(this), 50);
+          }.bind(this), 5);
         }
       },
       applyAutolayout: function (layoutedKGraph) {
