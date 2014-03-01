@@ -106,7 +106,7 @@
       triggerAutolayout: function (event) {
         if (klay !== undefined) {
           setTimeout(function () {
-            klay(this.graph, this.applyAutolayout.bind(this));
+            window.klay(this.graph, this.applyAutolayout.bind(this));
           }.bind(this), 5);
         }
       },

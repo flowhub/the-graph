@@ -1,9 +1,10 @@
 //function klayinit () {
-//  "use strict";
+(function () {
+  "use strict";
 
   Array.prototype.clean = function() {
     for (var i = 0; i < this.length; i++) {
-      if (this[i] == null) {         
+      if (this[i] === null) {         
         this.splice(i, 1);
         i--;
       }
@@ -62,8 +63,8 @@
         ports.push(port);
       }
 
-      var ports = kGraph.children[idx[target]].ports;
-      var port = {id: target + '_' + targetPort, 
+      ports = kGraph.children[idx[target]].ports;
+      port = {id: target + '_' + targetPort, 
                   width: 10, 
                   height: 10, 
                   properties: {'de.cau.cs.kieler.portSide': 'WEST'}};
@@ -124,7 +125,7 @@
   };
 
   // Main interface for now: apply KLayJS layout algorithm and call the render
-  var klay = function (graph, render) {
+  window.klay = function (graph, render) {
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph);
     
@@ -142,4 +143,4 @@
                     console.log("$klay.layout error:", error);
                   }});
   };
-//}
+})();
