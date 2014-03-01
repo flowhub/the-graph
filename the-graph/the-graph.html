@@ -1,7 +1,6 @@
 <polymer-element name="the-graph" attributes="graph menus library width height autolayout">
 
   <template>
-
     <link rel="stylesheet" href="./the-graph-svg.css">
     <div id="svgcontainer"></div>
   </template>
@@ -48,7 +47,6 @@
 
         // Listen for autolayout changes
         if (this.autolayout) {
-          this.graph.on('applyAutolayout', this.triggerAutolayout.bind(this))
           this.graph.on('addNode', this.triggerAutolayout.bind(this));
           this.graph.on('removeNode', this.triggerAutolayout.bind(this));
           this.graph.on('addInport', this.triggerAutolayout.bind(this));
@@ -227,7 +225,7 @@
       },
       getComponent: function (name) {
         return this.library[name];
-  },
+      },
       toJSON: function () {
         if (!this.graph) { return {}; }
         return this.graph.toJSON();
