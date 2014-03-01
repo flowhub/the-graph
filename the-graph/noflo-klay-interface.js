@@ -26,8 +26,8 @@
       kGraph.children.push({id: node.id, 
                             labels: [{text: node.metadata.label}],
                             // Math.max(72, 8*node.metadata.label.length),
-                            width: 92, 
-                            height: 72,
+                            width: 72, 
+                            height: 108,
                             ports: []
                            });
       idx[node.id] = countIdx++;
@@ -132,7 +132,7 @@
     // Define some preset options to KLayJS
     var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
                    "layoutHierarchy": true,
-                   "spacing": 50};
+                   "spacing": 20};
 
     $klay.layout({graph: kGraph,
                   options: options,

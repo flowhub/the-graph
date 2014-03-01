@@ -40,12 +40,18 @@
       the-graph-editor {
         background-color: transparent;
       }
+      #autolayout {
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
     </style>
 
   </head>
   <body>
     <!--<the-pointer-trail listento="html"></the-pointer-trail>-->
-    <the-graph-editor id="editor" width="800" height="600" grid="72" snap="36" autolayout></the-graph-editor>
+    <the-graph-editor id="editor" width="800" height="600" grid="72" snap="36"></the-graph-editor>
+    <button id="autolayout">autolayout</button>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
       <div id="loading-message">loading custom elements...</div>
@@ -84,6 +90,11 @@
             });
             editor.registerComponent(component);
           }, 1000);
+
+          // Autolayout button
+          document.getElementById("autolayout").addEventListener("click", function () {
+            editor.triggerAutolayout();
+          });
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
