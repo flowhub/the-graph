@@ -86,6 +86,7 @@
           if (this.selectedEdges.length>0) {
             this.selectedEdges = [];
           }
+          this.fire('edges', this.selectedEdges);
           return;
         }
         if (toggle) {
@@ -102,12 +103,14 @@
         } else {
           this.selectedEdges = [item];
         }
+        this.fire('edges', this.selectedEdges);
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
           if (this.selectedNodes.length>0) {
             this.selectedNodes = [];
           }
+          this.fire('nodes', this.selectedNodes);
           return;
         }
         if (toggle) {
@@ -124,6 +127,7 @@
         } else {
           this.selectedNodes = [item];
         }
+        this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
         if (!this.graphView) { return; }
