@@ -5,54 +5,9 @@
 
 
   TheGraph.NodeMenuPort = React.createClass({
-    // mixins: [
-    //   TheGraph.mixins.SavePointer
-    // ],
     componentDidMount: function () {
       this.getDOMNode().addEventListener("tap", this.edgeStart);
-
-      // // Show context menu
-      // this.getDOMNode().addEventListener("contextmenu", this.showContext);
-      // this.getDOMNode().addEventListener("hold", this.showContext);
     },
-    // showContext: function (event) {
-    //   // Don't show native context menu
-    //   event.preventDefault();
-
-    //   // Don't tap graph on hold event
-    //   event.stopPropagation();
-    //   if (event.preventTap) { event.preventTap(); }
-
-    //   // Get mouse position
-    //   var x = event.clientX;
-    //   var y = event.clientY;
-    //   if (x === undefined) {
-    //     x = this.pointerX;
-    //     y = this.pointerY;
-    //   }
-
-    //   var contextEvent = new CustomEvent('the-graph-context-show', { 
-    //     detail: {
-    //       element: this,
-    //       x: x,
-    //       y: y
-    //     },
-    //     bubbles: true
-    //   });
-    //   this.getDOMNode().dispatchEvent(contextEvent);
-    // },
-    // getContext: function (x, y) {
-    //   return TheGraph.PortMenu({
-    //     graph: this.props.graph,
-    //     isIn: this.props.isIn,
-    //     processKey: this.props.processKey,
-    //     portKey: this.props.label,
-    //     portX: this.props.nodeX + this.props.x,
-    //     portY: this.props.nodeY + this.props.y,
-    //     x: x,
-    //     y: y
-    //   });
-    // },
     edgeStart: function (event) {
       // Don't tap graph
       event.stopPropagation();
@@ -69,6 +24,8 @@
       this.getDOMNode().dispatchEvent(edgeStartEvent);
     },
     render: function() {
+      var labelLen = this.props.label.length;
+      var bgWidth = (labelLen>12 ? labelLen*8+40 : 120);
       return (
         React.DOM.g(
           {
@@ -78,9 +35,9 @@
             className: "context-port-bg",
             rx: TheGraph.nodeRadius,
             ry: TheGraph.nodeRadius,
-            x: this.props.x + (this.props.isIn ? -120 : 0),
+            x: this.props.x + (this.props.isIn ? -bgWidth : 0),
             y: this.props.y - TheGraph.contextPortSize/2,
-            width: 120,
+            width: bgWidth,
             height: TheGraph.contextPortSize-1
           }),
           React.DOM.circle({
