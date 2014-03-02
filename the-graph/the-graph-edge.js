@@ -33,7 +33,7 @@
       // Don't click app
       event.stopPropagation();
 
-      var toggle = (TheGraph.shiftKeyPressed || event.pointerType==="touch");
+      var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
       this.props.onEdgeSelection(this.props.key, this.props.edge, toggle);
     },
     stopPropagationSecondary: function (event) {

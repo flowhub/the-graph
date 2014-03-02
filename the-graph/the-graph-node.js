@@ -34,7 +34,7 @@
       // Don't tap app (unselect)
       event.stopPropagation();
 
-      var toggle = (TheGraph.shiftKeyPressed || event.pointerType==="touch");
+      var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
       this.props.onNodeSelection(this.props.key, this.props.node, toggle);
     },
     onTrackStart: function (event) {
