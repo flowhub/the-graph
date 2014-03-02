@@ -3,8 +3,9 @@
 
   var TheGraph = context.TheGraph;
 
-  // Polymer monkeypatch
+  // PointerGestures monkeypatch
   window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
+  window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
 
 
   // Node view
