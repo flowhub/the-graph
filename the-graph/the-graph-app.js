@@ -199,7 +199,7 @@
 
       // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       document.addEventListener('keydown', function (event) {
-        if (event.metaKey || event.controlKey) { 
+        if (event.metaKey || event.ctrlKey) { 
           TheGraph.metaKeyPressed = true; 
         }
       });
