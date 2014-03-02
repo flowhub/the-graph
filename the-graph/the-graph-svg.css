@@ -55,9 +55,10 @@ svg {
 .node-bg {
   opacity: 0;
 }
-.node.selected .node-bg {
-  opacity: 1;
-  fill: red;
+.node.selected .node-rect {
+  fill: hsla(0, 100%, 10%, 0.75);
+  stroke: hsl(0, 100%, 50%);
+  stroke-width: 4px;
 }
 
 path {

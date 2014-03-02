@@ -20,7 +20,7 @@
       // Tap to select
       if (this.props.onNodeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        this.getDOMNode().addEventListener("click", this.onNodeSelection);
+        this.getDOMNode().addEventListener("tap", this.onNodeSelection);
       }
 
       // Context menu
@@ -30,14 +30,18 @@
       this.getDOMNode().addEventListener("hold", this.showContext);
     },
     onNodeSelection: function (event) {
-      // Don't click app
+      // Don't tap app (unselect)
       event.stopPropagation();
 
-      this.props.onNodeSelection(this.props.key, this.props.node, event);
+      var toggle = (TheGraph.shiftKeyPressed || event.pointerType==="touch");
+      this.props.onNodeSelection(this.props.key, this.props.node, toggle);
     },
     onTrackStart: function (event) {
       // Don't drag graph
       event.stopPropagation();
+
+      // Don't change selection
+      event.preventTap();
 
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }

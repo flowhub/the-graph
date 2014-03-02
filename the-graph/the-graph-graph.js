@@ -247,9 +247,14 @@
       }
       return exp;
     },
-    setSelection: function (nodes, edges) {
+    setSelectedNodes: function (nodes) {
       this.setState({
-        selectedNodes: nodes,
+        selectedNodes: nodes
+      });
+      this.markDirty();
+    },
+    setSelectedEdges: function (edges) {
+      this.setState({
         selectedEdges: edges
       });
       this.markDirty();

@@ -81,17 +81,16 @@
         );
         this.graphView = this.appView.refs.graph;
       },
-      onEdgeSelection: function (itemKey, item, event) {
+      onEdgeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
           if (this.selectedEdges.length>0) {
             this.selectedEdges = [];
           }
           return;
         }
-        if (event.shiftKey) {
+        if (toggle) {
           var index = this.selectedEdges.indexOf(item);
           var isSelected = (index !== -1);
-          // Easier to test changes in React
           var shallowClone = this.selectedEdges.slice();
           if (isSelected) {
             shallowClone.splice(index, 1);
@@ -104,17 +103,16 @@
           this.selectedEdges = [item];
         }
       },
-      onNodeSelection: function (itemKey, item, event) {
+      onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
           if (this.selectedNodes.length>0) {
             this.selectedNodes = [];
           }
           return;
         }
-        if (event.shiftKey) {
+        if (toggle) {
           var index = this.selectedNodes.indexOf(item);
           var isSelected = (index !== -1);
-          // Easier to test changes in React
           var shallowClone = this.selectedNodes.slice();
           if (isSelected) {
             shallowClone.splice(index, 1);
@@ -129,11 +127,11 @@
       },
       selectedNodesChanged: function () {
         if (!this.graphView) { return; }
-        this.graphView.setSelection(this.selectedNodes, this.selectedEdges);
+        this.graphView.setSelectedNodes(this.selectedNodes);
       },
       selectedEdgesChanged: function () {
         if (!this.graphView) { return; }
-        this.graphView.setSelection(this.selectedNodes, this.selectedEdges);
+        this.graphView.setSelectedEdges(this.selectedEdges);
       },
       fireChanged: function (event) {
         this.fire("changed", this);
@@ -171,7 +169,7 @@
       },
       applyAutolayout: function (layoutedKGraph) {
         this.graph.startTransaction("autolayout");
-  
+
         // Update original graph nodes with the new coordinates from KIELER graph
         var children = layoutedKGraph.children.slice();
 
@@ -181,8 +179,8 @@
           var nofloNode = this.graph.getNode(klayNode.id);
           if (nofloNode) {
             this.graph.setNodeMetadata(klayNode.id, {
-              x: klayNode.x,
-              y: klayNode.y
+              x: Math.round(klayNode.x),
+              y: Math.round(klayNode.y)
             });
           } else {
             // Find inport or outport
@@ -191,17 +189,19 @@
             var expKey = idSplit[1];
             if (expDirection==="inport" && this.graph.inports[expKey]) {
               this.graph.setInportMetadata(expKey, {
-                x: klayNode.x,
-                y: klayNode.y
+                x: Math.round(klayNode.x),
+                y: Math.round(klayNode.y)
               });
             } else if (expDirection==="outport" && this.graph.outports[expKey]) {
               this.graph.setOutportMetadata(expKey, {
-                x: klayNode.x,
-                y: klayNode.y
+                x: Math.round(klayNode.x),
+                y: Math.round(klayNode.y)
               });
             }
           }
         }
+
+        // TODO edge bends
   
         this.graph.endTransaction("autolayout");
       },

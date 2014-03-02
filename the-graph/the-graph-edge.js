@@ -20,7 +20,7 @@
 
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        this.getDOMNode().addEventListener("click", this.onEdgeSelection);
+        this.getDOMNode().addEventListener("tap", this.onEdgeSelection);
       }
 
       // Context menu
@@ -32,7 +32,9 @@
     onEdgeSelection: function (event) {
       // Don't click app
       event.stopPropagation();
-      this.props.onEdgeSelection(this.props.key, this.props.edge, event);
+
+      var toggle = (TheGraph.shiftKeyPressed || event.pointerType==="touch");
+      this.props.onEdgeSelection(this.props.key, this.props.edge, toggle);
     },
     stopPropagationSecondary: function (event) {
       // HACK to not tap graph

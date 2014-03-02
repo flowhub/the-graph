@@ -205,6 +205,10 @@
 
   // Main interface for now: apply KLayJS layout algorithm and call the render
   window.klay = function (graph, portInfo, render) {
+    if (!$klay) {
+      console.warn("klay didn't load, gwtwtf");
+      return;
+    }
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph, portInfo);
     

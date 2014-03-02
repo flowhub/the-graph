@@ -97,6 +97,7 @@
       });
     },
     onTrackStart: function (event) {
+      event.preventTap();
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
     },
@@ -167,7 +168,7 @@
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
-        domNode.addEventListener("click", this.unselectAll);
+        domNode.addEventListener("tap", this.unselectAll);
       }
 
       // Pointer gesture events for pan/zoom
@@ -195,6 +196,18 @@
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
+
+      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      document.addEventListener('keydown', function (event) {
+        if (event.shiftKey) { 
+          TheGraph.shiftKeyPressed = true; 
+        }
+      });
+      document.addEventListener('keyup', function (event) {
+        if (TheGraph.shiftKeyPressed) { 
+          TheGraph.shiftKeyPressed = false; 
+        }
+      });
 
       // Rerender graph once to fix edges
       setTimeout(function () {
