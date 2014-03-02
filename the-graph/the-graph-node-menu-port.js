@@ -93,7 +93,7 @@
             className: "context-port-label fill route"+this.props.route,
             x: this.props.x + (this.props.isIn ? -20 : 20),
             y: this.props.y,
-            children: this.props.label
+            children: this.props.label.replace(/(.*)\/(.*)(_.*)\.(.*)/, '$2.$4')
           })
         )
       );
