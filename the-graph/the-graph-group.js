@@ -7,23 +7,61 @@
   // Group view
 
   TheGraph.Group = React.createClass({
+    mixins: [
+      TheGraph.mixins.SavePointer
+    ],
+    componentDidMount: function () {
+      var label = this.refs.label.getDOMNode();
+
+      // Move group
+      label.addEventListener("trackstart", this.onTrackStart);
+
+      // Context menu
+      if (this.props.showContext) {
+        this.getDOMNode().addEventListener("contextmenu", this.showContext);
+        this.getDOMNode().addEventListener("hold", this.showContext);
+      }
+    },
+    showContext: function (event) {
+      // Don't show native context menu
+      event.preventDefault();
+      
+      // Don't tap graph on hold event
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
+
+      // Get mouse position
+      var x = event.clientX;
+      var y = event.clientY;
+      if (x === undefined) {
+        x = this.pointerX;
+        y = this.pointerY;
+      }
+
+      // App.showContext
+      this.props.showContext({
+        element: this,
+        type: "group",
+        x: x,
+        y: y,
+        graph: this.props.graph,
+        itemKey: this.props.label,
+        item: this.props.item
+      });
+    },
+    getContext: function (menu, options) {
+      return TheGraph.Menu({
+        menu: menu,
+        options: options,
+        label: this.props.label
+      });
+    },
     onTrackStart: function (event) {
       // Don't drag graph
       event.stopPropagation();
 
       this.refs.label.getDOMNode().addEventListener("track", this.onTrack);
       this.refs.label.getDOMNode().addEventListener("trackend", this.onTrackEnd);
-    },
-    highlight: function () {
-      var highlightEvent = new CustomEvent('the-graph-group-highlight', { 
-        'detail': {
-          index: this.props.index,
-          x: this.mouseX,
-          y: this.mouseY
-        },
-        'bubbles': true
-      });
-      this.getDOMNode().dispatchEvent(highlightEvent);
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -41,9 +79,16 @@
       this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
       this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
-    componentDidMount: function () {
-      // Pointer events for pan/zoom
-      this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+    highlight: function () {
+      var highlightEvent = new CustomEvent('the-graph-group-highlight', { 
+        'detail': {
+          index: this.props.index,
+          x: this.mouseX,
+          y: this.mouseY
+        },
+        'bubbles': true
+      });
+      this.getDOMNode().dispatchEvent(highlightEvent);
     },
     render: function() {
       var x = this.props.minX - TheGraph.nodeSize/2;

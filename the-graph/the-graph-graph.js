@@ -531,6 +531,8 @@
         }
         var g = TheGraph.Group({
           key: "group."+group.name,
+          graph: graph,
+          item: group,
           minX: limits.minX,
           minY: limits.minY,
           maxX: limits.maxX,
