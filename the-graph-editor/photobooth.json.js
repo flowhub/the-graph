@@ -40,35 +40,40 @@ loadGraph({
       "name": "elements", 
       "nodes": ["dom/GetElement_ah82a", "dom/GetElement_f4nkd", "dom/GetElement_z64xf"],
       "metadata": {
-        "description": "get the elements from the dom"
+        "description": "get the elements from the dom",
+        "color": 1
       }
     },
     {
       "name": "countdown",
       "nodes": ["core/Split_lbwyz", "interaction/ListenMouse_1u0rk", "strings/SendString_zry4n", "core/RunTimeout_3wulz", "dom/AddClass_9rihj", "core/Split_ho5ib", "strings/SendString_lnf0z", "core/Kick_7efi8", "dom/RemoveClass_ec7ug"],
       "metadata": {
-        "description": ""
+        "description": "",
+        "color": 3
       }
     },
     {
       "name": "changefilter",
       "nodes": ["dom/GetElement_e16dy", "dom/GetElement_85so0", "interaction/ListenMouse_bil4d", "interaction/ListenMouse_aii7r"],
       "metadata": {
-        "description": ""
+        "description": "",
+        "color": 5
       }
     },
     {
       "name": "save",
       "nodes": ["dom/GetElement_ah36i", "core/MakeFunction_t17n", "core/Split_xyb8x", "strings/SendString_7g9h8", "dom/GetElement_4houj", "core/RepeatAsync_grqs3", "dom/CreateElement_sf6ec", "dom/SetAttribute_3bmlw"],
       "metadata": {
-        "description": ""
+        "description": "",
+        "color": 9
       }
     },
     {
       "name": "filter",
       "nodes": ["dom/GetElement_j674o", "routers/KickRouter_bzaiw", "interaction/ListenChange_z7m5u", "math/Multiply_rbxrn", "math/Multiply_3v13k", "seriously/HueSaturation_bzfvt", "core/Split_jx318", "math/Multiply_3eldx", "seriously/TVGlitch_e1qre", "seriously/Hex_lx162", "seriously/Ascii_17c9q", "seriously/Invert_7xnl3", "seriously/Edge_egmkb", "seriously/Split_7oj15", "seriously/SetTarget_kii7s"],
       "metadata": {
-        "description": ""
+        "description": "",
+        "color": 12
       }
     }
   ],

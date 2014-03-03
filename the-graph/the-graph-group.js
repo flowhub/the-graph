@@ -25,7 +25,7 @@
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
-      
+
       // Don't tap graph on hold event
       event.stopPropagation();
       if (event.preventTap) { event.preventTap(); }
@@ -90,9 +90,16 @@
       });
       this.getDOMNode().dispatchEvent(highlightEvent);
     },
+    componentDidUpdate: function (prevProps, prevState) {
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      var color = (this.props.color ? this.props.color : 0);
+      var c = "group-box color"+color;
+      this.refs.box.getDOMNode().setAttribute("class", c);
+    },
     render: function() {
       var x = this.props.minX - TheGraph.nodeSize/2;
       var y = this.props.minY - TheGraph.nodeSize/2;
+      var color = (this.props.color ? this.props.color : 0);
       return (
         React.DOM.g(
           {
@@ -100,7 +107,8 @@
             // transform: "translate("+x+","+y+")"
           },
           React.DOM.rect({
-            className: "group-box",
+            ref: "box",
+            // className: "group-box color"+color, // See componentDidUpdate
             x: x,
             y: y,
             rx: TheGraph.nodeRadius,

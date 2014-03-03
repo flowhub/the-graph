@@ -541,6 +541,7 @@
           label: group.name,
           nodes: group.nodes,
           description: group.metadata.description,
+          color: group.metadata.color,
           triggerMoveGroup: self.moveGroup,
           showContext: self.props.showContext
         });
