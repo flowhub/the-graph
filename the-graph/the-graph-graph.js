@@ -30,8 +30,6 @@
       this.props.graph.on("changeOutport", this.markDirty);
       this.props.graph.on("endTransaction", this.markDirty);
 
-      // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
-      this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
       this.getDOMNode().addEventListener("the-graph-node-remove", this.removeNode);
     },
     edgePreview: null,
@@ -89,9 +87,8 @@
     addEdge: function (edge) {
       this.state.graph.addEdge(edge.from.node, edge.from.port, edge.to.node, edge.to.port, edge.metadata);
     },
-    moveGroup: function (event) {
+    moveGroup: function (nodes, dx, dy) {
       var graph = this.state.graph;
-      var nodes = event.detail.nodes;
 
       graph.startTransaction('movegroup');
 
@@ -101,8 +98,8 @@
         var node = graph.getNode(nodes[i]);
         if (node) {
           graph.setNodeMetadata(node.id, {
-            x: node.metadata.x + event.detail.x,
-            y: node.metadata.y + event.detail.y
+            x: node.metadata.x + dx,
+            y: node.metadata.y + dy
           });
         }
       }
@@ -542,6 +539,7 @@
           label: group.name,
           nodes: group.nodes,
           description: group.metadata.description,
+          triggerMoveGroup: self.moveGroup,
           showContext: self.props.showContext
         });
         return g;

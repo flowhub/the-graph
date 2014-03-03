@@ -32,15 +32,7 @@
       var deltaX = Math.round( event.ddx / this.props.scale );
       var deltaY = Math.round( event.ddy / this.props.scale );
 
-      var moveEvent = new CustomEvent('the-graph-group-move', { 
-        detail: {
-          nodes: this.props.nodes,
-          x: deltaX,
-          y: deltaY
-        },
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(moveEvent);
+      this.props.triggerMoveGroup(this.props.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
       // Don't fire on graph
