@@ -243,7 +243,9 @@
         var options = this.state.contextMenu;
         // the-graph-editor.getMenuDef
         var menu = this.props.getMenuDef(options);
-        contextMenu = options.element.getContext(menu, options);
+        if (menu) {
+          contextMenu = options.element.getContext(menu, options);
+        }
       }
       if (contextMenu) {
         contextModal = [ 
