@@ -320,7 +320,8 @@
           icon: icon,
           ports: self.getPorts(key, node.component),
           onNodeSelection: self.props.onNodeSelection,
-          selected: (self.state.selectedNodes.indexOf(node) !== -1)
+          selected: (self.state.selectedNodes.indexOf(node) !== -1),
+          showContext: self.props.showContext
         });
       });
 
@@ -358,7 +359,8 @@
           label: label,
           route: route,
           onEdgeSelection: self.props.onEdgeSelection,
-          selected: (self.state.selectedEdges.indexOf(edge) !== -1)
+          selected: (self.state.selectedEdges.indexOf(edge) !== -1),
+          showContext: self.props.showContext
         });
       });
 
@@ -429,7 +431,8 @@
           node: {},
           ports: self.getGraphInport(key),
           isIn: true,
-          icon: "sign-in"
+          icon: "sign-in",
+          showContext: self.props.showContext
         };
         // Edge view
         var expEdge = {
@@ -444,7 +447,8 @@
           sX: expNode.x + TheGraph.nodeSize,
           sY: expNode.y + TheGraph.nodeSize/2,
           tX: privateNode.metadata.x + privatePort.x,
-          tY: privateNode.metadata.y + privatePort.y
+          tY: privateNode.metadata.y + privatePort.y,
+          showContext: self.props.showContext
         };
         edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
@@ -495,7 +499,8 @@
           node: {},
           ports: self.getGraphOutport(key),
           isIn: false,
-          icon: "sign-out"
+          icon: "sign-out",
+          showContext: self.props.showContext
         };
         // Edge view
         var expEdge = {
@@ -510,7 +515,8 @@
           sX: privateNode.metadata.x + privatePort.x,
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
-          tY: expNode.y + TheGraph.nodeSize/2
+          tY: expNode.y + TheGraph.nodeSize/2,
+          showContext: self.props.showContext
         };
         edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
@@ -535,7 +541,8 @@
           scale: self.props.scale,
           label: group.name,
           nodes: group.nodes,
-          description: group.metadata.description
+          description: group.metadata.description,
+          showContext: self.props.showContext
         });
         return g;
       });

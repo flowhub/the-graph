@@ -114,18 +114,24 @@
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
-    showNodeContext: function (event) {
+    showContext: function (options) {
       this.setState({
-        contextElement: event.detail.element,
-        contextType: event.detail.type,
-        contextX: event.detail.x,
-        contextY: event.detail.y,
+        contextMenu: options,
         tooltipVisible: false
       });
     },
+    // showNodeContext: function (event) {
+    //   this.setState({
+    //     contextElement: event.detail.element,
+    //     contextType: event.detail.type,
+    //     contextX: event.detail.x,
+    //     contextY: event.detail.y,
+    //     tooltipVisible: false
+    //   });
+    // },
     hideContext: function (event) {
       this.setState({
-        contextElement: null
+        contextMenu: null
       });
     },
     changeTooltip: function (event) {
@@ -189,8 +195,8 @@
       domNode.addEventListener("the-graph-tooltip-hide", this.hideTooltip);
 
       // Context menu listeners
-      domNode.addEventListener("the-graph-context-show", this.showNodeContext);
-      domNode.addEventListener("the-graph-context-hide", this.hideContext);
+      // domNode.addEventListener("the-graph-context-show", this.showNodeContext);
+      // domNode.addEventListener("the-graph-context-hide", this.hideContext);
       domNode.addEventListener("the-graph-edge-start", this.edgeStart);
 
       // Start zoom from middle if zoom before mouse move
@@ -235,16 +241,18 @@
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
       var contextMenu, contextModal;
-      if ( this.state.contextElement ) {
-        var menus = this.props.menus[ this.state.contextType ];
-        contextMenu = this.state.contextElement.getContext(this.state.contextX, this.state.contextY, menus);
+      if ( this.state.contextMenu ) {
+        var options = this.state.contextMenu;
+        // the-graph-editor.getMenuDef
+        var menu = this.props.getMenuDef(options);
+        contextMenu = options.element.getContext(menu, options);
       }
       if (contextMenu) {
         contextModal = [ 
           TheGraph.ModalBG({
             width: this.state.width,
             height: this.state.height,
-            app: this,
+            triggerHideContext: this.hideContext,
             children: contextMenu
           })
         ];
@@ -279,7 +287,8 @@
               app: this,
               library: this.props.library,
               onNodeSelection: this.props.onNodeSelection,
-              onEdgeSelection: this.props.onEdgeSelection
+              onEdgeSelection: this.props.onEdgeSelection,
+              showContext: this.showContext
             })
           ),
           TheGraph.Tooltip({

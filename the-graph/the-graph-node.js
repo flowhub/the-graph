@@ -119,32 +119,30 @@
         y = this.pointerY;
       }
 
-      var contextEvent = new CustomEvent('the-graph-context-show', { 
-        detail: {
-          element: this,
-          type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "node"),
-          x: x,
-          y: y
-        },
-        bubbles: true
+      // App.showContext
+      this.props.showContext({
+        element: this,
+        type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "node"),
+        x: x,
+        y: y,
+        graph: this.props.graph,
+        itemKey: (this.props.export ? this.props.exportKey : this.props.key),
+        item: (this.props.export ? this.props.export : this.props.node)
       });
-      this.getDOMNode().dispatchEvent(contextEvent);
     },
-    getContext: function (x, y, menu) {
+    getContext: function (menu, options) {
       // If this node is an export
       if (this.props.export) {
         return TheGraph.Menu({
-          graph: this.props.graph,
-          label: this.props.exportKey,
           menu: menu,
-          itemKey: this.props.exportKey,
-          item: this.props.export,
-          x: x,
-          y: y
+          options: options,
+          label: this.props.exportKey
         });
       }
 
       // Absolute position of node
+      var x = options.x;
+      var y = options.y;
       var scale = this.props.app.state.scale;
       var appX = this.props.app.state.x;
       var appY = this.props.app.state.y;
@@ -186,13 +184,12 @@
 
       // Default, show whole node menu
       return TheGraph.NodeMenu({
-        key: "context." + this.props.key,
-        modal: true,
+        menu: menu,
+        options: options,
         label: this.props.label,
         graph: this.props.graph,
         graphView: this.props.graphView,
         node: this,
-        menu: menu,
         icon: this.props.icon,
         ports: ports,
         process: this.props.node,
@@ -245,7 +242,7 @@
       var app = this.props.app;
       var graph = this.props.graph;
       var isExport = (this.props.export !== undefined);
-
+      var showContext = this.props.showContext;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -267,7 +264,8 @@
           x: info.x,
           y: info.y,
           port: {node:processKey, port:info.label},
-          route: info.route
+          route: info.route,
+          showContext: showContext
         };
         return TheGraph.Port(props);
       });
@@ -291,7 +289,8 @@
           x: info.x,
           y: info.y,
           port: {node:processKey, port:info.label},
-          route: info.route
+          route: info.route,
+          showContext: showContext
         };
         return TheGraph.Port(props);
       });

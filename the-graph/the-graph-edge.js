@@ -54,39 +54,24 @@
         y = this.pointerY;
       }
 
-      var contextEvent = new CustomEvent('the-graph-context-show', { 
-        detail: {
-          element: this,
-          type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "edge"),
-          x: x,
-          y: y
-        }, 
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(contextEvent);
-    },
-    getContext: function (x, y, menu) {
-      // If this edge represents an export
-      if (this.props.export) {
-        return TheGraph.Menu({
-          graph: this.props.graph,
-          label: this.props.exportKey,
-          menu: menu,
-          itemKey: this.props.exportKey,
-          item: this.props.export,
-          x: x,
-          y: y
-        });
-      }
-
-      return TheGraph.Menu({
-        graph: this.props.graph,
-        item: this.props.edge,
-        menu: menu,
-        label: this.props.label,
-        iconColor: this.props.route,
+      // App.showContext
+      this.props.showContext({
+        element: this,
+        type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "edge"),
         x: x,
-        y: y
+        y: y,
+        graph: this.props.graph,
+        itemKey: (this.props.export ? this.props.exportKey : null),
+        item: (this.props.export ? this.props.export : this.props.edge)
+      });
+
+    },
+    getContext: function (menu, options) {
+      return TheGraph.Menu({
+        menu: menu,
+        options: options,
+        label: this.props.label,
+        iconColor: this.props.route
       });
     },
     shouldComponentUpdate: function (nextProps, nextState) {
