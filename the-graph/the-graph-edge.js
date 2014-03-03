@@ -24,10 +24,12 @@
       }
 
       // Context menu
-      this.getDOMNode().addEventListener("pointerdown", this.stopPropagationSecondary);
-      this.getDOMNode().addEventListener("pointerup", this.stopPropagationSecondary);
-      this.getDOMNode().addEventListener("contextmenu", this.showContext);
-      this.getDOMNode().addEventListener("hold", this.showContext);
+      if (this.props.showContext) {
+        this.getDOMNode().addEventListener("pointerdown", this.stopPropagationSecondary);
+        this.getDOMNode().addEventListener("pointerup", this.stopPropagationSecondary);
+        this.getDOMNode().addEventListener("contextmenu", this.showContext);
+        this.getDOMNode().addEventListener("hold", this.showContext);
+      }
     },
     onEdgeSelection: function (event) {
       // Don't click app

@@ -25,10 +25,12 @@
       }
 
       // Context menu
-      this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
-      this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
-      this.getDOMNode().addEventListener("contextmenu", this.showContext);
-      this.getDOMNode().addEventListener("hold", this.showContext);
+      if (this.props.showContext) {
+        this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
+        this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
+        this.getDOMNode().addEventListener("contextmenu", this.showContext);
+        this.getDOMNode().addEventListener("hold", this.showContext);
+      }
     },
     onNodeSelection: function (event) {
       // Don't tap app (unselect)

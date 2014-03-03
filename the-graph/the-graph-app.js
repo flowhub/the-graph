@@ -194,9 +194,7 @@
       domNode.addEventListener("the-graph-tooltip", this.changeTooltip);
       domNode.addEventListener("the-graph-tooltip-hide", this.hideTooltip);
 
-      // Context menu listeners
-      // domNode.addEventListener("the-graph-context-show", this.showNodeContext);
-      // domNode.addEventListener("the-graph-context-hide", this.hideContext);
+      // Edge preview
       domNode.addEventListener("the-graph-edge-start", this.edgeStart);
 
       // Start zoom from middle if zoom before mouse move
