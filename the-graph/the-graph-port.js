@@ -20,8 +20,10 @@
       this.getDOMNode().addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
-      this.getDOMNode().addEventListener("contextmenu", this.showContext);
-      this.getDOMNode().addEventListener("hold", this.showContext);
+      if (this.props.showContext) {
+        this.getDOMNode().addEventListener("contextmenu", this.showContext);
+        this.getDOMNode().addEventListener("hold", this.showContext);
+      }
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -56,25 +58,22 @@
         y = this.pointerY;
       }
 
-      var contextEvent = new CustomEvent('the-graph-context-show', { 
-        detail: {
-          element: this,
-          type: (this.props.isIn ? "nodeInport" : "nodeOutport"),
-          x: x,
-          y: y
-        },
-        bubbles: true
-      });
-      this.getDOMNode().dispatchEvent(contextEvent);
-    },
-    getContext: function (x, y, menu) {
-      return TheGraph.Menu({
-        graph: this.props.graph,
-        menu: menu,
-        label: this.props.label,        
-        item: this.props.port,
+      // App.showContext
+      this.props.showContext({
+        element: this,
+        type: (this.props.isIn ? "nodeInport" : "nodeOutport"),
         x: x,
-        y: y
+        y: y,
+        graph: this.props.graph,
+        itemKey: this.props.label,
+        item: this.props.port
+      });
+    },
+    getContext: function (menu, options) {
+      return TheGraph.Menu({
+        menu: menu,
+        options: options,
+        label: this.props.label
       });
     },
     edgeStart: function (event) {

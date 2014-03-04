@@ -30,8 +30,6 @@
       this.props.graph.on("changeOutport", this.markDirty);
       this.props.graph.on("endTransaction", this.markDirty);
 
-      // this.getDOMNode().addEventListener("the-graph-node-move", this.markDirty);
-      this.getDOMNode().addEventListener("the-graph-group-move", this.moveGroup);
       this.getDOMNode().addEventListener("the-graph-node-remove", this.removeNode);
     },
     edgePreview: null,
@@ -89,9 +87,8 @@
     addEdge: function (edge) {
       this.state.graph.addEdge(edge.from.node, edge.from.port, edge.to.node, edge.to.port, edge.metadata);
     },
-    moveGroup: function (event) {
+    moveGroup: function (nodes, dx, dy) {
       var graph = this.state.graph;
-      var nodes = event.detail.nodes;
 
       graph.startTransaction('movegroup');
 
@@ -101,8 +98,8 @@
         var node = graph.getNode(nodes[i]);
         if (node) {
           graph.setNodeMetadata(node.id, {
-            x: node.metadata.x + event.detail.x,
-            y: node.metadata.y + event.detail.y
+            x: node.metadata.x + dx,
+            y: node.metadata.y + dy
           });
         }
       }
@@ -320,7 +317,8 @@
           icon: icon,
           ports: self.getPorts(key, node.component),
           onNodeSelection: self.props.onNodeSelection,
-          selected: (self.state.selectedNodes.indexOf(node) !== -1)
+          selected: (self.state.selectedNodes.indexOf(node) !== -1),
+          showContext: self.props.showContext
         });
       });
 
@@ -358,7 +356,8 @@
           label: label,
           route: route,
           onEdgeSelection: self.props.onEdgeSelection,
-          selected: (self.state.selectedEdges.indexOf(edge) !== -1)
+          selected: (self.state.selectedEdges.indexOf(edge) !== -1),
+          showContext: self.props.showContext
         });
       });
 
@@ -429,7 +428,8 @@
           node: {},
           ports: self.getGraphInport(key),
           isIn: true,
-          icon: "sign-in"
+          icon: "sign-in",
+          showContext: self.props.showContext
         };
         // Edge view
         var expEdge = {
@@ -444,7 +444,8 @@
           sX: expNode.x + TheGraph.nodeSize,
           sY: expNode.y + TheGraph.nodeSize/2,
           tX: privateNode.metadata.x + privatePort.x,
-          tY: privateNode.metadata.y + privatePort.y
+          tY: privateNode.metadata.y + privatePort.y,
+          showContext: self.props.showContext
         };
         edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
@@ -495,7 +496,8 @@
           node: {},
           ports: self.getGraphOutport(key),
           isIn: false,
-          icon: "sign-out"
+          icon: "sign-out",
+          showContext: self.props.showContext
         };
         // Edge view
         var expEdge = {
@@ -510,7 +512,8 @@
           sX: privateNode.metadata.x + privatePort.x,
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
-          tY: expNode.y + TheGraph.nodeSize/2
+          tY: expNode.y + TheGraph.nodeSize/2,
+          showContext: self.props.showContext
         };
         edges.unshift(TheGraph.Edge(expEdge));
         return TheGraph.Node(expNode);
@@ -526,8 +529,10 @@
         if (!limits) {
           return;
         }
-        var g = TheGraph.Group({
+        return TheGraph.Group({
           key: "group."+group.name,
+          graph: graph,
+          item: group,
           minX: limits.minX,
           minY: limits.minY,
           maxX: limits.maxX,
@@ -535,10 +540,43 @@
           scale: self.props.scale,
           label: group.name,
           nodes: group.nodes,
-          description: group.metadata.description
+          description: group.metadata.description,
+          color: group.metadata.color,
+          triggerMoveGroup: self.moveGroup,
+          showContext: self.props.showContext
         });
-        return g;
       });
+
+      // Selection pseudo-group
+      if (this.state.selectedNodes.length >= 2) {
+        var selectedIds = this.state.selectedNodes.map(function (node) {
+          return node.id;
+        });
+        var limits = TheGraph.findMinMax(graph, selectedIds);
+        var pseudoGroup = {
+          name: "selection",
+          nodes: selectedIds,
+          metadata: {color:1}
+        };
+        var selectionGroup = TheGraph.Group({
+          key: "selectiongroup",
+          selectionGroup: true,
+          graph: graph,
+          item: pseudoGroup,
+          minX: limits.minX,
+          minY: limits.minY,
+          maxX: limits.maxX,
+          maxY: limits.maxY,
+          scale: self.props.scale,
+          label: pseudoGroup.name,
+          nodes: pseudoGroup.nodes,
+          description: "",
+          color: pseudoGroup.metadata.color,
+          triggerMoveGroup: self.moveGroup,
+          showContext: self.props.showContext
+        });
+        groups.push(selectionGroup);
+      }
 
 
       // Edge preview

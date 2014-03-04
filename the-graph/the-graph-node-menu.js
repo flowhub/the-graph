@@ -41,12 +41,11 @@
           deltaY: deltaY
         }),
         TheGraph.Menu({
-          x: 0,
-          y: 0,
-          graph: this.props.graph,
-          itemKey: this.props.processKey,
-          item: this.props.graph.getNode(this.props.processKey),
           menu: this.props.menu,
+          options: this.props.options,
+          // Translating NodeMenu here, so Menu is at 0, 0
+          x: 0, 
+          y: 0,
           icon: this.props.icon,
           label: this.props.label
         })

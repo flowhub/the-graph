@@ -1,10 +1,10 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout selectedNodes selectedEdges" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
     <link rel="stylesheet" href="../themes/default/the-graph.css">
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}"></the-graph>
+    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
   </template>
   <script>
   (function () {
@@ -122,6 +122,33 @@
                 graph.removeOutport(itemKey);
               }
             }
+          },
+          group: {
+            icon: "th",
+            n4: {
+              icon: "info-circle",
+              iconLabel: "info",
+              action: function (graph, itemKey, item) {
+                console.log("group info", itemKey, item);
+              }
+            },
+            s4: {
+              icon: "trash-o",
+              iconLabel: "ungroup",
+              action: function (graph, itemKey, item) {
+                graph.removeGroup(itemKey);
+              }
+            }
+          },
+          selection: {
+            icon: "th",
+            n4: {
+              icon: "check",
+              iconLabel: "makegroup",
+              action: function (graph, itemKey, item) {
+                console.log("make group", item.nodes);
+              }
+            }
           }
         };
       },
@@ -147,6 +174,13 @@
         }
         var menu = this.menus[type];
         menu[direction] = options;
+      },
+      getMenuDef: function (options) {
+        // Options: type, graph, itemKey, item
+        if (options.type && this.menus[options.type]) {
+          return this.menus[options.type];
+        }
+        return null;
       },
       widthChanged: function () {
         this.style.width = this.width + "px";

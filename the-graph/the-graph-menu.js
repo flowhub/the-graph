@@ -35,16 +35,20 @@
       };
     },
     onTapN4: function () {
-      this.props.menu.n4.action(this.props.graph, this.props.itemKey, this.props.item);
+      var options = this.props.options;
+      this.props.menu.n4.action(options.graph, options.itemKey, options.item);
     },
     onTapS4: function () {
-      this.props.menu.s4.action(this.props.graph, this.props.itemKey, this.props.item);
+      var options = this.props.options;
+      this.props.menu.s4.action(options.graph, options.itemKey, options.item);
     },
     onTapE4: function () {
-      this.props.menu.e4.action(this.props.graph, this.props.itemKey, this.props.item);
+      var options = this.props.options;
+      this.props.menu.e4.action(options.graph, options.itemKey, options.item);
     },
     onTapW4: function () {
-      this.props.menu.w4.action(this.props.graph, this.props.itemKey, this.props.item);
+      var options = this.props.options;
+      this.props.menu.w4.action(options.graph, options.itemKey, options.item);
     },
     componentDidMount: function () {
       if (this.state.n4tappable) {
@@ -116,6 +120,9 @@
     },
     render: function() {
       var menu = this.props.menu;
+      var options = this.props.options;
+      var x = this.props.x !== undefined ? this.props.x : options.x;
+      var y = this.props.y !== undefined ? this.props.y : options.y;
 
       var children = [
         // Directional slices
@@ -169,7 +176,7 @@
       }
       return React.DOM.g({
         className: "context-menu",
-        transform: "translate("+this.props.x+","+this.props.y+")",
+        transform: "translate("+x+","+y+")",
         children: children
       });
     }
@@ -193,7 +200,7 @@
       domNode.addEventListener("tap", this.hideModal);
     },
     hideModal: function (event) {
-      this.props.app.hideContext();
+      this.props.triggerHideContext();
     },
     render: function () {
       return React.DOM.g(

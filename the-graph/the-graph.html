@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout selectedNodes selectedEdges">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout selectedNodes selectedEdges getMenuDef">
 
   <template>
     <link rel="stylesheet" href="./the-graph-svg.css">
@@ -75,7 +75,8 @@
             menus: this.menus,
             editable: this.editable,
             onEdgeSelection: this.onEdgeSelection.bind(this),
-            onNodeSelection: this.onNodeSelection.bind(this)
+            onNodeSelection: this.onNodeSelection.bind(this),
+            getMenuDef: this.getMenuDef
           }),
           this.$.svgcontainer
         );
