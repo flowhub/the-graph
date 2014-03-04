@@ -309,19 +309,58 @@ text {
   transition-duration: 0.3s;
 }
 
-.group-box.color0  { fill: hsla(  0,   0%, 90%, 0.1); }
-.group-box.color1  { fill: hsla(  0, 100%, 70%, 0.1); }
-.group-box.color2  { fill: hsla( 30, 100%, 70%, 0.1); }
-.group-box.color3  { fill: hsla( 60, 100%, 70%, 0.1); }
-.group-box.color4  { fill: hsla( 90, 100%, 70%, 0.1); }
-.group-box.color5  { fill: hsla(120, 100%, 70%, 0.1); }
-.group-box.color6  { fill: hsla(150, 100%, 70%, 0.1); }
-.group-box.color7  { fill: hsla(180, 100%, 70%, 0.1); }
-.group-box.color8  { fill: hsla(210, 100%, 70%, 0.1); }
-.group-box.color9  { fill: hsla(240, 100%, 70%, 0.1); }
-.group-box.color10 { fill: hsla(270, 100%, 70%, 0.1); }
-.group-box.color11 { fill: hsla(300, 100%, 70%, 0.1); }
-.group-box.color12 { fill: hsla(330, 100%, 70%, 0.1); }
+.group-box.color0  { 
+  fill: hsla(  0,   0%, 90%, 0.1);
+  stroke: hsla(  0,   0%, 90%, 0.15);
+}
+.group-box.color1  { 
+  fill: hsla(  0, 100%, 70%, 0.1); 
+  stroke: hsla(  0, 100%, 70%, 0.15);
+}
+.group-box.color2  { 
+  fill: hsla( 30, 100%, 70%, 0.1);
+  stroke: hsla( 30, 100%, 70%, 0.15);
+}
+.group-box.color3  { 
+  fill: hsla( 60, 100%, 70%, 0.1);
+  stroke: hsla( 60, 100%, 70%, 0.15);
+}
+.group-box.color4  { 
+  fill: hsla( 90, 100%, 70%, 0.1);
+  stroke: hsla( 90, 100%, 70%, 0.15);
+}
+.group-box.color5  { 
+  fill: hsla(120, 100%, 70%, 0.1);
+  stroke: hsla(120, 100%, 70%, 0.15);
+}
+.group-box.color6  { 
+  fill: hsla(150, 100%, 70%, 0.1);
+  stroke: hsla(150, 100%, 70%, 0.15);
+}
+.group-box.color7  { 
+  fill: hsla(180, 100%, 70%, 0.1); 
+  stroke: hsla(180, 100%, 70%, 0.15);
+}
+.group-box.color8  { 
+  fill: hsla(210, 100%, 70%, 0.1); 
+  stroke: hsla(210, 100%, 70%, 0.15);
+}
+.group-box.color9  { 
+  fill: hsla(240, 100%, 70%, 0.1); 
+  stroke: hsla(240, 100%, 70%, 0.15);
+}
+.group-box.color10 { 
+  fill: hsla(270, 100%, 70%, 0.1); 
+  stroke: hsla(270, 100%, 70%, 0.15);
+}
+.group-box.color11 { 
+  fill: hsla(300, 100%, 70%, 0.1); 
+  stroke: hsla(300, 100%, 70%, 0.15);
+}
+.group-box.color12 { 
+  fill: hsla(330, 100%, 70%, 0.1); 
+  stroke: hsla(330, 100%, 70%, 0.15);
+}
 
 .group-box.color0:hover  { fill: hsla(  0,   0%, 90%, 0.15); }
 .group-box.color1:hover  { fill: hsla(  0, 100%, 70%, 0.15); }

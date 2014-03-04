@@ -529,7 +529,7 @@
         if (!limits) {
           return;
         }
-        var g = TheGraph.Group({
+        return TheGraph.Group({
           key: "group."+group.name,
           graph: graph,
           item: group,
@@ -545,8 +545,38 @@
           triggerMoveGroup: self.moveGroup,
           showContext: self.props.showContext
         });
-        return g;
       });
+
+      // Selection pseudo-group
+      if (this.state.selectedNodes.length >= 2) {
+        var selectedIds = this.state.selectedNodes.map(function (node) {
+          return node.id;
+        });
+        var limits = TheGraph.findMinMax(graph, selectedIds);
+        var pseudoGroup = {
+          name: "selection",
+          nodes: selectedIds,
+          metadata: {color:1}
+        };
+        var selectionGroup = TheGraph.Group({
+          key: "selectiongroup",
+          selectionGroup: true,
+          graph: graph,
+          item: pseudoGroup,
+          minX: limits.minX,
+          minY: limits.minY,
+          maxX: limits.maxX,
+          maxY: limits.maxY,
+          scale: self.props.scale,
+          label: pseudoGroup.name,
+          nodes: pseudoGroup.nodes,
+          description: "",
+          color: pseudoGroup.metadata.color,
+          triggerMoveGroup: self.moveGroup,
+          showContext: self.props.showContext
+        });
+        groups.push(selectionGroup);
+      }
 
 
       // Edge preview
