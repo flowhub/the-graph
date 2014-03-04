@@ -10,9 +10,19 @@
 }
 */
 
-svg {
+.the-graph-app {
   background-color: hsl(0, 0%, 0%);
+  position: relative;
+}
 
+.app-canvas,
+.app-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+svg {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
