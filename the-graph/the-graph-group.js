@@ -87,8 +87,10 @@
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var color = (this.props.color ? this.props.color : 0);
-      var c = "group-box color"+color;
+      var c = "group-box color" + (this.props.color ? this.props.color : 0);
+      if (this.props.selectionGroup) { 
+        c += " selection";
+      }
       this.refs.box.getDOMNode().setAttribute("class", c);
     },
     render: function() {

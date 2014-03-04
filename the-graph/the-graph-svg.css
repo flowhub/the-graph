@@ -362,6 +362,12 @@ text {
   stroke: hsla(330, 100%, 70%, 0.15);
 }
 
+.group-box.selection { 
+  fill: hsla(0, 100%, 70%, 0.1); 
+  stroke: hsla(0, 100%, 70%, 0.35);
+  stroke-width: 2px;
+}
+
 .group-box.color0:hover  { fill: hsla(  0,   0%, 90%, 0.15); }
 .group-box.color1:hover  { fill: hsla(  0, 100%, 70%, 0.15); }
 .group-box.color2:hover  { fill: hsla( 30, 100%, 70%, 0.15); }
