@@ -173,6 +173,7 @@
         }
       },
       applyAutolayout: function (layoutedKGraph) {
+        console.log('layouted:', layoutedKGraph);
         this.graph.startTransaction("autolayout");
 
         // Update original graph nodes with the new coordinates from KIELER graph

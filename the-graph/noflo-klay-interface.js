@@ -13,7 +13,18 @@
   };
 
   // Encode the original NoFlo graph as a KGraph (KIELER Graph) JSON
-  var toKieler = function (graph, portInfo) {
+  var toKieler = function (graph, portInfo, direction) {
+    console.log('graph:', graph);
+    console.log('portInfo:', portInfo);
+    var direction = direction || 'l2r';
+    var portProperties = {inportSide: {'de.cau.cs.kieler.portSide': 'WEST'},
+                          outportSide: {'de.cau.cs.kieler.portSide': 'EAST'},
+                          width: 10,
+                          height: 10};
+    if (direction === 't2b') {
+      portProperties.inportSide = {'de.cau.cs.kieler.portSide': 'NORTH'};
+      portProperties.outportSide = {'de.cau.cs.kieler.portSide': 'SOUTH'};
+    }
     var kGraph = {
       id: 'root',
       children: [], 
@@ -25,12 +36,28 @@
     var idx = {};
     var countIdx = 0;
     var nodeChildren = nodes.map(function (node) {
+      var inPorts = portInfo[node.id].inports;
+      var inPortsKeys = Object.keys(inPorts);
+      var inPortsTemp = inPortsKeys.map(function (key) {
+        return {id: node.id + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.inportSide};
+      });
+      var outPorts = portInfo[node.id].outports;
+      var outPortsKeys = Object.keys(outPorts);
+      var outPortsTemp = outPortsKeys.map(function (key) {
+        return {id: node.id + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.outportSide};
+      });
       var kChild = {
         id: node.id,
         labels: [{text: node.metadata.label}],
         width: 72, 
         height: 108,
-        ports: []
+        ports: inPortsTemp.concat(outPortsTemp)
       };
       idx[node.id] = countIdx++;
       return kChild;
@@ -71,7 +98,6 @@
     // Combine nodes, inports, outports to one array
     kGraph.children = nodeChildren.concat(inportChildren, outportChildren);
 
-
     // Encode edges (together with ports on both edges and already encoded nodes)
     var currentEdge = 0;
     var edges = graph.edges;
@@ -85,34 +111,10 @@
       var targetPort = edge.to.port;
       kGraph.edges.push({id: 'e' + currentEdge++, 
                          source: source,
-                         // KGraph edges doesn't allow the same name to
-                         // both sourcePort and targetPort, so...
                          sourcePort: source + '_' + sourcePort,
                          target: target,
                          targetPort: target + '_' + targetPort
                         });
-
-      // Can use portInfo here
-
-      // // Complete nodes encoding adding ports to them
-      // var ports = kGraph.children[idx[source]].ports;
-      // var port = {id: source + '_' + sourcePort, 
-      //             width: 10, 
-      //             height: 10, 
-      //             properties: {'de.cau.cs.kieler.portSide': 'EAST'}};
-      // if (ports.indexOf(port) < 0) { 
-      //   ports.push(port);
-      // }
-
-      // ports = kGraph.children[idx[target]].ports;
-      // port = {id: target + '_' + targetPort, 
-      //             width: 10, 
-      //             height: 10, 
-      //             properties: {'de.cau.cs.kieler.portSide': 'WEST'}};
-      // if (ports.indexOf(port) < 0) {
-      //   ports.push(port);
-      // }
-      
     });
     
     // Graph i/o to kGraph edges
