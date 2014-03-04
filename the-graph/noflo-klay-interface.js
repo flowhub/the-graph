@@ -17,6 +17,7 @@
     console.log('graph:', graph);
     console.log('portInfo:', portInfo);
     var direction = direction || 'l2r';
+    // Default port and node properties
     var portProperties = {inportSide: {'de.cau.cs.kieler.portSide': 'WEST'},
                           outportSide: {'de.cau.cs.kieler.portSide': 'EAST'},
                           width: 10,
@@ -25,6 +26,8 @@
       portProperties.inportSide = {'de.cau.cs.kieler.portSide': 'NORTH'};
       portProperties.outportSide = {'de.cau.cs.kieler.portSide': 'SOUTH'};
     }
+    var nodeProperties = {width: 72,
+                          height: 108};
     var kGraph = {
       id: 'root',
       children: [], 
@@ -55,8 +58,8 @@
       var kChild = {
         id: node.id,
         labels: [{text: node.metadata.label}],
-        width: 72, 
-        height: 108,
+        width: nodeProperties.width,
+        height: nodeProperties.height,
         ports: inPortsTemp.concat(outPortsTemp)
       };
       idx[node.id] = countIdx++;
@@ -69,12 +72,30 @@
     var inportChildren = inportsKeys.map(function(key){
       var inport = inports[key];
       var tempId = "inport:::"+key;
+
+      var inPorts = portInfo[inport].inports;
+      var inPortsKeys = Object.keys(inPorts);
+      var inPortsTemp = inPortsKeys.map(function (key) {
+        return {id: inport + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.inportSide};
+      });
+      var outPorts = portInfo[inport].outports;
+      var outPortsKeys = Object.keys(outPorts);
+      var outPortsTemp = outPortsKeys.map(function (key) {
+        return {id: inport + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.outportSide};
+      });
+      
       var kChild = {
         id: tempId, 
         labels: [{text: key}],
-        width: 72, 
-        height: 108,
-        ports: []
+        width: nodeProperties.width, 
+        height: nodeProperties.height,
+        ports: inPortsTemp.concat(outPortsTemp)
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -84,12 +105,30 @@
     var outportChildren = outportsKeys.map(function(key){
       var outport = outports[key];
       var tempId = "outport:::"+key;
+
+      var inPorts = portInfo[outport].inports;
+      var inPortsKeys = Object.keys(inPorts);
+      var inPortsTemp = inPortsKeys.map(function (key) {
+        return {id: outport + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.inportSide};
+      });
+      var outPorts = portInfo[outport].outports;
+      var outPortsKeys = Object.keys(outPorts);
+      var outPortsTemp = outPortsKeys.map(function (key) {
+        return {id: outport + '_' + key,
+                width: portProperties.width,
+                height: portProperties.height,
+                properties: portProperties.outportSide};
+      });
+
       var kChild = {
         id: tempId, 
         labels: [{text: key}],
-        width: 72, 
-        height: 108,
-        ports: []
+        width: nodeProperties.width, 
+        height: nodeProperties.height,
+        ports: inPortsTemp.concat(outPortsTemp)
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -152,8 +191,6 @@
 
     // Combine edges, inports, outports to one array
     kGraph.edges = kGraph.edges.concat(inportEdges, outportEdges);
-
-
 
     // FIXME: groups are not supported on KLayJS, uncomment the following lines
     // when it gets support
