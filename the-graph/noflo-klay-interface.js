@@ -205,7 +205,7 @@
 
   // Main interface for now: apply KLayJS layout algorithm and call the render
   window.klay = function (graph, portInfo, render) {
-    if ($klay === undefined) {
+    if (typeof $klay === 'undefined') {
       console.warn('Klay autolayout algorithm not loaded, aborting');
       return;
     }
