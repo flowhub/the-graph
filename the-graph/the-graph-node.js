@@ -20,7 +20,6 @@
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        // Needs to be click (not tap) to get event.shiftKey
         this.getDOMNode().addEventListener("tap", this.onNodeSelection);
       }
 
