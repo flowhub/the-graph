@@ -247,8 +247,8 @@
       var cols = Math.floor(this.state.width / g) + 1;
       var row = Math.floor(this.state.height / g) + 1;
       // Origin row/col index
-      var oc = Math.floor(this.state.x / g);
-      var or = Math.floor(this.state.y / g);
+      var oc = Math.floor(this.state.x / g) + (this.state.x<0 ? 1 : 0);
+      var or = Math.floor(this.state.y / g) + (this.state.y<0 ? 1 : 0);
 
       while (row--) {
         var col = cols; 
