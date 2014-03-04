@@ -206,8 +206,7 @@
   // Main interface for now: apply KLayJS layout algorithm and call the render
   window.klay = function (graph, portInfo, render) {
     if (typeof $klay === 'undefined') {
-      console.warn('Klay autolayout algorithm not loaded, aborting');
-      return;
+      throw new Error('Klay autolayout algorithm not loaded, aborting');
     }
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph, portInfo);
