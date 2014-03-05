@@ -1,0 +1,462 @@
+.the-graph-app {
+  background-color: #000;
+  position: relative;
+}
+.app-canvas,
+.app-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+svg {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.arrow {
+  cursor: default;
+}
+.click {
+  cursor: pointer;
+}
+.drag {
+  cursor: pointer;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.node-rect {
+  fill: rgba(230,238,240,0.8);
+/*fill: hsla(0, 0%, 0%, 0.75);*/
+  stroke: #fff;
+  stroke-width: 2px;
+}
+.ex-inports .node-rect {
+  stroke: #d6995c;
+}
+.ex-outports .node-rect {
+  stroke: #5cd65c;
+}
+.node:hover .node-rect {
+  fill: rgba(230,238,240,0.9);
+}
+.small .node-rect {
+  fill: rgba(26,26,26,0.9);
+  stroke: none;
+}
+.node-bg {
+  opacity: 0;
+}
+.node.selected .node-rect {
+  stroke: #f00;
+  stroke-width: 4px;
+}
+path {
+  fill: none;
+}
+.edge-bg {
+  stroke: #000;
+  stroke-width: 4px;
+}
+.edge:hover .edge-bg {
+  stroke: #808080;
+}
+.edge.selected .edge-bg {
+  stroke-width: 8px;
+  stroke: #f00;
+}
+.edge-fg {
+  stroke: #fff;
+  stroke-width: 2px;
+  transition-property: stroke-width;
+  transition-duration: 0.5s;
+}
+.edge-touch {
+  stroke: #fff;
+  stroke-width: 10px;
+  opacity: 0;
+}
+.small .edge-bg {
+  stroke-width: 8px;
+}
+.small .edge-fg {
+  stroke-width: 4px;
+}
+text {
+  font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
+  text-rendering: geometricPrecision;
+/* makes text scale smoothly */
+  font-size: 14px;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.text-bg-rect {
+  fill: rgba(0,0,0,0.5);
+}
+.node-label,
+.node-sublabel {
+  text-anchor: middle;
+}
+.small .node-label-bg {
+  visibility: hidden;
+}
+.node-sublabel {
+  font-size: 9px;
+}
+.node-sublabel-bg {
+  visibility: hidden;
+}
+.big .node-sublabel-bg {
+  visibility: visible;
+}
+.iip-path {
+  stroke-width: 1px;
+  stroke: #fff;
+}
+.iip-info {
+  visibility: hidden;
+}
+.iip-info .text-bg-text {
+  font-size: 5px;
+  text-anchor: end;
+}
+.big .iip-info {
+  visibility: visible;
+}
+.context-modal-bg {
+  fill: rgba(0,0,0,0.5);
+}
+.context-node-rect {
+  fill: #1a1a1a;
+  stroke: #808080;
+  stroke-width: 0.5px;
+}
+.context-node-icon {
+  font-size: 30px;
+  fill: #fff;
+}
+.context-icon {
+  font-size: 20px;
+  fill: #fff;
+}
+.context-node-label {
+  text-anchor: middle;
+}
+.context-arc {
+  stroke-width: 72px;
+  stroke: rgba(43,48,54,0.95);
+}
+.context-slice.click:hover .context-arc {
+  stroke: rgba(90,102,114,0.95);
+}
+.context-circle {
+  stroke: #bfbfbf;
+  fill: none;
+  stroke-width: 1.5px;
+}
+.context-circle-x {
+  stroke: #808080;
+  fill: none;
+  stroke-width: 1px;
+}
+.context-arc-icon-label {
+  font-size: 12px;
+}
+.context-port-bg {
+  fill: rgba(43,48,54,0.95);
+}
+.context-port-hole {
+  stroke-width: 2px;
+  fill: rgba(43,48,54,0.95);
+  stroke: #bfbfbf;
+}
+.context-port-path {
+  stroke: #bfbfbf;
+}
+.context-port-label {
+  fill: #fff;
+  dominant-baseline: central;
+}
+.context-port-in .context-port-label {
+  text-anchor: end;
+}
+.context-port-out .context-port-label {
+  text-anchor: start;
+}
+.context-edge-label-out {
+  text-anchor: end;
+  dominant-baseline: central;
+}
+.context-edge-label-in {
+  text-anchor: start;
+  dominant-baseline: central;
+}
+.tooltip {
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+}
+.tooltip.hidden {
+  opacity: 0;
+}
+.tooltip-bg {
+  fill: #000;
+  opacity: 0.75;
+}
+.tooltip-label {
+  text-anchor: start;
+  font-size: 10px;
+}
+.icon {
+  font-family: 'FontAwesomeSVG';
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.node-icon {
+  font-size: 40px;
+  fill: #232829;
+  transition-property: font-size, fill;
+  transition-duration: 0.5s, 0.3s;
+}
+.small .node-icon {
+  fill: #fff;
+  font-size: 68px;
+}
+.big .node-icon {
+  fill: #d6dadc;
+}
+.ex-inports .node-icon {
+  stroke: #d6995c;
+  fill: #d6995c;
+}
+.small .ex-inports .node-icon {
+  fill: #d6995c;
+}
+.ex-outports .node-icon {
+  stroke: #5cd65c;
+  fill: #5cd65c;
+}
+.small .ex-outports .node-icon {
+  fill: #5cd65c;
+}
+.port-circle {
+  fill: #000;
+  stroke: #808080;
+  stroke-width: 1px;
+}
+.small .port-circle {
+  visibility: hidden;
+}
+.port-label {
+  fill: #3c4344;
+/* type-grey */
+  visibility: hidden;
+  font-size: 6px;
+  dominant-baseline: central;
+}
+.inports .port-label {
+  text-anchor: start;
+}
+.outports .port-label {
+  text-anchor: end;
+}
+.big .port-label {
+  visibility: visible;
+}
+.big .ex-inports .port-label,
+.big .ex-outports .port-label {
+  visibility: hidden;
+}
+.group-box {
+  transition-property: fill;
+  transition-duration: 0.3s;
+}
+.group-box.color0 {
+  fill: rgba(230,230,230,0.1);
+  stroke: rgba(230,230,230,0.15);
+}
+.group-box.color1 {
+  fill: rgba(255,102,102,0.1);
+  stroke: rgba(255,102,102,0.15);
+}
+.group-box.color2 {
+  fill: rgba(255,179,102,0.1);
+  stroke: rgba(255,179,102,0.15);
+}
+.group-box.color3 {
+  fill: rgba(255,255,102,0.1);
+  stroke: rgba(255,255,102,0.15);
+}
+.group-box.color4 {
+  fill: rgba(179,255,102,0.1);
+  stroke: rgba(179,255,102,0.15);
+}
+.group-box.color5 {
+  fill: rgba(102,255,102,0.1);
+  stroke: rgba(102,255,102,0.15);
+}
+.group-box.color6 {
+  fill: rgba(102,255,179,0.1);
+  stroke: rgba(102,255,179,0.15);
+}
+.group-box.color7 {
+  fill: rgba(102,255,255,0.1);
+  stroke: rgba(102,255,255,0.15);
+}
+.group-box.color8 {
+  fill: rgba(102,178,255,0.1);
+  stroke: rgba(102,178,255,0.15);
+}
+.group-box.color9 {
+  fill: rgba(102,102,255,0.1);
+  stroke: rgba(102,102,255,0.15);
+}
+.group-box.color10 {
+  fill: rgba(178,102,255,0.1);
+  stroke: rgba(178,102,255,0.15);
+}
+.group-box.color11 {
+  fill: rgba(255,102,255,0.1);
+  stroke: rgba(255,102,255,0.15);
+}
+.group-box.color12 {
+  fill: rgba(255,102,179,0.1);
+  stroke: rgba(255,102,179,0.15);
+}
+.group-box.color0:hover {
+  fill: rgba(230,230,230,0.15);
+}
+.group-box.color1:hover {
+  fill: rgba(255,102,102,0.15);
+}
+.group-box.color2:hover {
+  fill: rgba(255,179,102,0.15);
+}
+.group-box.color3:hover {
+  fill: rgba(255,255,102,0.15);
+}
+.group-box.color4:hover {
+  fill: rgba(179,255,102,0.15);
+}
+.group-box.color5:hover {
+  fill: rgba(102,255,102,0.15);
+}
+.group-box.color6:hover {
+  fill: rgba(102,255,179,0.15);
+}
+.group-box.color7:hover {
+  fill: rgba(102,255,255,0.15);
+}
+.group-box.color8:hover {
+  fill: rgba(102,178,255,0.15);
+}
+.group-box.color9:hover {
+  fill: rgba(102,102,255,0.15);
+}
+.group-box.color10:hover {
+  fill: rgba(178,102,255,0.15);
+}
+.group-box.color11:hover {
+  fill: rgba(255,102,255,0.15);
+}
+.group-box.color12:hover {
+  fill: rgba(255,102,179,0.15);
+}
+.group-box.selection {
+  fill: rgba(255,102,102,0.15);
+  stroke: #f00;
+  stroke-width: 1px;
+}
+.group-box.selection:hover {
+  fill: rgba(255,102,102,0.25);
+}
+.group-label {
+  text-anchor: start;
+  fill: #fff;
+  font-size: 20px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+.small .group-label {
+  font-size: 30px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+.group-description {
+  fill: #bfbfbf;
+  font-size: 12px;
+  text-anchor: start;
+}
+.small .group-description {
+  visibility: hidden;
+}
+.stroke.route0 {
+  stroke: #fff;
+}
+.stroke.route1 {
+  stroke: #e80202;
+}
+.stroke.route2 {
+  stroke: #e88802;
+}
+.stroke.route3 {
+  stroke: #e8e802;
+}
+.stroke.route4 {
+  stroke: #02e83c;
+}
+.stroke.route5 {
+  stroke: #02e89c;
+}
+.stroke.route6 {
+  stroke: #02d5e8;
+}
+.stroke.route7 {
+  stroke: #0275e8;
+}
+.stroke.route8 {
+  stroke: #af02e8;
+}
+.stroke.route9 {
+  stroke: #e802c2;
+}
+.stroke.route10 {
+  stroke: #e80262;
+}
+.fill.route0 {
+  fill: #fff;
+}
+.fill.route1 {
+  fill: #e80202;
+}
+.fill.route2 {
+  fill: #e88802;
+}
+.fill.route3 {
+  fill: #e8e802;
+}
+.fill.route4 {
+  fill: #02e83c;
+}
+.fill.route5 {
+  fill: #02e89c;
+}
+.fill.route6 {
+  fill: #02d5e8;
+}
+.fill.route7 {
+  fill: #0275e8;
+}
+.fill.route8 {
+  fill: #af02e8;
+}
+.fill.route9 {
+  fill: #e802c2;
+}
+.fill.route10 {
+  fill: #e80262;
+}
