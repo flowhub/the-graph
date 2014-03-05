@@ -45,8 +45,9 @@ svg {
   cursor: grab;
 }
 .node-rect {
-  fill: hsla(0, 0%, 0%, 0.75);
-  stroke: hsl(0, 0%, 50%);
+  fill: hsla(192, 25%, 92%, 0.8);
+  /*fill: hsla(0, 0%, 0%, 0.75);*/
+  stroke: hsla(0, 0%, 100%, 1.0);
   stroke-width: 2px;
 }
 .ex-inports .node-rect {
@@ -56,7 +57,7 @@ svg {
   stroke: hsl(120, 60%, 60%);
 }
 .node:hover .node-rect {
-  fill: hsla(0, 0%, 20%, 0.75);
+  fill: hsla(192, 25%, 92%, 0.9);
 }
 .small .node-rect {
   fill: hsla(0, 0%, 10%, 0.9);
@@ -66,7 +67,6 @@ svg {
   opacity: 0;
 }
 .node.selected .node-rect {
-  fill: hsla(0, 100%, 10%, 0.75);
   stroke: hsl(0, 100%, 50%);
   stroke-width: 4px;
 }
@@ -209,7 +209,7 @@ text {
   stroke: hsl(0, 0%, 75%);
 }
 .context-port-label {
-  fill: hsl(0, 0%, 75%);
+  fill: white;
   dominant-baseline: central;
 }
 .context-port-in .context-port-label {
@@ -257,7 +257,7 @@ text {
 }
 .node-icon {
   font-size: 40px;
-  fill: hsl(0, 0%, 75%);
+  fill: hsl(194, 8%, 15%);
 
   transition-property: font-size, fill;
   transition-duration: 0.5s,      0.3s;
@@ -267,7 +267,7 @@ text {
   font-size: 68px;
 }
 .big .node-icon {
-  fill: hsl(0, 0%, 25%);
+  fill: hsl(194, 8%, 85%);
 }
 .ex-inports .node-icon {
   stroke: hsl(30, 60%, 60%);
@@ -293,6 +293,7 @@ text {
   visibility: hidden;
 }
 .port-label {
+  fill: hsl(188, 6%, 25%); /* type-grey */
   visibility: hidden;
   font-size: 6px;
   dominant-baseline: central;
@@ -320,55 +321,55 @@ text {
 }
 
 .group-box.color0  { 
-  fill: hsla(  0,   0%, 90%, 0.1);
-  stroke: hsla(  0,   0%, 90%, 0.15);
+  fill:   hsla(  0, 0%, 90%, 0.1);
+  stroke: hsla(  0, 0%, 90%, 0.15);
 }
 .group-box.color1  { 
-  fill: hsla(  0, 100%, 70%, 0.1); 
+  fill:   hsla(  0, 100%, 70%, 0.1); 
   stroke: hsla(  0, 100%, 70%, 0.15);
 }
 .group-box.color2  { 
-  fill: hsla( 30, 100%, 70%, 0.1);
+  fill:   hsla( 30, 100%, 70%, 0.1);
   stroke: hsla( 30, 100%, 70%, 0.15);
 }
 .group-box.color3  { 
-  fill: hsla( 60, 100%, 70%, 0.1);
+  fill:   hsla( 60, 100%, 70%, 0.1);
   stroke: hsla( 60, 100%, 70%, 0.15);
 }
 .group-box.color4  { 
-  fill: hsla( 90, 100%, 70%, 0.1);
+  fill:   hsla( 90, 100%, 70%, 0.1);
   stroke: hsla( 90, 100%, 70%, 0.15);
 }
 .group-box.color5  { 
-  fill: hsla(120, 100%, 70%, 0.1);
+  fill:   hsla(120, 100%, 70%, 0.1);
   stroke: hsla(120, 100%, 70%, 0.15);
 }
 .group-box.color6  { 
-  fill: hsla(150, 100%, 70%, 0.1);
+  fill:   hsla(150, 100%, 70%, 0.1);
   stroke: hsla(150, 100%, 70%, 0.15);
 }
 .group-box.color7  { 
-  fill: hsla(180, 100%, 70%, 0.1); 
+  fill:   hsla(180, 100%, 70%, 0.1); 
   stroke: hsla(180, 100%, 70%, 0.15);
 }
 .group-box.color8  { 
-  fill: hsla(210, 100%, 70%, 0.1); 
+  fill:   hsla(210, 100%, 70%, 0.1); 
   stroke: hsla(210, 100%, 70%, 0.15);
 }
 .group-box.color9  { 
-  fill: hsla(240, 100%, 70%, 0.1); 
+  fill:   hsla(240, 100%, 70%, 0.1); 
   stroke: hsla(240, 100%, 70%, 0.15);
 }
 .group-box.color10 { 
-  fill: hsla(270, 100%, 70%, 0.1); 
+  fill:   hsla(270, 100%, 70%, 0.1); 
   stroke: hsla(270, 100%, 70%, 0.15);
 }
 .group-box.color11 { 
-  fill: hsla(300, 100%, 70%, 0.1); 
+  fill:   hsla(300, 100%, 70%, 0.1); 
   stroke: hsla(300, 100%, 70%, 0.15);
 }
 .group-box.color12 { 
-  fill: hsla(330, 100%, 70%, 0.1); 
+  fill:   hsla(330, 100%, 70%, 0.1); 
   stroke: hsla(330, 100%, 70%, 0.15);
 }
 
@@ -388,7 +389,7 @@ text {
 
 .group-box.selection { 
   fill: hsla(0, 100%, 70%, 0.15); 
-  stroke: hsla(0, 100%, 50%, 1);
+  stroke: hsl(0, 100%, 50%);
   stroke-width: 1px;
 }
 .group-box.selection:hover { 
