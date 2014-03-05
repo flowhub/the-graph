@@ -3,7 +3,6 @@
 
 <polymer-element name="the-graph-editor" attributes="grid snap width height autolayout selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
-    <link rel="stylesheet" href="../themes/default/the-graph.css">
     <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
   </template>
   <script>

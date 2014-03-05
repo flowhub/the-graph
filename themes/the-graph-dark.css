@@ -1,5 +1,5 @@
 .the-graph-app {
-  background-color: #000;
+  background-color: #0b1314;
   position: relative;
 }
 .app-canvas,
@@ -29,19 +29,19 @@ svg {
   cursor: grab;
 }
 .node-rect {
-  fill: rgba(230,238,240,0.8);
-/*fill: hsla(0, 0%, 0%, 0.75);*/
+  fill: rgba(230,238,240,0.9);
   stroke: #fff;
   stroke-width: 2px;
 }
 .ex-inports .node-rect {
-  stroke: #d6995c;
+  stroke: var-spectrum-b2;
 }
 .ex-outports .node-rect {
-  stroke: #5cd65c;
+  stroke: var-spectrum-b4;
 }
 .node:hover .node-rect {
-  fill: rgba(230,238,240,0.9);
+  fill: #e6eef0;
+  stroke: var-node-hover-border;
 }
 .small .node-rect {
   fill: rgba(26,26,26,0.9);
@@ -217,31 +217,25 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 40px;
-  fill: #232829;
+  font-size: 50px;
+  fill: #aab3b6;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
 .small .node-icon {
-  fill: #fff;
+  fill: #aab3b6;
   font-size: 68px;
 }
 .big .node-icon {
-  fill: #d6dadc;
+  fill: #aab3b6;
 }
-.ex-inports .node-icon {
-  stroke: #d6995c;
-  fill: #d6995c;
-}
+.ex-inports .node-icon,
 .small .ex-inports .node-icon {
-  fill: #d6995c;
+  fill: #e88802;
 }
-.ex-outports .node-icon {
-  stroke: #5cd65c;
-  fill: #5cd65c;
-}
+.ex-outports .node-icon,
 .small .ex-outports .node-icon {
-  fill: #5cd65c;
+  fill: #02e83c;
 }
 .port-circle {
   fill: #000;
@@ -253,7 +247,6 @@ text {
 }
 .port-label {
   fill: #3c4344;
-/* type-grey */
   visibility: hidden;
   font-size: 6px;
   dominant-baseline: central;
@@ -276,95 +269,81 @@ text {
   transition-duration: 0.3s;
 }
 .group-box.color0 {
-  fill: rgba(230,230,230,0.1);
-  stroke: rgba(230,230,230,0.15);
+  fill: rgba(191,191,191,0.15);
+  stroke: rgba(191,191,191,0.25);
 }
 .group-box.color1 {
-  fill: rgba(255,102,102,0.1);
-  stroke: rgba(255,102,102,0.15);
+  fill: rgba(255,128,128,0.15);
+  stroke: rgba(255,128,128,0.25);
 }
 .group-box.color2 {
-  fill: rgba(255,179,102,0.1);
-  stroke: rgba(255,179,102,0.15);
+  fill: rgba(255,202,128,0.15);
+  stroke: rgba(255,202,128,0.25);
 }
 .group-box.color3 {
-  fill: rgba(255,255,102,0.1);
-  stroke: rgba(255,255,102,0.15);
+  fill: rgba(255,255,128,0.15);
+  stroke: rgba(255,255,128,0.25);
 }
 .group-box.color4 {
-  fill: rgba(179,255,102,0.1);
-  stroke: rgba(179,255,102,0.15);
+  fill: rgba(128,255,159,0.15);
+  stroke: rgba(128,255,159,0.25);
 }
 .group-box.color5 {
-  fill: rgba(102,255,102,0.1);
-  stroke: rgba(102,255,102,0.15);
+  fill: rgba(128,255,212,0.15);
+  stroke: rgba(128,255,212,0.25);
 }
 .group-box.color6 {
-  fill: rgba(102,255,179,0.1);
-  stroke: rgba(102,255,179,0.15);
+  fill: rgba(128,244,255,0.15);
+  stroke: rgba(128,244,255,0.25);
 }
 .group-box.color7 {
-  fill: rgba(102,255,255,0.1);
-  stroke: rgba(102,255,255,0.15);
+  fill: rgba(128,191,255,0.15);
+  stroke: rgba(128,191,255,0.25);
 }
 .group-box.color8 {
-  fill: rgba(102,178,255,0.1);
-  stroke: rgba(102,178,255,0.15);
+  fill: rgba(223,128,255,0.15);
+  stroke: rgba(223,128,255,0.25);
 }
 .group-box.color9 {
-  fill: rgba(102,102,255,0.1);
-  stroke: rgba(102,102,255,0.15);
+  fill: rgba(255,128,234,0.15);
+  stroke: rgba(255,128,234,0.25);
 }
 .group-box.color10 {
-  fill: rgba(178,102,255,0.1);
-  stroke: rgba(178,102,255,0.15);
-}
-.group-box.color11 {
-  fill: rgba(255,102,255,0.1);
-  stroke: rgba(255,102,255,0.15);
-}
-.group-box.color12 {
-  fill: rgba(255,102,179,0.1);
-  stroke: rgba(255,102,179,0.15);
+  fill: rgba(255,128,181,0.15);
+  stroke: rgba(255,128,181,0.25);
 }
 .group-box.color0:hover {
-  fill: rgba(230,230,230,0.15);
+  fill: rgba(191,191,191,0.25);
 }
 .group-box.color1:hover {
-  fill: rgba(255,102,102,0.15);
+  fill: rgba(255,128,128,0.25);
 }
 .group-box.color2:hover {
-  fill: rgba(255,179,102,0.15);
+  fill: rgba(255,202,128,0.25);
 }
 .group-box.color3:hover {
-  fill: rgba(255,255,102,0.15);
+  fill: rgba(255,255,128,0.25);
 }
 .group-box.color4:hover {
-  fill: rgba(179,255,102,0.15);
+  fill: rgba(128,255,159,0.25);
 }
 .group-box.color5:hover {
-  fill: rgba(102,255,102,0.15);
+  fill: rgba(128,255,212,0.25);
 }
 .group-box.color6:hover {
-  fill: rgba(102,255,179,0.15);
+  fill: rgba(128,244,255,0.25);
 }
 .group-box.color7:hover {
-  fill: rgba(102,255,255,0.15);
+  fill: rgba(128,191,255,0.25);
 }
 .group-box.color8:hover {
-  fill: rgba(102,178,255,0.15);
+  fill: rgba(223,128,255,0.25);
 }
 .group-box.color9:hover {
-  fill: rgba(102,102,255,0.15);
+  fill: rgba(255,128,234,0.25);
 }
 .group-box.color10:hover {
-  fill: rgba(178,102,255,0.15);
-}
-.group-box.color11:hover {
-  fill: rgba(255,102,255,0.15);
-}
-.group-box.color12:hover {
-  fill: rgba(255,102,179,0.15);
+  fill: rgba(255,128,181,0.25);
 }
 .group-box.selection {
   fill: rgba(255,102,102,0.15);
