@@ -388,8 +388,8 @@ text {
 
 .group-box.selection { 
   fill: hsla(0, 100%, 70%, 0.15); 
-  stroke: hsla(0, 100%, 70%, 0.5);
-  stroke-width: 2px;
+  stroke: hsla(0, 100%, 50%, 1);
+  stroke-width: 1px;
 }
 .group-box.selection:hover { 
   fill: hsla(0, 100%, 70%, 0.25); 

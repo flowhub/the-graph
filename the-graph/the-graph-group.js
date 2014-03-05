@@ -12,10 +12,11 @@
     ],
     componentDidMount: function () {
       // Move group
-      this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       if (this.props.isSelectionGroup) {
         // Drag selection by bg
         this.refs.box.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      } else {
+        this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       }
 
       // Context menu
@@ -66,11 +67,13 @@
       event.stopPropagation();
 
       if (this.props.isSelectionGroup) {
-        this.refs.box.getDOMNode().addEventListener("track", this.onTrack);
-        this.refs.box.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+        var box = this.refs.box.getDOMNode();
+        box.addEventListener("track", this.onTrack);
+        box.addEventListener("trackend", this.onTrackEnd);
       } else {
-        this.refs.label.getDOMNode().addEventListener("track", this.onTrack);
-        this.refs.label.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+        var label = this.refs.label.getDOMNode();
+        label.addEventListener("track", this.onTrack);
+        label.addEventListener("trackend", this.onTrackEnd);
       }
     },
     onTrack: function (event) {
@@ -93,11 +96,13 @@
       this.props.triggerMoveGroup(this.props.item.nodes);
 
       if (this.props.isSelectionGroup) {
-        this.refs.box.getDOMNode().removeEventListener("track", this.onTrack);
-        this.refs.box.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+        var box = this.refs.box.getDOMNode();
+        box.removeEventListener("track", this.onTrack);
+        box.removeEventListener("trackend", this.onTrackEnd);
       } else {
-        this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
-        this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+        var label = this.refs.label.getDOMNode();
+        label.removeEventListener("track", this.onTrack);
+        label.removeEventListener("trackend", this.onTrackEnd);
       }
     },
     componentDidUpdate: function (prevProps, prevState) {
