@@ -173,7 +173,6 @@
         }
       },
       applyAutolayout: function (layoutedKGraph) {
-        console.log('layouted:', layoutedKGraph);
         this.graph.startTransaction("autolayout");
 
         // Update original graph nodes with the new coordinates from KIELER graph
@@ -183,6 +182,23 @@
         for (i=0, len = children.length; i<len; i++) {
           var klayNode = children[i];
           var nofloNode = this.graph.getNode(klayNode.id);
+
+          // Encode nodes inside groups
+          if (klayNode.children) {
+            var klayChildren = klayNode.children;
+            var idx;
+            for (idx in klayChildren) {
+              var klayChild = klayChildren[idx];
+              if (klayChild.id) {
+                this.graph.setNodeMetadata(klayChild.id, {
+                  x: Math.round(klayNode.x + klayChild.x),
+                  y: Math.round(klayNode.y + klayChild.y)
+                });
+              }
+            }
+          }
+
+          // Encode nodes outside groups
           if (nofloNode) {
             this.graph.setNodeMetadata(klayNode.id, {
               x: Math.round(klayNode.x),
@@ -207,7 +223,7 @@
           }
         }
 
-        // TODO edge bends
+        // TODO: edge bends
   
         this.graph.endTransaction("autolayout");
       },
