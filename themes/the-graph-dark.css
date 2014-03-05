@@ -1,5 +1,5 @@
 .the-graph-app {
-  background-color: #0b1314;
+  background-color: #000;
   position: relative;
 }
 .app-canvas,
@@ -40,11 +40,10 @@ svg {
   stroke: var-spectrum-b4;
 }
 .node:hover .node-rect {
-  fill: #e6eef0;
+  fill: rgba(230,238,240,0.95);
   stroke: var-node-hover-border;
 }
 .small .node-rect {
-  fill: rgba(26,26,26,0.9);
   stroke: none;
 }
 .node-bg {
@@ -159,7 +158,7 @@ text {
   stroke-width: 1.5px;
 }
 .context-circle-x {
-  stroke: #808080;
+  stroke: #bfbfbf;
   fill: none;
   stroke-width: 1px;
 }
@@ -217,17 +216,17 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 50px;
-  fill: #aab3b6;
+  font-size: 60px;
+  fill: #2f3537;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
 .small .node-icon {
-  fill: #aab3b6;
-  font-size: 68px;
+  fill: #0c0d0e;
+  font-size: 70px;
 }
 .big .node-icon {
-  fill: #aab3b6;
+  fill: #c8ced0;
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
@@ -238,15 +237,18 @@ text {
   fill: #02e83c;
 }
 .port-circle {
-  fill: #000;
-  stroke: #808080;
+  fill: rgba(230,238,240,0.9);
+  stroke: #fff;
   stroke-width: 1px;
+}
+.port-circle-small {
+  fill: none;
 }
 .small .port-circle {
   visibility: hidden;
 }
 .port-label {
-  fill: #3c4344;
+  fill: #0c0d0e;
   visibility: hidden;
   font-size: 6px;
   dominant-baseline: central;
@@ -265,6 +267,8 @@ text {
   visibility: hidden;
 }
 .group-box {
+  fill: rgba(191,191,191,0.15);
+  stroke: rgba(191,191,191,0.25);
   transition-property: fill;
   transition-duration: 0.3s;
 }
@@ -366,7 +370,7 @@ text {
   transition-duration: 0.5s;
 }
 .group-description {
-  fill: #bfbfbf;
+  fill: #fff;
   font-size: 12px;
   text-anchor: start;
 }

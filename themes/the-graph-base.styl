@@ -11,7 +11,7 @@
 */
 
 .the-graph-app {
-  background-color: var-background;
+  background-color: var-bg;
   position: relative;
 }
 
@@ -60,7 +60,6 @@ svg {
   stroke: var-node-hover-border;
 }
 .small .node-rect {
-  fill: hsla(0, 0%, 10%, 0.9);
   stroke: none;
 }
 .node-bg {
@@ -155,7 +154,7 @@ text {
 
 /* Context menu - node */
 .context-modal-bg {
-  fill: rgba(0,0,0,0.5);
+  fill: var-menu-modal-bg;
 }
 .context-node-rect {
   fill: hsl(0, 0%, 10%);
@@ -168,25 +167,25 @@ text {
 }
 .context-icon {
   font-size: 20px;
-  fill: hsl(0, 0%, 100%);
+  fill: var-type-a;
 }
 .context-node-label {
   text-anchor: middle;
 }
 .context-arc {
   stroke-width: 72px;
-  stroke: hsla(211, 12%, 19%, 0.95);
+  stroke: var-menu-bg;
 }
 .context-slice.click:hover .context-arc {
-  stroke: hsla(211, 12%, 40%, 0.95);
+  stroke: var-menu-bg-hover;
 }
 .context-circle {
-  stroke: hsl(0, 0%, 75%);
+  stroke: var-menu-border;
   fill: none;
   stroke-width: 1.5px;
 }
 .context-circle-x {
-  stroke: hsl(0, 0%, 50%);
+  stroke: var-menu-border;
   fill: none;
   stroke-width: 1px;
 }
@@ -198,18 +197,18 @@ text {
 
 /* Context menu - port */
 .context-port-bg {
-  fill: hsla(211, 12%, 19%, 0.95);
+  fill: var-menu-bg;
 }
 .context-port-hole {
   stroke-width: 2px;
-  fill: hsla(211, 12%, 19%, 0.95);
-  stroke: hsl(0, 0%, 75%);
+  fill: var-menu-bg;
+  stroke: var-menu-border;
 }
 .context-port-path {
-  stroke: hsl(0, 0%, 75%);
+  stroke: var-menu-border;
 }
 .context-port-label {
-  fill: white;
+  fill: var-type-a;
   dominant-baseline: central;
 }
 .context-port-in .context-port-label {
@@ -256,18 +255,18 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 50px;
+  font-size: 60px;
   fill: var-node-icon;
 
   transition-property: font-size, fill;
   transition-duration: 0.5s,      0.3s;
 }
 .small .node-icon {
-  fill: var-node-icon;
-  font-size: 68px;
+  fill: var-node-icon-small;
+  font-size: 70px;
 }
 .big .node-icon {
-  fill: var-node-icon;
+  fill: var-node-icon-big;
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
@@ -279,9 +278,12 @@ text {
 }
 
 .port-circle {
-  fill: black;
-  stroke: hsl(0, 0%, 50%);
+  fill: var-node;
+  stroke: var-node-border;
   stroke-width: 1px;
+}
+.port-circle-small {
+  fill: none;
 }
 .small .port-circle {
   visibility: hidden;
@@ -310,6 +312,9 @@ text {
 
 /* Groups */
 .group-box {
+  fill: var-spectrum-a00a1;
+  stroke: var-spectrum-a00a2;
+
   transition-property: fill;
   transition-duration: 0.3s;
 }
@@ -373,17 +378,17 @@ text {
 
 
 .group-box.selection { 
-  fill: hsla(0, 100%, 70%, 0.15); 
-  stroke: hsl(0, 100%, 50%);
+  fill: var-selection-box; 
+  stroke: var-selection-box-border;
   stroke-width: 1px;
 }
 .group-box.selection:hover { 
-  fill: hsla(0, 100%, 70%, 0.25); 
+  fill: var-selection-box-hover;
 }
 
 .group-label {
   text-anchor: start;  
-  fill: white;
+  fill: var-type-a;
   font-size: 20px;
   transition-property: font-size;
   transition-duration: 0.5s;
@@ -395,7 +400,7 @@ text {
 }
 
 .group-description {
-  fill: hsl(0, 0%, 75%);
+  fill: var-type-a;
   font-size: 12px;
   text-anchor: start;  
 }

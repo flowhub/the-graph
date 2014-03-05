@@ -24,6 +24,9 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
+
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      this.componentDidUpdate();
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
