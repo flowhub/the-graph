@@ -21,6 +21,8 @@
 
       // Context menu
       if (this.props.showContext) {
+        this.getDOMNode().addEventListener("pointerdown", this.stopPropagationSecondary);
+        this.getDOMNode().addEventListener("pointerup", this.stopPropagationSecondary);
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
@@ -54,6 +56,12 @@
         itemKey: this.props.label,
         item: this.props.item
       });
+    },
+    stopPropagationSecondary: function (event) {
+      // HACK to not tap graph, deselect
+      if (event.buttons && event.buttons===2) {
+        event.stopPropagation();
+      }
     },
     getContext: function (menu, options) {
       return TheGraph.Menu({
