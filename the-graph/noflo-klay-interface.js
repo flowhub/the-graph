@@ -222,9 +222,8 @@
 
   // Main interface for now: apply KLayJS layout algorithm and call the render
   window.klay = function (graph, portInfo, render, direction) {
-    if (!$klay) {
-      console.warn("klay didn't load, gwtwtf");
-      return;
+    if (typeof $klay === 'undefined') {
+      throw new Error('Klay autolayout algorithm not loaded, aborting');
     }
     var direction = direction || "RIGHT";
 

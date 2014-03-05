@@ -213,6 +213,11 @@
         }
       });
 
+      // Canvas background
+      this.bgCanvas = unwrap(this.refs.canvas.getDOMNode());
+      this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
+      this.componentDidUpdate();
+
       // Rerender graph once to fix edges
       setTimeout(function () {
         this.renderGraph();
@@ -225,6 +230,43 @@
     },
     renderGraph: function () {
       this.refs.graph.markDirty();
+    },
+    componentDidUpdate: function () {
+      this.renderCanvas(this.bgContext);
+    },
+    renderCanvas: function (c) {
+      // Comment this line to go plaid
+      c.clearRect(0, 0, this.state.width, this.state.height);
+
+      // Background grid pattern
+      var scale = this.state.scale;
+      var g = TheGraph.nodeSize * scale;
+
+      var dx = this.state.x % g;
+      var dy = this.state.y % g;
+      var cols = Math.floor(this.state.width / g) + 1;
+      var row = Math.floor(this.state.height / g) + 1;
+      // Origin row/col index
+      var oc = Math.floor(this.state.x / g) + (this.state.x<0 ? 1 : 0);
+      var or = Math.floor(this.state.y / g) + (this.state.y<0 ? 1 : 0);
+
+      while (row--) {
+        var col = cols; 
+        while (col--) {
+          var x = Math.round(col*g+dx);
+          var y = Math.round(row*g+dy);
+          if ((oc-col)%3===0 && (or-row)%3===0) {
+            // 3x grid
+            c.fillStyle = "white";
+            c.fillRect(x, y, 1, 1);
+          } else if (scale > 0.5) {
+            // 1x grid
+            c.fillStyle = "grey";
+            c.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+
     },
     render: function() {
       // console.timeEnd("App.render");
@@ -263,15 +305,22 @@
 
       return React.DOM.div(
         {
-          className: "the-graph " + scaleClass,
+          className: "the-graph-app " + scaleClass,
           name:"app", 
           style: {
             width: this.state.width,
             height: this.state.height
           }
         },
+        React.DOM.canvas({
+          ref: "canvas",
+          className: "app-canvas",
+          width: this.state.width, 
+          height: this.state.height
+        }),
         React.DOM.svg(
           {
+            className: "app-svg",
             width: this.state.width, 
             height: this.state.height
           },

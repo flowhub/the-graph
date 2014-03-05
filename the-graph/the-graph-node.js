@@ -20,7 +20,6 @@
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        // Needs to be click (not tap) to get event.shiftKey
         this.getDOMNode().addEventListener("tap", this.onNodeSelection);
       }
 
@@ -91,6 +90,29 @@
 
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+
+      // Snap to grid
+      var snapToGrid = true;
+      var snap = TheGraph.nodeSize/2;
+      if (snapToGrid) {
+        var x, y;
+        if (this.props.export) {
+          var newPos = {
+            x: Math.round(this.props.export.metadata.x/snap) * snap,
+            y: Math.round(this.props.export.metadata.y/snap) * snap
+          };
+          if (this.props.isIn) {
+            this.props.graph.setInportMetadata(this.props.exportKey, newPos);
+          } else {
+            this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
+          }
+        } else {
+          this.props.graph.setNodeMetadata(this.props.key, {
+            x: Math.round(this.props.node.metadata.x/snap) * snap,
+            y: Math.round(this.props.node.metadata.y/snap) * snap
+          });
+        }
+      }
 
       // Moving a node should only be a single transaction
       if (this.props.export) {

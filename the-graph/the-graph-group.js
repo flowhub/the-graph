@@ -21,6 +21,9 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
+
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      this.componentDidUpdate();
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -41,7 +44,7 @@
       // App.showContext
       this.props.showContext({
         element: this,
-        type: "group",
+        type: (this.props.selectionGroup ? "selection" : "group"),
         x: x,
         y: y,
         graph: this.props.graph,
@@ -76,24 +79,18 @@
       // Don't fire on graph
       event.stopPropagation();
 
+      // Don't tap graph (deselect)
+      event.preventTap();
+
       this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
       this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
-    highlight: function () {
-      var highlightEvent = new CustomEvent('the-graph-group-highlight', { 
-        'detail': {
-          index: this.props.index,
-          x: this.mouseX,
-          y: this.mouseY
-        },
-        'bubbles': true
-      });
-      this.getDOMNode().dispatchEvent(highlightEvent);
-    },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var color = (this.props.color ? this.props.color : 0);
-      var c = "group-box color"+color;
+      var c = "group-box color" + (this.props.color ? this.props.color : 0);
+      if (this.props.selectionGroup) { 
+        c += " selection";
+      }
       this.refs.box.getDOMNode().setAttribute("class", c);
     },
     render: function() {

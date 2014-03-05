@@ -81,6 +81,10 @@
       if (this.props.isExport) {
         return;
       }
+      // Click on label, pass context menu to node
+      if (event && (event.target === this.refs.label.getDOMNode())) {
+        return;
+      }
       // Don't tap graph
       event.stopPropagation();
       
@@ -137,7 +141,7 @@
           }),
           React.DOM.text({
             ref: "label",
-            className: "port-label",
+            className: "port-label drag",
             x: this.props.x + (this.props.isIn ? 5 : -5),
             y: this.props.y,
             style: style,

@@ -139,6 +139,16 @@
                 graph.removeGroup(itemKey);
               }
             }
+          },
+          selection: {
+            icon: "th",
+            n4: {
+              icon: "check",
+              iconLabel: "makegroup",
+              action: function (graph, itemKey, item) {
+                console.log("make group", item.nodes);
+              }
+            }
           }
         };
       },
