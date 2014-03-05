@@ -68,7 +68,6 @@
 
     // Graph i/o to kGraph nodes
     var inports = graph.inports;
-    console.log(graph.inports);
     var inportsKeys = Object.keys(inports);
     var inportChildren = inportsKeys.map(function(key){
       var inport = inports[key];
