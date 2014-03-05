@@ -1,5 +1,4 @@
-//function klayinit () {
-(function () {
+function klayinit () {
   "use strict";
 
   Array.prototype.clean = function() {
@@ -15,7 +14,7 @@
   // Encode the original NoFlo graph as a KGraph (KIELER Graph) JSON
   var toKieler = function (graph, portInfo, direction) {
     // Default direction is left to right
-    var direction = direction || 'RIGHT';
+    direction = direction || 'RIGHT';
     // Default port and node properties
     var portProperties = {inportSide: {'de.cau.cs.kieler.portSide': 'WEST'},
                           outportSide: {'de.cau.cs.kieler.portSide': 'EAST'},
@@ -76,7 +75,7 @@
       var uniquePort = {id: inport.port,
                         width: portProperties.width,
                         height: portProperties.height,
-                        properties: portProperties.outportSide}
+                        properties: portProperties.outportSide};
       
       var kChild = {
         id: tempId, 
@@ -97,7 +96,7 @@
       var uniquePort = {id: outport.port,
                         width: portProperties.width,
                         height: portProperties.height,
-                        properties: portProperties.inportSide}
+                        properties: portProperties.inportSide};
 
       var kChild = {
         id: tempId, 
@@ -204,7 +203,7 @@
       // Mark edges too
       node.edges.map(function (edge) {
         if (edge) {
-          kGraph.edges[parseInt(edge.id.substr(1))] = null;
+          kGraph.edges[parseInt(edge.id.substr(1), 10)] = null;
         }
       });
       // Add node/subgraph to the graph
@@ -224,7 +223,7 @@
     if (typeof $klay === 'undefined') {
       throw new Error('Klay autolayout algorithm not loaded, aborting');
     }
-    var direction = direction || "RIGHT";
+    direction = direction || "RIGHT";
 
     // Define some preset options to KLayJS
     var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
@@ -248,4 +247,4 @@
                     console.log("$klay.layout error:", error);
                   }});
   };
-})();
+}
