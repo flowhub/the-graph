@@ -167,6 +167,12 @@
         // options: icon, label
         this.menus[type] = options;
       },
+      addMenuCallback: function (type, callback) {
+        if (!this.menus[type]) {
+          return;
+        }
+        this.menus[type].callback = callback;
+      },
       addMenuAction: function (type, direction, options) {
         if (!this.menus[type]) {
           this.menus[type] = {};
