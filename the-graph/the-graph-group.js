@@ -11,10 +11,12 @@
       TheGraph.mixins.SavePointer
     ],
     componentDidMount: function () {
-      var label = this.refs.label.getDOMNode();
-
       // Move group
-      label.addEventListener("trackstart", this.onTrackStart);
+      this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      if (this.props.isSelectionGroup) {
+        // Drag selection by bg
+        this.refs.box.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      }
 
       // Context menu
       if (this.props.showContext) {
@@ -44,7 +46,7 @@
       // App.showContext
       this.props.showContext({
         element: this,
-        type: (this.props.selectionGroup ? "selection" : "group"),
+        type: (this.props.isSelectionGroup ? "selection" : "group"),
         x: x,
         y: y,
         graph: this.props.graph,
@@ -63,8 +65,13 @@
       // Don't drag graph
       event.stopPropagation();
 
-      this.refs.label.getDOMNode().addEventListener("track", this.onTrack);
-      this.refs.label.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      if (this.props.isSelectionGroup) {
+        this.refs.box.getDOMNode().addEventListener("track", this.onTrack);
+        this.refs.box.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      } else {
+        this.refs.label.getDOMNode().addEventListener("track", this.onTrack);
+        this.refs.label.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      }
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -73,7 +80,7 @@
       var deltaX = Math.round( event.ddx / this.props.scale );
       var deltaY = Math.round( event.ddy / this.props.scale );
 
-      this.props.triggerMoveGroup(this.props.nodes, deltaX, deltaY);
+      this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
       // Don't fire on graph
@@ -82,14 +89,22 @@
       // Don't tap graph (deselect)
       event.preventTap();
 
-      this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
-      this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      // Snap to grid
+      this.props.triggerMoveGroup(this.props.item.nodes);
+
+      if (this.props.isSelectionGroup) {
+        this.refs.box.getDOMNode().removeEventListener("track", this.onTrack);
+        this.refs.box.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      } else {
+        this.refs.label.getDOMNode().removeEventListener("track", this.onTrack);
+        this.refs.label.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      }
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
       var c = "group-box color" + (this.props.color ? this.props.color : 0);
-      if (this.props.selectionGroup) { 
-        c += " selection";
+      if (this.props.isSelectionGroup) { 
+        c += " selection drag";
       }
       this.refs.box.getDOMNode().setAttribute("class", c);
     },

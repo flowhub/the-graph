@@ -96,10 +96,19 @@
       var len = nodes.length;
       for (var i=0; i<len; i++) {
         var node = graph.getNode(nodes[i]);
-        if (node) {
+        if (!node) { continue; }
+        if (dx !== undefined) {
+          // Move by delta
           graph.setNodeMetadata(node.id, {
             x: node.metadata.x + dx,
             y: node.metadata.y + dy
+          });
+        } else {
+          // Snap to grid
+          var snap = TheGraph.nodeSize/2;
+          graph.setNodeMetadata(node.id, {
+            x: Math.round(node.metadata.x/snap) * snap,
+            y: Math.round(node.metadata.y/snap) * snap
           });
         }
       }
@@ -560,7 +569,7 @@
         };
         var selectionGroup = TheGraph.Group({
           key: "selectiongroup",
-          selectionGroup: true,
+          isSelectionGroup: true,
           graph: graph,
           item: pseudoGroup,
           minX: limits.minX,
@@ -568,8 +577,7 @@
           maxX: limits.maxX,
           maxY: limits.maxY,
           scale: self.props.scale,
-          label: pseudoGroup.name,
-          nodes: pseudoGroup.nodes,
+          label: "",
           description: "",
           color: pseudoGroup.metadata.color,
           triggerMoveGroup: self.moveGroup,
