@@ -20,6 +20,11 @@
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
+      exec: {
+        build_stylus: {
+          command: 'node ./node_modules/stylus/bin/stylus ./themes/the-graph-dark.styl'
+        }
+      },
       jshint: {
         options: jshintOptions,
         all: {
@@ -82,6 +87,7 @@
     //   this.config('inlinelint.all.src', filepath);
     // }.bind(this));
 
+    this.loadNpmTasks('grunt-exec');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
@@ -89,6 +95,7 @@
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
+    this.registerTask('build', ['exec:build_stylus']);
     this.registerTask('default', ['test']);
   };
 

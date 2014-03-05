@@ -6,7 +6,9 @@
   "dependencies": {
   },
   "devDependencies": {
+    "stylus": "~0.42.3",
     "grunt": "~0.4.1",
+    "grunt-exec": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-lint-inline": "~0.3.1",
     "grunt-contrib-watch": "~0.5.3",
