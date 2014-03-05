@@ -34,14 +34,20 @@ svg {
   stroke-width: 2px;
 }
 .ex-inports .node-rect {
-  stroke: var-spectrum-b2;
+  fill: #2f3537;
+  stroke: #e88802;
 }
 .ex-outports .node-rect {
-  stroke: var-spectrum-b4;
+  fill: #2f3537;
+  stroke: #02e83c;
 }
 .node:hover .node-rect {
   fill: rgba(230,238,240,0.95);
   stroke: var-node-hover-border;
+}
+.ex-inports:hover .node-rect,
+.ex-outports:hover .node-rect {
+  fill: #2f3537;
 }
 .small .node-rect {
   stroke: none;
@@ -74,7 +80,6 @@ path {
   transition-duration: 0.5s;
 }
 .edge-touch {
-  stroke: #fff;
   stroke-width: 10px;
   opacity: 0;
 }
@@ -130,8 +135,8 @@ text {
   fill: rgba(0,0,0,0.5);
 }
 .context-node-rect {
-  fill: #1a1a1a;
-  stroke: #808080;
+  fill: #121417;
+  stroke: #bfbfbf;
   stroke-width: 0.5px;
 }
 .context-node-icon {
@@ -203,7 +208,7 @@ text {
   opacity: 0;
 }
 .tooltip-bg {
-  fill: #000;
+  fill: rgba(0,0,0,0.9);
   opacity: 0.75;
 }
 .tooltip-label {
@@ -226,7 +231,7 @@ text {
   font-size: 70px;
 }
 .big .node-icon {
-  fill: #c8ced0;
+  fill: #acb6b9;
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {

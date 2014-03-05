@@ -50,14 +50,20 @@ svg {
   stroke-width: 2px;
 }
 .ex-inports .node-rect {
-  stroke: var-spectrum-b2;
+  fill: var-export-bg;
+  stroke: var-spectrum-a02;
 }
 .ex-outports .node-rect {
-  stroke: var-spectrum-b4;
+  fill: var-export-bg;
+  stroke: var-spectrum-a04;
 }
 .node:hover .node-rect {
   fill: var-node-hover;
   stroke: var-node-hover-border;
+}
+.ex-inports:hover .node-rect,
+.ex-outports:hover .node-rect {
+  fill: var-export-bg;
 }
 .small .node-rect {
   stroke: none;
@@ -66,15 +72,16 @@ svg {
   opacity: 0;
 }
 .node.selected .node-rect {
-  stroke: hsl(0, 100%, 50%);
+  stroke: var-selection-box-border;
   stroke-width: 4px;
 }
+
 
 path {
   fill: none;
 }
 .edge-bg {
-  stroke: black;
+  stroke: var-edge-bg;
   stroke-width: 4px;
 }
 .edge:hover .edge-bg {
@@ -85,14 +92,13 @@ path {
   stroke: red;
 }
 .edge-fg {
-  stroke: white;
+  stroke: var-spectrum-a00;
   stroke-width: 2px;
 
   transition-property: stroke-width;
   transition-duration: 0.5s;
 }
 .edge-touch {
-  stroke: white;
   stroke-width: 10px;
   opacity: 0;
 }
@@ -107,13 +113,13 @@ text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision; /* makes text scale smoothly */
   font-size: 14px;
-  fill: white;
+  fill: var-type-a;
   text-anchor: middle;
   dominant-baseline: central;
 }
 
 .text-bg-rect {
-  fill: hsla(0, 0%, 0%, 0.5);
+  fill: var-text-bg;
 }
 
 .node-label,
@@ -138,7 +144,7 @@ text {
 /* IIPs */
 .iip-path {
   stroke-width: 1px;
-  stroke: white;
+  stroke: var-spectrum-a00;
 }
 .iip-info {
   visibility: hidden;
@@ -157,8 +163,8 @@ text {
   fill: var-menu-modal-bg;
 }
 .context-node-rect {
-  fill: hsl(0, 0%, 10%);
-  stroke: hsl(0, 0%, 50%);
+  fill: var-menu-icon-bg;
+  stroke: var-menu-border;
   stroke-width: 0.5px;
 }
 .context-node-icon {
@@ -241,7 +247,7 @@ text {
   opacity: 0;
 }
 .tooltip-bg {
-  fill: black;
+  fill: var-tooltip-bg;
   opacity: 0.75;
 }
 .tooltip-label {
