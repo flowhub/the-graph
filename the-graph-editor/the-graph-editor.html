@@ -177,7 +177,11 @@
       getMenuDef: function (options) {
         // Options: type, graph, itemKey, item
         if (options.type && this.menus[options.type]) {
-          return this.menus[options.type];
+          var defaultMenu = this.menus[options.type];
+          if (defaultMenu.callback) {
+            return defaultMenu.callback(defaultMenu, options);
+          }
+          return defaultMenu;
         }
         return null;
       },
