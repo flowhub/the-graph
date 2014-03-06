@@ -122,31 +122,31 @@
         var fontSize = 6 * (30 / (4 * this.props.label.length));
         style = { "font-size": fontSize+"px" };
       }
-      var r = 3.5;
+      var r = 4;
       return (
         React.DOM.g(
           {
             className: "port arrow",
-            title: this.props.label
+            title: this.props.label,
+            transform: "translate("+this.props.x+","+this.props.y+")"
           },
           React.DOM.circle({
-            className: "port-circle",
-            cx: this.props.x,
-            cy: this.props.y,
-            r: r
+            className: "port-circle-bg", // Transparent, for hit region
+            r: r+1
+          }),
+          React.DOM.path({
+            className: "port-arc",
+            d: (this.props.isIn ? TheGraph.arcs.inport : TheGraph.arcs.outport)
           }),
           React.DOM.circle({
             ref: "circleSmall",
             // className: "port-circle-small fill route"+this.props.route,  // See componentDidUpdate
-            cx: this.props.x,
-            cy: this.props.y,
-            r: r * 5/8
+            r: r-1.5
           }),
           React.DOM.text({
             ref: "label",
             className: "port-label drag",
-            x: this.props.x + (this.props.isIn ? 5 : -5),
-            y: this.props.y,
+            x: (this.props.isIn ? 5 : -5),
             style: style,
             children: this.props.label
           })
