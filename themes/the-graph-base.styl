@@ -49,6 +49,10 @@ svg {
   stroke: var-node-border;
   stroke-width: 2px;
 };
+.small .node-border {
+  fill: var-node;
+  stroke: none;
+}
 .node-rect {
   fill: var-node;
   stroke: none;
@@ -59,18 +63,21 @@ svg {
 }
 .ex-inports .node-border {
   fill: var-export-bg;
-  stroke: var-spectrum-a02;
+  stroke: none;
 }
 .ex-outports .node-border {
   fill: var-export-bg;
-  stroke: var-spectrum-a04;
+  stroke: none;
 }
 .ex-inports .node .node-rect,
-.ex-outports .node .node-rect {
+.ex-outports .node .node-rect,
+.ex-inports .node:hover .node-rect,
+.ex-outports .node:hover .node-rect {
   fill: none;
 }
-.small .node-rect {
-  stroke: none;
+.small .ex-inports .node .node-border,
+.small .ex-outports .node .node-border {
+  fill: var-export-bg; 
 }
 .node-bg {
   opacity: 0;
@@ -96,7 +103,7 @@ path {
   stroke: red;
 }
 .edge-fg {
-  stroke: var-spectrum-a00;
+  stroke: var-route00;
   stroke-width: 2px;
 
   transition-property: stroke-width;
@@ -148,7 +155,7 @@ text {
 /* IIPs */
 .iip-path {
   stroke-width: 1px;
-  stroke: var-spectrum-a00;
+  stroke: var-route00;
 }
 .iip-info {
   visibility: hidden;
@@ -265,7 +272,7 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 50px;
+  font-size: 45px;
   fill: var-node-icon;
 
   transition-property: font-size, fill;
@@ -273,24 +280,22 @@ text {
 }
 .small .node-icon {
   fill: var-node-icon-small;
-  font-size: 68px;
+  font-size: 66px;
 }
 .big .node-icon {
   fill: var-node-icon-big;
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
-  fill: var-spectrum-a02;
+  fill: var-route02;
 }
 .ex-outports .node-icon,
 .small .ex-outports .node-icon {
-  fill: var-spectrum-a04;
+  fill: var-route04;
 }
 
 .port-circle {
   fill: var-node;
-  stroke: var-node-border;
-  stroke-width: 1px;
 }
 .port-circle-small {
   fill: none;
@@ -322,57 +327,60 @@ text {
 
 /* Groups */
 .group-box {
-  fill: var-spectrum-a00a1;
+  fill: var-group00;
 
   transition-property: fill;
   transition-duration: 0.3s;
 }
+.group-box:hover {
+  fill: var-group00-hover;
+}
 
 .group-box.color0 
-  fill: var-spectrum-a00a1
+  fill: var-group00
 .group-box.color1 
-  fill: var-spectrum-a01a1
+  fill: var-group01
 .group-box.color2 
-  fill: var-spectrum-a02a1
+  fill: var-group02
 .group-box.color3 
-  fill: var-spectrum-a03a1
+  fill: var-group03
 .group-box.color4 
-  fill: var-spectrum-a04a1
+  fill: var-group04
 .group-box.color5 
-  fill: var-spectrum-a05a1
+  fill: var-group05
 .group-box.color6 
-  fill: var-spectrum-a06a1
+  fill: var-group06
 .group-box.color7 
-  fill: var-spectrum-a07a1
+  fill: var-group07
 .group-box.color8 
-  fill: var-spectrum-a08a1
+  fill: var-group08
 .group-box.color9 
-  fill: var-spectrum-a09a1
+  fill: var-group09
 .group-box.color10
-  fill: var-spectrum-a10a1
+  fill: var-group10
 
 .group-box.color0:hover 
-  fill: var-spectrum-a00a2
+  fill: var-group00-hover
 .group-box.color1:hover 
-  fill: var-spectrum-a01a2
+  fill: var-group01-hover
 .group-box.color2:hover 
-  fill: var-spectrum-a02a2
+  fill: var-group02-hover
 .group-box.color3:hover 
-  fill: var-spectrum-a03a2
+  fill: var-group03-hover
 .group-box.color4:hover 
-  fill: var-spectrum-a04a2
+  fill: var-group04-hover
 .group-box.color5:hover 
-  fill: var-spectrum-a05a2
+  fill: var-group05-hover
 .group-box.color6:hover 
-  fill: var-spectrum-a06a2
+  fill: var-group06-hover
 .group-box.color7:hover 
-  fill: var-spectrum-a07a2
+  fill: var-group07-hover
 .group-box.color8:hover 
-  fill: var-spectrum-a08a2
+  fill: var-group08-hover
 .group-box.color9:hover 
-  fill: var-spectrum-a09a2
+  fill: var-group09-hover
 .group-box.color10:hover
-  fill: var-spectrum-a10a2
+  fill: var-group10-hover
 
 
 .group-box.selection { 
@@ -407,47 +415,47 @@ text {
 }
 
 .stroke.route0
-  stroke: var-spectrum-a00
+  stroke: var-route00
 .stroke.route1
-  stroke: var-spectrum-a01
+  stroke: var-route01
 .stroke.route2
-  stroke: var-spectrum-a02
+  stroke: var-route02
 .stroke.route3
-  stroke: var-spectrum-a03
+  stroke: var-route03
 .stroke.route4
-  stroke: var-spectrum-a04
+  stroke: var-route04
 .stroke.route5
-  stroke: var-spectrum-a05
+  stroke: var-route05
 .stroke.route6
-  stroke: var-spectrum-a06
+  stroke: var-route06
 .stroke.route7
-  stroke: var-spectrum-a07
+  stroke: var-route07
 .stroke.route8
-  stroke: var-spectrum-a08
+  stroke: var-route08
 .stroke.route9
-  stroke: var-spectrum-a09
+  stroke: var-route09
 .stroke.route10
-  stroke: var-spectrum-a10
+  stroke: var-route10
 
 .fill.route0 
-  fill: var-spectrum-a00
+  fill: var-route00
 .fill.route1 
-  fill: var-spectrum-a01
+  fill: var-route01
 .fill.route2 
-  fill: var-spectrum-a02
+  fill: var-route02
 .fill.route3 
-  fill: var-spectrum-a03
+  fill: var-route03
 .fill.route4 
-  fill: var-spectrum-a04
+  fill: var-route04
 .fill.route5 
-  fill: var-spectrum-a05
+  fill: var-route05
 .fill.route6 
-  fill: var-spectrum-a06
+  fill: var-route06
 .fill.route7 
-  fill: var-spectrum-a07
+  fill: var-route07
 .fill.route8 
-  fill: var-spectrum-a08
+  fill: var-route08
 .fill.route9 
-  fill: var-spectrum-a09
+  fill: var-route09
 .fill.route10
-  fill: var-spectrum-a10
+  fill: var-route10

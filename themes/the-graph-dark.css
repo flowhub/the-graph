@@ -33,6 +33,10 @@ svg {
   stroke: rgba(255,255,255,0.75);
   stroke-width: 2px;
 }
+.small .node-border {
+  fill: rgba(230,238,240,0.94);
+  stroke: none;
+}
 .node-rect {
   fill: rgba(230,238,240,0.94);
   stroke: none;
@@ -43,18 +47,21 @@ svg {
 }
 .ex-inports .node-border {
   fill: #1a1a1a;
-  stroke: #e88802;
+  stroke: none;
 }
 .ex-outports .node-border {
   fill: #1a1a1a;
-  stroke: #02e83c;
+  stroke: none;
 }
 .ex-inports .node .node-rect,
-.ex-outports .node .node-rect {
+.ex-outports .node .node-rect,
+.ex-inports .node:hover .node-rect,
+.ex-outports .node:hover .node-rect {
   fill: none;
 }
-.small .node-rect {
-  stroke: none;
+.small .ex-inports .node .node-border,
+.small .ex-outports .node .node-border {
+  fill: #1a1a1a;
 }
 .node-bg {
   opacity: 0;
@@ -225,17 +232,17 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 50px;
-  fill: #2f3537;
+  font-size: 45px;
+  fill: #5e6a6e;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
 .small .node-icon {
-  fill: #0c0d0e;
-  font-size: 68px;
+  fill: #2f3537;
+  font-size: 66px;
 }
 .big .node-icon {
-  fill: #acb6b9;
+  fill: #c8ced0;
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
@@ -247,8 +254,6 @@ text {
 }
 .port-circle {
   fill: rgba(230,238,240,0.94);
-  stroke: rgba(255,255,255,0.75);
-  stroke-width: 1px;
 }
 .port-circle-small {
   fill: none;
@@ -279,6 +284,9 @@ text {
   fill: rgba(191,191,191,0.15);
   transition-property: fill;
   transition-duration: 0.3s;
+}
+.group-box:hover {
+  fill: rgba(191,191,191,0.25);
 }
 .group-box.color0 {
   fill: rgba(191,191,191,0.15);
