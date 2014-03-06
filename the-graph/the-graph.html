@@ -226,6 +226,15 @@
         // TODO: edge bends
   
         this.graph.endTransaction("autolayout");
+
+        // Fit to window
+        this.triggerFit();
+
+      },
+      triggerFit: function () {
+        if (this.appView) {
+          this.appView.triggerFit();
+        }
       },
       widthChanged: function () {
         if (!this.appView) { return; }

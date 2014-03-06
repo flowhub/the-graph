@@ -41,7 +41,14 @@ loadGraph({
       "nodes": ["dom/GetElement_ah82a", "dom/GetElement_f4nkd", "dom/GetElement_z64xf", "dom/GetElement_ah36i", "core/Split_jzzu2"],
       "metadata": {
         "description": "get the elements from the dom",
-        "color": 1
+        "color": 0
+      }
+    },
+    {
+      "name": "setup", 
+      "nodes": ["interaction/ListenMouse_1w3vt", "core/Split_y0bla", "seriously/SetSource_szf33", "gum/GetUserMedia_9e9i4", "dom/SetAttribute_uto4k", "core/Split_occbw", "core/RepeatAsync_647ff", "core/Kick_4njgs"],
+      "metadata": {
+        "color": 2
       }
     },
     {
@@ -73,7 +80,7 @@ loadGraph({
       "nodes": ["dom/GetElement_j674o", "routers/KickRouter_bzaiw", "interaction/ListenChange_z7m5u", "math/Multiply_rbxrn", "math/Multiply_3v13k", "seriously/HueSaturation_bzfvt", "core/Split_jx318", "math/Multiply_3eldx", "seriously/TVGlitch_e1qre", "seriously/Hex_lx162", "seriously/Ascii_17c9q", "seriously/Invert_7xnl3", "seriously/Edge_egmkb", "seriously/Split_7oj15", "seriously/SetTarget_kii7s"],
       "metadata": {
         "description": "",
-        "color": 12
+        "color": 10
       }
     }
   ],
