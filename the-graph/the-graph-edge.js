@@ -106,57 +106,38 @@
       var targetX = this.props.tX;
       var targetY = this.props.tY;
 
-      var bendPoints;
-      if (this.props.edge && this.props.edge.metadata && 
-        this.props.edge.metadata.bendPoints && this.props.edge.metadata.bendPoints.length) {
-        bendPoints = this.props.edge.metadata.bendPoints;
-      }
-
-      var path;
-      if (bendPoints) {
-        // Othagonal / straight lines
-        path = [];
-        path.push("M", sourceX, sourceY);
-        var i, len;
-        for (i=0, len=bendPoints.length; i<len; i++) {
-          var point = bendPoints[i];
-          path.push("L", point.x, point.y);
-        }
-        path.push("L", targetX, targetY);
-      } else {
-        // Organic / curved edge
-        var c1X, c1Y, c2X, c2Y;
-        if (targetX-5 < sourceX) {
-          if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
-            // Loopback
-            c1X = sourceX + CURVE;
-            c1Y = sourceY - CURVE;
-            c2X = targetX - CURVE;
-            c2Y = targetY - CURVE;
-          } else {
-            // Stick out some
-            c1X = sourceX + CURVE;
-            c1Y = sourceY + (targetY > sourceY ? CURVE : -CURVE);
-            c2X = targetX - CURVE;
-            c2Y = targetY + (targetY > sourceY ? -CURVE : CURVE);
-          }
+      // Organic / curved edge
+      var c1X, c1Y, c2X, c2Y;
+      if (targetX-5 < sourceX) {
+        if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
+          // Loopback
+          c1X = sourceX + CURVE;
+          c1Y = sourceY - CURVE;
+          c2X = targetX - CURVE;
+          c2Y = targetY - CURVE;
         } else {
-          // Controls halfway between
-          c1X = sourceX + (targetX - sourceX)/2;
-          c1Y = sourceY;
-          c2X = c1X;
-          c2Y = targetY;
+          // Stick out some
+          c1X = sourceX + CURVE;
+          c1Y = sourceY + (targetY > sourceY ? CURVE : -CURVE);
+          c2X = targetX - CURVE;
+          c2Y = targetY + (targetY > sourceY ? -CURVE : CURVE);
         }
-
-        path = [
-          "M",
-          sourceX, sourceY,
-          "C",
-          c1X, c1Y,
-          c2X, c2Y,
-          targetX, targetY
-        ];
+      } else {
+        // Controls halfway between
+        c1X = sourceX + (targetX - sourceX)/2;
+        c1Y = sourceY;
+        c2X = c1X;
+        c2Y = targetY;
       }
+
+      var path = [
+        "M",
+        sourceX, sourceY,
+        "C",
+        c1X, c1Y,
+        c2X, c2Y,
+        targetX, targetY
+      ];
       // Make SVG path
       path = path.join(" ");
 

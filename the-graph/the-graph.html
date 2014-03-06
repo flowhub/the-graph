@@ -37,7 +37,7 @@
       editable: true,
       autolayout: false,
       grid: 72,
-      snap: 1,
+      snap: 36,
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
@@ -177,8 +177,6 @@
       applyAutolayout: function (layoutedKGraph) {
         this.graph.startTransaction("autolayout");
 
-        console.log(layoutedKGraph);
-
         // Update original graph nodes with the new coordinates from KIELER graph
         var children = layoutedKGraph.children.slice();
 
@@ -226,28 +224,6 @@
             }
           }
         }
-        
-        var edges = layoutedKGraph.edges.slice();
-        for (i=0, len = children.length; i<len; i++) {
-          var edge = edges[i];
-          var sourceNode = edge.source;
-          var sourcePortSplit = edge.sourcePort.split("_");
-          var sourcePort = sourcePortSplit[sourcePortSplit.length-1];
-          var targetNode = edge.target;
-          var targetPortSplit = edge.targetPort.split("_");
-          var targetPort = targetPortSplit[targetPortSplit.length-1];
-          var nofloEdge = this.graph.getEdge(sourceNode, sourcePort, targetNode, targetPort);
-          if (nofloEdge) {
-            var bendPoints = null;
-            if (edge.bendPoints && edge.bendPoints.length) {
-              bendPoints = edge.bendPoints.slice();
-            }
-            this.graph.setEdgeMetadata(sourceNode, sourcePort, targetNode, targetPort, {
-              bendPoints: bendPoints
-            });
-          }
-        };
-
   
         this.graph.endTransaction("autolayout");
 
