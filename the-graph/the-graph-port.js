@@ -122,7 +122,7 @@
         var fontSize = 6 * (30 / (4 * this.props.label.length));
         style = { "font-size": fontSize+"px" };
       }
-      var r = 4;
+      var r = 3.5;
       return (
         React.DOM.g(
           {

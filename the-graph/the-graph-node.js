@@ -340,11 +340,20 @@
             height: TheGraph.nodeSize + 35
           }),
           React.DOM.rect({
-            className: "node-rect drag",
+            className: "node-border drag",
             width: TheGraph.nodeSize,
             height: TheGraph.nodeSize,
             rx: TheGraph.nodeRadius,
             ry: TheGraph.nodeRadius
+          }),
+          React.DOM.rect({
+            className: "node-rect drag",
+            width: TheGraph.nodeSize - 6,
+            height: TheGraph.nodeSize - 6,
+            x: 3,
+            y: 3,
+            rx: TheGraph.nodeRadius-2,
+            ry: TheGraph.nodeRadius-2
           }),
           React.DOM.text({
             ref: "icon",

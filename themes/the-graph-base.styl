@@ -44,26 +44,30 @@ svg {
   cursor: -webkit-grab;
   cursor: grab;
 }
-.node-rect {
-  fill: var-node;
+.node-border {
+  fill: none;
   stroke: var-node-border;
   stroke-width: 2px;
-}
-.ex-inports .node-rect {
-  fill: var-export-bg;
-  stroke: var-spectrum-a02;
-}
-.ex-outports .node-rect {
-  fill: var-export-bg;
-  stroke: var-spectrum-a04;
+};
+.node-rect {
+  fill: var-node;
+  stroke: none;
 }
 .node:hover .node-rect {
   fill: var-node-hover;
   stroke: var-node-hover-border;
 }
-.ex-inports:hover .node-rect,
-.ex-outports:hover .node-rect {
+.ex-inports .node-border {
   fill: var-export-bg;
+  stroke: var-spectrum-a02;
+}
+.ex-outports .node-border {
+  fill: var-export-bg;
+  stroke: var-spectrum-a04;
+}
+.ex-inports .node .node-rect,
+.ex-outports .node .node-rect {
+  fill: none;
 }
 .small .node-rect {
   stroke: none;
@@ -71,7 +75,7 @@ svg {
 .node-bg {
   opacity: 0;
 }
-.node.selected .node-rect {
+.node.selected .node-border {
   stroke: var-selection-box-border;
   stroke-width: 4px;
 }
@@ -261,7 +265,7 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 60px;
+  font-size: 50px;
   fill: var-node-icon;
 
   transition-property: font-size, fill;
@@ -269,7 +273,7 @@ text {
 }
 .small .node-icon {
   fill: var-node-icon-small;
-  font-size: 70px;
+  font-size: 68px;
 }
 .big .node-icon {
   fill: var-node-icon-big;

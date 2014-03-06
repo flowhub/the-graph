@@ -28,26 +28,30 @@ svg {
   cursor: -webkit-grab;
   cursor: grab;
 }
-.node-rect {
-  fill: rgba(230,238,240,0.9);
-  stroke: #fff;
+.node-border {
+  fill: none;
+  stroke: rgba(255,255,255,0.75);
   stroke-width: 2px;
 }
-.ex-inports .node-rect {
-  fill: #2f3537;
-  stroke: #e88802;
-}
-.ex-outports .node-rect {
-  fill: #2f3537;
-  stroke: #02e83c;
+.node-rect {
+  fill: rgba(230,238,240,0.94);
+  stroke: none;
 }
 .node:hover .node-rect {
-  fill: rgba(230,238,240,0.95);
+  fill: rgba(230,238,240,0.97);
   stroke: var-node-hover-border;
 }
-.ex-inports:hover .node-rect,
-.ex-outports:hover .node-rect {
-  fill: #2f3537;
+.ex-inports .node-border {
+  fill: #1a1a1a;
+  stroke: #e88802;
+}
+.ex-outports .node-border {
+  fill: #1a1a1a;
+  stroke: #02e83c;
+}
+.ex-inports .node .node-rect,
+.ex-outports .node .node-rect {
+  fill: none;
 }
 .small .node-rect {
   stroke: none;
@@ -55,7 +59,7 @@ svg {
 .node-bg {
   opacity: 0;
 }
-.node.selected .node-rect {
+.node.selected .node-border {
   stroke: #f00;
   stroke-width: 4px;
 }
@@ -221,14 +225,14 @@ text {
   dominant-baseline: central;
 }
 .node-icon {
-  font-size: 60px;
+  font-size: 50px;
   fill: #2f3537;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
 .small .node-icon {
   fill: #0c0d0e;
-  font-size: 70px;
+  font-size: 68px;
 }
 .big .node-icon {
   fill: #acb6b9;
@@ -242,8 +246,8 @@ text {
   fill: #02e83c;
 }
 .port-circle {
-  fill: rgba(230,238,240,0.9);
-  stroke: #fff;
+  fill: rgba(230,238,240,0.94);
+  stroke: rgba(255,255,255,0.75);
   stroke-width: 1px;
 }
 .port-circle-small {

@@ -515,7 +515,7 @@
           exportKey: key,
           graph: graph,
           edge: {},
-          route: (metadata.route ? metadata.route : 5),
+          route: (metadata.route ? metadata.route : 4),
           isIn: false,
           label: privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + label.toUpperCase() + " export out",
           sX: privateNode.metadata.x + privatePort.x,
