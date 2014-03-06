@@ -110,13 +110,6 @@
           },
           group: {
             icon: "th",
-            n4: {
-              icon: "info-circle",
-              iconLabel: "info",
-              action: function (graph, itemKey, item) {
-                console.log("group info", itemKey, item);
-              }
-            },
             s4: {
               icon: "trash-o",
               iconLabel: "ungroup",
@@ -126,14 +119,7 @@
             }
           },
           selection: {
-            icon: "th",
-            n4: {
-              icon: "check",
-              iconLabel: "makegroup",
-              action: function (graph, itemKey, item) {
-                console.log("make group", item.nodes);
-              }
-            }
+            icon: "th"
           }
         };
       },
