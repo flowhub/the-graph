@@ -93,7 +93,7 @@ function klayinit () {
         width: nodeProperties.width, 
         height: nodeProperties.height,
         ports: [uniquePort],
-        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST"}
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST_SEPARATE"}
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -117,7 +117,7 @@ function klayinit () {
         width: nodeProperties.width, 
         height: nodeProperties.height,
         ports: [uniquePort],
-        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "LAST"}
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "LAST_SEPARATE"}
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -247,9 +247,12 @@ function klayinit () {
       "algorithm": "de.cau.cs.kieler.klay.layered",
       "layoutHierarchy": true,
       "spacing": 20,
-      "portConstraints": "FIXED_SIDE",
+      "edgeSpacingFactor": 0.2,
+      "inLayerSpacingFactor": 1.0,
       "nodePlace": "BRANDES_KOEPF",
+      "nodeLayering": "NETWORK_SIMPLEX",
       "edgeRouting": "POLYLINE",
+      "crossMin": "LAYER_SWEEP",
       "direction": direction
     };
     
