@@ -92,7 +92,8 @@ function klayinit () {
         labels: [{text: key}],
         width: nodeProperties.width, 
         height: nodeProperties.height,
-        ports: [uniquePort]
+        ports: [uniquePort],
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST"}
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -115,7 +116,8 @@ function klayinit () {
         labels: [{text: key}],
         width: nodeProperties.width, 
         height: nodeProperties.height,
-        ports: [uniquePort]
+        ports: [uniquePort],
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "LAST"}
       };
       idx[tempId] = countIdx++;
       return kChild;
