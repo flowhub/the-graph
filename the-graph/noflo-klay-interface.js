@@ -3,7 +3,7 @@ function klayinit () {
 
   Array.prototype.clean = function() {
     for (var i = 0; i < this.length; i++) {
-      if (this[i] === null || this[i] === undefined) {         
+      if (this[i] === null || this[i] === undefined) {
         this.splice(i, 1);
         i--;
       }
@@ -255,7 +255,7 @@ function klayinit () {
     
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph, portInfo, direction);
-
+   
     $klay.layout({
       graph: kGraph,
       options: options,
