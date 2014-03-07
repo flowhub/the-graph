@@ -244,6 +244,7 @@ function klayinit () {
 
     // Define some preset options to KLayJS
     var options = {
+      "intCoordinates": true,
       "algorithm": "de.cau.cs.kieler.klay.layered",
       "layoutHierarchy": true,
       "spacing": 20,
