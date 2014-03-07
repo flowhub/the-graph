@@ -23,7 +23,7 @@
       pkg: this.file.readJSON('package.json'),
       exec: {
         build_stylus: {
-          command: 'node ./node_modules/stylus/bin/stylus ./themes/the-graph-dark.styl'
+          command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
         }
       },
       jshint: {

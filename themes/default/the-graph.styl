@@ -59,7 +59,12 @@ svg {
 }
 .node:hover .node-rect {
   fill: var-node-hover;
+}
+.node:hover .node-border {
   stroke: var-node-hover-border;
+}
+.node:hover .port-arc {
+  fill: var-node-hover-border;
 }
 .ex-inports .node-border {
   fill: var-export-bg;
@@ -86,38 +91,41 @@ svg {
   stroke: var-selection-box-border;
   stroke-width: 4px;
 }
-
+.node.selected .port-arc {
+  stroke: var-selection-box-border;
+  fill: var-selection-box-border;
+}
 
 path {
   fill: none;
 }
 .edge-bg {
   stroke: var-edge-bg;
-  stroke-width: 4px;
-}
-.edge:hover .edge-bg {
-  stroke: gray;  
-}
-.edge.selected .edge-bg {
-  stroke-width: 8px;
-  stroke: red;
+  stroke-width: (var-edge-width + 2);
 }
 .edge-fg {
   stroke: var-route00;
-  stroke-width: 2px;
+  stroke-width: var-edge-width;
 
   transition-property: stroke-width;
   transition-duration: 0.5s;
 }
 .edge-touch {
-  stroke-width: 10px;
+  stroke-width: (var-edge-width + 4);
   opacity: 0;
 }
+.edge:hover .edge-bg {
+  stroke: var-edge-hover-bg;  
+}
+.edge.selected .edge-bg {
+  stroke-width: (var-edge-width * 2 + 2);
+  stroke: var-selection-box-border;
+}
 .small .edge-bg {
-  stroke-width: 8px;
+  stroke-width: (var-edge-width * 2 + 2);
 }
 .small .edge-fg {
-  stroke-width: 4px;
+  stroke-width: (var-edge-width * 2);
 }
 
 text {
@@ -332,6 +340,8 @@ text {
 /* Groups */
 .group-box {
   fill: var-group00;
+  stroke: var-group00-stroke;
+  stroke-width: 8px;
 
   transition-property: fill;
   transition-duration: 0.3s;
@@ -339,29 +349,43 @@ text {
 .group-box:hover {
   fill: var-group00-hover;
 }
+.small .group-box {
+  stroke-width: 8px;
+}
 
 .group-box.color0 
   fill: var-group00
+  stroke: var-group00-stroke
 .group-box.color1 
   fill: var-group01
+  stroke: var-group01-stroke
 .group-box.color2 
   fill: var-group02
+  stroke: var-group02-stroke
 .group-box.color3 
   fill: var-group03
+  stroke: var-group03-stroke
 .group-box.color4 
   fill: var-group04
+  stroke: var-group04-stroke
 .group-box.color5 
   fill: var-group05
+  stroke: var-group05-stroke
 .group-box.color6 
   fill: var-group06
+  stroke: var-group06-stroke
 .group-box.color7 
   fill: var-group07
+  stroke: var-group07-stroke
 .group-box.color8 
   fill: var-group08
+  stroke: var-group08-stroke
 .group-box.color9 
   fill: var-group09
+  stroke: var-group09-stroke
 .group-box.color10
   fill: var-group10
+  stroke: var-group10-stroke
 
 .group-box.color0:hover 
   fill: var-group00-hover

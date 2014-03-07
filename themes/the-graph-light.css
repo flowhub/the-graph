@@ -1,5 +1,5 @@
 .the-graph-app {
-  background-color: #000;
+  background-color: #fff;
   position: relative;
 }
 .app-canvas,
@@ -29,8 +29,8 @@ svg {
   cursor: grab;
 }
 .node-border {
-  fill: rgba(0,0,0,0.5);
-  stroke: #666;
+  fill: rgba(255,255,255,0.5);
+  stroke: #3b4245;
   stroke-width: 2px;
 }
 .small .node-border {
@@ -51,11 +51,11 @@ svg {
   fill: #808080;
 }
 .ex-inports .node-border {
-  fill: #1a1a1a;
+  fill: #e6e6e6;
   stroke: none;
 }
 .ex-outports .node-border {
-  fill: #1a1a1a;
+  fill: #e6e6e6;
   stroke: none;
 }
 .ex-inports .node .node-rect,
@@ -66,7 +66,7 @@ svg {
 }
 .small .ex-inports .node .node-border,
 .small .ex-outports .node .node-border {
-  fill: #1a1a1a;
+  fill: #e6e6e6;
 }
 .node-bg {
   opacity: 0;
@@ -83,43 +83,43 @@ path {
   fill: none;
 }
 .edge-bg {
-  stroke: #000;
-  stroke-width: 5px;
+  stroke: #e6e6e6;
+  stroke-width: 6px;
 }
 .edge-fg {
-  stroke: #fff;
-  stroke-width: 3px;
+  stroke: #a0a5a9;
+  stroke-width: 4px;
   transition-property: stroke-width;
   transition-duration: 0.5s;
 }
 .edge-touch {
-  stroke-width: 7px;
+  stroke-width: 8px;
   opacity: 0;
 }
 .edge:hover .edge-bg {
   stroke: #808080;
 }
 .edge.selected .edge-bg {
-  stroke-width: 8px;
+  stroke-width: 10px;
   stroke: #f00;
 }
 .small .edge-bg {
-  stroke-width: 8px;
+  stroke-width: 10px;
 }
 .small .edge-fg {
-  stroke-width: 6px;
+  stroke-width: 8px;
 }
 text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision;
 /* makes text scale smoothly */
   font-size: 14px;
-  fill: #fff;
+  fill: #000;
   text-anchor: middle;
   dominant-baseline: central;
 }
 .text-bg-rect {
-  fill: rgba(0,0,0,0.5);
+  fill: rgba(255,255,255,0.5);
 }
 .node-label,
 .node-sublabel {
@@ -139,7 +139,7 @@ text {
 }
 .iip-path {
   stroke-width: 1px;
-  stroke: #fff;
+  stroke: #a0a5a9;
 }
 .iip-info {
   visibility: hidden;
@@ -161,11 +161,11 @@ text {
 }
 .context-node-icon {
   font-size: 30px;
-  fill: #fff;
+  fill: #000;
 }
 .context-icon {
   font-size: 20px;
-  fill: #fff;
+  fill: #000;
 }
 .context-node-label {
   text-anchor: middle;
@@ -202,7 +202,7 @@ text {
   stroke: #bfbfbf;
 }
 .context-port-label {
-  fill: #fff;
+  fill: #000;
   dominant-baseline: central;
 }
 .context-port-in .context-port-label {
@@ -242,12 +242,12 @@ text {
 }
 .node-icon {
   font-size: 45px;
-  fill: #5e6a6e;
+  fill: #3b4245;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
 .small .node-icon {
-  fill: #2f3537;
+  fill: #171b1c;
   font-size: 66px;
 }
 .big .node-icon {
@@ -255,18 +255,18 @@ text {
 }
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
-  fill: #e88802;
+  fill: #ee7c0e;
 }
 .ex-outports .node-icon,
 .small .ex-outports .node-icon {
-  fill: #02e83c;
+  fill: #00782a;
 }
 .port-circle-bg {
-  fill: #666;
+  fill: #3b4245;
   opacity: 0;
 }
 .port-arc {
-  fill: #666;
+  fill: #3b4245;
 }
 .port-circle-small {
   fill: none;
@@ -275,7 +275,7 @@ text {
   visibility: hidden;
 }
 .port-label {
-  fill: #0c0d0e;
+  fill: #f1f3f3;
   visibility: hidden;
   font-size: 6px;
   dominant-baseline: central;
@@ -294,8 +294,8 @@ text {
   visibility: hidden;
 }
 .group-box {
-  fill: rgba(191,191,191,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(191,191,191,0.25);
   stroke-width: 8px;
   transition-property: fill;
   transition-duration: 0.3s;
@@ -307,48 +307,48 @@ text {
   stroke-width: 8px;
 }
 .group-box.color0 {
-  fill: rgba(191,191,191,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(191,191,191,0.25);
 }
 .group-box.color1 {
-  fill: rgba(255,128,128,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,128,128,0.25);
 }
 .group-box.color2 {
-  fill: rgba(255,202,128,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,202,128,0.25);
 }
 .group-box.color3 {
-  fill: rgba(255,255,128,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,255,128,0.25);
 }
 .group-box.color4 {
-  fill: rgba(128,255,159,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(128,255,159,0.25);
 }
 .group-box.color5 {
-  fill: rgba(128,255,212,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(128,255,212,0.25);
 }
 .group-box.color6 {
-  fill: rgba(128,244,255,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(128,244,255,0.25);
 }
 .group-box.color7 {
-  fill: rgba(128,191,255,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(128,191,255,0.25);
 }
 .group-box.color8 {
-  fill: rgba(223,128,255,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(223,128,255,0.25);
 }
 .group-box.color9 {
-  fill: rgba(255,128,234,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,128,234,0.25);
 }
 .group-box.color10 {
-  fill: rgba(255,128,181,0.15);
-  stroke: none;
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,128,181,0.25);
 }
 .group-box.color0:hover {
   fill: rgba(191,191,191,0.25);
@@ -393,7 +393,7 @@ text {
 }
 .group-label {
   text-anchor: start;
-  fill: #fff;
+  fill: #000;
   font-size: 20px;
   transition-property: font-size;
   transition-duration: 0.5s;
@@ -404,7 +404,7 @@ text {
   transition-duration: 0.5s;
 }
 .group-description {
-  fill: #fff;
+  fill: #000;
   font-size: 12px;
   text-anchor: start;
 }
@@ -412,68 +412,68 @@ text {
   visibility: hidden;
 }
 .stroke.route0 {
-  stroke: #fff;
+  stroke: #a0a5a9;
 }
 .stroke.route1 {
-  stroke: #e80202;
+  stroke: #e32017;
 }
 .stroke.route2 {
-  stroke: #e88802;
+  stroke: #ee7c0e;
 }
 .stroke.route3 {
-  stroke: #e8e802;
+  stroke: #ffd300;
 }
 .stroke.route4 {
-  stroke: #02e83c;
+  stroke: #00782a;
 }
 .stroke.route5 {
-  stroke: #02e89c;
+  stroke: #95cdba;
 }
 .stroke.route6 {
-  stroke: #02d5e8;
+  stroke: #0098d4;
 }
 .stroke.route7 {
-  stroke: #0275e8;
+  stroke: #003688;
 }
 .stroke.route8 {
-  stroke: #af02e8;
+  stroke: #9b0056;
 }
 .stroke.route9 {
-  stroke: #e802c2;
+  stroke: #f3a9bb;
 }
 .stroke.route10 {
-  stroke: #e80262;
+  stroke: #b36305;
 }
 .fill.route0 {
-  fill: #fff;
+  fill: #a0a5a9;
 }
 .fill.route1 {
-  fill: #e80202;
+  fill: #e32017;
 }
 .fill.route2 {
-  fill: #e88802;
+  fill: #ee7c0e;
 }
 .fill.route3 {
-  fill: #e8e802;
+  fill: #ffd300;
 }
 .fill.route4 {
-  fill: #02e83c;
+  fill: #00782a;
 }
 .fill.route5 {
-  fill: #02e89c;
+  fill: #95cdba;
 }
 .fill.route6 {
-  fill: #02d5e8;
+  fill: #0098d4;
 }
 .fill.route7 {
-  fill: #0275e8;
+  fill: #003688;
 }
 .fill.route8 {
-  fill: #af02e8;
+  fill: #9b0056;
 }
 .fill.route9 {
-  fill: #e802c2;
+  fill: #f3a9bb;
 }
 .fill.route10 {
-  fill: #e80262;
+  fill: #b36305;
 }
