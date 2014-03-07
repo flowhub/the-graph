@@ -249,7 +249,7 @@ function klayinit () {
       "layoutHierarchy": true,
       "spacing": 20,
       "edgeSpacingFactor": 0.2,
-      "inLayerSpacingFactor": 1.0,
+      "inLayerSpacingFactor": 2.0,
       "nodePlace": "BRANDES_KOEPF",
       "nodeLayering": "NETWORK_SIMPLEX",
       "edgeRouting": "POLYLINE",
