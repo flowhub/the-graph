@@ -73,7 +73,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: inPortsTemp.concat(outPortsTemp),
         properties: {
-          'portConstraints': 'FIXED_SIDE'
+          'portConstraints': 'FREE'
         }
       };
       idx[node.id] = countIdx++;
@@ -103,7 +103,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_SIDE',
+          'portConstraints': 'FREE',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST_SEPARATE"
         }
       };
@@ -132,7 +132,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_SIDE',
+          'portConstraints': 'FREE',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "LAST_SEPARATE"
         }
       };
