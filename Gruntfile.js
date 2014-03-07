@@ -9,7 +9,8 @@
     var sources = {
       scripts: ['Gruntfile.js', 'the-*/*.js'],
       elements: ['the-*/*.html'],
-      styles: ['themes/default/*.css']
+      stylus: ['themes/*/*.styl'],
+      css: ['themes/*.css']
     };
 
     var jshintOptions = { 
@@ -71,8 +72,16 @@
             livereload: true
           }
         },
-        styles: {
-          files: sources.styles,
+        stylus: {
+          files: sources.stylus,
+          tasks: ['exec:build_stylus'],
+          options: {
+            // nospawn: true,
+            livereload: false
+          }
+        },
+        css: {
+          files: sources.css,
           options: {
             // nospawn: true,
             livereload: true

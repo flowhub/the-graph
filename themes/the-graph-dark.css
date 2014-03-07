@@ -29,7 +29,7 @@ svg {
   cursor: grab;
 }
 .node-border {
-  fill: none;
+  fill: rgba(0,0,0,0.5);
   stroke: #666;
   stroke-width: 2px;
 }
