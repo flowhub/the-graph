@@ -30,7 +30,7 @@ svg {
 }
 .node-border {
   fill: none;
-  stroke: #808080;
+  stroke: #666;
   stroke-width: 2px;
 }
 .small .node-border {
@@ -253,11 +253,11 @@ text {
   fill: #02e83c;
 }
 .port-circle-bg {
-  fill: #808080;
+  fill: #666;
   opacity: 0;
 }
 .port-arc {
-  fill: #808080;
+  fill: #666;
 }
 .port-circle-small {
   fill: none;
