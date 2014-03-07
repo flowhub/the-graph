@@ -36,13 +36,27 @@ function klayinit () {
       children: [], 
       edges: []
     };
-
+    console.log(portInfo);
     // Encode nodes
     var nodes = graph.nodes;
     var idx = {};
     var countIdx = 0;
     var nodeChildren = nodes.map(function (node) {
-      var countPorts = 0;
+      var inPorts = portInfo[node.id].inports;
+      var inPortsKeys = Object.keys(inPorts);
+      var inPortsTemp = inPortsKeys.map(function (key) {
+        return {
+          id: node.id + '_' + key,
+          width: portProperties.width,
+          height: portProperties.height,
+          x: inPorts[key].x,
+          y: inPorts[key].y
+          // properties: {
+          //   'de.cau.cs.kieler.portSide': portProperties.inportSide,
+          //   'de.cau.cs.kieler.portIndex': countPorts++
+          // }
+        };
+      });
       var outPorts = portInfo[node.id].outports;
       var outPortsKeys = Object.keys(outPorts);
       var outPortsTemp = outPortsKeys.map(function (key) {
@@ -50,26 +64,15 @@ function klayinit () {
           id: node.id + '_' + key,
           width: portProperties.width,
           height: portProperties.height,
-          properties: {
-            'de.cau.cs.kieler.portSide': portProperties.outportSide,
-            'de.cau.cs.kieler.portIndex': countPorts++
-          }
+          x: outPorts[key].x,
+          y: outPorts[key].y
+          // properties: {
+          //   'de.cau.cs.kieler.portSide': portProperties.outportSide,
+          //   'de.cau.cs.kieler.portIndex': countPorts++
+          // }
         };
       });
-      var inPorts = portInfo[node.id].inports;
-      var inPortsKeys = Object.keys(inPorts);
-      var inPortsTemp = inPortsKeys.map(function (key) {
-        console.log(node.id, countPorts);
-        return {
-          id: node.id + '_' + key,
-          width: portProperties.width,
-          height: portProperties.height,
-          properties: {
-            'de.cau.cs.kieler.portSide': portProperties.inportSide,
-            'de.cau.cs.kieler.portIndex': countPorts++
-          }
-        };
-      });
+
       var kChild = {
         id: node.id,
         labels: [{text: node.metadata.label}],
@@ -77,7 +80,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: inPortsTemp.concat(outPortsTemp),
         properties: {
-          'portConstraints': 'FIXED_ORDER'
+          'portConstraints': 'FIXED_POS'
         }
       };
       idx[node.id] = countIdx++;
@@ -95,10 +98,12 @@ function klayinit () {
         id: inport.port,
         width: portProperties.width,
         height: portProperties.height,
-        properties: {
-          'de.cau.cs.kieler.portSide': portProperties.inportSide,
-          'de.cau.cs.kieler.portIndex': 0
-        }
+        x: nodeProperties.width,
+        y: nodeProperties.width/2
+        // properties: {
+        //   'de.cau.cs.kieler.portSide': portProperties.outportSide,
+        //   'de.cau.cs.kieler.portIndex': 0
+        // }
       };
       
       var kChild = {
@@ -108,7 +113,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_ORDER',
+          'portConstraints': 'FIXED_POS',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST_SEPARATE"
         }
       };
@@ -125,10 +130,12 @@ function klayinit () {
         id: outport.port,
         width: portProperties.width,
         height: portProperties.height,
-        properties: {
-          'de.cau.cs.kieler.portSide': portProperties.outportSide,
-          'de.cau.cs.kieler.portIndex': 0
-        }
+        x: 0,
+        y: nodeProperties.width/2
+        // properties: {
+        //   'de.cau.cs.kieler.portSide': portProperties.inportSide,
+        //   'de.cau.cs.kieler.portIndex': 0
+        // }
       };
 
       var kChild = {
@@ -138,7 +145,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_ORDER',
+          'portConstraints': 'FIXED_POS',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "LAST_SEPARATE"
         }
       };
