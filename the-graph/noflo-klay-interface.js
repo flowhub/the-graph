@@ -36,7 +36,6 @@ function klayinit () {
       children: [], 
       edges: []
     };
-    console.log(portInfo);
     // Encode nodes
     var nodes = graph.nodes;
     var idx = {};
@@ -49,12 +48,9 @@ function klayinit () {
           id: node.id + '_' + key,
           width: portProperties.width,
           height: portProperties.height,
-          x: inPorts[key].x,
-          y: inPorts[key].y
-          // properties: {
-          //   'de.cau.cs.kieler.portSide': portProperties.inportSide,
-          //   'de.cau.cs.kieler.portIndex': countPorts++
-          // }
+          properties: {
+            'de.cau.cs.kieler.portSide': portProperties.inportSide
+          }
         };
       });
       var outPorts = portInfo[node.id].outports;
@@ -64,12 +60,9 @@ function klayinit () {
           id: node.id + '_' + key,
           width: portProperties.width,
           height: portProperties.height,
-          x: outPorts[key].x,
-          y: outPorts[key].y
-          // properties: {
-          //   'de.cau.cs.kieler.portSide': portProperties.outportSide,
-          //   'de.cau.cs.kieler.portIndex': countPorts++
-          // }
+          properties: {
+            'de.cau.cs.kieler.portSide': portProperties.outportSide
+          }
         };
       });
 
@@ -80,7 +73,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: inPortsTemp.concat(outPortsTemp),
         properties: {
-          'portConstraints': 'FIXED_POS'
+          'portConstraints': 'FIXED_SIDE'
         }
       };
       idx[node.id] = countIdx++;
@@ -98,12 +91,9 @@ function klayinit () {
         id: inport.port,
         width: portProperties.width,
         height: portProperties.height,
-        x: nodeProperties.width,
-        y: nodeProperties.width/2
-        // properties: {
-        //   'de.cau.cs.kieler.portSide': portProperties.outportSide,
-        //   'de.cau.cs.kieler.portIndex': 0
-        // }
+        properties: {
+          'de.cau.cs.kieler.portSide': portProperties.outportSide
+        }
       };
       
       var kChild = {
@@ -113,7 +103,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_POS',
+          'portConstraints': 'FIXED_SIDE',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST_SEPARATE"
         }
       };
@@ -130,12 +120,9 @@ function klayinit () {
         id: outport.port,
         width: portProperties.width,
         height: portProperties.height,
-        x: 0,
-        y: nodeProperties.width/2
-        // properties: {
-        //   'de.cau.cs.kieler.portSide': portProperties.inportSide,
-        //   'de.cau.cs.kieler.portIndex': 0
-        // }
+        properties: {
+          'de.cau.cs.kieler.portSide': portProperties.inportSide
+        }
       };
 
       var kChild = {
@@ -145,7 +132,7 @@ function klayinit () {
         height: nodeProperties.height,
         ports: [uniquePort],
         properties: {
-          'portConstraints': 'FIXED_POS',
+          'portConstraints': 'FIXED_SIDE',
           "de.cau.cs.kieler.klay.layered.layerConstraint": "LAST_SEPARATE"
         }
       };
