@@ -1,0 +1,477 @@
+.the-graph-light .the-graph-app {
+  background-color: #fff;
+  position: relative;
+}
+.the-graph-light .app-canvas,
+.the-graph-light .app-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.the-graph-light svg {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.the-graph-light .arrow {
+  cursor: default;
+}
+.the-graph-light .click {
+  cursor: pointer;
+}
+.the-graph-light .drag {
+  cursor: pointer;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.the-graph-light .node-border {
+  fill: rgba(255,255,255,0.5);
+  stroke: #3b4245;
+  stroke-width: 2px;
+}
+.the-graph-light .small .node-border {
+  fill: rgba(230,238,240,0.94);
+  stroke: none;
+}
+.the-graph-light .node-rect {
+  fill: rgba(230,238,240,0.94);
+  stroke: none;
+}
+.the-graph-light .node:hover .node-rect {
+  fill: rgba(230,238,240,0.97);
+}
+.the-graph-light .node:hover .node-border {
+  stroke: #808080;
+}
+.the-graph-light .node:hover .port-arc {
+  fill: #808080;
+}
+.the-graph-light .ex-inports .node-border {
+  fill: #e6e6e6;
+  stroke: none;
+}
+.the-graph-light .ex-outports .node-border {
+  fill: #e6e6e6;
+  stroke: none;
+}
+.the-graph-light .ex-inports .node .node-rect,
+.the-graph-light .ex-outports .node .node-rect,
+.the-graph-light .ex-inports .node:hover .node-rect,
+.the-graph-light .ex-outports .node:hover .node-rect {
+  fill: none;
+}
+.the-graph-light .small .ex-inports .node .node-border,
+.the-graph-light .small .ex-outports .node .node-border {
+  fill: #e6e6e6;
+}
+.the-graph-light .node-bg {
+  opacity: 0;
+}
+.the-graph-light .node.selected .node-border {
+  stroke: #f00;
+  stroke-width: 4px;
+}
+.the-graph-light .node.selected .port-arc {
+  stroke: #f00;
+  fill: #f00;
+}
+.the-graph-light path {
+  fill: none;
+}
+.the-graph-light .edge-bg {
+  stroke: #e6e6e6;
+  stroke-width: 6px;
+}
+.the-graph-light .edge-fg {
+  stroke: #a0a5a9;
+  stroke-width: 4px;
+  transition-property: stroke-width;
+  transition-duration: 0.5s;
+}
+.the-graph-light .edge-touch {
+  stroke-width: 8px;
+  opacity: 0;
+}
+.the-graph-light .edge:hover .edge-bg {
+  stroke: #808080;
+}
+.the-graph-light .edge.selected .edge-bg {
+  stroke-width: 10px;
+  stroke: #f00;
+}
+.the-graph-light .small .edge-bg {
+  stroke-width: 10px;
+}
+.the-graph-light .small .edge-fg {
+  stroke-width: 8px;
+}
+.the-graph-light text {
+  font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
+  text-rendering: geometricPrecision;
+/* makes text scale smoothly */
+  font-size: 14px;
+  fill: #000;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.the-graph-light .text-bg-rect {
+  fill: rgba(255,255,255,0.5);
+}
+.the-graph-light .node-label,
+.the-graph-light .node-sublabel {
+  text-anchor: middle;
+}
+.the-graph-light .small .node-label-bg {
+  visibility: hidden;
+}
+.the-graph-light .node-sublabel {
+  font-size: 9px;
+}
+.the-graph-light .node-sublabel-bg {
+  visibility: hidden;
+}
+.the-graph-light .big .node-sublabel-bg {
+  visibility: visible;
+}
+.the-graph-light .iip-path {
+  stroke-width: 1px;
+  stroke: #a0a5a9;
+}
+.the-graph-light .iip-info {
+  visibility: hidden;
+}
+.the-graph-light .iip-info .text-bg-text {
+  font-size: 5px;
+  text-anchor: end;
+}
+.the-graph-light .big .iip-info {
+  visibility: visible;
+}
+.the-graph-light .context-modal-bg {
+  fill: rgba(255,255,255,0.5);
+}
+.the-graph-light .context-node-rect {
+  fill: #e0e3e6;
+  stroke: #404040;
+  stroke-width: 0.5px;
+}
+.the-graph-light .context-node-icon {
+  font-size: 30px;
+  fill: #000;
+}
+.the-graph-light .context-icon {
+  font-size: 20px;
+  fill: #000;
+}
+.the-graph-light .context-node-label {
+  text-anchor: middle;
+}
+.the-graph-light .context-arc {
+  stroke-width: 72px;
+  stroke: rgba(224,227,230,0.95);
+}
+.the-graph-light .context-slice.click:hover .context-arc {
+  stroke: rgba(195,201,208,0.95);
+}
+.the-graph-light .context-circle {
+  stroke: #404040;
+  fill: none;
+  stroke-width: 1.5px;
+}
+.the-graph-light .context-circle-x {
+  stroke: #404040;
+  fill: none;
+  stroke-width: 1px;
+}
+.the-graph-light .context-arc-icon-label {
+  font-size: 12px;
+}
+.the-graph-light .context-port-bg {
+  fill: rgba(224,227,230,0.95);
+}
+.the-graph-light .context-port-hole {
+  stroke-width: 2px;
+  fill: rgba(224,227,230,0.95);
+  stroke: #404040;
+}
+.the-graph-light .context-port-path {
+  stroke: #404040;
+}
+.the-graph-light .context-port-label {
+  fill: #000;
+  dominant-baseline: central;
+}
+.the-graph-light .context-port-in .context-port-label {
+  text-anchor: end;
+}
+.the-graph-light .context-port-out .context-port-label {
+  text-anchor: start;
+}
+.the-graph-light .context-edge-label-out {
+  text-anchor: end;
+  dominant-baseline: central;
+}
+.the-graph-light .context-edge-label-in {
+  text-anchor: start;
+  dominant-baseline: central;
+}
+.the-graph-light .tooltip {
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+}
+.the-graph-light .tooltip.hidden {
+  opacity: 0;
+}
+.the-graph-light .tooltip-bg {
+  fill: rgba(255,255,255,0.9);
+  opacity: 0.75;
+}
+.the-graph-light .tooltip-label {
+  text-anchor: start;
+  font-size: 10px;
+}
+.the-graph-light .icon {
+  font-family: 'FontAwesomeSVG';
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.the-graph-light .node-icon {
+  font-size: 45px;
+  fill: #3b4245;
+  transition-property: font-size, fill;
+  transition-duration: 0.5s, 0.3s;
+}
+.the-graph-light .small .node-icon {
+  fill: #171b1c;
+  font-size: 66px;
+}
+.the-graph-light .big .node-icon {
+  fill: #c8ced0;
+}
+.the-graph-light .ex-inports .node-icon,
+.the-graph-light .small .ex-inports .node-icon {
+  fill: #ee7c0e;
+}
+.the-graph-light .ex-outports .node-icon,
+.the-graph-light .small .ex-outports .node-icon {
+  fill: #00782a;
+}
+.the-graph-light .port-circle-bg {
+  fill: #3b4245;
+  opacity: 0;
+}
+.the-graph-light .port-arc {
+  fill: #3b4245;
+}
+.the-graph-light .port-circle-small {
+  fill: none;
+}
+.the-graph-light .small .port-circle {
+  visibility: hidden;
+}
+.the-graph-light .port-label {
+  fill: #0c0d0e;
+  visibility: hidden;
+  font-size: 6px;
+  dominant-baseline: central;
+}
+.the-graph-light .inports .port-label {
+  text-anchor: start;
+}
+.the-graph-light .outports .port-label {
+  text-anchor: end;
+}
+.the-graph-light .big .port-label {
+  visibility: visible;
+}
+.the-graph-light .big .ex-inports .port-label,
+.the-graph-light .big .ex-outports .port-label {
+  visibility: hidden;
+}
+.the-graph-light .group-box {
+  fill: rgba(191,191,191,0.25);
+  transition-property: fill;
+  transition-duration: 0.3s;
+}
+.the-graph-light .group-box:hover {
+  fill: rgba(191,191,191,0.35);
+}
+.the-graph-light .small .group-box {
+  stroke-width: 8px;
+}
+.the-graph-light .group-box.color0 {
+  fill: rgba(191,191,191,0.25);
+  stroke: var-group00-stroke;
+}
+.the-graph-light .group-box.color1 {
+  fill: rgba(223,159,159,0.25);
+  stroke: var-group01-stroke;
+}
+.the-graph-light .group-box.color2 {
+  fill: rgba(223,197,159,0.25);
+  stroke: var-group02-stroke;
+}
+.the-graph-light .group-box.color3 {
+  fill: rgba(223,223,159,0.25);
+  stroke: var-group03-stroke;
+}
+.the-graph-light .group-box.color4 {
+  fill: rgba(159,223,175,0.25);
+  stroke: var-group04-stroke;
+}
+.the-graph-light .group-box.color5 {
+  fill: rgba(159,223,202,0.25);
+  stroke: var-group05-stroke;
+}
+.the-graph-light .group-box.color6 {
+  fill: rgba(159,218,223,0.25);
+  stroke: var-group06-stroke;
+}
+.the-graph-light .group-box.color7 {
+  fill: rgba(159,191,223,0.25);
+  stroke: var-group07-stroke;
+}
+.the-graph-light .group-box.color8 {
+  fill: rgba(207,159,223,0.25);
+  stroke: var-group08-stroke;
+}
+.the-graph-light .group-box.color9 {
+  fill: rgba(223,159,212,0.25);
+  stroke: var-group09-stroke;
+}
+.the-graph-light .group-box.color10 {
+  fill: rgba(223,159,186,0.25);
+  stroke: var-group10-stroke;
+}
+.the-graph-light .group-box.color0:hover {
+  fill: rgba(191,191,191,0.35);
+}
+.the-graph-light .group-box.color1:hover {
+  fill: rgba(223,159,159,0.35);
+}
+.the-graph-light .group-box.color2:hover {
+  fill: rgba(223,197,159,0.35);
+}
+.the-graph-light .group-box.color3:hover {
+  fill: rgba(223,223,159,0.35);
+}
+.the-graph-light .group-box.color4:hover {
+  fill: rgba(159,223,175,0.35);
+}
+.the-graph-light .group-box.color5:hover {
+  fill: rgba(159,223,202,0.35);
+}
+.the-graph-light .group-box.color6:hover {
+  fill: rgba(159,218,223,0.35);
+}
+.the-graph-light .group-box.color7:hover {
+  fill: rgba(159,191,223,0.35);
+}
+.the-graph-light .group-box.color8:hover {
+  fill: rgba(207,159,223,0.35);
+}
+.the-graph-light .group-box.color9:hover {
+  fill: rgba(223,159,212,0.35);
+}
+.the-graph-light .group-box.color10:hover {
+  fill: rgba(223,159,186,0.35);
+}
+.the-graph-light .group-box.selection {
+  fill: rgba(255,102,102,0.15);
+  stroke: #f00;
+  stroke-width: 1px;
+}
+.the-graph-light .group-box.selection:hover {
+  fill: rgba(255,102,102,0.25);
+}
+.the-graph-light .group-label {
+  text-anchor: start;
+  fill: #000;
+  font-size: 20px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+.the-graph-light .small .group-label {
+  font-size: 30px;
+  transition-property: font-size;
+  transition-duration: 0.5s;
+}
+.the-graph-light .group-description {
+  fill: #000;
+  font-size: 12px;
+  text-anchor: start;
+}
+.the-graph-light .small .group-description {
+  visibility: hidden;
+}
+.the-graph-light .stroke.route0 {
+  stroke: #a0a5a9;
+}
+.the-graph-light .stroke.route1 {
+  stroke: #e32017;
+}
+.the-graph-light .stroke.route2 {
+  stroke: #ee7c0e;
+}
+.the-graph-light .stroke.route3 {
+  stroke: #ffd300;
+}
+.the-graph-light .stroke.route4 {
+  stroke: #00782a;
+}
+.the-graph-light .stroke.route5 {
+  stroke: #95cdba;
+}
+.the-graph-light .stroke.route6 {
+  stroke: #0098d4;
+}
+.the-graph-light .stroke.route7 {
+  stroke: #003688;
+}
+.the-graph-light .stroke.route8 {
+  stroke: #9b0056;
+}
+.the-graph-light .stroke.route9 {
+  stroke: #f3a9bb;
+}
+.the-graph-light .stroke.route10 {
+  stroke: #b36305;
+}
+.the-graph-light .fill.route0 {
+  fill: #a0a5a9;
+}
+.the-graph-light .fill.route1 {
+  fill: #e32017;
+}
+.the-graph-light .fill.route2 {
+  fill: #ee7c0e;
+}
+.the-graph-light .fill.route3 {
+  fill: #ffd300;
+}
+.the-graph-light .fill.route4 {
+  fill: #00782a;
+}
+.the-graph-light .fill.route5 {
+  fill: #95cdba;
+}
+.the-graph-light .fill.route6 {
+  fill: #0098d4;
+}
+.the-graph-light .fill.route7 {
+  fill: #003688;
+}
+.the-graph-light .fill.route8 {
+  fill: #9b0056;
+}
+.the-graph-light .fill.route9 {
+  fill: #f3a9bb;
+}
+.the-graph-light .fill.route10 {
+  fill: #b36305;
+}

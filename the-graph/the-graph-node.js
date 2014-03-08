@@ -376,7 +376,7 @@
             height: 14,
             halign: "center",
             x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + 15,
+            y: TheGraph.nodeSize + (this.props.export ? 7 : 15),
             text: label
           }),
           TheGraph.TextBG({

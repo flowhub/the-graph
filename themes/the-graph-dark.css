@@ -1,14 +1,14 @@
-.the-graph-app {
+.the-graph-dark .the-graph-app {
   background-color: #000;
   position: relative;
 }
-.app-canvas,
-.app-svg {
+.the-graph-dark .app-canvas,
+.the-graph-dark .app-svg {
   position: absolute;
   top: 0;
   left: 0;
 }
-svg {
+.the-graph-dark svg {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -16,84 +16,100 @@ svg {
   -ms-user-select: none;
   user-select: none;
 }
-.arrow {
+.the-graph-dark .arrow {
   cursor: default;
 }
-.click {
+.the-graph-dark .click {
   cursor: pointer;
 }
-.drag {
+.the-graph-dark .drag {
   cursor: pointer;
   cursor: -moz-grab;
   cursor: -webkit-grab;
   cursor: grab;
 }
-.node-border {
-  fill: none;
-  stroke: rgba(255,255,255,0.75);
+.the-graph-dark .node-border {
+  fill: rgba(0,0,0,0.5);
+  stroke: #666;
   stroke-width: 2px;
 }
-.node-rect {
+.the-graph-dark .small .node-border {
   fill: rgba(230,238,240,0.94);
   stroke: none;
 }
-.node:hover .node-rect {
-  fill: rgba(230,238,240,0.97);
-  stroke: var-node-hover-border;
-}
-.ex-inports .node-border {
-  fill: #1a1a1a;
-  stroke: #e88802;
-}
-.ex-outports .node-border {
-  fill: #1a1a1a;
-  stroke: #02e83c;
-}
-.ex-inports .node .node-rect,
-.ex-outports .node .node-rect {
-  fill: none;
-}
-.small .node-rect {
+.the-graph-dark .node-rect {
+  fill: rgba(230,238,240,0.94);
   stroke: none;
 }
-.node-bg {
-  opacity: 0;
+.the-graph-dark .node:hover .node-rect {
+  fill: rgba(230,238,240,0.97);
 }
-.node.selected .node-border {
-  stroke: #f00;
-  stroke-width: 4px;
-}
-path {
-  fill: none;
-}
-.edge-bg {
-  stroke: #000;
-  stroke-width: 4px;
-}
-.edge:hover .edge-bg {
+.the-graph-dark .node:hover .node-border {
   stroke: #808080;
 }
-.edge.selected .edge-bg {
-  stroke-width: 8px;
-  stroke: #f00;
+.the-graph-dark .node:hover .port-arc {
+  fill: #808080;
 }
-.edge-fg {
+.the-graph-dark .ex-inports .node-border {
+  fill: #1a1a1a;
+  stroke: none;
+}
+.the-graph-dark .ex-outports .node-border {
+  fill: #1a1a1a;
+  stroke: none;
+}
+.the-graph-dark .ex-inports .node .node-rect,
+.the-graph-dark .ex-outports .node .node-rect,
+.the-graph-dark .ex-inports .node:hover .node-rect,
+.the-graph-dark .ex-outports .node:hover .node-rect {
+  fill: none;
+}
+.the-graph-dark .small .ex-inports .node .node-border,
+.the-graph-dark .small .ex-outports .node .node-border {
+  fill: #1a1a1a;
+}
+.the-graph-dark .node-bg {
+  opacity: 0;
+}
+.the-graph-dark .node.selected .node-border {
+  stroke: #f00;
+  stroke-width: 4px;
+}
+.the-graph-dark .node.selected .port-arc {
+  stroke: #f00;
+  fill: #f00;
+}
+.the-graph-dark path {
+  fill: none;
+}
+.the-graph-dark .edge-bg {
+  stroke: #000;
+  stroke-width: 5px;
+}
+.the-graph-dark .edge-fg {
   stroke: #fff;
-  stroke-width: 2px;
+  stroke-width: 3px;
   transition-property: stroke-width;
   transition-duration: 0.5s;
 }
-.edge-touch {
-  stroke-width: 10px;
+.the-graph-dark .edge-touch {
+  stroke-width: 7px;
   opacity: 0;
 }
-.small .edge-bg {
+.the-graph-dark .edge:hover .edge-bg {
+  stroke: #808080;
+}
+.the-graph-dark .edge.selected .edge-bg {
+  stroke-width: 8px;
+  stroke: #f00;
+}
+.the-graph-dark .small .edge-bg {
   stroke-width: 8px;
 }
-.small .edge-fg {
-  stroke-width: 4px;
+.the-graph-dark .small .edge-fg {
+  stroke-width: 6px;
 }
-text {
+.the-graph-dark text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision;
 /* makes text scale smoothly */
@@ -102,341 +118,360 @@ text {
   text-anchor: middle;
   dominant-baseline: central;
 }
-.text-bg-rect {
+.the-graph-dark .text-bg-rect {
   fill: rgba(0,0,0,0.5);
 }
-.node-label,
-.node-sublabel {
+.the-graph-dark .node-label,
+.the-graph-dark .node-sublabel {
   text-anchor: middle;
 }
-.small .node-label-bg {
+.the-graph-dark .small .node-label-bg {
   visibility: hidden;
 }
-.node-sublabel {
+.the-graph-dark .node-sublabel {
   font-size: 9px;
 }
-.node-sublabel-bg {
+.the-graph-dark .node-sublabel-bg {
   visibility: hidden;
 }
-.big .node-sublabel-bg {
+.the-graph-dark .big .node-sublabel-bg {
   visibility: visible;
 }
-.iip-path {
+.the-graph-dark .iip-path {
   stroke-width: 1px;
   stroke: #fff;
 }
-.iip-info {
+.the-graph-dark .iip-info {
   visibility: hidden;
 }
-.iip-info .text-bg-text {
+.the-graph-dark .iip-info .text-bg-text {
   font-size: 5px;
   text-anchor: end;
 }
-.big .iip-info {
+.the-graph-dark .big .iip-info {
   visibility: visible;
 }
-.context-modal-bg {
+.the-graph-dark .context-modal-bg {
   fill: rgba(0,0,0,0.5);
 }
-.context-node-rect {
+.the-graph-dark .context-node-rect {
   fill: #121417;
   stroke: #bfbfbf;
   stroke-width: 0.5px;
 }
-.context-node-icon {
+.the-graph-dark .context-node-icon {
   font-size: 30px;
   fill: #fff;
 }
-.context-icon {
+.the-graph-dark .context-icon {
   font-size: 20px;
   fill: #fff;
 }
-.context-node-label {
+.the-graph-dark .context-node-label {
   text-anchor: middle;
 }
-.context-arc {
+.the-graph-dark .context-arc {
   stroke-width: 72px;
   stroke: rgba(43,48,54,0.95);
 }
-.context-slice.click:hover .context-arc {
+.the-graph-dark .context-slice.click:hover .context-arc {
   stroke: rgba(90,102,114,0.95);
 }
-.context-circle {
+.the-graph-dark .context-circle {
   stroke: #bfbfbf;
   fill: none;
   stroke-width: 1.5px;
 }
-.context-circle-x {
+.the-graph-dark .context-circle-x {
   stroke: #bfbfbf;
   fill: none;
   stroke-width: 1px;
 }
-.context-arc-icon-label {
+.the-graph-dark .context-arc-icon-label {
   font-size: 12px;
 }
-.context-port-bg {
+.the-graph-dark .context-port-bg {
   fill: rgba(43,48,54,0.95);
 }
-.context-port-hole {
+.the-graph-dark .context-port-hole {
   stroke-width: 2px;
   fill: rgba(43,48,54,0.95);
   stroke: #bfbfbf;
 }
-.context-port-path {
+.the-graph-dark .context-port-path {
   stroke: #bfbfbf;
 }
-.context-port-label {
+.the-graph-dark .context-port-label {
   fill: #fff;
   dominant-baseline: central;
 }
-.context-port-in .context-port-label {
+.the-graph-dark .context-port-in .context-port-label {
   text-anchor: end;
 }
-.context-port-out .context-port-label {
+.the-graph-dark .context-port-out .context-port-label {
   text-anchor: start;
 }
-.context-edge-label-out {
+.the-graph-dark .context-edge-label-out {
   text-anchor: end;
   dominant-baseline: central;
 }
-.context-edge-label-in {
+.the-graph-dark .context-edge-label-in {
   text-anchor: start;
   dominant-baseline: central;
 }
-.tooltip {
+.the-graph-dark .tooltip {
   opacity: 1;
   transition-property: opacity;
   transition-duration: 0.3s;
 }
-.tooltip.hidden {
+.the-graph-dark .tooltip.hidden {
   opacity: 0;
 }
-.tooltip-bg {
+.the-graph-dark .tooltip-bg {
   fill: rgba(0,0,0,0.9);
   opacity: 0.75;
 }
-.tooltip-label {
+.the-graph-dark .tooltip-label {
   text-anchor: start;
   font-size: 10px;
 }
-.icon {
+.the-graph-dark .icon {
   font-family: 'FontAwesomeSVG';
   text-anchor: middle;
   dominant-baseline: central;
 }
-.node-icon {
-  font-size: 50px;
-  fill: #2f3537;
+.the-graph-dark .node-icon {
+  font-size: 45px;
+  fill: #5e6a6e;
   transition-property: font-size, fill;
   transition-duration: 0.5s, 0.3s;
 }
-.small .node-icon {
-  fill: #0c0d0e;
-  font-size: 68px;
+.the-graph-dark .small .node-icon {
+  fill: #2f3537;
+  font-size: 66px;
 }
-.big .node-icon {
-  fill: #acb6b9;
+.the-graph-dark .big .node-icon {
+  fill: #c8ced0;
 }
-.ex-inports .node-icon,
-.small .ex-inports .node-icon {
+.the-graph-dark .ex-inports .node-icon,
+.the-graph-dark .small .ex-inports .node-icon {
   fill: #e88802;
 }
-.ex-outports .node-icon,
-.small .ex-outports .node-icon {
+.the-graph-dark .ex-outports .node-icon,
+.the-graph-dark .small .ex-outports .node-icon {
   fill: #02e83c;
 }
-.port-circle {
-  fill: rgba(230,238,240,0.94);
-  stroke: rgba(255,255,255,0.75);
-  stroke-width: 1px;
+.the-graph-dark .port-circle-bg {
+  fill: #666;
+  opacity: 0;
 }
-.port-circle-small {
+.the-graph-dark .port-arc {
+  fill: #666;
+}
+.the-graph-dark .port-circle-small {
   fill: none;
 }
-.small .port-circle {
+.the-graph-dark .small .port-circle {
   visibility: hidden;
 }
-.port-label {
+.the-graph-dark .port-label {
   fill: #0c0d0e;
   visibility: hidden;
   font-size: 6px;
   dominant-baseline: central;
 }
-.inports .port-label {
+.the-graph-dark .inports .port-label {
   text-anchor: start;
 }
-.outports .port-label {
+.the-graph-dark .outports .port-label {
   text-anchor: end;
 }
-.big .port-label {
+.the-graph-dark .big .port-label {
   visibility: visible;
 }
-.big .ex-inports .port-label,
-.big .ex-outports .port-label {
+.the-graph-dark .big .ex-inports .port-label,
+.the-graph-dark .big .ex-outports .port-label {
   visibility: hidden;
 }
-.group-box {
+.the-graph-dark .group-box {
   fill: rgba(191,191,191,0.15);
   transition-property: fill;
   transition-duration: 0.3s;
 }
-.group-box.color0 {
-  fill: rgba(191,191,191,0.15);
-}
-.group-box.color1 {
-  fill: rgba(255,128,128,0.15);
-}
-.group-box.color2 {
-  fill: rgba(255,202,128,0.15);
-}
-.group-box.color3 {
-  fill: rgba(255,255,128,0.15);
-}
-.group-box.color4 {
-  fill: rgba(128,255,159,0.15);
-}
-.group-box.color5 {
-  fill: rgba(128,255,212,0.15);
-}
-.group-box.color6 {
-  fill: rgba(128,244,255,0.15);
-}
-.group-box.color7 {
-  fill: rgba(128,191,255,0.15);
-}
-.group-box.color8 {
-  fill: rgba(223,128,255,0.15);
-}
-.group-box.color9 {
-  fill: rgba(255,128,234,0.15);
-}
-.group-box.color10 {
-  fill: rgba(255,128,181,0.15);
-}
-.group-box.color0:hover {
+.the-graph-dark .group-box:hover {
   fill: rgba(191,191,191,0.25);
 }
-.group-box.color1:hover {
+.the-graph-dark .small .group-box {
+  stroke-width: 8px;
+}
+.the-graph-dark .group-box.color0 {
+  fill: rgba(191,191,191,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color1 {
+  fill: rgba(255,128,128,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color2 {
+  fill: rgba(255,202,128,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color3 {
+  fill: rgba(255,255,128,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color4 {
+  fill: rgba(128,255,159,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color5 {
+  fill: rgba(128,255,212,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color6 {
+  fill: rgba(128,244,255,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color7 {
+  fill: rgba(128,191,255,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color8 {
+  fill: rgba(223,128,255,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color9 {
+  fill: rgba(255,128,234,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color10 {
+  fill: rgba(255,128,181,0.15);
+  stroke: none;
+}
+.the-graph-dark .group-box.color0:hover {
+  fill: rgba(191,191,191,0.25);
+}
+.the-graph-dark .group-box.color1:hover {
   fill: rgba(255,128,128,0.25);
 }
-.group-box.color2:hover {
+.the-graph-dark .group-box.color2:hover {
   fill: rgba(255,202,128,0.25);
 }
-.group-box.color3:hover {
+.the-graph-dark .group-box.color3:hover {
   fill: rgba(255,255,128,0.25);
 }
-.group-box.color4:hover {
+.the-graph-dark .group-box.color4:hover {
   fill: rgba(128,255,159,0.25);
 }
-.group-box.color5:hover {
+.the-graph-dark .group-box.color5:hover {
   fill: rgba(128,255,212,0.25);
 }
-.group-box.color6:hover {
+.the-graph-dark .group-box.color6:hover {
   fill: rgba(128,244,255,0.25);
 }
-.group-box.color7:hover {
+.the-graph-dark .group-box.color7:hover {
   fill: rgba(128,191,255,0.25);
 }
-.group-box.color8:hover {
+.the-graph-dark .group-box.color8:hover {
   fill: rgba(223,128,255,0.25);
 }
-.group-box.color9:hover {
+.the-graph-dark .group-box.color9:hover {
   fill: rgba(255,128,234,0.25);
 }
-.group-box.color10:hover {
+.the-graph-dark .group-box.color10:hover {
   fill: rgba(255,128,181,0.25);
 }
-.group-box.selection {
+.the-graph-dark .group-box.selection {
   fill: rgba(255,102,102,0.15);
   stroke: #f00;
   stroke-width: 1px;
 }
-.group-box.selection:hover {
+.the-graph-dark .group-box.selection:hover {
   fill: rgba(255,102,102,0.25);
 }
-.group-label {
+.the-graph-dark .group-label {
   text-anchor: start;
   fill: #fff;
   font-size: 20px;
   transition-property: font-size;
   transition-duration: 0.5s;
 }
-.small .group-label {
+.the-graph-dark .small .group-label {
   font-size: 30px;
   transition-property: font-size;
   transition-duration: 0.5s;
 }
-.group-description {
+.the-graph-dark .group-description {
   fill: #fff;
   font-size: 12px;
   text-anchor: start;
 }
-.small .group-description {
+.the-graph-dark .small .group-description {
   visibility: hidden;
 }
-.stroke.route0 {
+.the-graph-dark .stroke.route0 {
   stroke: #fff;
 }
-.stroke.route1 {
+.the-graph-dark .stroke.route1 {
   stroke: #e80202;
 }
-.stroke.route2 {
+.the-graph-dark .stroke.route2 {
   stroke: #e88802;
 }
-.stroke.route3 {
+.the-graph-dark .stroke.route3 {
   stroke: #e8e802;
 }
-.stroke.route4 {
+.the-graph-dark .stroke.route4 {
   stroke: #02e83c;
 }
-.stroke.route5 {
+.the-graph-dark .stroke.route5 {
   stroke: #02e89c;
 }
-.stroke.route6 {
+.the-graph-dark .stroke.route6 {
   stroke: #02d5e8;
 }
-.stroke.route7 {
+.the-graph-dark .stroke.route7 {
   stroke: #0275e8;
 }
-.stroke.route8 {
+.the-graph-dark .stroke.route8 {
   stroke: #af02e8;
 }
-.stroke.route9 {
+.the-graph-dark .stroke.route9 {
   stroke: #e802c2;
 }
-.stroke.route10 {
+.the-graph-dark .stroke.route10 {
   stroke: #e80262;
 }
-.fill.route0 {
+.the-graph-dark .fill.route0 {
   fill: #fff;
 }
-.fill.route1 {
+.the-graph-dark .fill.route1 {
   fill: #e80202;
 }
-.fill.route2 {
+.the-graph-dark .fill.route2 {
   fill: #e88802;
 }
-.fill.route3 {
+.the-graph-dark .fill.route3 {
   fill: #e8e802;
 }
-.fill.route4 {
+.the-graph-dark .fill.route4 {
   fill: #02e83c;
 }
-.fill.route5 {
+.the-graph-dark .fill.route5 {
   fill: #02e89c;
 }
-.fill.route6 {
+.the-graph-dark .fill.route6 {
   fill: #02d5e8;
 }
-.fill.route7 {
+.the-graph-dark .fill.route7 {
   fill: #0275e8;
 }
-.fill.route8 {
+.the-graph-dark .fill.route8 {
   fill: #af02e8;
 }
-.fill.route9 {
+.the-graph-dark .fill.route9 {
   fill: #e802c2;
 }
-.fill.route10 {
+.the-graph-dark .fill.route10 {
   fill: #e80262;
 }

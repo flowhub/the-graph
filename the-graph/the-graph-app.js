@@ -157,13 +157,14 @@
         tooltipVisible: false
       });
     },
-    // onFit: function (event) {
-    //   this.setState({
-    //     x: event.detail.x,
-    //     y: event.detail.y,
-    //     scale: event.detail.scale
-    //   });
-    // },
+    triggerFit: function (event) {
+      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      this.setState({
+        x: fit.x,
+        y: fit.y,
+        scale: fit.scale
+      });
+    },
     edgeStart: function (event) {
       // Listened from PortMenu.edgeStart() and Port.edgeStart()
       this.refs.graph.edgeStart(event);

@@ -145,13 +145,13 @@
             ref: "label",
             className: "group-label drag",
             x: x + TheGraph.nodeRadius,
-            y: y,
+            y: y + 9,
             children: this.props.label
           }),
           React.DOM.text({
             className: "group-description",
             x: x + TheGraph.nodeRadius,
-            y: y + 10 + TheGraph.nodeRadius,
+            y: y + 24,
             children: this.props.description
           })
         )

@@ -3,7 +3,7 @@ function klayinit () {
 
   Array.prototype.clean = function() {
     for (var i = 0; i < this.length; i++) {
-      if (this[i] === null) {         
+      if (this[i] === null || this[i] === undefined) {
         this.splice(i, 1);
         i--;
       }
@@ -16,16 +16,20 @@ function klayinit () {
     // Default direction is left to right
     direction = direction || 'RIGHT';
     // Default port and node properties
-    var portProperties = {inportSide: {'de.cau.cs.kieler.portSide': 'WEST'},
-                          outportSide: {'de.cau.cs.kieler.portSide': 'EAST'},
-                          width: 10,
-                          height: 10};
+    var portProperties = {
+      inportSide: {'de.cau.cs.kieler.portSide': 'WEST'},
+      outportSide: {'de.cau.cs.kieler.portSide': 'EAST'},
+      width: 10,
+      height: 10
+    };
     if (direction === 'DOWN') {
       portProperties.inportSide = {'de.cau.cs.kieler.portSide': 'NORTH'};
       portProperties.outportSide = {'de.cau.cs.kieler.portSide': 'SOUTH'};
     }
-    var nodeProperties = {width: 72,
-                          height: 108};
+    var nodeProperties = {
+      width: 72,
+      height: 108
+    };
     // Start KGraph building
     var kGraph = {
       id: graph.name,
@@ -41,18 +45,22 @@ function klayinit () {
       var inPorts = portInfo[node.id].inports;
       var inPortsKeys = Object.keys(inPorts);
       var inPortsTemp = inPortsKeys.map(function (key) {
-        return {id: node.id + '_' + key,
-                width: portProperties.width,
-                height: portProperties.height,
-                properties: portProperties.inportSide};
+        return {
+          id: node.id + '_' + key,
+          width: portProperties.width,
+          height: portProperties.height,
+          properties: portProperties.inportSide
+        };
       });
       var outPorts = portInfo[node.id].outports;
       var outPortsKeys = Object.keys(outPorts);
       var outPortsTemp = outPortsKeys.map(function (key) {
-        return {id: node.id + '_' + key,
-                width: portProperties.width,
-                height: portProperties.height,
-                properties: portProperties.outportSide};
+        return {
+          id: node.id + '_' + key,
+          width: portProperties.width,
+          height: portProperties.height,
+          properties: portProperties.outportSide
+        };
       });
       var kChild = {
         id: node.id,
@@ -72,17 +80,20 @@ function klayinit () {
       var inport = inports[key];
       var tempId = "inport:::"+key;
       // Inports just has only one output port
-      var uniquePort = {id: inport.port,
-                        width: portProperties.width,
-                        height: portProperties.height,
-                        properties: portProperties.outportSide};
+      var uniquePort = {
+        id: inport.port,
+        width: portProperties.width,
+        height: portProperties.height,
+        properties: portProperties.outportSide
+      };
       
       var kChild = {
         id: tempId, 
         labels: [{text: key}],
         width: nodeProperties.width, 
         height: nodeProperties.height,
-        ports: [uniquePort]
+        ports: [uniquePort],
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "FIRST_SEPARATE"}
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -93,17 +104,20 @@ function klayinit () {
       var outport = outports[key];
       var tempId = "outport:::"+key;
       // Outports just has only one input port
-      var uniquePort = {id: outport.port,
-                        width: portProperties.width,
-                        height: portProperties.height,
-                        properties: portProperties.inportSide};
+      var uniquePort = {
+        id: outport.port,
+        width: portProperties.width,
+        height: portProperties.height,
+        properties: portProperties.inportSide
+      };
 
       var kChild = {
         id: tempId, 
         labels: [{text: key}],
         width: nodeProperties.width, 
         height: nodeProperties.height,
-        ports: [uniquePort]
+        ports: [uniquePort],
+        properties: {"de.cau.cs.kieler.klay.layered.layerConstraint": "LAST_SEPARATE"}
       };
       idx[tempId] = countIdx++;
       return kChild;
@@ -123,12 +137,13 @@ function klayinit () {
       var sourcePort = edge.from.port;
       var target = edge.to.node;
       var targetPort = edge.to.port;
-      kGraph.edges.push({id: 'e' + currentEdge++, 
-                         source: source,
-                         sourcePort: source + '_' + sourcePort,
-                         target: target,
-                         targetPort: target + '_' + targetPort
-                        });
+      kGraph.edges.push({
+        id: 'e' + currentEdge++, 
+        source: source,
+        sourcePort: source + '_' + sourcePort,
+        target: target,
+        targetPort: target + '_' + targetPort
+      });
     });
     
     // Graph i/o to kGraph edges
@@ -173,9 +188,11 @@ function klayinit () {
     var nodesInGroups = [];
     groups.map(function (group) {
       // Create a node to use as a subgraph
-      var node = {id: 'group' + countGroups++, 
-                  children: [], 
-                  edges: []};
+      var node = {
+        id: 'group' + countGroups++, 
+        children: [], 
+        edges: []
+      };
       // Build the node/subgraph
       group.nodes.map(function (n) {
         var nodeT = kGraph.children[idx[n]];
@@ -226,25 +243,33 @@ function klayinit () {
     direction = direction || "RIGHT";
 
     // Define some preset options to KLayJS
-    var options = {"algorithm": "de.cau.cs.kieler.klay.layered",
-                   "layoutHierarchy": true,
-                   "spacing": 20,
-                   "portConstraints": "FIXED_SIDE",
-                   "nodePlace": "BRANDES_KOEPF",
-                   "edgeRouting": "POLYLINE",
-                   "direction": direction};
+    var options = {
+      "intCoordinates": true,
+      "algorithm": "de.cau.cs.kieler.klay.layered",
+      "layoutHierarchy": true,
+      "spacing": 20,
+      "edgeSpacingFactor": 0.2,
+      "inLayerSpacingFactor": 1.0,
+      "nodePlace": "BRANDES_KOEPF",
+      "nodeLayering": "NETWORK_SIMPLEX",
+      "edgeRouting": "POLYLINE",
+      "crossMin": "LAYER_SWEEP",
+      "direction": direction
+    };
     
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph, portInfo, direction);
-
-    $klay.layout({graph: kGraph,
-                  options: options,
-                  success: function (layouted) {
-                    render(layouted);
-                  },
-                  error: function (error) {
-                    // CAVEAT: this will catch errors in render callback
-                    console.log("$klay.layout error:", error);
-                  }});
+   
+    $klay.layout({
+      graph: kGraph,
+      options: options,
+      success: function (layouted) {
+        render(layouted);
+      },
+      error: function (error) {
+        // CAVEAT: this will catch errors in render callback
+        console.warn("$klay.layout error:", error);
+      }
+    });
   };
 }

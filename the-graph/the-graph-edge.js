@@ -106,6 +106,7 @@
       var targetX = this.props.tX;
       var targetY = this.props.tY;
 
+      // Organic / curved edge
       var c1X, c1Y, c2X, c2Y;
       if (targetX-5 < sourceX) {
         if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
@@ -136,7 +137,10 @@
         c1X, c1Y,
         c2X, c2Y,
         targetX, targetY
-      ].join(" ");
+      ];
+      // Make SVG path
+      path = path.join(" ");
+
 
       return (
         React.DOM.g(

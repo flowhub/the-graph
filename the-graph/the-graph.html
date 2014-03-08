@@ -1,7 +1,8 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout selectedNodes selectedEdges getMenuDef">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges getMenuDef">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
+    <link rel="stylesheet" href="../themes/the-graph-light.css">
     <div id="svgcontainer"></div>
   </template>
 
@@ -36,12 +37,19 @@
       graphView: null,
       editable: true,
       autolayout: false,
+      grid: 72,
+      snap: 36,
+      theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
         this.library = {};
       },
       ready: function () {
+        this.themeChanged();
+      },
+      themeChanged: function () {
+        this.$.svgcontainer.className = "the-graph-"+this.theme;
       },
       graphChanged: function () {
         // Listen for graph changes
@@ -191,8 +199,8 @@
               var klayChild = klayChildren[idx];
               if (klayChild.id) {
                 this.graph.setNodeMetadata(klayChild.id, {
-                  x: Math.round(klayNode.x + klayChild.x),
-                  y: Math.round(klayNode.y + klayChild.y)
+                  x: Math.round((klayNode.x + klayChild.x)/this.snap)*this.snap,
+                  y: Math.round((klayNode.y + klayChild.y)/this.snap)*this.snap
                 });
               }
             }
@@ -201,8 +209,8 @@
           // Encode nodes outside groups
           if (nofloNode) {
             this.graph.setNodeMetadata(klayNode.id, {
-              x: Math.round(klayNode.x),
-              y: Math.round(klayNode.y)
+              x: Math.round(klayNode.x/this.snap)*this.snap,
+              y: Math.round(klayNode.y/this.snap)*this.snap
             });
           } else {
             // Find inport or outport
@@ -211,21 +219,28 @@
             var expKey = idSplit[1];
             if (expDirection==="inport" && this.graph.inports[expKey]) {
               this.graph.setInportMetadata(expKey, {
-                x: Math.round(klayNode.x),
-                y: Math.round(klayNode.y)
+                x: Math.round(klayNode.x/this.snap)*this.snap,
+                y: Math.round(klayNode.y/this.snap)*this.snap
               });
             } else if (expDirection==="outport" && this.graph.outports[expKey]) {
               this.graph.setOutportMetadata(expKey, {
-                x: Math.round(klayNode.x),
-                y: Math.round(klayNode.y)
+                x: Math.round(klayNode.x/this.snap)*this.snap,
+                y: Math.round(klayNode.y/this.snap)*this.snap
               });
             }
           }
         }
-
-        // TODO: edge bends
   
         this.graph.endTransaction("autolayout");
+
+        // Fit to window
+        this.triggerFit();
+
+      },
+      triggerFit: function () {
+        if (this.appView) {
+          this.appView.triggerFit();
+        }
       },
       widthChanged: function () {
         if (!this.appView) { return; }
