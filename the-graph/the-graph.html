@@ -1,7 +1,8 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout selectedNodes selectedEdges getMenuDef">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges getMenuDef">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
+    <link rel="stylesheet" href="../themes/the-graph-light.css">
     <div id="svgcontainer"></div>
   </template>
 
@@ -38,12 +39,17 @@
       autolayout: false,
       grid: 72,
       snap: 36,
+      theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
         this.library = {};
       },
       ready: function () {
+        this.themeChanged();
+      },
+      themeChanged: function () {
+        this.$.svgcontainer.className = "the-graph-"+this.theme;
       },
       graphChanged: function () {
         // Listen for graph changes

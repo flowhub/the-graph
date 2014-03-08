@@ -1,9 +1,9 @@
 <link rel="import" href="../the-graph/the-graph.html">
 <!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout selectedNodes selectedEdges onContextMenu" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
+    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" theme="{{theme}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
   </template>
   <script>
   (function () {
@@ -21,6 +21,7 @@
       nofloGraph: null,
       menus: null,
       autolayout: false,
+      theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
