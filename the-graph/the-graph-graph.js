@@ -73,8 +73,10 @@
     cancelPreviewEdge: function (event) {
       this.props.app.getDOMNode().removeEventListener("pointermove", this.renderPreviewEdge);
       this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
-      this.setState({edgePreview: null});
-      this.markDirty();
+      if (this.state.edgePreview) {
+        this.setState({edgePreview: null});
+        this.markDirty();
+      }
     },
     renderPreviewEdge: function (event) {
       var scale = this.props.app.state.scale;

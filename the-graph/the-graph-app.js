@@ -203,16 +203,8 @@
       this.mouseY = Math.floor( this.props.height/2 );
 
       // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      document.addEventListener('keydown', function (event) {
-        if (event.metaKey || event.ctrlKey) { 
-          TheGraph.metaKeyPressed = true; 
-        }
-      });
-      document.addEventListener('keyup', function (event) {
-        if (TheGraph.metaKeyPressed) { 
-          TheGraph.metaKeyPressed = false; 
-        }
-      });
+      document.addEventListener('keydown', this.keyDown);
+      document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
       this.bgCanvas = unwrap(this.refs.canvas.getDOMNode());
@@ -223,6 +215,22 @@
       setTimeout(function () {
         this.renderGraph();
       }.bind(this), 500);
+    },
+    keyDown: function (event) {
+      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      if (event.metaKey || event.ctrlKey) { 
+        TheGraph.metaKeyPressed = true; 
+      }
+    },
+    keyUp: function (event) {
+      // Escape
+      if (event.keyCode===27) {
+        this.refs.graph.cancelPreviewEdge();
+      }
+      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      if (TheGraph.metaKeyPressed) { 
+        TheGraph.metaKeyPressed = false; 
+      }
     },
     unselectAll: function (event) {
       // No arguments = clear selection
