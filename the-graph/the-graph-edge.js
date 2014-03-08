@@ -11,8 +11,7 @@
 
   TheGraph.Edge = React.createClass({
     mixins: [
-      TheGraph.mixins.Tooltip,
-      TheGraph.mixins.SavePointer
+      TheGraph.mixins.Tooltip
     ],
     componentWillMount: function() {
     },
@@ -42,11 +41,6 @@
 
       var x = event.clientX;
       var y = event.clientY;
-
-      if (x === undefined) {
-        x = this.pointerX;
-        y = this.pointerY;
-      }
 
       // App.showContext
       this.props.showContext({

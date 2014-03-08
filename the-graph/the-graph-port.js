@@ -8,8 +8,7 @@
 
   TheGraph.Port = React.createClass({
     mixins: [
-      TheGraph.mixins.Tooltip,
-      TheGraph.mixins.SavePointer
+      TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
       // Preview edge start
@@ -56,10 +55,6 @@
       // Get mouse position
       var x = event.clientX;
       var y = event.clientY;
-      if (x === undefined) {
-        x = this.pointerX;
-        y = this.pointerY;
-      }
 
       // App.showContext
       this.props.showContext({

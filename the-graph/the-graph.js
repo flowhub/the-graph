@@ -64,20 +64,6 @@
     }
   };
 
-  // Working around hold event not having x y
-  // https://github.com/Polymer/PointerGestures/issues/23
-  TheGraph.mixins.SavePointer = {
-    componentDidMount: function () {
-      this.getDOMNode().addEventListener("pointerdown", this.savePointerPosition);
-    },
-    pointerX: 0,
-    pointerY: 0,
-    savePointerPosition: function (event) {
-      this.pointerX = event.clientX;
-      this.pointerY = event.clientY;
-    },
-  };  
-
   TheGraph.findMinMax = function (graph, nodes) {
     var inports, outports;
     if (nodes === undefined) {
