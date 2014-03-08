@@ -225,6 +225,9 @@
     keyUp: function (event) {
       // Escape
       if (event.keyCode===27) {
+        if (!this.refs.graph) {
+          return;
+        }
         this.refs.graph.cancelPreviewEdge();
       }
       // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
