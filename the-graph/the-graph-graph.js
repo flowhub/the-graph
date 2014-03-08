@@ -267,6 +267,11 @@
       });
       this.markDirty();
     },
+    updatedIcons: {},
+    updateIcon: function (nodeId, icon) {
+      this.updatedIcons[nodeId] = icon;
+      this.markDirty();
+    },
     dirty: false,
     libraryDirty: false,
     markDirty: function (event) {
@@ -283,7 +288,7 @@
         return;
       }
       this.dirty = true;
-      this.setState({});
+      this.forceUpdate();
     },
     shouldComponentUpdate: function () {
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
@@ -314,7 +319,12 @@
           node.metadata.label = key;
         }
         var componentInfo = self.getComponentInfo(node.component);
-        var icon = (componentInfo && componentInfo.icon ? componentInfo.icon : "cog");
+        var icon = "cog";
+        if (self.updatedIcons[key]) {
+          icon = self.updatedIcons[key];
+        } else if (componentInfo && componentInfo.icon) {
+          icon = componentInfo.icon;
+        }
         return TheGraph.Node({
           key: key,
           x: node.metadata.x,

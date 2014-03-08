@@ -98,6 +98,16 @@
             editor.registerComponent(component);
           }, 1000);
 
+          // Simulate node icon updates
+          var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
+          window.setInterval(function () {
+            if (!editor.nofloGraph) { return; }
+            var nodes = editor.nofloGraph.nodes;
+            var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+            var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
+            editor.updateIcon(randomNodeId, randomIcon);
+          }, 1000);
+
           // Autolayout button
           document.getElementById("autolayout").addEventListener("click", function () {
             editor.triggerAutolayout();

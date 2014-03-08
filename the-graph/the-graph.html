@@ -254,6 +254,10 @@
           height: this.height
         });
       },
+      updateIcon: function (nodeId, icon) {
+        if (!this.graphView) { return; }
+        this.graphView.updateIcon(nodeId, icon);
+      },
       rerender: function (options) {
         // This is throttled with rAF internally
         if (!this.graphView) { return; }

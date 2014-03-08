@@ -270,6 +270,9 @@
       registerComponent: function (definition) {
         this.$.graph.registerComponent(definition);
       },
+      updateIcon: function (nodeId, icon) {
+        this.$.graph.updateIcon(nodeId, icon);
+      },
       rerender: function () {
         this.$.graph.rerender();
       },

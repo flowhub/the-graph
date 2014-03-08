@@ -7,7 +7,6 @@
   window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
   window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
 
-
   // Node view
   TheGraph.Node = React.createClass({
     mixins: [
@@ -27,6 +26,7 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
+
     },
     onNodeSelection: function (event) {
       // Don't tap app (unselect)
