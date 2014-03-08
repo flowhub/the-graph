@@ -25,8 +25,6 @@
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
-        this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
@@ -119,12 +117,6 @@
         this.props.graph.endTransaction('moveexport');
       } else {
         this.props.graph.endTransaction('movenode');
-      }
-    },
-    stopPropagation: function (event) {
-      // HACK to keep context menu from cancelling preview edge
-      if (event.buttons && event.buttons===2) {
-        event.stopPropagation();
       }
     },
     showContext: function (event) {
