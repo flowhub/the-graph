@@ -72,41 +72,41 @@
   opacity: 0;
 }
 .the-graph-light .graph.selection .node .node-rect {
-  fill: var-node-deselected;
+  fill: rgba(245,248,249,0.94);
 }
 .the-graph-light .graph.selection .node .node-border {
-  stroke: var-node-deselected-border;
+  stroke: #d6dadc;
 }
 .the-graph-light .graph.selection .node .port-arc {
-  fill: var-node-deselected-border;
+  fill: #d6dadc;
 }
 .the-graph-light .graph.selection .node .node-icon {
-  fill: var-node-deselected-icon;
+  fill: #bac2c4;
 }
 .the-graph-light .graph.selection .node.selected .node-rect {
-  fill: var-node-selected;
+  fill: rgba(230,238,240,0.94);
 }
 .the-graph-light .graph.selection .node.selected .node-border {
-  stroke: var-node-selected-border;
+  stroke: #808080;
 }
 .the-graph-light .graph.selection .node.selected .port-arc {
-  fill: var-node-selected-border;
+  fill: #808080;
 }
 .the-graph-light .graph.selection .node.selected .node-icon {
-  fill: var-node-selected-icon;
+  fill: #2f3537;
 }
 .the-graph-light .small .graph.selection .node .node-rect {
   fill: none;
 }
 .the-graph-light .small .graph.selection .node .node-border {
-  fill: var-node-deselected;
+  fill: rgba(245,248,249,0.94);
   stroke: none;
 }
 .the-graph-light .small .graph.selection .node.selected .node-rect {
   fill: none;
 }
 .the-graph-light .small .graph.selection .node.selected .node-border {
-  fill: var-node-selected;
+  fill: rgba(230,238,240,0.94);
   stroke: none;
 }
 .the-graph-light path {
@@ -117,7 +117,7 @@
   stroke-width: 6px;
 }
 .the-graph-light .edge-fg {
-  stroke: #a0a5a9;
+  stroke: #bfbfbf;
   stroke-width: 4px;
   transition-property: stroke-width;
   transition-duration: 0.5s;
@@ -131,7 +131,7 @@
 }
 .the-graph-light .edge.selected .edge-bg {
   stroke-width: 10px;
-  stroke: #f00;
+  stroke: #808080;
 }
 .the-graph-light .small .edge-bg {
   stroke-width: 10px;
@@ -169,7 +169,7 @@
 }
 .the-graph-light .iip-path {
   stroke-width: 1px;
-  stroke: #a0a5a9;
+  stroke: #bfbfbf;
 }
 .the-graph-light .iip-info {
   visibility: hidden;
@@ -285,11 +285,11 @@
 }
 .the-graph-light .ex-inports .node-icon,
 .the-graph-light .small .ex-inports .node-icon {
-  fill: #ee7c0e;
+  fill: #cc6300;
 }
 .the-graph-light .ex-outports .node-icon,
 .the-graph-light .small .ex-outports .node-icon {
-  fill: #00782a;
+  fill: #00cc3d;
 }
 .the-graph-light .port-circle-bg {
   fill: #3b4245;
@@ -324,133 +324,133 @@
   visibility: hidden;
 }
 .the-graph-light .group-box {
-  fill: rgba(191,191,191,0.25);
+  fill: rgba(191,191,191,0.1);
   transition-property: fill;
   transition-duration: 0.3s;
 }
 .the-graph-light .group-box:hover {
-  fill: rgba(191,191,191,0.35);
+  fill: rgba(191,191,191,0.15);
 }
 .the-graph-light .small .group-box {
   stroke-width: 8px;
 }
 .the-graph-light .group-box.color0 {
-  fill: rgba(191,191,191,0.25);
-  stroke: var-group00-stroke;
+  fill: rgba(191,191,191,0.1);
+  stroke: rgba(191,191,191,0.15);
 }
 .the-graph-light .group-box.color1 {
-  fill: rgba(223,159,159,0.25);
-  stroke: var-group01-stroke;
+  fill: rgba(204,0,0,0.1);
+  stroke: rgba(204,0,0,0.15);
 }
 .the-graph-light .group-box.color2 {
-  fill: rgba(223,197,159,0.25);
-  stroke: var-group02-stroke;
+  fill: rgba(204,99,0,0.1);
+  stroke: rgba(204,99,0,0.15);
 }
 .the-graph-light .group-box.color3 {
-  fill: rgba(223,223,159,0.25);
-  stroke: var-group03-stroke;
+  fill: rgba(255,200,0,0.1);
+  stroke: rgba(255,200,0,0.15);
 }
 .the-graph-light .group-box.color4 {
-  fill: rgba(159,223,175,0.25);
-  stroke: var-group04-stroke;
+  fill: rgba(0,204,61,0.1);
+  stroke: rgba(0,204,61,0.15);
 }
 .the-graph-light .group-box.color5 {
-  fill: rgba(159,223,202,0.25);
-  stroke: var-group05-stroke;
+  fill: rgba(171,242,218,0.1);
+  stroke: rgba(171,242,218,0.15);
 }
 .the-graph-light .group-box.color6 {
-  fill: rgba(159,218,223,0.25);
-  stroke: var-group06-stroke;
+  fill: rgba(0,201,204,0.1);
+  stroke: rgba(0,201,204,0.15);
 }
 .the-graph-light .group-box.color7 {
-  fill: rgba(159,191,223,0.25);
-  stroke: var-group07-stroke;
+  fill: rgba(0,82,204,0.1);
+  stroke: rgba(0,82,204,0.15);
 }
 .the-graph-light .group-box.color8 {
-  fill: rgba(207,159,223,0.25);
-  stroke: var-group08-stroke;
+  fill: rgba(68,0,204,0.1);
+  stroke: rgba(68,0,204,0.15);
 }
 .the-graph-light .group-box.color9 {
-  fill: rgba(223,159,212,0.25);
-  stroke: var-group09-stroke;
+  fill: rgba(255,168,186,0.1);
+  stroke: rgba(255,168,186,0.15);
 }
 .the-graph-light .group-box.color10 {
-  fill: rgba(223,159,186,0.25);
-  stroke: var-group10-stroke;
+  fill: rgba(204,0,109,0.1);
+  stroke: rgba(204,0,109,0.15);
 }
 .the-graph-light .group-box.color0:hover {
-  fill: rgba(191,191,191,0.35);
+  fill: rgba(191,191,191,0.15);
 }
 .the-graph-light .group-box.color1:hover {
-  fill: rgba(223,159,159,0.35);
+  fill: rgba(204,0,0,0.15);
 }
 .the-graph-light .group-box.color2:hover {
-  fill: rgba(223,197,159,0.35);
+  fill: rgba(204,99,0,0.15);
 }
 .the-graph-light .group-box.color3:hover {
-  fill: rgba(223,223,159,0.35);
+  fill: rgba(255,200,0,0.15);
 }
 .the-graph-light .group-box.color4:hover {
-  fill: rgba(159,223,175,0.35);
+  fill: rgba(0,204,61,0.15);
 }
 .the-graph-light .group-box.color5:hover {
-  fill: rgba(159,223,202,0.35);
+  fill: rgba(171,242,218,0.15);
 }
 .the-graph-light .group-box.color6:hover {
-  fill: rgba(159,218,223,0.35);
+  fill: rgba(0,201,204,0.15);
 }
 .the-graph-light .group-box.color7:hover {
-  fill: rgba(159,191,223,0.35);
+  fill: rgba(0,82,204,0.15);
 }
 .the-graph-light .group-box.color8:hover {
-  fill: rgba(207,159,223,0.35);
+  fill: rgba(68,0,204,0.15);
 }
 .the-graph-light .group-box.color9:hover {
-  fill: rgba(223,159,212,0.35);
+  fill: rgba(255,168,186,0.15);
 }
 .the-graph-light .group-box.color10:hover {
-  fill: rgba(223,159,186,0.35);
+  fill: rgba(204,0,109,0.15);
 }
 .the-graph-light .selection .group-box.color0 {
-  fill: var-group00-fade;
+  fill: rgba(191,191,191,0.05);
 }
 .the-graph-light .selection .group-box.color1 {
-  fill: var-group01-fade;
+  fill: rgba(204,0,0,0.05);
 }
 .the-graph-light .selection .group-box.color2 {
-  fill: var-group02-fade;
+  fill: rgba(204,99,0,0.05);
 }
 .the-graph-light .selection .group-box.color3 {
-  fill: var-group03-fade;
+  fill: rgba(255,200,0,0.05);
 }
 .the-graph-light .selection .group-box.color4 {
-  fill: var-group04-fade;
+  fill: rgba(0,204,61,0.05);
 }
 .the-graph-light .selection .group-box.color5 {
-  fill: var-group05-fade;
+  fill: rgba(171,242,218,0.05);
 }
 .the-graph-light .selection .group-box.color6 {
-  fill: var-group06-fade;
+  fill: rgba(0,201,204,0.05);
 }
 .the-graph-light .selection .group-box.color7 {
-  fill: var-group07-fade;
+  fill: rgba(0,82,204,0.05);
 }
 .the-graph-light .selection .group-box.color8 {
-  fill: var-group08-fade;
+  fill: rgba(68,0,204,0.05);
 }
 .the-graph-light .selection .group-box.color9 {
-  fill: var-group09-fade;
+  fill: rgba(255,168,186,0.05);
 }
 .the-graph-light .selection .group-box.color10 {
-  fill: var-group10-fade;
+  fill: rgba(204,0,109,0.05);
 }
 .the-graph-light .selection .group-box.selection {
-  fill: rgba(255,102,102,0.15);
-  stroke: #f00;
+  fill: rgba(128,128,128,0.15);
+  stroke: #808080;
   stroke-width: 1px;
 }
 .the-graph-light .selection .group-box.selection:hover {
-  fill: rgba(255,102,102,0.25);
+  fill: rgba(102,102,102,0.25);
 }
 .the-graph-light .group-label {
   text-anchor: start;
@@ -474,111 +474,111 @@
 }
 .the-graph-light .stroke.route0,
 .the-graph-light .selection .selected .stroke.route0 {
-  stroke: #a0a5a9;
+  stroke: #bfbfbf;
 }
 .the-graph-light .stroke.route1,
 .the-graph-light .selection .selected .stroke.route1 {
-  stroke: #e32017;
+  stroke: #c00;
 }
 .the-graph-light .stroke.route2,
 .the-graph-light .selection .selected .stroke.route2 {
-  stroke: #ee7c0e;
+  stroke: #cc6300;
 }
 .the-graph-light .stroke.route3,
 .the-graph-light .selection .selected .stroke.route3 {
-  stroke: #ffd300;
+  stroke: #ffc800;
 }
 .the-graph-light .stroke.route4,
 .the-graph-light .selection .selected .stroke.route4 {
-  stroke: #00782a;
+  stroke: #00cc3d;
 }
 .the-graph-light .stroke.route5,
 .the-graph-light .selection .selected .stroke.route5 {
-  stroke: #95cdba;
+  stroke: #abf2da;
 }
 .the-graph-light .stroke.route6,
 .the-graph-light .selection .selected .stroke.route6 {
-  stroke: #0098d4;
+  stroke: #00c9cc;
 }
 .the-graph-light .stroke.route7,
 .the-graph-light .selection .selected .stroke.route7 {
-  stroke: #003688;
+  stroke: #0052cc;
 }
 .the-graph-light .stroke.route8,
 .the-graph-light .selection .selected .stroke.route8 {
-  stroke: #9b0056;
+  stroke: #40c;
 }
 .the-graph-light .stroke.route9,
 .the-graph-light .selection .selected .stroke.route9 {
-  stroke: #f3a9bb;
+  stroke: #ffa8ba;
 }
 .the-graph-light .stroke.route10,
 .the-graph-light .selection .selected .stroke.route10 {
-  stroke: #b36305;
+  stroke: #cc006d;
 }
 .the-graph-light .selection .stroke.route0 {
-  stroke: var-route00-fade;
+  stroke: #e6e6e6;
 }
 .the-graph-light .selection .stroke.route1 {
-  stroke: var-route01-fade;
+  stroke: #fcc;
 }
 .the-graph-light .selection .stroke.route2 {
-  stroke: var-route02-fade;
+  stroke: #ffe5cc;
 }
 .the-graph-light .selection .stroke.route3 {
-  stroke: var-route03-fade;
+  stroke: #fff4cc;
 }
 .the-graph-light .selection .stroke.route4 {
-  stroke: var-route04-fade;
+  stroke: #ccffdb;
 }
 .the-graph-light .selection .stroke.route5 {
-  stroke: var-route05-fade;
+  stroke: #d3f8ec;
 }
 .the-graph-light .selection .stroke.route6 {
-  stroke: var-route06-fade;
+  stroke: #ccfeff;
 }
 .the-graph-light .selection .stroke.route7 {
-  stroke: var-route07-fade;
+  stroke: #cce0ff;
 }
 .the-graph-light .selection .stroke.route8 {
-  stroke: var-route08-fade;
+  stroke: #dcf;
 }
 .the-graph-light .selection .stroke.route9 {
-  stroke: var-route09-fade;
+  stroke: #ffccd6;
 }
 .the-graph-light .selection .stroke.route10 {
-  stroke: var-route10-fade;
+  stroke: #ffcce7;
 }
 .the-graph-light .fill.route0 {
-  fill: #a0a5a9;
+  fill: #bfbfbf;
 }
 .the-graph-light .fill.route1 {
-  fill: #e32017;
+  fill: #c00;
 }
 .the-graph-light .fill.route2 {
-  fill: #ee7c0e;
+  fill: #cc6300;
 }
 .the-graph-light .fill.route3 {
-  fill: #ffd300;
+  fill: #ffc800;
 }
 .the-graph-light .fill.route4 {
-  fill: #00782a;
+  fill: #00cc3d;
 }
 .the-graph-light .fill.route5 {
-  fill: #95cdba;
+  fill: #abf2da;
 }
 .the-graph-light .fill.route6 {
-  fill: #0098d4;
+  fill: #00c9cc;
 }
 .the-graph-light .fill.route7 {
-  fill: #003688;
+  fill: #0052cc;
 }
 .the-graph-light .fill.route8 {
-  fill: #9b0056;
+  fill: #40c;
 }
 .the-graph-light .fill.route9 {
-  fill: #f3a9bb;
+  fill: #ffa8ba;
 }
 .the-graph-light .fill.route10 {
-  fill: #b36305;
+  fill: #cc006d;
 }
