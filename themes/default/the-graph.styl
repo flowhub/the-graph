@@ -44,28 +44,27 @@ svg {
   cursor: -webkit-grab;
   cursor: grab;
 }
+
+/* defaults */
+
 .node-border {
   fill: var-node-border-bg;
   stroke: var-node-border;
   stroke-width: 2px;
 };
-.small .node-border {
-  fill: var-node;
-  stroke: none;
-}
 .node-rect {
   fill: var-node;
   stroke: none;
 }
-.node:hover .node-rect {
-  fill: var-node-hover;
-}
-.node:hover .node-border {
-  stroke: var-node-hover-border;
-}
-.node:hover .port-arc {
-  fill: var-node-hover-border;
-}
+
+.node:hover 
+  .node-rect 
+    fill: var-node-hover
+  .node-border
+    stroke: var-node-hover-border
+  .port-arc
+    fill: var-node-hover-border
+
 .ex-inports .node-border {
   fill: var-export-bg;
   stroke: none;
@@ -80,21 +79,59 @@ svg {
 .ex-outports .node:hover .node-rect {
   fill: none;
 }
-.small .ex-inports .node .node-border,
-.small .ex-outports .node .node-border {
-  fill: var-export-bg; 
-}
+
+.small 
+  .node-border
+    fill: var-node
+    stroke: none
+  .ex-inports .node .node-border
+  .ex-outports .node .node-border 
+    fill: var-export-bg
+
+
 .node-bg {
   opacity: 0;
 }
-.node.selected .node-border {
-  stroke: var-selection-box-border;
-  stroke-width: 4px;
-}
-.node.selected .port-arc {
-  stroke: var-selection-box-border;
-  fill: var-selection-box-border;
-}
+
+/* de-emphasizing the rest of the nodes */
+/* emphasizing the selection */
+
+.graph.selection
+  .node
+    .node-rect
+      fill: var-node-deselected
+    .node-border
+      stroke: var-node-deselected-border
+    .port-arc
+      fill: var-node-deselected-border
+    .node-icon
+      fill: var-node-deselected-icon
+  .node.selected
+    .node-rect
+      fill: var-node-selected
+    .node-border
+      stroke: var-node-selected-border
+    .port-arc
+      fill: var-node-selected-border
+    .node-icon
+      fill: var-node-selected-icon
+
+.small .graph.selection
+  .node
+    .node-rect
+      fill: none
+    .node-border
+      fill: var-node-deselected
+      stroke: none
+  .node.selected
+    .node-rect
+      fill: none
+    .node-border
+      fill: var-node-selected
+      stroke: none
+
+
+
 
 path {
   fill: none;
@@ -408,15 +445,40 @@ text {
 .group-box.color10:hover
   fill: var-group10-hover
 
+/* deselected group */
+.selection
+  .group-box.color0 
+    fill: var-group00-fade
+  .group-box.color1 
+    fill: var-group01-fade
+  .group-box.color2 
+    fill: var-group02-fade
+  .group-box.color3 
+    fill: var-group03-fade
+  .group-box.color4 
+    fill: var-group04-fade
+  .group-box.color5 
+    fill: var-group05-fade
+  .group-box.color6 
+    fill: var-group06-fade
+  .group-box.color7 
+    fill: var-group07-fade
+  .group-box.color8 
+    fill: var-group08-fade
+  .group-box.color9 
+    fill: var-group09-fade
+  .group-box.color10
+    fill: var-group10-fade
 
-.group-box.selection { 
-  fill: var-selection-box; 
-  stroke: var-selection-box-border;
-  stroke-width: 1px;
-}
-.group-box.selection:hover { 
-  fill: var-selection-box-hover;
-}
+/* selected pseudo-group */
+.selection
+  .group-box.selection
+    fill: var-selection-box
+    stroke: var-selection-box-border
+    stroke-width: 1px
+  .group-box.selection:hover
+    fill: var-selection-box-hover
+
 
 .group-label {
   text-anchor: start;  
@@ -441,27 +503,62 @@ text {
 }
 
 .stroke.route0
+.selection .selected .stroke.route0
   stroke: var-route00
 .stroke.route1
+.selection .selected .stroke.route1
   stroke: var-route01
 .stroke.route2
+.selection .selected .stroke.route2
   stroke: var-route02
 .stroke.route3
+.selection .selected .stroke.route3
   stroke: var-route03
 .stroke.route4
+.selection .selected .stroke.route4
   stroke: var-route04
 .stroke.route5
+.selection .selected .stroke.route5
   stroke: var-route05
 .stroke.route6
+.selection .selected .stroke.route6
   stroke: var-route06
 .stroke.route7
+.selection .selected .stroke.route7
   stroke: var-route07
 .stroke.route8
+.selection .selected .stroke.route8
   stroke: var-route08
 .stroke.route9
+.selection .selected .stroke.route9
   stroke: var-route09
 .stroke.route10
+.selection .selected .stroke.route10
   stroke: var-route10
+
+.selection
+  .stroke.route0
+    stroke: var-route00-fade
+  .stroke.route1
+    stroke: var-route01-fade
+  .stroke.route2
+    stroke: var-route02-fade
+  .stroke.route3
+    stroke: var-route03-fade
+  .stroke.route4
+    stroke: var-route04-fade
+  .stroke.route5
+    stroke: var-route05-fade
+  .stroke.route6
+    stroke: var-route06-fade
+  .stroke.route7
+    stroke: var-route07-fade
+  .stroke.route8
+    stroke: var-route08-fade
+  .stroke.route9
+    stroke: var-route09-fade
+  .stroke.route10
+    stroke: var-route10-fade
 
 .fill.route0 
   fill: var-route00

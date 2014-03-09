@@ -294,6 +294,15 @@
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
     },
+    componentDidUpdate: function () {
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      var d = this.getDOMNode();
+      var c = "graph";
+      if (this.state.selectedNodes.length > 0 || this.state.selectedEdges.length > 0) {
+        c += " selection";
+      }
+      d.setAttribute("class", c);
+    },
     render: function() {
       this.dirty = false;
 
@@ -634,8 +643,7 @@
 
       return React.DOM.g(
         {
-          className: "graph"//,
-          // onMouseDown: this.onMouseDown
+          // className: "graph" // See componentDidUpdate
         },
         React.DOM.g({
           className: "groups",

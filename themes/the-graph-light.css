@@ -33,10 +33,6 @@
   stroke: #3b4245;
   stroke-width: 2px;
 }
-.the-graph-light .small .node-border {
-  fill: rgba(230,238,240,0.94);
-  stroke: none;
-}
 .the-graph-light .node-rect {
   fill: rgba(230,238,240,0.94);
   stroke: none;
@@ -64,6 +60,10 @@
 .the-graph-light .ex-outports .node:hover .node-rect {
   fill: none;
 }
+.the-graph-light .small .node-border {
+  fill: rgba(230,238,240,0.94);
+  stroke: none;
+}
 .the-graph-light .small .ex-inports .node .node-border,
 .the-graph-light .small .ex-outports .node .node-border {
   fill: #e6e6e6;
@@ -71,13 +71,43 @@
 .the-graph-light .node-bg {
   opacity: 0;
 }
-.the-graph-light .node.selected .node-border {
-  stroke: #f00;
-  stroke-width: 4px;
+.the-graph-light .graph.selection .node .node-rect {
+  fill: var-node-deselected;
 }
-.the-graph-light .node.selected .port-arc {
-  stroke: #f00;
-  fill: #f00;
+.the-graph-light .graph.selection .node .node-border {
+  stroke: var-node-deselected-border;
+}
+.the-graph-light .graph.selection .node .port-arc {
+  fill: var-node-deselected-border;
+}
+.the-graph-light .graph.selection .node .node-icon {
+  fill: var-node-deselected-icon;
+}
+.the-graph-light .graph.selection .node.selected .node-rect {
+  fill: var-node-selected;
+}
+.the-graph-light .graph.selection .node.selected .node-border {
+  stroke: var-node-selected-border;
+}
+.the-graph-light .graph.selection .node.selected .port-arc {
+  fill: var-node-selected-border;
+}
+.the-graph-light .graph.selection .node.selected .node-icon {
+  fill: var-node-selected-icon;
+}
+.the-graph-light .small .graph.selection .node .node-rect {
+  fill: none;
+}
+.the-graph-light .small .graph.selection .node .node-border {
+  fill: var-node-deselected;
+  stroke: none;
+}
+.the-graph-light .small .graph.selection .node.selected .node-rect {
+  fill: none;
+}
+.the-graph-light .small .graph.selection .node.selected .node-border {
+  fill: var-node-selected;
+  stroke: none;
 }
 .the-graph-light path {
   fill: none;
@@ -381,12 +411,45 @@
 .the-graph-light .group-box.color10:hover {
   fill: rgba(223,159,186,0.35);
 }
-.the-graph-light .group-box.selection {
+.the-graph-light .selection .group-box.color0 {
+  fill: var-group00-fade;
+}
+.the-graph-light .selection .group-box.color1 {
+  fill: var-group01-fade;
+}
+.the-graph-light .selection .group-box.color2 {
+  fill: var-group02-fade;
+}
+.the-graph-light .selection .group-box.color3 {
+  fill: var-group03-fade;
+}
+.the-graph-light .selection .group-box.color4 {
+  fill: var-group04-fade;
+}
+.the-graph-light .selection .group-box.color5 {
+  fill: var-group05-fade;
+}
+.the-graph-light .selection .group-box.color6 {
+  fill: var-group06-fade;
+}
+.the-graph-light .selection .group-box.color7 {
+  fill: var-group07-fade;
+}
+.the-graph-light .selection .group-box.color8 {
+  fill: var-group08-fade;
+}
+.the-graph-light .selection .group-box.color9 {
+  fill: var-group09-fade;
+}
+.the-graph-light .selection .group-box.color10 {
+  fill: var-group10-fade;
+}
+.the-graph-light .selection .group-box.selection {
   fill: rgba(255,102,102,0.15);
   stroke: #f00;
   stroke-width: 1px;
 }
-.the-graph-light .group-box.selection:hover {
+.the-graph-light .selection .group-box.selection:hover {
   fill: rgba(255,102,102,0.25);
 }
 .the-graph-light .group-label {
@@ -409,38 +472,82 @@
 .the-graph-light .small .group-description {
   visibility: hidden;
 }
-.the-graph-light .stroke.route0 {
+.the-graph-light .stroke.route0,
+.the-graph-light .selection .selected .stroke.route0 {
   stroke: #a0a5a9;
 }
-.the-graph-light .stroke.route1 {
+.the-graph-light .stroke.route1,
+.the-graph-light .selection .selected .stroke.route1 {
   stroke: #e32017;
 }
-.the-graph-light .stroke.route2 {
+.the-graph-light .stroke.route2,
+.the-graph-light .selection .selected .stroke.route2 {
   stroke: #ee7c0e;
 }
-.the-graph-light .stroke.route3 {
+.the-graph-light .stroke.route3,
+.the-graph-light .selection .selected .stroke.route3 {
   stroke: #ffd300;
 }
-.the-graph-light .stroke.route4 {
+.the-graph-light .stroke.route4,
+.the-graph-light .selection .selected .stroke.route4 {
   stroke: #00782a;
 }
-.the-graph-light .stroke.route5 {
+.the-graph-light .stroke.route5,
+.the-graph-light .selection .selected .stroke.route5 {
   stroke: #95cdba;
 }
-.the-graph-light .stroke.route6 {
+.the-graph-light .stroke.route6,
+.the-graph-light .selection .selected .stroke.route6 {
   stroke: #0098d4;
 }
-.the-graph-light .stroke.route7 {
+.the-graph-light .stroke.route7,
+.the-graph-light .selection .selected .stroke.route7 {
   stroke: #003688;
 }
-.the-graph-light .stroke.route8 {
+.the-graph-light .stroke.route8,
+.the-graph-light .selection .selected .stroke.route8 {
   stroke: #9b0056;
 }
-.the-graph-light .stroke.route9 {
+.the-graph-light .stroke.route9,
+.the-graph-light .selection .selected .stroke.route9 {
   stroke: #f3a9bb;
 }
-.the-graph-light .stroke.route10 {
+.the-graph-light .stroke.route10,
+.the-graph-light .selection .selected .stroke.route10 {
   stroke: #b36305;
+}
+.the-graph-light .selection .stroke.route0 {
+  stroke: var-route00-fade;
+}
+.the-graph-light .selection .stroke.route1 {
+  stroke: var-route01-fade;
+}
+.the-graph-light .selection .stroke.route2 {
+  stroke: var-route02-fade;
+}
+.the-graph-light .selection .stroke.route3 {
+  stroke: var-route03-fade;
+}
+.the-graph-light .selection .stroke.route4 {
+  stroke: var-route04-fade;
+}
+.the-graph-light .selection .stroke.route5 {
+  stroke: var-route05-fade;
+}
+.the-graph-light .selection .stroke.route6 {
+  stroke: var-route06-fade;
+}
+.the-graph-light .selection .stroke.route7 {
+  stroke: var-route07-fade;
+}
+.the-graph-light .selection .stroke.route8 {
+  stroke: var-route08-fade;
+}
+.the-graph-light .selection .stroke.route9 {
+  stroke: var-route09-fade;
+}
+.the-graph-light .selection .stroke.route10 {
+  stroke: var-route10-fade;
 }
 .the-graph-light .fill.route0 {
   fill: #a0a5a9;
