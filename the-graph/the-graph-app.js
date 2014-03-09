@@ -114,21 +114,18 @@
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
+    onPanScale: function () {
+      // Pass pan/scale out to the-graph
+      if (this.props.onPanScale) {
+        this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
+      }
+    },
     showContext: function (options) {
       this.setState({
         contextMenu: options,
         tooltipVisible: false
       });
     },
-    // showNodeContext: function (event) {
-    //   this.setState({
-    //     contextElement: event.detail.element,
-    //     contextType: event.detail.type,
-    //     contextX: event.detail.x,
-    //     contextY: event.detail.y,
-    //     tooltipVisible: false
-    //   });
-    // },
     hideContext: function (event) {
       this.setState({
         contextMenu: null
@@ -217,7 +214,7 @@
       }.bind(this), 500);
     },
     keyDown: function (event) {
-      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       if (event.metaKey || event.ctrlKey) { 
         TheGraph.metaKeyPressed = true; 
       }
@@ -230,7 +227,7 @@
         }
         this.refs.graph.cancelPreviewEdge();
       }
-      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       if (TheGraph.metaKeyPressed) { 
         TheGraph.metaKeyPressed = false; 
       }
@@ -243,8 +240,11 @@
     renderGraph: function () {
       this.refs.graph.markDirty();
     },
-    componentDidUpdate: function () {
+    componentDidUpdate: function (prevProps, prevState) {
       this.renderCanvas(this.bgContext);
+      if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
+        this.onPanScale();
+      }
     },
     renderCanvas: function (c) {
       // Comment this line to go plaid

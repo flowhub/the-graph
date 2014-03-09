@@ -1,9 +1,27 @@
 <link rel="import" href="../the-graph/the-graph.html">
-<!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
+<link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
 <polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" theme="{{theme}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
+    <the-graph id="graph" 
+      name="{{ graph.properties.name }}" 
+      graph="{{nofloGraph}}" 
+      menus="{{menus}}" 
+      width="{{width}}" height="{{height}}" 
+      pan="{{pan}}" scale="{{scale}}" 
+      autolayout="{{autolayout}}" 
+      theme="{{theme}}" 
+      selectedNodes="{{selectedNodes}}" 
+      selectedEdges="{{selectedEdges}}" 
+      getMenuDef="{{getMenuDef}}">
+    </the-graph>
+    <the-graph-nav id="nav"
+      graph="{{nofloGraph}}" 
+      width="216" height="162" 
+      viewwidth="{{width}}" viewheight="{{height}}" 
+      pan="{{pan}}" scale="{{scale}}" 
+      style="position:absolute; right:0px; bottom:0px;">
+    </the-graph-nav>
   </template>
   <script>
   (function () {
@@ -16,7 +34,6 @@
       width: 800,
       height: 600,
       scale: 1,
-      pan: [0, 0],
       plugins: {},
       nofloGraph: null,
       menus: null,
@@ -25,6 +42,9 @@
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
+        // Default pan
+        this.pan = [0,0];
+        // Default context menu defs
         this.menus = {
           edge: {
             icon: "long-arrow-right",
@@ -125,7 +145,9 @@
         };
       },
       ready: function () {},
-      attached: function () {},
+      attached: function () {
+        this.$.nav.addEventListener("tap", this.triggerFit.bind(this));
+      },
       detached: function () {
         for (var name in this.plugins) {
           this.plugins[name].unregister(this);

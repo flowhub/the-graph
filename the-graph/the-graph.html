@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges getMenuDef">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges getMenuDef pan scale">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
@@ -33,6 +33,7 @@
       menus: null,
       width: 800,
       height: 600,
+      scale: 1,
       appView: null,
       graphView: null,
       editable: true,
@@ -44,6 +45,8 @@
       selectedEdges: [],
       created: function () {
         this.library = {};
+        // Default pan
+        this.pan = [0,0];
       },
       ready: function () {
         this.themeChanged();
@@ -51,7 +54,10 @@
       themeChanged: function () {
         this.$.svgcontainer.className = "the-graph-"+this.theme;
       },
-      graphChanged: function () {
+      graphChanged: function (oldGraph, newGraph) {
+        if (oldGraph && oldGraph.removeListener) {
+          oldGraph.removeListener("endTransaction", this.fireChanged);
+        }
         // Listen for graph changes
         this.graph.on("endTransaction", this.fireChanged.bind(this));
 
@@ -84,11 +90,17 @@
             editable: this.editable,
             onEdgeSelection: this.onEdgeSelection.bind(this),
             onNodeSelection: this.onNodeSelection.bind(this),
+            onPanScale: this.onPanScale.bind(this),
             getMenuDef: this.getMenuDef
           }),
           this.$.svgcontainer
         );
         this.graphView = this.appView.refs.graph;
+      },
+      onPanScale: function (x, y, scale) {
+        this.pan[0] = x;
+        this.pan[1] = y;
+        this.scale = scale;
       },
       onEdgeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
@@ -272,6 +284,14 @@
           return [0, 0]; 
         }
         return [this.appView.state.x, this.appView.state.y];
+      },
+      panChanged: function () {
+        // Send pan back to React
+        if (!this.appView) { return; }
+        this.appView.setState({
+          x: this.pan[0],
+          y: this.pan[1]
+        });
       },
       getScale: function () {
         if (!this.appView) { 
