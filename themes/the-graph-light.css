@@ -324,7 +324,7 @@
   visibility: hidden;
 }
 .the-graph-light .group-box {
-  fill: rgba(191,191,191,0.1);
+  fill: rgba(191,191,191,0.05);
   transition-property: fill;
   transition-duration: 0.3s;
 }
@@ -335,47 +335,47 @@
   stroke-width: 8px;
 }
 .the-graph-light .group-box.color0 {
-  fill: rgba(191,191,191,0.1);
+  fill: rgba(191,191,191,0.05);
   stroke: rgba(191,191,191,0.15);
 }
 .the-graph-light .group-box.color1 {
-  fill: rgba(204,0,0,0.1);
+  fill: rgba(204,0,0,0.05);
   stroke: rgba(204,0,0,0.15);
 }
 .the-graph-light .group-box.color2 {
-  fill: rgba(204,99,0,0.1);
+  fill: rgba(204,99,0,0.05);
   stroke: rgba(204,99,0,0.15);
 }
 .the-graph-light .group-box.color3 {
-  fill: rgba(255,200,0,0.1);
+  fill: rgba(255,200,0,0.05);
   stroke: rgba(255,200,0,0.15);
 }
 .the-graph-light .group-box.color4 {
-  fill: rgba(0,204,61,0.1);
+  fill: rgba(0,204,61,0.05);
   stroke: rgba(0,204,61,0.15);
 }
 .the-graph-light .group-box.color5 {
-  fill: rgba(171,242,218,0.1);
+  fill: rgba(171,242,218,0.05);
   stroke: rgba(171,242,218,0.15);
 }
 .the-graph-light .group-box.color6 {
-  fill: rgba(0,201,204,0.1);
+  fill: rgba(0,201,204,0.05);
   stroke: rgba(0,201,204,0.15);
 }
 .the-graph-light .group-box.color7 {
-  fill: rgba(0,82,204,0.1);
+  fill: rgba(0,82,204,0.05);
   stroke: rgba(0,82,204,0.15);
 }
 .the-graph-light .group-box.color8 {
-  fill: rgba(68,0,204,0.1);
+  fill: rgba(68,0,204,0.05);
   stroke: rgba(68,0,204,0.15);
 }
 .the-graph-light .group-box.color9 {
-  fill: rgba(255,168,186,0.1);
+  fill: rgba(255,168,186,0.05);
   stroke: rgba(255,168,186,0.15);
 }
 .the-graph-light .group-box.color10 {
-  fill: rgba(204,0,109,0.1);
+  fill: rgba(204,0,109,0.05);
   stroke: rgba(204,0,109,0.15);
 }
 .the-graph-light .group-box.color0:hover {
@@ -412,37 +412,37 @@
   fill: rgba(204,0,109,0.15);
 }
 .the-graph-light .selection .group-box.color0 {
-  fill: rgba(191,191,191,0.05);
+  fill: rgba(191,191,191,0.01);
 }
 .the-graph-light .selection .group-box.color1 {
-  fill: rgba(204,0,0,0.05);
+  fill: rgba(204,0,0,0.01);
 }
 .the-graph-light .selection .group-box.color2 {
-  fill: rgba(204,99,0,0.05);
+  fill: rgba(204,99,0,0.01);
 }
 .the-graph-light .selection .group-box.color3 {
-  fill: rgba(255,200,0,0.05);
+  fill: rgba(255,200,0,0.01);
 }
 .the-graph-light .selection .group-box.color4 {
-  fill: rgba(0,204,61,0.05);
+  fill: rgba(0,204,61,0.01);
 }
 .the-graph-light .selection .group-box.color5 {
-  fill: rgba(171,242,218,0.05);
+  fill: rgba(171,242,218,0.01);
 }
 .the-graph-light .selection .group-box.color6 {
-  fill: rgba(0,201,204,0.05);
+  fill: rgba(0,201,204,0.01);
 }
 .the-graph-light .selection .group-box.color7 {
-  fill: rgba(0,82,204,0.05);
+  fill: rgba(0,82,204,0.01);
 }
 .the-graph-light .selection .group-box.color8 {
-  fill: rgba(68,0,204,0.05);
+  fill: rgba(68,0,204,0.01);
 }
 .the-graph-light .selection .group-box.color9 {
-  fill: rgba(255,168,186,0.05);
+  fill: rgba(255,168,186,0.01);
 }
 .the-graph-light .selection .group-box.color10 {
-  fill: rgba(204,0,109,0.05);
+  fill: rgba(204,0,109,0.01);
 }
 .the-graph-light .selection .group-box.selection {
   fill: rgba(128,128,128,0.15);
