@@ -22,8 +22,5 @@
     "tests",
     "docs",
     "tools"
-  ],
-  "resolutions": {
-    "platform": "0.2.1"
-  }
+  ]
 }
