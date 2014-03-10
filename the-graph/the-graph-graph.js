@@ -73,8 +73,10 @@
     cancelPreviewEdge: function (event) {
       this.props.app.getDOMNode().removeEventListener("pointermove", this.renderPreviewEdge);
       this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
-      this.setState({edgePreview: null});
-      this.markDirty();
+      if (this.state.edgePreview) {
+        this.setState({edgePreview: null});
+        this.markDirty();
+      }
     },
     renderPreviewEdge: function (event) {
       var scale = this.props.app.state.scale;
@@ -265,6 +267,11 @@
       });
       this.markDirty();
     },
+    updatedIcons: {},
+    updateIcon: function (nodeId, icon) {
+      this.updatedIcons[nodeId] = icon;
+      this.markDirty();
+    },
     dirty: false,
     libraryDirty: false,
     markDirty: function (event) {
@@ -281,11 +288,20 @@
         return;
       }
       this.dirty = true;
-      this.setState({});
+      this.forceUpdate();
     },
     shouldComponentUpdate: function () {
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
+    },
+    componentDidUpdate: function () {
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      var d = this.getDOMNode();
+      var c = "graph";
+      if (this.state.selectedNodes.length > 0 || this.state.selectedEdges.length > 0) {
+        c += " selection";
+      }
+      d.setAttribute("class", c);
     },
     render: function() {
       this.dirty = false;
@@ -312,7 +328,12 @@
           node.metadata.label = key;
         }
         var componentInfo = self.getComponentInfo(node.component);
-        var icon = (componentInfo && componentInfo.icon ? componentInfo.icon : "cog");
+        var icon = "cog";
+        if (self.updatedIcons[key]) {
+          icon = self.updatedIcons[key];
+        } else if (componentInfo && componentInfo.icon) {
+          icon = componentInfo.icon;
+        }
         return TheGraph.Node({
           key: key,
           x: node.metadata.x,
@@ -515,7 +536,7 @@
           exportKey: key,
           graph: graph,
           edge: {},
-          route: (metadata.route ? metadata.route : 5),
+          route: (metadata.route ? metadata.route : 4),
           isIn: false,
           label: privateNode.metadata.label + " " + portKey.toUpperCase() + " -> " + label.toUpperCase() + " export out",
           sX: privateNode.metadata.x + privatePort.x,
@@ -622,8 +643,7 @@
 
       return React.DOM.g(
         {
-          className: "graph"//,
-          // onMouseDown: this.onMouseDown
+          // className: "graph" // See componentDidUpdate
         },
         React.DOM.g({
           className: "groups",

@@ -36,12 +36,16 @@
       body {
         background-color: hsl(189, 47%, 6%);
         font-family: "SourceCodePro",Helvetica,Arial,sans-serif;
+        overflow: hidden;
       }
       the-graph-editor {
         background-color: transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
-      #autolayout {
-        position: fixed;
+      #testing {
+        position: absolute;
         top: 0;
         left: 0;
       }
@@ -50,8 +54,11 @@
   </head>
   <body>
     <!--<the-pointer-trail listento="html"></the-pointer-trail>-->
-    <the-graph-editor id="editor" width="800" height="600" grid="72" snap="36"></the-graph-editor>
-    <button id="autolayout">autolayout</button>
+    <the-graph-editor id="editor" width="800" height="600" grid="72" snap="36" theme="dark"></the-graph-editor>
+    <div id="testing">
+      <button id="autolayout">autolayout</button>
+      <button id="theme">theme</button>
+    </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
       <div id="loading-message">loading custom elements...</div>
@@ -91,9 +98,26 @@
             editor.registerComponent(component);
           }, 1000);
 
+          // Simulate node icon updates
+          var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
+          window.setInterval(function () {
+            if (!editor.nofloGraph) { return; }
+            var nodes = editor.nofloGraph.nodes;
+            var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+            var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
+            editor.updateIcon(randomNodeId, randomIcon);
+          }, 1000);
+
           // Autolayout button
           document.getElementById("autolayout").addEventListener("click", function () {
             editor.triggerAutolayout();
+          });
+
+          // Toggle theme
+          var theme = "dark";
+          document.getElementById("theme").addEventListener("click", function () {
+            theme = (theme==="dark" ? "light" : "dark");
+            editor.theme = theme;
           });
         };
         var body = document.querySelector('body');

@@ -1,10 +1,27 @@
 <link rel="import" href="../the-graph/the-graph.html">
-<!-- <link rel="import" href="../the-graph-nav/the-graph-nav.html"> -->
+<link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout selectedNodes selectedEdges onContextMenu" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
-    <link rel="stylesheet" href="../themes/default/the-graph.css">
-    <the-graph id="graph" name="{{ graph.properties.name }}" graph="{{nofloGraph}}" menus="{{menus}}" width="{{width}}" height="{{height}}" autolayout="{{autolayout}}" selectedNodes="{{selectedNodes}}" selectedEdges="{{selectedEdges}}" getMenuDef="{{getMenuDef}}"></the-graph>
+    <the-graph id="graph" 
+      name="{{ graph.properties.name }}" 
+      graph="{{nofloGraph}}" 
+      menus="{{menus}}" 
+      width="{{width}}" height="{{height}}" 
+      pan="{{pan}}" scale="{{scale}}" 
+      autolayout="{{autolayout}}" 
+      theme="{{theme}}" 
+      selectedNodes="{{selectedNodes}}" 
+      selectedEdges="{{selectedEdges}}" 
+      getMenuDef="{{getMenuDef}}">
+    </the-graph>
+    <the-graph-nav id="nav"
+      graph="{{nofloGraph}}" 
+      width="216" height="162" 
+      viewwidth="{{width}}" viewheight="{{height}}" 
+      pan="{{pan}}" scale="{{scale}}" 
+      style="position:absolute; right:0px; bottom:0px;">
+    </the-graph-nav>
   </template>
   <script>
   (function () {
@@ -17,24 +34,20 @@
       width: 800,
       height: 600,
       scale: 1,
-      pan: [0, 0],
       plugins: {},
       nofloGraph: null,
       menus: null,
       autolayout: false,
+      theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
       created: function () {
+        // Default pan
+        this.pan = [0,0];
+        // Default context menu defs
         this.menus = {
           edge: {
             icon: "long-arrow-right",
-            n4: {
-              icon: "info-circle",
-              iconLabel: "info",
-              action: function (graph, itemKey, item) {
-                console.log("edge info", graph, itemKey, item);
-              }
-            },
             s4: {
               icon: "trash-o",
               iconLabel: "delete",
@@ -44,13 +57,6 @@
             }
           },
           node: {
-            n4: {
-              icon: "info-circle",
-              iconLabel: "info",
-              action: function (graph, itemKey, item) {
-                console.log("node info", graph, itemKey, item);
-              }
-            },
             s4: {
               icon: "trash-o",
               iconLabel: "delete",
@@ -125,13 +131,6 @@
           },
           group: {
             icon: "th",
-            n4: {
-              icon: "info-circle",
-              iconLabel: "info",
-              action: function (graph, itemKey, item) {
-                console.log("group info", itemKey, item);
-              }
-            },
             s4: {
               icon: "trash-o",
               iconLabel: "ungroup",
@@ -141,19 +140,14 @@
             }
           },
           selection: {
-            icon: "th",
-            n4: {
-              icon: "check",
-              iconLabel: "makegroup",
-              action: function (graph, itemKey, item) {
-                console.log("make group", item.nodes);
-              }
-            }
+            icon: "th"
           }
         };
       },
       ready: function () {},
-      attached: function () {},
+      attached: function () {
+        this.$.nav.addEventListener("tap", this.triggerFit.bind(this));
+      },
       detached: function () {
         for (var name in this.plugins) {
           this.plugins[name].unregister(this);
@@ -168,6 +162,12 @@
         // options: icon, label
         this.menus[type] = options;
       },
+      addMenuCallback: function (type, callback) {
+        if (!this.menus[type]) {
+          return;
+        }
+        this.menus[type].callback = callback;
+      },
       addMenuAction: function (type, direction, options) {
         if (!this.menus[type]) {
           this.menus[type] = {};
@@ -178,7 +178,11 @@
       getMenuDef: function (options) {
         // Options: type, graph, itemKey, item
         if (options.type && this.menus[options.type]) {
-          return this.menus[options.type];
+          var defaultMenu = this.menus[options.type];
+          if (defaultMenu.callback) {
+            return defaultMenu.callback(defaultMenu, options);
+          }
+          return defaultMenu;
         }
         return null;
       },
@@ -288,11 +292,17 @@
       registerComponent: function (definition) {
         this.$.graph.registerComponent(definition);
       },
+      updateIcon: function (nodeId, icon) {
+        this.$.graph.updateIcon(nodeId, icon);
+      },
       rerender: function () {
         this.$.graph.rerender();
       },
       triggerAutolayout: function () {
         this.$.graph.triggerAutolayout();
+      },
+      triggerFit: function () {
+        this.$.graph.triggerFit();
       },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);

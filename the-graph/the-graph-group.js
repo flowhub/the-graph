@@ -7,9 +7,6 @@
   // Group view
 
   TheGraph.Group = React.createClass({
-    mixins: [
-      TheGraph.mixins.SavePointer
-    ],
     componentDidMount: function () {
       // Move group
       if (this.props.isSelectionGroup) {
@@ -39,10 +36,6 @@
       // Get mouse position
       var x = event.clientX;
       var y = event.clientY;
-      if (x === undefined) {
-        x = this.pointerX;
-        y = this.pointerY;
-      }
 
       // App.showContext
       this.props.showContext({
@@ -137,13 +130,13 @@
             ref: "label",
             className: "group-label drag",
             x: x + TheGraph.nodeRadius,
-            y: y,
+            y: y + 9,
             children: this.props.label
           }),
           React.DOM.text({
             className: "group-description",
             x: x + TheGraph.nodeRadius,
-            y: y + 10 + TheGraph.nodeRadius,
+            y: y + 24,
             children: this.props.description
           })
         )

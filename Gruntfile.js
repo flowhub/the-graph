@@ -9,7 +9,8 @@
     var sources = {
       scripts: ['Gruntfile.js', 'the-*/*.js'],
       elements: ['the-*/*.html'],
-      styles: ['themes/default/*.css']
+      stylus: ['themes/*/*.styl'],
+      css: ['themes/*.css']
     };
 
     var jshintOptions = { 
@@ -20,6 +21,11 @@
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
+      exec: {
+        build_stylus: {
+          command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
+        }
+      },
       jshint: {
         options: jshintOptions,
         all: {
@@ -66,8 +72,16 @@
             livereload: true
           }
         },
-        styles: {
-          files: sources.styles,
+        stylus: {
+          files: sources.stylus,
+          tasks: ['exec:build_stylus'],
+          options: {
+            // nospawn: true,
+            livereload: false
+          }
+        },
+        css: {
+          files: sources.css,
           options: {
             // nospawn: true,
             livereload: true
@@ -82,6 +96,7 @@
     //   this.config('inlinelint.all.src', filepath);
     // }.bind(this));
 
+    this.loadNpmTasks('grunt-exec');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
@@ -89,6 +104,7 @@
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
+    this.registerTask('build', ['exec:build_stylus']);
     this.registerTask('default', ['test']);
   };
 

@@ -114,21 +114,18 @@
       this.getDOMNode().removeEventListener("track", this.onTrack);
       this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
     },
+    onPanScale: function () {
+      // Pass pan/scale out to the-graph
+      if (this.props.onPanScale) {
+        this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
+      }
+    },
     showContext: function (options) {
       this.setState({
         contextMenu: options,
         tooltipVisible: false
       });
     },
-    // showNodeContext: function (event) {
-    //   this.setState({
-    //     contextElement: event.detail.element,
-    //     contextType: event.detail.type,
-    //     contextX: event.detail.x,
-    //     contextY: event.detail.y,
-    //     tooltipVisible: false
-    //   });
-    // },
     hideContext: function (event) {
       this.setState({
         contextMenu: null
@@ -157,13 +154,14 @@
         tooltipVisible: false
       });
     },
-    // onFit: function (event) {
-    //   this.setState({
-    //     x: event.detail.x,
-    //     y: event.detail.y,
-    //     scale: event.detail.scale
-    //   });
-    // },
+    triggerFit: function (event) {
+      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      this.setState({
+        x: fit.x,
+        y: fit.y,
+        scale: fit.scale
+      });
+    },
     edgeStart: function (event) {
       // Listened from PortMenu.edgeStart() and Port.edgeStart()
       this.refs.graph.edgeStart(event);
@@ -202,16 +200,8 @@
       this.mouseY = Math.floor( this.props.height/2 );
 
       // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      document.addEventListener('keydown', function (event) {
-        if (event.metaKey || event.ctrlKey) { 
-          TheGraph.metaKeyPressed = true; 
-        }
-      });
-      document.addEventListener('keyup', function (event) {
-        if (TheGraph.metaKeyPressed) { 
-          TheGraph.metaKeyPressed = false; 
-        }
-      });
+      document.addEventListener('keydown', this.keyDown);
+      document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
       this.bgCanvas = unwrap(this.refs.canvas.getDOMNode());
@@ -223,6 +213,25 @@
         this.renderGraph();
       }.bind(this), 500);
     },
+    keyDown: function (event) {
+      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      if (event.metaKey || event.ctrlKey) { 
+        TheGraph.metaKeyPressed = true; 
+      }
+    },
+    keyUp: function (event) {
+      // Escape
+      if (event.keyCode===27) {
+        if (!this.refs.graph) {
+          return;
+        }
+        this.refs.graph.cancelPreviewEdge();
+      }
+      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      if (TheGraph.metaKeyPressed) { 
+        TheGraph.metaKeyPressed = false; 
+      }
+    },
     unselectAll: function (event) {
       // No arguments = clear selection
       this.props.onNodeSelection();
@@ -231,8 +240,11 @@
     renderGraph: function () {
       this.refs.graph.markDirty();
     },
-    componentDidUpdate: function () {
+    componentDidUpdate: function (prevProps, prevState) {
       this.renderCanvas(this.bgContext);
+      if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
+        this.onPanScale();
+      }
     },
     renderCanvas: function (c) {
       // Comment this line to go plaid

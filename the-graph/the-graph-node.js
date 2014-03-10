@@ -7,12 +7,10 @@
   window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
   window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
 
-
   // Node view
   TheGraph.Node = React.createClass({
     mixins: [
-      TheGraph.mixins.Tooltip,
-      TheGraph.mixins.SavePointer
+      TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
       // Dragging
@@ -25,11 +23,10 @@
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("pointerdown", this.stopPropagation);
-        this.getDOMNode().addEventListener("pointerup", this.stopPropagation);
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
+
     },
     onNodeSelection: function (event) {
       // Don't tap app (unselect)
@@ -121,12 +118,6 @@
         this.props.graph.endTransaction('movenode');
       }
     },
-    stopPropagation: function (event) {
-      // HACK to keep context menu from cancelling preview edge
-      if (event.buttons && event.buttons===2) {
-        event.stopPropagation();
-      }
-    },
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
@@ -138,10 +129,6 @@
       // Get mouse position
       var x = event.clientX;
       var y = event.clientY;
-      if (x === undefined) {
-        x = this.pointerX;
-        y = this.pointerY;
-      }
 
       // App.showContext
       this.props.showContext({
@@ -340,11 +327,20 @@
             height: TheGraph.nodeSize + 35
           }),
           React.DOM.rect({
-            className: "node-rect drag",
+            className: "node-border drag",
             width: TheGraph.nodeSize,
             height: TheGraph.nodeSize,
             rx: TheGraph.nodeRadius,
             ry: TheGraph.nodeRadius
+          }),
+          React.DOM.rect({
+            className: "node-rect drag",
+            width: TheGraph.nodeSize - 6,
+            height: TheGraph.nodeSize - 6,
+            x: 3,
+            y: 3,
+            rx: TheGraph.nodeRadius-2,
+            ry: TheGraph.nodeRadius-2
           }),
           React.DOM.text({
             ref: "icon",
@@ -367,7 +363,7 @@
             height: 14,
             halign: "center",
             x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + 15,
+            y: TheGraph.nodeSize + (this.props.export ? 7 : 15),
             text: label
           }),
           TheGraph.TextBG({

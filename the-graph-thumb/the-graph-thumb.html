@@ -1,6 +1,7 @@
-<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle">
+<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle viewrectangle hide">
   <template>
-    <canvas id="canvas" width="{{width}}" height="{{height}}"></canvas>
+    <canvas id="canvas" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
+    <canvas id="canvas2" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
   </template>
   <script>
   (function () {
@@ -8,30 +9,35 @@
 
     Polymer('the-graph-thumb', {
       graph: null,
+      width: 200,
+      height: 150,
       thumbscale: 1,
       nodeSize: 60,
       fillStyle: "hsl(184, 8%, 75%)",
-      strokeStyle: "hsl(180, 11%, 32%)",
+      strokeStyle: "hsl(180, 11%, 70%)",
+      outsideFill: "hsla(0, 0%, 0%, 0.25)",
       lineWidth: 0.75,
+      hide: false,
       edgeColors: [
         "white",
-        "hsl(  0, 100%, 60%)",
-        "hsl( 30, 100%, 60%)",
-        "hsl( 60, 100%, 60%)",
-        "hsl( 90, 100%, 60%)",
-        "hsl(120, 100%, 60%)",
-        "hsl(150, 100%, 60%)",
-        "hsl(180, 100%, 60%)",
-        "hsl(210, 100%, 60%)",
-        "hsl(240, 100%, 60%)",
-        "hsl(270, 100%, 60%)",
-        "hsl(300, 100%, 60%)",
-        "hsl(330, 100%, 60%)"
+        "hsl(  0, 100%, 46%)",
+        "hsl( 35, 100%, 46%)",
+        "hsl( 60, 100%, 46%)",
+        "hsl(135, 100%, 46%)",
+        "hsl(160, 100%, 46%)",
+        "hsl(185, 100%, 46%)",
+        "hsl(210, 100%, 46%)",
+        "hsl(285, 100%, 46%)",
+        "hsl(310, 100%, 46%)",
+        "hsl(335, 100%, 46%)"
       ],
       ready: function () {
         this.thumbrectangle = [0,0,500,500];
+        this.viewrectangle = [0,0,200,150];
       },
-      enteredView: function () {
+      attached: function () {
+        this.style.width = this.width + "px";
+        this.style.height = this.height + "px";
       },
       drawEdge: function (context, scale, source, target, route) {
         // Draw path
@@ -62,7 +68,6 @@
           setTimeout( this.redrawGraph.bind(this), 500);
           return; 
         }
-
         // Need the actual context, not polymer-wrapped one
         context = unwrap(context);
 
@@ -150,7 +155,7 @@
               if (!target) {
                 return;
               }
-              this.drawEdge(context, scale, exp, target);
+              this.drawEdge(context, scale, exp, target, 2);
             }
           }.bind(this));
         }
@@ -163,7 +168,7 @@
               if (!source) {
                 return;
               }
-              this.drawEdge(context, scale, source, exp);
+              this.drawEdge(context, scale, source, exp, 5);
             }
           }.bind(this));
         }
@@ -208,9 +213,38 @@
           context.fill();
 
         }.bind(this));
+
+      },
+      // Grey out map outside of area
+      viewrectangleChanged: function () {
+        // [x, y, w, h]
+        var context = this.$.canvas2.getContext('2d');
+        context = unwrap(context);
+        // Clear
+        context.clearRect(0, 0, this.width, this.height);
+        // Mask outside view
+        context.fillStyle = this.outsideFill;
+        // Left
+        if (this.viewrectangle[0] > 0) {
+          context.fillRect(0, 0, this.viewrectangle[0], this.height);
+        }
+        // Top
+        if (this.viewrectangle[1] > 0) {
+          context.fillRect(this.viewrectangle[0], 0, this.viewrectangle[2], this.viewrectangle[1]);
+        }
+        // Bottom
+        var y = this.viewrectangle[1]+this.viewrectangle[3];
+        if (y < this.height) {
+          context.fillRect(this.viewrectangle[0], y, this.viewrectangle[2], this.height-y);
+        }
+        // Right
+        var x = this.viewrectangle[0]+this.viewrectangle[2];
+        if (x < this.width) {
+          context.fillRect(x, 0, this.width-x, this.height);
+        }
       },
       listener: null,
-      graphChanged: function (oldGraph) {
+      graphChanged: function (oldGraph, newGraph) {
         if (!this.listener) {
           this.listener = this.redrawGraph.bind(this);
         }
@@ -224,9 +258,11 @@
         this.redrawGraph();
       },
       widthChanged: function () {
+        this.style.width = this.width + "px";
         this.redrawGraph();
       },
       heightChanged: function () {
+        this.style.height = this.height + "px";
         this.redrawGraph();
       },
       toDataURL: function () {

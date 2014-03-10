@@ -8,8 +8,7 @@
 
   TheGraph.Port = React.createClass({
     mixins: [
-      TheGraph.mixins.Tooltip,
-      TheGraph.mixins.SavePointer
+      TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
       // Preview edge start
@@ -24,6 +23,9 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
+
+      // HACK to change SVG class https://github.com/facebook/react/issues/1139
+      this.componentDidUpdate();
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -53,10 +55,6 @@
       // Get mouse position
       var x = event.clientX;
       var y = event.clientY;
-      if (x === undefined) {
-        x = this.pointerX;
-        y = this.pointerY;
-      }
 
       // App.showContext
       this.props.showContext({
@@ -124,26 +122,26 @@
         React.DOM.g(
           {
             className: "port arrow",
-            title: this.props.label
+            title: this.props.label,
+            transform: "translate("+this.props.x+","+this.props.y+")"
           },
           React.DOM.circle({
-            className: "port-circle",
-            cx: this.props.x,
-            cy: this.props.y,
-            r: r
+            className: "port-circle-bg", // Transparent, for hit region
+            r: r+1
+          }),
+          React.DOM.path({
+            className: "port-arc",
+            d: (this.props.isIn ? TheGraph.arcs.inport : TheGraph.arcs.outport)
           }),
           React.DOM.circle({
             ref: "circleSmall",
             // className: "port-circle-small fill route"+this.props.route,  // See componentDidUpdate
-            cx: this.props.x,
-            cy: this.props.y,
-            r: r * 5/8
+            r: r-1.5
           }),
           React.DOM.text({
             ref: "label",
             className: "port-label drag",
-            x: this.props.x + (this.props.isIn ? 5 : -5),
-            y: this.props.y,
+            x: (this.props.isIn ? 5 : -5),
             style: style,
             children: this.props.label
           })
