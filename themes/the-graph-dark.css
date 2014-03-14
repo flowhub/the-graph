@@ -472,7 +472,9 @@
 .the-graph-dark .small .group-description {
   visibility: hidden;
 }
+.the-graph-dark .stroke,
 .the-graph-dark .stroke.route0,
+.the-graph-dark .selection .selected .stroke,
 .the-graph-dark .selection .selected .stroke.route0 {
   stroke: #fff;
 }
@@ -516,6 +518,7 @@
 .the-graph-dark .selection .selected .stroke.route10 {
   stroke: #e80262;
 }
+.the-graph-dark .selection .stroke,
 .the-graph-dark .selection .stroke.route0 {
   stroke: #757575;
 }

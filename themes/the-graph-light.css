@@ -472,7 +472,9 @@
 .the-graph-light .small .group-description {
   visibility: hidden;
 }
+.the-graph-light .stroke,
 .the-graph-light .stroke.route0,
+.the-graph-light .selection .selected .stroke,
 .the-graph-light .selection .selected .stroke.route0 {
   stroke: #bfbfbf;
 }
@@ -516,6 +518,7 @@
 .the-graph-light .selection .selected .stroke.route10 {
   stroke: #cc006d;
 }
+.the-graph-light .selection .stroke,
 .the-graph-light .selection .stroke.route0 {
   stroke: #e6e6e6;
 }
