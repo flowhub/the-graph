@@ -80,6 +80,11 @@ svg {
   fill: none;
 }
 
+.selection 
+  .ex-inports .node .node-border
+  .ex-outports .node .node-border 
+    fill: var-export-bg
+
 .small 
   .node-border
     fill: var-node
@@ -96,7 +101,7 @@ svg {
 /* de-emphasizing the rest of the nodes */
 /* emphasizing the selection */
 
-.graph.selection
+.selection
   .node
     .node-rect
       fill: var-node-deselected
@@ -115,8 +120,13 @@ svg {
       fill: var-node-selected-border
     .node-icon
       fill: var-node-selected-icon
+  .ex-inports .node .node-icon
+    fill: var-route02-fade
+  .ex-outports .node .node-icon
+    fill: var-route04-fade
 
-.small .graph.selection
+
+.small .selection
   .node
     .node-rect
       fill: none
@@ -330,6 +340,7 @@ text {
 .big .node-icon {
   fill: var-node-icon-big;
 }
+
 .ex-inports .node-icon,
 .small .ex-inports .node-icon {
   fill: var-route02;
@@ -585,3 +596,5 @@ text {
   fill: var-route09
 .fill.route10
   fill: var-route10
+
+
