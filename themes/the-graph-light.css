@@ -60,6 +60,10 @@
 .the-graph-light .ex-outports .node:hover .node-rect {
   fill: none;
 }
+.the-graph-light .selection .ex-inports .node .node-border,
+.the-graph-light .selection .ex-outports .node .node-border {
+  fill: #e6e6e6;
+}
 .the-graph-light .small .node-border {
   fill: rgba(230,238,240,0.94);
   stroke: none;
@@ -71,41 +75,47 @@
 .the-graph-light .node-bg {
   opacity: 0;
 }
-.the-graph-light .graph.selection .node .node-rect {
+.the-graph-light .selection .node .node-rect {
   fill: rgba(245,248,249,0.94);
 }
-.the-graph-light .graph.selection .node .node-border {
+.the-graph-light .selection .node .node-border {
   stroke: #d6dadc;
 }
-.the-graph-light .graph.selection .node .port-arc {
+.the-graph-light .selection .node .port-arc {
   fill: #d6dadc;
 }
-.the-graph-light .graph.selection .node .node-icon {
+.the-graph-light .selection .node .node-icon {
   fill: #bac2c4;
 }
-.the-graph-light .graph.selection .node.selected .node-rect {
+.the-graph-light .selection .node.selected .node-rect {
   fill: rgba(230,238,240,0.94);
 }
-.the-graph-light .graph.selection .node.selected .node-border {
+.the-graph-light .selection .node.selected .node-border {
   stroke: #808080;
 }
-.the-graph-light .graph.selection .node.selected .port-arc {
+.the-graph-light .selection .node.selected .port-arc {
   fill: #808080;
 }
-.the-graph-light .graph.selection .node.selected .node-icon {
+.the-graph-light .selection .node.selected .node-icon {
   fill: #2f3537;
 }
-.the-graph-light .small .graph.selection .node .node-rect {
+.the-graph-light .selection .ex-inports .node .node-icon {
+  fill: #ffe5cc;
+}
+.the-graph-light .selection .ex-outports .node .node-icon {
+  fill: #ccffdb;
+}
+.the-graph-light .small .selection .node .node-rect {
   fill: none;
 }
-.the-graph-light .small .graph.selection .node .node-border {
+.the-graph-light .small .selection .node .node-border {
   fill: rgba(245,248,249,0.94);
   stroke: none;
 }
-.the-graph-light .small .graph.selection .node.selected .node-rect {
+.the-graph-light .small .selection .node.selected .node-rect {
   fill: none;
 }
-.the-graph-light .small .graph.selection .node.selected .node-border {
+.the-graph-light .small .selection .node.selected .node-border {
   fill: rgba(230,238,240,0.94);
   stroke: none;
 }
