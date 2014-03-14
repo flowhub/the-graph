@@ -328,7 +328,7 @@
         if (definition.description) {
           component.description = definition.description;
         }
-        if (definition.icon) {
+        if (definition.icon && definition.icon!=="cog") {
           component.icon = definition.icon;
         }
         definition.inports.forEach(function (defPort) {
