@@ -361,7 +361,7 @@
         }
 
         var route = 0;
-        if (edge.metadata && edge.metadata.route !== undefined) {
+        if (edge.metadata && edge.metadata.route) {
           route = edge.metadata.route;
         }
 
