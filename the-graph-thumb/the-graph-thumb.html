@@ -1,4 +1,4 @@
-<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle viewrectangle hide">
+<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle viewrectangle hide theme">
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
     <canvas id="canvas2" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
@@ -13,11 +13,13 @@
       height: 150,
       thumbscale: 1,
       nodeSize: 60,
-      fillStyle: "hsl(184, 8%, 75%)",
+      backgroundColor: "hsla(184, 8%, 75%, 0.9)",
+      fillStyle: "hsl(184, 8%, 10%)",
       strokeStyle: "hsl(180, 11%, 70%)",
-      outsideFill: "hsla(0, 0%, 0%, 0.25)",
+      outsideFill: "hsla(0, 0%, 0%, 0.4)",
       lineWidth: 0.75,
       hide: false,
+      theme: "dark",
       edgeColors: [
         "white",
         "hsl(  0, 100%, 46%)",
@@ -38,6 +40,51 @@
       attached: function () {
         this.style.width = this.width + "px";
         this.style.height = this.height + "px";
+      },
+      themeChanged: function () {
+        if (this.theme === "dark") {
+          this.fillStyle = "hsl(184, 8%, 10%)";
+          this.strokeStyle = "hsl(180, 11%, 70%)";
+          this.outsideFill = "hsla(0, 0%, 0%, 0.4)";
+          this.backgroundColor = "hsla(0, 0%, 0%, 0.9)";
+          this.edgeColors = [
+            "white",
+            "hsl(  0, 100%, 46%)",
+            "hsl( 35, 100%, 46%)",
+            "hsl( 60, 100%, 46%)",
+            "hsl(135, 100%, 46%)",
+            "hsl(160, 100%, 46%)",
+            "hsl(185, 100%, 46%)",
+            "hsl(210, 100%, 46%)",
+            "hsl(285, 100%, 46%)",
+            "hsl(310, 100%, 46%)",
+            "hsl(335, 100%, 46%)"
+          ]
+
+        } else {
+          // Light
+          this.fillStyle = "hsl(184, 8%, 75%)";
+          this.strokeStyle = "hsl(180, 11%, 20%)";
+          this.outsideFill = "hsla(0, 0%, 100%, 0.4)";
+          this.backgroundColor = "hsla(0, 0%, 100%, 0.9)";
+          this.edgeColors = [
+            "hsl(  0,   0%, 75%)",
+            "hsl(  0, 100%, 40%)",
+            "hsl( 29, 100%, 40%)",
+            "hsl( 47, 100%, 50%)",
+            "hsl(138, 100%, 40%)",
+            "hsl(160,  73%, 81%)",
+            "hsl(181, 100%, 40%)",
+            "hsl(216, 100%, 40%)",
+            "hsl(260, 100%, 40%)",
+            "hsl(348, 100%, 83%)",
+            "hsl(328, 100%, 40%)"
+          ]
+        }
+        // Redraw
+        this.style.backgroundColor = this.backgroundColor;
+        this.redrawGraph();
+        this.viewrectangleChanged();
       },
       drawEdge: function (context, scale, source, target, route) {
         // Draw path
@@ -190,7 +237,7 @@
 
           // Outer circle
           context.strokeStyle = this.strokeStyle;
-          context.fillStyle = "#000000";
+          context.fillStyle = this.fillStyle;
           context.beginPath();
           if (node.process && !node.component) {
             context.arc(x, y, sizeHalf / 2, 0, 2*Math.PI, false);
