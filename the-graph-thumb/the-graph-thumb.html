@@ -40,6 +40,7 @@
       attached: function () {
         this.style.width = this.width + "px";
         this.style.height = this.height + "px";
+        this.themeChanged();
       },
       themeChanged: function () {
         if (this.theme === "dark") {
