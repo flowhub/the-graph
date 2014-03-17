@@ -16,16 +16,26 @@
     componentWillMount: function() {
     },
     componentDidMount: function () {
+      var domNode = this.getDOMNode();
+
+      // Dragging
+      domNode.addEventListener("trackstart", this.dontPan);
 
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        this.getDOMNode().addEventListener("tap", this.onEdgeSelection);
+        domNode.addEventListener("tap", this.onEdgeSelection);
       }
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("hold", this.showContext);
+      }
+    },
+    dontPan: function (event) {
+      // Don't drag under menu
+      if (this.props.app.menuShown) { 
+        event.stopPropagation();
       }
     },
     onEdgeSelection: function (event) {
@@ -54,10 +64,11 @@
       });
 
     },
-    getContext: function (menu, options) {
+    getContext: function (menu, options, hide) {
       return TheGraph.Menu({
         menu: menu,
         options: options,
+        triggerHideContext: hide,
         label: this.props.label,
         iconColor: this.props.route
       });

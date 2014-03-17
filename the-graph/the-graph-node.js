@@ -141,12 +141,13 @@
         item: (this.props.export ? this.props.export : this.props.node)
       });
     },
-    getContext: function (menu, options) {
+    getContext: function (menu, options, hide) {
       // If this node is an export
       if (this.props.export) {
         return TheGraph.Menu({
           menu: menu,
           options: options,
+          triggerHideContext: hide,
           label: this.props.exportKey
         });
       }
@@ -170,6 +171,7 @@
           // Show outputs
           return TheGraph.NodeMenuPorts({
             ports: ports.outports,
+            triggerHideContext: hide,
             isIn: false,
             scale: scale,
             processKey: processKey,
@@ -182,6 +184,7 @@
           // Show inputs
           return TheGraph.NodeMenuPorts({
             ports: ports.inports,
+            triggerHideContext: hide,
             isIn: true,
             scale: scale,
             processKey: processKey,
@@ -197,6 +200,7 @@
       return TheGraph.NodeMenu({
         menu: menu,
         options: options,
+        triggerHideContext: hide,
         label: this.props.label,
         graph: this.props.graph,
         graphView: this.props.graphView,
