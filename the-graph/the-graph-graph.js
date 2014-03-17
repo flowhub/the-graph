@@ -20,6 +20,7 @@
     },
     componentDidMount: function () {
       // To change port colors
+      this.props.graph.on("addEdge", this.resetPortRoute);
       this.props.graph.on("changeEdge", this.resetPortRoute);
       this.props.graph.on("removeEdge", this.resetPortRoute);
       this.props.graph.on("removeInitial", this.resetPortRoute);
