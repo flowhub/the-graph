@@ -28,7 +28,7 @@
       portProperties.outportSide = 'SOUTH';
     }
     var nodeProperties = {
-      width: 72,
+      width: 108,
       height: 108
     };
     // Start KGraph building
