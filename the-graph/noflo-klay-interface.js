@@ -1,14 +1,14 @@
 function klayinit () {
   "use strict";
 
-  Array.prototype.clean = function() {
-    for (var i = 0; i < this.length; i++) {
-      if (this[i] === null || this[i] === undefined) {
-        this.splice(i, 1);
+  var cleanArray = function(array) {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] === null || array[i] === undefined) {
+        array.splice(i, 1);
         i--;
       }
     }
-    return this;
+    return array;
   };
 
   // Encode the original NoFlo graph as a KGraph (KIELER Graph) JSON
@@ -229,7 +229,7 @@ function klayinit () {
             }
           }
         })[0]);
-        node.edges.clean();
+        node.edges = cleanArray(node.edges);
 
         // Mark nodes inside the group to be removed from the graph
         kGraph.children[idx[n]] = null;
@@ -247,8 +247,8 @@ function klayinit () {
 
     // Remove the nodes and edges from the graph, just preserve them inside the
     // subgraph/group
-    kGraph.children.clean();
-    kGraph.edges.clean();
+    kGraph.children = cleanArray(kGraph.children);
+    kGraph.edges = cleanArray(kGraph.edges);
 
     return kGraph;
   };
