@@ -1,4 +1,4 @@
-function klayinit () {
+(function () {
   "use strict";
 
   var cleanArray = function(array) {
@@ -253,8 +253,8 @@ function klayinit () {
     return kGraph;
   };
 
-  // Main interface for now: apply KLayJS layout algorithm and call the render
-  window.klay = function (graph, portInfo, render, direction) {
+  // Main interface for now: apply KLayJS layout algorithm and call the callback
+  window.KLayInterface = function (graph, portInfo, callback, direction) {
     if (typeof $klay === 'undefined') {
       throw new Error('Klay autolayout algorithm not loaded, aborting');
     }
@@ -278,12 +278,12 @@ function klayinit () {
     
     // Convert the NoFlo graph to KGraph
     var kGraph = toKieler(graph, portInfo, direction);
-   
+
     $klay.layout({
       graph: kGraph,
       options: options,
       success: function (layouted) {
-        render(layouted);
+        callback(layouted);
       },
       error: function (error) {
         // CAVEAT: this will catch errors in render callback
@@ -291,4 +291,6 @@ function klayinit () {
       }
     });
   };
-}
+
+})();
+

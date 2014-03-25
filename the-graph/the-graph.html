@@ -185,11 +185,11 @@
         }
       },
       triggerAutolayout: function (event) {
-        if (klay !== undefined) {
+        if (window.KLayInterface) {
           setTimeout(function () {
             var portInfo = this.graphView ? this.graphView.portInfo : null;
-            window.klay(this.graph, portInfo, this.applyAutolayout.bind(this));
-          }.bind(this), 5);
+            window.KLayInterface(this.graph, portInfo, this.applyAutolayout.bind(this));
+          }.bind(this), 0);
         }
       },
       applyAutolayout: function (layoutedKGraph) {
