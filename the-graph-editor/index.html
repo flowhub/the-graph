@@ -13,6 +13,7 @@
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
     <link rel="import" href="./the-graph-editor.html">
+    <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
@@ -34,16 +35,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
     <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
       body {
         background-color: hsl(189, 47%, 6%);
         font-family: "SourceCodePro",Helvetica,Arial,sans-serif;
         overflow: hidden;
       }
-      the-graph-editor {
+      #editor {
         background-color: transparent;
         position: absolute;
         top: 0;
         left: 0;
+      }
+      #nav {
+        position: absolute; 
+        right: 0px; 
+        bottom: 0px;
       }
       #testing {
         position: absolute;
@@ -54,8 +64,16 @@
 
   </head>
   <body>
-    <!--<the-pointer-trail listento="html"></the-pointer-trail>-->
-    <the-graph-editor id="editor" width="800" height="600" grid="72" snap="36" theme="dark"></the-graph-editor>
+
+    <the-graph-editor id="editor" 
+      width="800" height="600" 
+      grid="72" 
+      snap="36" 
+      theme="dark">
+    </the-graph-editor>
+
+    <the-graph-nav id="nav" width="216" height="162"></the-graph-nav>
+
     <div id="testing">
       <button id="autolayout">autolayout</button>
       <button id="theme">theme</button>
@@ -81,6 +99,10 @@
           var editor = document.getElementById('editor');
           var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
           editor.graph = graph;
+
+          // Attach editor to nav
+          var nav = document.getElementById('nav');
+          nav.editor = editor;
 
           // Simulate a library update
           setTimeout(function () {

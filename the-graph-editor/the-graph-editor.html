@@ -1,5 +1,4 @@
 <link rel="import" href="../the-graph/the-graph.html">
-<link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
 <polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges onContextMenu" touch-action="none">
   <template>
@@ -15,14 +14,6 @@
       selectedEdges="{{selectedEdges}}" 
       getMenuDef="{{getMenuDef}}">
     </the-graph>
-    <the-graph-nav id="nav"
-      graph="{{nofloGraph}}" 
-      width="216" height="162" 
-      viewwidth="{{width}}" viewheight="{{height}}" 
-      pan="{{pan}}" scale="{{scale}}" 
-      theme="{{theme}}"
-      style="position:absolute; right:0px; bottom:0px;">
-    </the-graph-nav>
   </template>
   <script>
   (function () {
@@ -147,7 +138,6 @@
       },
       ready: function () {},
       attached: function () {
-        this.$.nav.addEventListener("tap", this.triggerFit.bind(this));
       },
       detached: function () {
         for (var name in this.plugins) {
