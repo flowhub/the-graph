@@ -65,12 +65,10 @@
           // Don't pan graph
           event.stopPropagation();
 
-          console.log(this.thumbscale);
-
           var x = this.editor.pan[0];
           var y = this.editor.pan[1];
-          x -= event.ddx / this.thumbscale;
-          y -= event.ddy / this.thumbscale;
+          x -= event.ddx / (this.thumbscale / this.editor.scale);
+          y -= event.ddy / (this.thumbscale / this.editor.scale);
           this.editor.pan = [Math.round(x), Math.round(y)];
 
           event.preventTap();
