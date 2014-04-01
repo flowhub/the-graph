@@ -7,11 +7,10 @@
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
-    "polymer": "Polymer/polymer#0.2.1",
+    "polymer": "0.2.2",
     "font-awesome": "~4.0.3",
     "react": "~0.10.0",
-    "klay-js": "~0.0.5",
-    "platform": "Polymer/platform#0.2.1"
+    "klay-js": "~0.0.5"
   },
   "license": "MIT",
   "ignore": [
