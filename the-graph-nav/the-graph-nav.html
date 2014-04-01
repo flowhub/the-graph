@@ -67,8 +67,9 @@
 
           var x = this.editor.pan[0];
           var y = this.editor.pan[1];
-          x -= event.ddx / (this.thumbscale / this.editor.scale);
-          y -= event.ddy / (this.thumbscale / this.editor.scale);
+          var panscale = this.thumbscale / this.editor.scale;
+          x -= event.ddx / panscale;
+          y -= event.ddy / panscale;
           this.editor.pan = [Math.round(x), Math.round(y)];
 
           event.preventTap();
