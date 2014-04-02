@@ -1,3 +1,10 @@
+<!-- 
+  
+* Renders a noflo graph instance into a canvas
+* Autoscales the render to fit, and exposes the scale as thumbscale, thumbrectangle, viewrectangle
+
+-->
+
 <polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle theme">
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
@@ -12,7 +19,6 @@
       height: 150,
       thumbscale: 1,
       nodeSize: 60,
-      backgroundColor: "hsla(184, 8%, 75%, 0.9)",
       fillStyle: "hsl(184, 8%, 10%)",
       strokeStyle: "hsl(180, 11%, 70%)",
       lineWidth: 0.75,
@@ -43,7 +49,6 @@
         if (this.theme === "dark") {
           this.fillStyle = "hsl(184, 8%, 10%)";
           this.strokeStyle = "hsl(180, 11%, 70%)";
-          this.backgroundColor = "hsla(0, 0%, 0%, 0.9)";
           this.edgeColors = [
             "white",
             "hsl(  0, 100%, 46%)",
@@ -62,7 +67,6 @@
           // Light
           this.fillStyle = "hsl(184, 8%, 75%)";
           this.strokeStyle = "hsl(180, 11%, 20%)";
-          this.backgroundColor = "hsla(0, 0%, 100%, 0.9)";
           // Tweaked to make thin lines more visible
           this.edgeColors = [
             "hsl(  0,   0%, 50%)",
@@ -79,7 +83,6 @@
           ];
         }
         // Redraw
-        this.style.backgroundColor = this.backgroundColor;
         this.redrawGraph();
       },
       drawEdge: function (context, scale, source, target, route) {

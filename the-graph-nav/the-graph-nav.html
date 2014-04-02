@@ -47,6 +47,7 @@
       height: 150,
       hide: false,
       thumbscale: 1,
+      backgroundColor: "hsla(184, 8%, 75%, 0.9)",
       outsideFill: "hsla(0, 0%, 0%, 0.4)",
       ready: function () {
         this.viewrectangle = [0,0,500,500];
@@ -116,11 +117,14 @@
           this.viewBoxBorder =  "hsla(190, 100%, 80%, 0.4)";
           this.viewBoxBorder2 = "hsla( 10,  60%, 32%, 0.3)";
           this.outsideFill = "hsla(0, 0%, 0%, 0.4)";
+          this.backgroundColor = "hsla(0, 0%, 0%, 0.9)";
         } else {
           this.viewBoxBorder =  "hsla(190, 100%, 20%, 0.8)";
           this.viewBoxBorder2 = "hsla( 10,  60%, 80%, 0.8)";
           this.outsideFill = "hsla(0, 0%, 100%, 0.4)";
+          this.backgroundColor = "hsla(0, 0%, 100%, 0.9)";
         }
+        this.style.backgroundColor = this.backgroundColor;
         // Redraw rectangle
         this.viewrectangleChanged();
       },
