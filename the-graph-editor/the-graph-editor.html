@@ -277,11 +277,11 @@
               });
             }
           });
-          this.registerComponent(component);
+          this.registerComponent(component, true);
         }.bind(this));
       },
-      registerComponent: function (definition) {
-        this.$.graph.registerComponent(definition);
+      registerComponent: function (definition, generated) {
+        this.$.graph.registerComponent(definition, generated);
       },
       updateIcon: function (nodeId, icon) {
         this.$.graph.updateIcon(nodeId, icon);

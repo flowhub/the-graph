@@ -315,7 +315,7 @@
           this.rerender({libraryDirty:true});
         }.bind(this), 200);
       },
-      registerComponent: function (definition) {
+      registerComponent: function (definition, generated) {
         if (!this.library[definition.name]) {
           // New component, register
           this.library[definition.name] = definition;
@@ -331,8 +331,11 @@
         if (definition.icon && definition.icon!=="cog") {
           component.icon = definition.icon;
         }
+        var defInPorts = [];
+        var defOutPorts = [];
         definition.inports.forEach(function (defPort) {
           var port = null;
+          defInPorts.push(defPort.name)
           component.inports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
@@ -350,6 +353,7 @@
         });
         definition.outports.forEach(function (defPort) {
           var port = null;
+          defOutPorts.push(defPort.name)
           component.outports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
@@ -364,6 +368,22 @@
             type: defPort.type,
             array: defPort.array
           });
+        });
+
+        if (generated) {
+          // So changes are rendered
+          this.debounceLibraryRefesh();
+          return;
+        }
+        component.inports.forEach(function (p, idx) {
+          if (defInPorts.indexOf(p.name) === -1) {
+            component.inports.splice(idx, 1);
+          }
+        });
+        component.outports.forEach(function (p, idx) {
+          if (defOutPorts.indexOf(p.name) === -1) {
+            component.outports.splice(idx, 1);
+          }
         });
 
         // So changes are rendered
