@@ -335,7 +335,7 @@
         var defOutPorts = [];
         definition.inports.forEach(function (defPort) {
           var port = null;
-          defInPorts.push(defPort.name)
+          defInPorts.push(defPort.name);
           component.inports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
@@ -353,7 +353,7 @@
         });
         definition.outports.forEach(function (defPort) {
           var port = null;
-          defOutPorts.push(defPort.name)
+          defOutPorts.push(defPort.name);
           component.outports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
