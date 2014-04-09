@@ -123,11 +123,7 @@
     }
 
     if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
-      minX = 0;
-      minY = 0;
-      maxX = 0;
-      maxY = 0;
-      return;
+      return null;
     }
     return {
       minX: minX,

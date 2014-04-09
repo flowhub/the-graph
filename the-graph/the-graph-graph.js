@@ -588,29 +588,31 @@
           return node.id;
         });
         var limits = TheGraph.findMinMax(graph, selectedIds);
-        var pseudoGroup = {
-          name: "selection",
-          nodes: selectedIds,
-          metadata: {color:1}
-        };
-        var selectionGroup = TheGraph.Group({
-          key: "selectiongroup",
-          isSelectionGroup: true,
-          graph: graph,
-          app: self.props.app,
-          item: pseudoGroup,
-          minX: limits.minX,
-          minY: limits.minY,
-          maxX: limits.maxX,
-          maxY: limits.maxY,
-          scale: self.props.scale,
-          label: "",
-          description: "",
-          color: pseudoGroup.metadata.color,
-          triggerMoveGroup: self.moveGroup,
-          showContext: self.props.showContext
-        });
-        groups.push(selectionGroup);
+        if (limits) {
+          var pseudoGroup = {
+            name: "selection",
+            nodes: selectedIds,
+            metadata: {color:1}
+          };
+          var selectionGroup = TheGraph.Group({
+            key: "selectiongroup",
+            isSelectionGroup: true,
+            graph: graph,
+            app: self.props.app,
+            item: pseudoGroup,
+            minX: limits.minX,
+            minY: limits.minY,
+            maxX: limits.maxX,
+            maxY: limits.maxY,
+            scale: self.props.scale,
+            label: "",
+            description: "",
+            color: pseudoGroup.metadata.color,
+            triggerMoveGroup: self.moveGroup,
+            showContext: self.props.showContext
+          });
+          groups.push(selectionGroup);
+        }
       }
 
 
