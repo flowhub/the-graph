@@ -15,7 +15,8 @@
         edgePreviewX: 0,
         edgePreviewY: 0,
         selectedNodes: [],
-        selectedEdges: []
+        selectedEdges: [],
+        animatedEdges: []
       };
     },
     componentDidMount: function () {
@@ -268,6 +269,12 @@
       });
       this.markDirty();
     },
+    setAnimatedEdges: function (edges) {
+      this.setState({
+        animatedEdges: edges
+      });
+      this.markDirty();
+    },
     updatedIcons: {},
     updateIcon: function (nodeId, icon) {
       this.updatedIcons[nodeId] = icon;
@@ -389,6 +396,7 @@
           route: route,
           onEdgeSelection: self.props.onEdgeSelection,
           selected: (self.state.selectedEdges.indexOf(edge) !== -1),
+          animated: (self.state.animatedEdges.indexOf(edge) !== -1),
           showContext: self.props.showContext
         });
       });

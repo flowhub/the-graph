@@ -149,6 +149,31 @@
 .the-graph-dark .small .edge-fg {
   stroke-width: 6px;
 }
+@-webkit-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@-moz-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@-o-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+.the-graph-dark .edge.animated .edge-bg {
+/* stroke-linecap: round; */
+  stroke-dasharray: 12px 12px;
+  stroke-width: 12px;
+  stroke: #e6e6e6;
+  -webkit-animation: marchingants 20s linear reverse infinite;
+  -moz-animation: marchingants 20s linear reverse infinite;
+  -o-animation: marchingants 20s linear reverse infinite;
+  animation: marchingants 20s linear reverse infinite;
+}
 .the-graph-dark text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision;
@@ -594,4 +619,29 @@
 }
 .the-graph-dark .fill.route10 {
   fill: #e80262;
+}
+@-moz-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@-webkit-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@-o-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@-ms-keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
+}
+@keyframes marchingants {
+  100% {
+    stroke-dashoffset: 100%;
+  }
 }

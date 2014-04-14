@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges onContextMenu" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges animatedEdges onContextMenu" touch-action="none">
   <template>
     <the-graph id="graph" 
       name="{{ graph.properties.name }}" 
@@ -12,6 +12,7 @@
       theme="{{theme}}" 
       selectedNodes="{{selectedNodes}}" 
       selectedEdges="{{selectedEdges}}" 
+      animatedEdges="{{animatedEdges}}" 
       getMenuDef="{{getMenuDef}}">
     </the-graph>
   </template>
@@ -33,6 +34,7 @@
       theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
+      animatedEdges: [],
       created: function () {
         // Default pan
         this.pan = [0,0];
@@ -300,6 +302,19 @@
       },
       triggerFit: function () {
         this.$.graph.triggerFit();
+      },
+      animateEdge: function (edge) {
+        // Make sure unique
+        var index = this.animatedEdges.indexOf(edge);
+        if (index === -1) {
+          this.animatedEdges.push(edge);
+        }
+      },
+      unanimateEdge: function (edge) {
+        var index = this.animatedEdges.indexOf(edge);
+        if (index >= 0) {
+          this.animatedEdges.splice(index, 1);
+        }
       },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);

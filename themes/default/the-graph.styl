@@ -175,6 +175,36 @@ path {
   stroke-width: (var-edge-width * 2);
 }
 
+
+
+
+/* marching ants for animated edges */
+
+@-webkit-keyframes marchingants {
+  to { stroke-dashoffset: 100%; }
+}
+@-moz-keyframes marchingants {
+  to { stroke-dashoffset: 100%; }
+}
+@-o-keyframes marchingants {
+  to { stroke-dashoffset: 100%; }
+}
+@keyframes marchingants {
+  to { stroke-dashoffset: 100%; }
+}
+.edge.animated .edge-bg {
+  /* stroke-linecap: round; */
+  stroke-dasharray: (var-edge-width * 4) (var-edge-width * 4);
+  stroke-width: (var-edge-width * 4);
+  stroke: var-selection-box-border;
+
+  -webkit-animation: marchingants 20s linear reverse infinite; 
+     -moz-animation: marchingants 20s linear reverse infinite; 
+       -o-animation: marchingants 20s linear reverse infinite; 
+          animation: marchingants 20s linear reverse infinite;   
+}
+
+
 text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision; /* makes text scale smoothly */

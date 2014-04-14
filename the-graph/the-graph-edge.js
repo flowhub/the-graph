@@ -104,6 +104,7 @@
         nextProps.tX !== this.props.tX || 
         nextProps.tY !== this.props.tY ||
         nextProps.selected !== this.props.selected ||
+        nextProps.animated !== this.props.animated ||
         nextProps.route !== this.props.route
       );
     },
@@ -115,7 +116,9 @@
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "edge"+(this.props.selected ? " selected" : "");
+      var groupClass = "edge"+
+        (this.props.selected ? " selected" : "")+
+        (this.props.animated ? " animated" : "");
       this.getDOMNode().setAttribute("class", groupClass);
       var fgClass = "edge-fg stroke route"+this.props.route;
       this.refs.route.getDOMNode().setAttribute("class", fgClass);

@@ -131,6 +131,22 @@
             editor.updateIcon(randomNodeId, randomIcon);
           }, 1000);
 
+          // Simulate un/triggering animations
+          var animatingEdge1 = null;
+          var animatingEdge2 = null;
+          window.setInterval(function () {
+            if (!editor.nofloGraph) { return; }
+            if (animatingEdge2) {
+              editor.unanimateEdge(animatingEdge2);
+            }
+            if (animatingEdge1) {
+              animatingEdge2 = animatingEdge1;
+            }
+            var edges = editor.nofloGraph.edges;
+            animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
+            editor.animateEdge(animatingEdge1);
+          }, 2014);
+
           // Autolayout button
           document.getElementById("autolayout").addEventListener("click", function () {
             editor.triggerAutolayout();
