@@ -180,28 +180,43 @@ path {
 
 /* marching ants for animated edges */
 
-@-webkit-keyframes marchingants {
-  to { stroke-dashoffset: 100%; }
+@-webkit-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
 }
-@-moz-keyframes marchingants {
-  to { stroke-dashoffset: 100%; }
+@-moz-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
 }
-@-o-keyframes marchingants {
-  to { stroke-dashoffset: 100%; }
+@-o-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
 }
-@keyframes marchingants {
-  to { stroke-dashoffset: 100%; }
+@keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
 }
 .edge.animated .edge-bg {
-  /* stroke-linecap: round; */
-  stroke-dasharray: (var-edge-width * 4) (var-edge-width * 4);
+  stroke-linecap: round;
   stroke-width: (var-edge-width * 4);
   stroke: var-selection-box-border;
 
-  -webkit-animation: marchingants 20s linear reverse infinite; 
-     -moz-animation: marchingants 20s linear reverse infinite; 
-       -o-animation: marchingants 20s linear reverse infinite; 
-          animation: marchingants 20s linear reverse infinite;   
+  -webkit-animation: heartbeats 1s linear infinite; 
+     -moz-animation: heartbeats 1s linear infinite; 
+       -o-animation: heartbeats 1s linear infinite; 
+          animation: heartbeats 1s linear infinite;   
 }
 
 
