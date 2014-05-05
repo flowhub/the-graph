@@ -70,8 +70,10 @@
 
       // Prevent context menu
       this.getDOMNode().addEventListener("contextmenu", function (event) {
-        event.stopPropagation();
-        event.preventDefault();
+        if (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
       }, false);
     },
     renderSlice: function (direction) {
@@ -195,7 +197,7 @@
       // Right-click on another item will show its menu
       domNode.addEventListener("pointerdown", function (event) {
         // Only if outside of menu
-        if (event.target===rectNode) {
+        if (event && event.target===rectNode) {
           this.hideModal();
         }
       }.bind(this));
