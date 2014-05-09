@@ -7,7 +7,8 @@
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
-    "polymer": "0.2.2",
+    "polymer": "0.2.3",
+    "polymer-gestures": "Polymer/polymer-gestures#master",
     "font-awesome": "~4.0.3",
     "react": "~0.10.0",
     "klay-js": "~0.0.5"

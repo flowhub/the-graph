@@ -6,7 +6,7 @@
 
   TheGraph.NodeMenuPort = React.createClass({
     componentDidMount: function () {
-      this.getDOMNode().addEventListener("pointerup", this.edgeStart);
+      this.getDOMNode().addEventListener("up", this.edgeStart);
     },
     edgeStart: function (event) {
       // Don't tap graph
