@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges getMenuDef pan scale">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges animatedEdges getMenuDef pan scale">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
@@ -43,6 +43,7 @@
       theme: "dark",
       selectedNodes: [],
       selectedEdges: [],
+      animatedEdges: [],
       created: function () {
         this.library = {};
         // Default pan
@@ -158,6 +159,10 @@
         if (!this.graphView) { return; }
         this.graphView.setSelectedEdges(this.selectedEdges);
       },
+      animatedEdgesChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setAnimatedEdges(this.animatedEdges);
+      },
       fireChanged: function (event) {
         this.fire("changed", this);
       },
@@ -185,11 +190,11 @@
         }
       },
       triggerAutolayout: function (event) {
-        if (klay !== undefined) {
+        if (window.KLayInterface) {
           setTimeout(function () {
             var portInfo = this.graphView ? this.graphView.portInfo : null;
-            window.klay(this.graph, portInfo, this.applyAutolayout.bind(this));
-          }.bind(this), 5);
+            window.KLayInterface(this.graph, portInfo, this.applyAutolayout.bind(this));
+          }.bind(this), 0);
         }
       },
       applyAutolayout: function (layoutedKGraph) {
@@ -315,7 +320,7 @@
           this.rerender({libraryDirty:true});
         }.bind(this), 200);
       },
-      registerComponent: function (definition) {
+      registerComponent: function (definition, generated) {
         if (!this.library[definition.name]) {
           // New component, register
           this.library[definition.name] = definition;
@@ -331,8 +336,11 @@
         if (definition.icon && definition.icon!=="cog") {
           component.icon = definition.icon;
         }
+        var defInPorts = [];
+        var defOutPorts = [];
         definition.inports.forEach(function (defPort) {
           var port = null;
+          defInPorts.push(defPort.name);
           component.inports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
@@ -350,6 +358,7 @@
         });
         definition.outports.forEach(function (defPort) {
           var port = null;
+          defOutPorts.push(defPort.name);
           component.outports.forEach(function (p) {
             if (p.name === defPort.name) {
               port = p;
@@ -364,6 +373,22 @@
             type: defPort.type,
             array: defPort.array
           });
+        });
+
+        if (generated) {
+          // So changes are rendered
+          this.debounceLibraryRefesh();
+          return;
+        }
+        component.inports.forEach(function (p, idx) {
+          if (defInPorts.indexOf(p.name) === -1) {
+            component.inports.splice(idx, 1);
+          }
+        });
+        component.outports.forEach(function (p, idx) {
+          if (defOutPorts.indexOf(p.name) === -1) {
+            component.outports.splice(idx, 1);
+          }
         });
 
         // So changes are rendered

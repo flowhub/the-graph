@@ -175,6 +175,51 @@ path {
   stroke-width: (var-edge-width * 2);
 }
 
+
+
+
+/* marching ants for animated edges */
+
+@-webkit-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
+}
+@-moz-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
+}
+@-o-keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
+}
+@keyframes heartbeats {
+  0% { stroke-width: (var-edge-width * 4); }
+  10% { stroke-width: (var-edge-width * 6); }
+  30% { stroke-width: (var-edge-width * 4); }
+  40% { stroke-width: (var-edge-width * 6); }
+  60% { stroke-width: (var-edge-width * 4); }
+}
+.edge.animated .edge-bg {
+  stroke-linecap: round;
+  stroke-width: (var-edge-width * 4);
+  stroke: var-selection-box-border;
+
+  -webkit-animation: heartbeats 1s linear infinite; 
+     -moz-animation: heartbeats 1s linear infinite; 
+       -o-animation: heartbeats 1s linear infinite; 
+          animation: heartbeats 1s linear infinite;   
+}
+
+
 text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision; /* makes text scale smoothly */

@@ -1,7 +1,13 @@
-<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle viewrectangle hide">
+<!-- 
+  
+* Renders a noflo graph instance into a canvas
+* Autoscales the render to fit, and exposes the scale as thumbscale, thumbrectangle, viewrectangle
+
+-->
+
+<polymer-element name="the-graph-thumb" attributes="graph width height thumbscale thumbrectangle theme">
   <template>
     <canvas id="canvas" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
-    <canvas id="canvas2" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
   </template>
   <script>
   (function () {
@@ -13,11 +19,10 @@
       height: 150,
       thumbscale: 1,
       nodeSize: 60,
-      fillStyle: "hsl(184, 8%, 75%)",
+      fillStyle: "hsl(184, 8%, 10%)",
       strokeStyle: "hsl(180, 11%, 70%)",
-      outsideFill: "hsla(0, 0%, 0%, 0.25)",
       lineWidth: 0.75,
-      hide: false,
+      theme: "dark",
       edgeColors: [
         "white",
         "hsl(  0, 100%, 46%)",
@@ -38,6 +43,47 @@
       attached: function () {
         this.style.width = this.width + "px";
         this.style.height = this.height + "px";
+        this.themeChanged();
+      },
+      themeChanged: function () {
+        if (this.theme === "dark") {
+          this.fillStyle = "hsl(184, 8%, 10%)";
+          this.strokeStyle = "hsl(180, 11%, 70%)";
+          this.edgeColors = [
+            "white",
+            "hsl(  0, 100%, 46%)",
+            "hsl( 35, 100%, 46%)",
+            "hsl( 60, 100%, 46%)",
+            "hsl(135, 100%, 46%)",
+            "hsl(160, 100%, 46%)",
+            "hsl(185, 100%, 46%)",
+            "hsl(210, 100%, 46%)",
+            "hsl(285, 100%, 46%)",
+            "hsl(310, 100%, 46%)",
+            "hsl(335, 100%, 46%)"
+          ];
+
+        } else {
+          // Light
+          this.fillStyle = "hsl(184, 8%, 75%)";
+          this.strokeStyle = "hsl(180, 11%, 20%)";
+          // Tweaked to make thin lines more visible
+          this.edgeColors = [
+            "hsl(  0,   0%, 50%)",
+            "hsl(  0, 100%, 40%)",
+            "hsl( 29, 100%, 40%)",
+            "hsl( 47, 100%, 40%)",
+            "hsl(138, 100%, 40%)",
+            "hsl(160,  73%, 50%)",
+            "hsl(181, 100%, 40%)",
+            "hsl(216, 100%, 40%)",
+            "hsl(260, 100%, 40%)",
+            "hsl(348, 100%, 50%)",
+            "hsl(328, 100%, 40%)"
+          ];
+        }
+        // Redraw
+        this.redrawGraph();
       },
       drawEdge: function (context, scale, source, target, route) {
         // Draw path
@@ -133,7 +179,7 @@
         maxY += this.nodeSize*2;
         var w = maxX - minX;
         var h = maxY - minY;
-        // For the-graph-map to bind
+        // For the-graph-nav to bind
         this.thumbrectangle[0] = minX;
         this.thumbrectangle[1] = minY;
         this.thumbrectangle[2] = w;
@@ -190,7 +236,7 @@
 
           // Outer circle
           context.strokeStyle = this.strokeStyle;
-          context.fillStyle = "#000000";
+          context.fillStyle = this.fillStyle;
           context.beginPath();
           if (node.process && !node.component) {
             context.arc(x, y, sizeHalf / 2, 0, 2*Math.PI, false);
@@ -214,34 +260,6 @@
 
         }.bind(this));
 
-      },
-      // Grey out map outside of area
-      viewrectangleChanged: function () {
-        // [x, y, w, h]
-        var context = this.$.canvas2.getContext('2d');
-        context = unwrap(context);
-        // Clear
-        context.clearRect(0, 0, this.width, this.height);
-        // Mask outside view
-        context.fillStyle = this.outsideFill;
-        // Left
-        if (this.viewrectangle[0] > 0) {
-          context.fillRect(0, 0, this.viewrectangle[0], this.height);
-        }
-        // Top
-        if (this.viewrectangle[1] > 0) {
-          context.fillRect(this.viewrectangle[0], 0, this.viewrectangle[2], this.viewrectangle[1]);
-        }
-        // Bottom
-        var y = this.viewrectangle[1]+this.viewrectangle[3];
-        if (y < this.height) {
-          context.fillRect(this.viewrectangle[0], y, this.viewrectangle[2], this.height-y);
-        }
-        // Right
-        var x = this.viewrectangle[0]+this.viewrectangle[2];
-        if (x < this.width) {
-          context.fillRect(x, 0, this.width-x, this.height);
-        }
       },
       listener: null,
       graphChanged: function (oldGraph, newGraph) {

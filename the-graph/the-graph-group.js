@@ -16,6 +16,9 @@
         this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       }
 
+      // Don't pan under menu
+      this.getDOMNode().addEventListener("trackstart", this.dontPan);
+
       // Context menu
       if (this.props.showContext) {
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
@@ -48,12 +51,19 @@
         item: this.props.item
       });
     },
-    getContext: function (menu, options) {
+    getContext: function (menu, options, hide) {
       return TheGraph.Menu({
         menu: menu,
         options: options,
-        label: this.props.label
+        label: this.props.label,
+        triggerHideContext: hide
       });
+    },
+    dontPan: function (event) {
+      // Don't drag under menu
+      if (this.props.app.menuShown) {
+        event.stopPropagation();
+      }
     },
     onTrackStart: function (event) {
       // Don't drag graph

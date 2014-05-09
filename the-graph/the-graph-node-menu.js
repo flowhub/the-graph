@@ -43,6 +43,7 @@
         TheGraph.Menu({
           menu: this.props.menu,
           options: this.props.options,
+          triggerHideContext: this.props.triggerHideContext,
           // Translating NodeMenu here, so Menu is at 0, 0
           x: 0, 
           y: 0,

@@ -149,6 +149,78 @@
 .the-graph-light .small .edge-fg {
   stroke-width: 8px;
 }
+@-webkit-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@-moz-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@-o-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+.the-graph-light .edge.animated .edge-bg {
+  stroke-linecap: round;
+  stroke-width: 16px;
+  stroke: #808080;
+  -webkit-animation: heartbeats 1s linear infinite;
+  -moz-animation: heartbeats 1s linear infinite;
+  -o-animation: heartbeats 1s linear infinite;
+  animation: heartbeats 1s linear infinite;
+}
 .the-graph-light text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
   text-rendering: geometricPrecision;
@@ -594,4 +666,109 @@
 }
 .the-graph-light .fill.route10 {
   fill: #cc006d;
+}
+@-moz-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@-webkit-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@-o-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@-ms-keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
+}
+@keyframes heartbeats {
+  0% {
+    stroke-width: 16px;
+  }
+
+  10% {
+    stroke-width: 24px;
+  }
+
+  30% {
+    stroke-width: 16px;
+  }
+
+  40% {
+    stroke-width: 24px;
+  }
+
+  60% {
+    stroke-width: 16px;
+  }
 }

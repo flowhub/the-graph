@@ -67,11 +67,12 @@
         item: this.props.port
       });
     },
-    getContext: function (menu, options) {
+    getContext: function (menu, options, hide) {
       return TheGraph.Menu({
         menu: menu,
         options: options,
-        label: this.props.label
+        label: this.props.label,
+        triggerHideContext: hide
       });
     },
     edgeStart: function (event) {

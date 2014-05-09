@@ -15,11 +15,13 @@
         edgePreviewX: 0,
         edgePreviewY: 0,
         selectedNodes: [],
-        selectedEdges: []
+        selectedEdges: [],
+        animatedEdges: []
       };
     },
     componentDidMount: function () {
       // To change port colors
+      this.props.graph.on("addEdge", this.resetPortRoute);
       this.props.graph.on("changeEdge", this.resetPortRoute);
       this.props.graph.on("removeEdge", this.resetPortRoute);
       this.props.graph.on("removeInitial", this.resetPortRoute);
@@ -267,6 +269,12 @@
       });
       this.markDirty();
     },
+    setAnimatedEdges: function (edges) {
+      this.setState({
+        animatedEdges: edges
+      });
+      this.markDirty();
+    },
     updatedIcons: {},
     updateIcon: function (nodeId, icon) {
       this.updatedIcons[nodeId] = icon;
@@ -379,6 +387,7 @@
           key: key,
           graph: graph,
           edge: edge,
+          app: self.props.app,
           sX: source.metadata.x + TheGraph.nodeSize,
           sY: source.metadata.y + sourcePort.y,
           tX: target.metadata.x,
@@ -387,6 +396,7 @@
           route: route,
           onEdgeSelection: self.props.onEdgeSelection,
           selected: (self.state.selectedEdges.indexOf(edge) !== -1),
+          animated: (self.state.animatedEdges.indexOf(edge) !== -1),
           showContext: self.props.showContext
         });
       });
@@ -467,6 +477,7 @@
           export: inport,
           exportKey: key,
           graph: graph,
+          app: self.props.app,
           edge: {},
           route: (metadata.route ? metadata.route : 2),
           isIn: true,
@@ -535,6 +546,7 @@
           export: outport,
           exportKey: key,
           graph: graph,
+          app: self.props.app,
           edge: {},
           route: (metadata.route ? metadata.route : 4),
           isIn: false,
@@ -563,6 +575,7 @@
           key: "group."+group.name,
           graph: graph,
           item: group,
+          app: self.props.app,
           minX: limits.minX,
           minY: limits.minY,
           maxX: limits.maxX,
@@ -583,28 +596,31 @@
           return node.id;
         });
         var limits = TheGraph.findMinMax(graph, selectedIds);
-        var pseudoGroup = {
-          name: "selection",
-          nodes: selectedIds,
-          metadata: {color:1}
-        };
-        var selectionGroup = TheGraph.Group({
-          key: "selectiongroup",
-          isSelectionGroup: true,
-          graph: graph,
-          item: pseudoGroup,
-          minX: limits.minX,
-          minY: limits.minY,
-          maxX: limits.maxX,
-          maxY: limits.maxY,
-          scale: self.props.scale,
-          label: "",
-          description: "",
-          color: pseudoGroup.metadata.color,
-          triggerMoveGroup: self.moveGroup,
-          showContext: self.props.showContext
-        });
-        groups.push(selectionGroup);
+        if (limits) {
+          var pseudoGroup = {
+            name: "selection",
+            nodes: selectedIds,
+            metadata: {color:1}
+          };
+          var selectionGroup = TheGraph.Group({
+            key: "selectiongroup",
+            isSelectionGroup: true,
+            graph: graph,
+            app: self.props.app,
+            item: pseudoGroup,
+            minX: limits.minX,
+            minY: limits.minY,
+            maxX: limits.maxX,
+            maxY: limits.maxY,
+            scale: self.props.scale,
+            label: "",
+            description: "",
+            color: pseudoGroup.metadata.color,
+            triggerMoveGroup: self.moveGroup,
+            showContext: self.props.showContext
+          });
+          groups.push(selectionGroup);
+        }
       }
 
 

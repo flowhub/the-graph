@@ -6,6 +6,29 @@
   // Const
   var CURVE = TheGraph.nodeSize;
 
+  // Point along cubic bezier curve
+  // See http://en.wikipedia.org/wiki/File:Bezier_3_big.gif
+  var findPointOnCubicBezier = function (p, sx, sy, c1x, c1y, c2x, c2y, ex, ey) {
+    // p is percentage from 0 to 1
+    var op = 1 - t;
+    // 3 green points between 4 points that define curve
+    var g1x = sx * p + c1x * op;
+    var g1y = sy * p + c1y * op;
+    var g2x = c1x * p + c2x * op;
+    var g2y = c1y * p + c2y * op;
+    var g3x = c2x * p + ex * op;
+    var g3y = c2y * p + ey * op;
+    // 2 blue points between green points
+    var b1x = g1x * p + g2x * op;
+    var b1y = g1y * p + g2y * op;
+    var b2x = g2x * p + g3x * op;
+    var b2y = g2y * p + g3y * op;
+    // Point on the curve between blue points
+    var x = b1x * p + b2x * op;
+    var y = b1y * p + b2y * op;
+    return [x, y];    
+  };
+
 
   // Edge view
 
@@ -16,16 +39,26 @@
     componentWillMount: function() {
     },
     componentDidMount: function () {
+      var domNode = this.getDOMNode();
+
+      // Dragging
+      domNode.addEventListener("trackstart", this.dontPan);
 
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        this.getDOMNode().addEventListener("tap", this.onEdgeSelection);
+        domNode.addEventListener("tap", this.onEdgeSelection);
       }
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("hold", this.showContext);
+      }
+    },
+    dontPan: function (event) {
+      // Don't drag under menu
+      if (this.props.app.menuShown) { 
+        event.stopPropagation();
       }
     },
     onEdgeSelection: function (event) {
@@ -54,10 +87,11 @@
       });
 
     },
-    getContext: function (menu, options) {
+    getContext: function (menu, options, hide) {
       return TheGraph.Menu({
         menu: menu,
         options: options,
+        triggerHideContext: hide,
         label: this.props.label,
         iconColor: this.props.route
       });
@@ -70,6 +104,7 @@
         nextProps.tX !== this.props.tX || 
         nextProps.tY !== this.props.tY ||
         nextProps.selected !== this.props.selected ||
+        nextProps.animated !== this.props.animated ||
         nextProps.route !== this.props.route
       );
     },
@@ -81,7 +116,9 @@
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "edge"+(this.props.selected ? " selected" : "");
+      var groupClass = "edge"+
+        (this.props.selected ? " selected" : "")+
+        (this.props.animated ? " animated" : "");
       this.getDOMNode().setAttribute("class", groupClass);
       var fgClass = "edge-fg stroke route"+this.props.route;
       this.refs.route.getDOMNode().setAttribute("class", fgClass);
