@@ -11,7 +11,7 @@
     "polymer-gestures": "Polymer/polymer-gestures#master",
     "font-awesome": "~4.0.3",
     "react": "~0.10.0",
-    "klay-js": "~0.0.5"
+    "klay-js": "~0.0.6"
   },
   "license": "MIT",
   "ignore": [

@@ -174,6 +174,7 @@
       var deltaY = nodeY - y;
       var ports = this.props.ports;
       var processKey = this.props.key;
+      var highlightPort = this.props.highlightPort;
 
       // If there is a preview edge started, only show connectable ports
       if (this.props.graphView.state.edgePreview) {
@@ -188,7 +189,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         } else {
           // Show inputs
@@ -201,7 +203,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         }
       }
@@ -222,7 +225,8 @@
         x: x,
         y: y,
         deltaX: deltaX,
-        deltaY: deltaY
+        deltaY: deltaY,
+        highlightPort: highlightPort
       });
     },
     getTooltipTrigger: function () {
@@ -239,6 +243,7 @@
         nextProps.y !== this.props.y ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
+        nextProps.highlightPort !== this.props.highlightPort ||
         nextProps.ports.dirty
       );
     },
@@ -268,6 +273,7 @@
       var graph = this.props.graph;
       var isExport = (this.props.export !== undefined);
       var showContext = this.props.showContext;
+      var highlightPort = this.props.highlightPort;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -288,7 +294,8 @@
           nodeY: y,
           x: info.x,
           y: info.y,
-          port: {node:processKey, port:info.label},
+          port: {process:processKey, port:info.label, type:info.type},
+          highlightPort: highlightPort,
           route: info.route,
           showContext: showContext
         };
@@ -313,7 +320,8 @@
           nodeY: y,
           x: info.x,
           y: info.y,
-          port: {node:processKey, port:info.label},
+          port: {process:processKey, port:info.label, type:info.type},
+          highlightPort: highlightPort,
           route: info.route,
           showContext: showContext
         };

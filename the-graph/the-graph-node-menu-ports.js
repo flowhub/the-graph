@@ -33,11 +33,13 @@
 
         var portView = TheGraph.NodeMenuPort({
           label: key,
+          port: port,
           processKey: this.props.processKey,
           isIn: this.props.isIn,
           x: x,
           y: y,
-          route: port.route
+          route: port.route,
+          highlightPort: this.props.highlightPort
         });
 
         lines.push(line);
