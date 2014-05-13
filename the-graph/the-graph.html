@@ -6,8 +6,6 @@
     <div id="svgcontainer"></div>
   </template>
 
-  <script type="text/javascript" src="./noflo-klay-interface.js"></script>
-  
   <script type="text/javascript" src="./the-graph.js"></script>
   <script type="text/javascript" src="./font-awesome-unicode-map.js"></script>
   <script type="text/javascript" src="./the-graph-app.js"></script>
@@ -193,9 +191,7 @@
         if (window.KLayInterface) {
           setTimeout(function () {
             var portInfo = this.graphView ? this.graphView.portInfo : null;
-            window.KLayInterface(this.graph, portInfo, this.applyAutolayout.bind(this));
-          }.bind(this), 0);
-        }
+            window.KLayInterface(this.graph, portInfo, this.applyAutolayout.bind(this));<script type="text/javascript" src="./
       },
       applyAutolayout: function (layoutedKGraph) {
         this.graph.startTransaction("autolayout");
