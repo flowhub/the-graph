@@ -305,6 +305,10 @@
 .the-graph-dark .context-port-bg {
   fill: rgba(43,48,54,0.95);
 }
+.the-graph-dark .context-port-bg.highlight {
+  stroke: #bfbfbf;
+  stroke-width: 1px;
+}
 .the-graph-dark .context-port-hole {
   stroke-width: 2px;
   fill: rgba(43,48,54,0.95);

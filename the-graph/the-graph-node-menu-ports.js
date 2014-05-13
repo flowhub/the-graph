@@ -38,7 +38,8 @@
           isIn: this.props.isIn,
           x: x,
           y: y,
-          route: port.route
+          route: port.route,
+          highlightPort: this.props.highlightPort
         });
 
         lines.push(line);

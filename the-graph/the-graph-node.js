@@ -164,6 +164,7 @@
       var deltaY = nodeY - y;
       var ports = this.props.ports;
       var processKey = this.props.key;
+      var highlightPort = this.props.highlightPort;
 
       // If there is a preview edge started, only show connectable ports
       if (this.props.graphView.state.edgePreview) {
@@ -178,7 +179,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         } else {
           // Show inputs
@@ -191,7 +193,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         }
       }
@@ -212,7 +215,8 @@
         x: x,
         y: y,
         deltaX: deltaX,
-        deltaY: deltaY
+        deltaY: deltaY,
+        highlightPort: highlightPort
       });
     },
     getTooltipTrigger: function () {

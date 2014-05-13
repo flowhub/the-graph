@@ -30,7 +30,8 @@
           scale: scale,
           processKey: this.props.processKey,
           deltaX: deltaX,
-          deltaY: deltaY
+          deltaY: deltaY,
+          highlightPort: this.props.highlightPort
         }),
         TheGraph.NodeMenuPorts({
           ports: ports.outports,
@@ -38,7 +39,8 @@
           scale: scale,
           processKey: this.props.processKey,
           deltaX: deltaX,
-          deltaY: deltaY
+          deltaY: deltaY,
+          highlightPort: this.props.highlightPort
         }),
         TheGraph.Menu({
           menu: this.props.menu,
