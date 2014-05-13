@@ -33,6 +33,7 @@
 
         var portView = TheGraph.NodeMenuPort({
           label: key,
+          port: port,
           processKey: this.props.processKey,
           isIn: this.props.isIn,
           x: x,

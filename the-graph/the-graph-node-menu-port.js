@@ -12,11 +12,16 @@
       // Don't tap graph
       event.stopPropagation();
 
+      var port = {
+        process: this.props.processKey,
+        port: this.props.label,
+        type: this.props.port.type
+      };
+
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
         detail: {
           isIn: this.props.isIn,
-          port: this.props.label,
-          process: this.props.processKey,
+          port: port,
           route: this.props.route
         },
         bubbles: true
