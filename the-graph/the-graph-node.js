@@ -238,9 +238,11 @@
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
       return (
-        nextProps.icon !== this.props.icon ||
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
+        nextProps.icon !== this.props.icon ||
+        nextProps.label !== this.props.label ||
+        nextProps.sublabel !== this.props.sublabel ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
         nextProps.highlightPort !== this.props.highlightPort ||
