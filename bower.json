@@ -7,7 +7,7 @@
   ],
   "description": "Polymer elements for graph editing",
   "dependencies": {
-    "polymer": "0.2.3",
+    "polymer": "~0.2.3",
     "polymer-gestures": "Polymer/polymer-gestures#master",
     "hammerjs": "~1.1.2",
     "font-awesome": "~4.0.3",
@@ -23,8 +23,5 @@
     "tests",
     "docs",
     "tools"
-  ],
-  "resolutions": {
-    "platform": "0.2.3"
-  }
+  ]
 }
