@@ -55,6 +55,9 @@
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
 
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
+
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
 
@@ -68,6 +71,9 @@
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
 
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );

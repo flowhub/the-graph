@@ -76,6 +76,10 @@
     lastY: 0,
     pinching: false,
     onTransformStart: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
       // Hammer.js
       this.lastScale = 1;
       this.lastX = event.gesture.center.clientX;
@@ -83,6 +87,10 @@
       this.pinching = true;
     },
     onTransform: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
       // Hammer.js
       var currentScale = this.state.scale;
       var currentX = this.state.x;
@@ -113,6 +121,10 @@
       });
     },
     onTransformEnd: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
       // Hammer.js
       this.pinching = false;
     },
