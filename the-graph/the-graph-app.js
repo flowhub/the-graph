@@ -71,23 +71,47 @@
         tooltipVisible: false
       });
     },
-    // FIXME: waiting for scale delta: https://github.com/Polymer/PointerGestures/issues/16#issuecomment-33697553
     lastScale: 1,
-    onPinch: function (event) {
-      var ddScale = event.scale / this.lastScale;
-      this.lastScale = event.scale;
+    lastX: 0,
+    lastY: 0,
+    pinching: false,
+    onTransformStart: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
 
-      var scale = this.state.scale * ddScale;
+      // Hammer.js
+      this.lastScale = 1;
+      this.lastX = event.gesture.center.clientX;
+      this.lastY = event.gesture.center.clientY;
+      this.pinching = true;
+    },
+    onTransform: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      // Hammer.js
+      var currentScale = this.state.scale;
+      var currentX = this.state.x;
+      var currentY = this.state.y;
+
+      var scaleEvent = event.gesture.scale;
+      var scaleDelta = 1 + (scaleEvent - this.lastScale);
+      this.lastScale = scaleEvent;
+      var scale = scaleDelta * currentScale;
       scale = Math.max(scale, this.minZoom);
 
       // Zoom and pan transform-origin equivalent
-      var scaleD = scale / this.state.scale;
-      var currentX = this.state.x;
-      var currentY = this.state.y;
-      var oX = event.centerX;
-      var oY = event.centerY;
-      var x = scaleD * (currentX - oX) + oX;
-      var y = scaleD * (currentY - oY) + oY;
+      var oX = event.gesture.center.clientX;
+      var oY = event.gesture.center.clientY;
+      var deltaX = oX - this.lastX;
+      var deltaY = oY - this.lastY;
+      var x = scaleDelta * (currentX - oX) + oX + deltaX;
+      var y = scaleDelta * (currentY - oY) + oY + deltaY;
+
+      this.lastX = oX;
+      this.lastY = oY;
 
       this.setState({
         scale: scale,
@@ -96,12 +120,21 @@
         tooltipVisible: false
       });
     },
+    onTransformEnd: function (event) {
+      // Don't drag nodes
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      // Hammer.js
+      this.pinching = false;
+    },
     onTrackStart: function (event) {
       event.preventTap();
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
     },
     onTrack: function (event) {
+      if ( this.pinching ) { return; }
       this.setState({
         x: this.state.x + event.ddx,
         y: this.state.y + event.ddy
@@ -177,7 +210,13 @@
 
       // Pointer gesture events for pan/zoom
       domNode.addEventListener("trackstart", this.onTrackStart);
-      domNode.addEventListener("pinch", this.onPinch);
+
+      var is_touch_device = 'ontouchstart' in document.documentElement;
+      if( is_touch_device && Hammer ){
+        Hammer(domNode).on("transformstart", this.onTransformStart);
+        Hammer(domNode).on("transform", this.onTransform);
+        Hammer(domNode).on("transformend", this.onTransformEnd);
+      }
 
       // Wheel to zoom
       if (domNode.onwheel!==undefined) {

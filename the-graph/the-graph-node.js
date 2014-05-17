@@ -4,8 +4,18 @@
   var TheGraph = context.TheGraph;
 
   // PointerGestures monkeypatch
-  window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
-  window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
+  PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
+    // hold
+    if (gesture.HOLD_DELAY) {
+      gesture.HOLD_DELAY = 500;
+    }
+    // track
+    if (gesture.WIGGLE_THRESHOLD) {
+      gesture.WIGGLE_THRESHOLD = 8;
+    }
+  });
+  // window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
+  // window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
 
   // Node view
   TheGraph.Node = React.createClass({
@@ -45,6 +55,9 @@
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
 
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
+
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
 
@@ -58,6 +71,9 @@
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
 
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );
@@ -127,8 +143,8 @@
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
@@ -228,9 +244,11 @@
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
       return (
-        nextProps.icon !== this.props.icon ||
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
+        nextProps.icon !== this.props.icon ||
+        nextProps.label !== this.props.label ||
+        nextProps.sublabel !== this.props.sublabel ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
         nextProps.highlightPort !== this.props.highlightPort ||

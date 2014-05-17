@@ -72,8 +72,9 @@
       // Don't show native context menu
       event.preventDefault();
 
-      var x = event.clientX;
-      var y = event.clientY;
+      // Get mouse position
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

@@ -56,16 +56,16 @@
     },
     componentDidMount: function () {
       if (this.state.n4tappable) {
-        this.refs.n4.getDOMNode().addEventListener("pointerup", this.onTapN4);
+        this.refs.n4.getDOMNode().addEventListener("up", this.onTapN4);
       }
       if (this.state.s4tappable) {
-        this.refs.s4.getDOMNode().addEventListener("pointerup", this.onTapS4);
+        this.refs.s4.getDOMNode().addEventListener("up", this.onTapS4);
       }
       if (this.state.e4tappable) {
-        this.refs.e4.getDOMNode().addEventListener("pointerup", this.onTapE4);
+        this.refs.e4.getDOMNode().addEventListener("up", this.onTapE4);
       }
       if (this.state.w4tappable) {
-        this.refs.w4.getDOMNode().addEventListener("pointerup", this.onTapW4);
+        this.refs.w4.getDOMNode().addEventListener("up", this.onTapW4);
       }
 
       // Prevent context menu
@@ -195,7 +195,7 @@
       var rectNode = this.refs.rect.getDOMNode();
 
       // Right-click on another item will show its menu
-      domNode.addEventListener("pointerdown", function (event) {
+      domNode.addEventListener("down", function (event) {
         // Only if outside of menu
         if (event && event.target===rectNode) {
           this.hideModal();

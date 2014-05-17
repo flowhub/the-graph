@@ -53,8 +53,8 @@
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

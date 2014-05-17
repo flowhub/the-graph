@@ -64,14 +64,16 @@
       edge.isIn = event.detail.isIn;
       edge.metadata = { route: event.detail.route };
       edge.type = event.detail.port.type;
-      this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().addEventListener("mousemove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().addEventListener("track", this.renderPreviewEdge);
       // TODO tap to add new node here
       this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
 
       this.setState({edgePreview: edge});
     },
     cancelPreviewEdge: function (event) {
-      this.props.app.getDOMNode().removeEventListener("pointermove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().removeEventListener("mousemove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().removeEventListener("track", this.renderPreviewEdge);
       this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
@@ -79,10 +81,12 @@
       }
     },
     renderPreviewEdge: function (event) {
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
       var scale = this.props.app.state.scale;
       this.setState({
-        edgePreviewX: (event.clientX - this.props.app.state.x) / scale,
-        edgePreviewY: (event.clientY - this.props.app.state.y) / scale
+        edgePreviewX: (x - this.props.app.state.x) / scale,
+        edgePreviewY: (y - this.props.app.state.y) / scale
       });
       this.markDirty();
     },
