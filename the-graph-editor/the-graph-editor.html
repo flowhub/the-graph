@@ -77,9 +77,9 @@
                   count++;
                   pub = item.port + count;
                 }
-                var priNode = graph.getNode(item.node);
+                var priNode = graph.getNode(item.process);
                 var metadata = {x:priNode.metadata.x-144, y:priNode.metadata.y};
-                graph.addInport(pub, item.node, item.port, metadata);
+                graph.addInport(pub, item.process, item.port, metadata);
               }
             }
           },
@@ -95,9 +95,9 @@
                   count++;
                   pub = item.port + count;
                 } 
-                var priNode = graph.getNode(item.node);
+                var priNode = graph.getNode(item.process);
                 var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
-                graph.addOutport(pub, item.node, item.port, metadata);
+                graph.addOutport(pub, item.process, item.port, metadata);
               }
             }
           },
