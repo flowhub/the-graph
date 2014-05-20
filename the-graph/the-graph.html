@@ -132,6 +132,7 @@
         this.fire('edges', this.selectedEdges);
       },
       onNodeSelection: function (itemKey, item, toggle) {
+        console.log("select", itemKey, toggle);
         if (itemKey === undefined) {
           if (this.selectedNodes.length>0) {
             this.selectedNodes = [];

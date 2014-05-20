@@ -28,7 +28,7 @@
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onNodeSelection);
+        this.getDOMNode().addEventListener("tap", this.onNodeSelection, true);
       }
 
       // Context menu
@@ -39,6 +39,7 @@
 
     },
     onNodeSelection: function (event) {
+      console.log('node');
       // Don't tap app (unselect)
       event.stopPropagation();
 

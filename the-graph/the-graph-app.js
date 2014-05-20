@@ -206,6 +206,9 @@
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
+        if (Hammer) {
+          Hammer(domNode, {tap:false, transform:true});
+        }
       }
 
       // Pointer gesture events for pan/zoom
@@ -238,7 +241,7 @@
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
 
-      // HACK shiftKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       document.addEventListener('keydown', this.keyDown);
       document.addEventListener('keyup', this.keyUp);
 
@@ -272,6 +275,7 @@
       }
     },
     unselectAll: function (event) {
+      console.log('app');
       // No arguments = clear selection
       this.props.onNodeSelection();
       this.props.onEdgeSelection();
