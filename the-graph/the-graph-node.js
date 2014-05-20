@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  // PointerGestures monkeypatch
+  // PolymerGestures monkeypatch
   PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
     // hold
     if (gesture.HOLD_DELAY) {
@@ -14,8 +14,6 @@
       gesture.WIGGLE_THRESHOLD = 8;
     }
   });
-  // window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
-  // window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
 
   // Node view
   TheGraph.Node = React.createClass({
@@ -143,8 +141,9 @@
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      // 'hold' via Hammer for now
+      var x = event.gesture.center.clientX || event.x || event.clientX || 0;
+      var y = event.gesture.center.clientY || event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

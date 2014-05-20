@@ -73,8 +73,9 @@
       event.preventDefault();
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      // 'hold' via Hammer for now
+      var x = event.gesture.center.clientX || event.x || event.clientX || 0;
+      var y = event.gesture.center.clientY || event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

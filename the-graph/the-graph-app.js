@@ -206,9 +206,15 @@
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
-        if (Hammer) {
-          Hammer(domNode, {tap:false, transform:true});
-        }
+      }
+
+      // Don't let Hammer.js collide with polymer-gestures
+      if (Hammer) {
+        Hammer(domNode, {
+          tap: false,
+          hold: true, 
+          transform: true
+        });
       }
 
       // Pointer gesture events for pan/zoom
