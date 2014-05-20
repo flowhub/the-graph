@@ -275,7 +275,6 @@
       }
     },
     unselectAll: function (event) {
-      console.log('app');
       // No arguments = clear selection
       this.props.onNodeSelection();
       this.props.onEdgeSelection();

@@ -39,7 +39,6 @@
 
     },
     onNodeSelection: function (event) {
-      console.log('node');
       // Don't tap app (unselect)
       event.stopPropagation();
 
