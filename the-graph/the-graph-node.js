@@ -142,8 +142,14 @@
 
       // Get mouse position
       // 'hold' via Hammer for now
-      var x = event.gesture.center.clientX || event.x || event.clientX || 0;
-      var y = event.gesture.center.clientY || event.y || event.clientY || 0;
+      var x, y;
+      if (event.gesture) {
+        x = event.gesture.center.clientX;
+        y = event.gesture.center.clientY;
+      } else {
+        x = event.x || event.clientX || 0;
+        y = event.y || event.clientY || 0;
+      }
 
       // App.showContext
       this.props.showContext({
