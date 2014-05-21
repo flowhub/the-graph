@@ -9,7 +9,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#0.2.4",
     "hammerjs": "~1.1.2",
-    "font-awesome": "~4.0.3",
+    "font-awesome": "~4.1.0",
     "react": "~0.10.0",
     "klay-js": "~0.0.6"
   },
