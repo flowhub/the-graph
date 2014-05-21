@@ -212,7 +212,7 @@
       if (Hammer) {
         Hammer(domNode, {
           tap: false,
-          hold: true, 
+          hold: false, 
           transform: true
         });
       }
