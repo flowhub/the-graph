@@ -1,11 +1,12 @@
 {
   "name": "the-graph",
+  "version": "0.2.3",
   "keywords": [
     "graph",
     "flow",
     "noflo"
   ],
-  "description": "Polymer elements for graph editing",
+  "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
     "polymer": "Polymer/polymer#0.2.4",
     "hammerjs": "~1.1.2",

@@ -133,18 +133,19 @@
       // Organic / curved edge
       var c1X, c1Y, c2X, c2Y;
       if (targetX-5 < sourceX) {
+        var curveFactor = (sourceX - targetX) * CURVE / 200;
         if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
           // Loopback
-          c1X = sourceX + CURVE;
-          c1Y = sourceY - CURVE;
-          c2X = targetX - CURVE;
-          c2Y = targetY - CURVE;
+          c1X = sourceX + curveFactor;
+          c1Y = sourceY - curveFactor;
+          c2X = targetX - curveFactor;
+          c2Y = targetY - curveFactor;
         } else {
           // Stick out some
-          c1X = sourceX + CURVE;
-          c1Y = sourceY + (targetY > sourceY ? CURVE : -CURVE);
-          c2X = targetX - CURVE;
-          c2Y = targetY + (targetY > sourceY ? -CURVE : CURVE);
+          c1X = sourceX + curveFactor;
+          c1Y = sourceY + (targetY > sourceY ? curveFactor : -curveFactor);
+          c2X = targetX - curveFactor;
+          c2Y = targetY + (targetY > sourceY ? -curveFactor : curveFactor);
         }
       } else {
         // Controls halfway between
