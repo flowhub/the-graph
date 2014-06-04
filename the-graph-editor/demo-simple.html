@@ -8,26 +8,24 @@
     <script src="../bower_components/platform/platform.js"></script>
     <script src="../bower_components/react/react.js"></script>
     <script src="../bower_components/noflo/browser/noflo.js"></script>
-    <script src="../bower_components/klay-js/klay/klay.nocache.js"></script>
+    <script src="../bower_components/klay-js/klay.js"></script>
     <script src="../bower_components/hammerjs/hammer.js"></script>
-    
+
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
-    <link rel="import" href="../bower_components/polymer-gestures/polymer-gestures.html">
     <link rel="import" href="./the-graph-editor.html">
     <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
-    <!-- <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Source+Code+Pro:400"> -->
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
     <style>
       @font-face {
         /* we want the svg version */
         font-family: 'FontAwesomeSVG';
         src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), 
+          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'),
+          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'),
           url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
         font-weight: normal;
         font-style: normal;
@@ -53,8 +51,8 @@
         left: 0;
       }
       #nav {
-        position: absolute; 
-        right: 0px; 
+        position: absolute;
+        right: 0px;
         bottom: 0px;
       }
       #testing {
@@ -67,10 +65,10 @@
   </head>
   <body>
 
-    <the-graph-editor id="editor" 
-      width="800" height="600" 
-      grid="72" 
-      snap="36" 
+    <the-graph-editor id="editor"
+      width="800" height="600"
+      grid="72"
+      snap="36"
       theme="dark">
     </the-graph-editor>
 
@@ -79,6 +77,7 @@
     <div id="testing">
       <button id="autolayout">autolayout</button>
       <button id="addnode">add node</button>
+      <button id="addedge">add edge</button>
     </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
@@ -102,7 +101,9 @@
             description: 'basic demo component',
             icon: 'eye',
             inports: [
-              {'name': 'in', 'type': 'all'}
+              {'name': 'in0', 'type': 'all'},
+              {'name': 'in1', 'type': 'all'},
+              {'name': 'in2', 'type': 'all'}
             ],
             outports: [
               {'name': 'out', 'type': 'all'}
@@ -129,6 +130,20 @@
         };
         document.getElementById("addnode").addEventListener("click", addnode);
 
+        // Add edge button
+        var addedge = function () {
+          var nodes = editor.nofloGraph.nodes;
+          var len = nodes.length;
+          if ( len<1 ) { return; }
+          var node1 = nodes[Math.floor(Math.random()*len)].id;
+          var node2 = nodes[Math.floor(Math.random()*len)].id;
+          var port2 = 'in' + Math.floor(Math.random()*3);
+          var meta = { route: Math.floor(Math.random()*10) };
+          var newEdge = editor.nofloGraph.addEdge(node1, 'out', node2, port2, meta);
+          console.log(newEdge);
+        };
+        document.getElementById("addedge").addEventListener("click", addedge);
+
         // Autolayout button
         document.getElementById("autolayout").addEventListener("click", function () {
           editor.triggerAutolayout();
@@ -143,7 +158,7 @@
 
         resize();
       });
-      
+
     </script>
   </body>
 </html>
