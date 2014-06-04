@@ -39,10 +39,7 @@
       // Forwarded from App.edgeStart()
 
       // Port that triggered this
-      var port = {
-        node: event.detail.process,
-        port: event.detail.port
-      };
+      var port = event.detail.port;
 
       // Complete edge if this is the second tap and ports are compatible
       if (this.state.edgePreview && this.state.edgePreview.isIn !== event.detail.isIn) {
@@ -66,14 +63,17 @@
       }
       edge.isIn = event.detail.isIn;
       edge.metadata = { route: event.detail.route };
-      this.props.app.getDOMNode().addEventListener("pointermove", this.renderPreviewEdge);
+      edge.type = event.detail.port.type;
+      this.props.app.getDOMNode().addEventListener("mousemove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().addEventListener("track", this.renderPreviewEdge);
       // TODO tap to add new node here
       this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
 
       this.setState({edgePreview: edge});
     },
     cancelPreviewEdge: function (event) {
-      this.props.app.getDOMNode().removeEventListener("pointermove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().removeEventListener("mousemove", this.renderPreviewEdge);
+      this.props.app.getDOMNode().removeEventListener("track", this.renderPreviewEdge);
       this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
@@ -81,15 +81,17 @@
       }
     },
     renderPreviewEdge: function (event) {
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
       var scale = this.props.app.state.scale;
       this.setState({
-        edgePreviewX: (event.clientX - this.props.app.state.x) / scale,
-        edgePreviewY: (event.clientY - this.props.app.state.y) / scale
+        edgePreviewX: (x - this.props.app.state.x) / scale,
+        edgePreviewY: (y - this.props.app.state.y) / scale
       });
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.node, edge.from.port, edge.to.node, edge.to.port, edge.metadata);
+      this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
     },
     moveGroup: function (nodes, dx, dy) {
       var graph = this.state.graph;
@@ -324,6 +326,15 @@
         this.portInfo = {};
       }
 
+      // Highlight compatible ports
+      var highlightPort = null;
+      if (this.state.edgePreview && this.state.edgePreview.type) {
+        highlightPort = {
+          type: this.state.edgePreview.type,
+          isIn: !this.state.edgePreview.isIn
+        };
+      }
+
       // Nodes
       var nodes = graph.nodes.map(function (node) {
         var key = node.id;
@@ -356,7 +367,8 @@
           ports: self.getPorts(key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          highlightPort: highlightPort
         });
       });
 
@@ -629,8 +641,8 @@
       if (edgePreview) {
         var edgePreviewView;
         if (edgePreview.from) {
-          var source = graph.getNode(edgePreview.from.node);
-          var sourcePort = this.getNodeOutport(edgePreview.from.node, edgePreview.from.port);
+          var source = graph.getNode(edgePreview.from.process);
+          var sourcePort = this.getNodeOutport(edgePreview.from.process, edgePreview.from.port);
           edgePreviewView = TheGraph.Edge({
             key: "edge-preview",
             sX: source.metadata.x + TheGraph.nodeSize,
@@ -641,8 +653,8 @@
             route: edgePreview.metadata.route
           });
         } else {
-          var target = graph.getNode(edgePreview.to.node);
-          var targetPort = this.getNodeInport(edgePreview.to.node, edgePreview.to.port);
+          var target = graph.getNode(edgePreview.to.process);
+          var targetPort = this.getNodeInport(edgePreview.to.process, edgePreview.to.port);
           edgePreviewView = TheGraph.Edge({
             key: "edge-preview",
             sX: this.state.edgePreviewX,

@@ -1,16 +1,18 @@
 {
   "name": "the-graph",
+  "version": "0.2.5",
   "keywords": [
     "graph",
     "flow",
     "noflo"
   ],
-  "description": "Polymer elements for graph editing",
+  "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "polymer": "0.2.2",
-    "font-awesome": "~4.0.3",
+    "polymer": "Polymer/polymer#0.2.4",
+    "hammerjs": "~1.1.2",
+    "font-awesome": "~4.1.0",
     "react": "~0.10.0",
-    "klay-js": "~0.0.5"
+    "klay-js": "~0.0.8"
   },
   "license": "MIT",
   "ignore": [

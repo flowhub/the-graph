@@ -53,8 +53,8 @@
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
@@ -90,8 +90,8 @@
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
         detail: {
           isIn: this.props.isIn,
-          port: this.props.label,
-          process: this.props.processKey,
+          port: this.props.port,
+          // process: this.props.processKey,
           route: this.props.route
         },
         bubbles: true
@@ -119,6 +119,15 @@
         style = { "font-size": fontSize+"px" };
       }
       var r = 4;
+      // Highlight matching ports
+      var highlightPort = this.props.highlightPort;
+      var inArc = TheGraph.arcs.inport;
+      var outArc = TheGraph.arcs.outport;
+      if (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type) {
+        r = 6;
+        inArc = TheGraph.arcs.inportBig;
+        outArc = TheGraph.arcs.outportBig;
+      }
       return (
         React.DOM.g(
           {
@@ -132,7 +141,7 @@
           }),
           React.DOM.path({
             className: "port-arc",
-            d: (this.props.isIn ? TheGraph.arcs.inport : TheGraph.arcs.outport)
+            d: (this.props.isIn ? inArc : outArc)
           }),
           React.DOM.circle({
             ref: "circleSmall",

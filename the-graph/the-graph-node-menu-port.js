@@ -6,17 +6,22 @@
 
   TheGraph.NodeMenuPort = React.createClass({
     componentDidMount: function () {
-      this.getDOMNode().addEventListener("pointerup", this.edgeStart);
+      this.getDOMNode().addEventListener("up", this.edgeStart);
     },
     edgeStart: function (event) {
       // Don't tap graph
       event.stopPropagation();
 
+      var port = {
+        process: this.props.processKey,
+        port: this.props.label,
+        type: this.props.port.type
+      };
+
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
         detail: {
           isIn: this.props.isIn,
-          port: this.props.label,
-          process: this.props.processKey,
+          port: port,
           route: this.props.route
         },
         bubbles: true
@@ -26,13 +31,16 @@
     render: function() {
       var labelLen = this.props.label.length;
       var bgWidth = (labelLen>12 ? labelLen*8+40 : 120);
+      // Highlight compatible port
+      var highlightPort = this.props.highlightPort;
+      var highlight = (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type);
       return (
         React.DOM.g(
           {
             className: "context-port click context-port-"+(this.props.isIn ? "in" : "out")
           },
           React.DOM.rect({
-            className: "context-port-bg",
+            className: "context-port-bg"+(highlight ? " highlight" : ""),
             rx: TheGraph.nodeRadius,
             ry: TheGraph.nodeRadius,
             x: this.props.x + (this.props.isIn ? -bgWidth : 0),

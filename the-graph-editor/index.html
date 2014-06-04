@@ -8,10 +8,12 @@
     <script src="../bower_components/platform/platform.js"></script>
     <script src="../bower_components/react/react.js"></script>
     <script src="../bower_components/noflo/browser/noflo.js"></script>
-    <script src="../bower_components/klay-js/klay/klay.nocache.js"></script>
+    <script src="../bower_components/klay-js/klay.js"></script>
+    <script src="../bower_components/hammerjs/hammer.js"></script>
     
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
+    <!-- <link rel="import" href="../bower_components/polymer-gestures/polymer-gestures.html"> -->
     <link rel="import" href="./the-graph-editor.html">
     <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
@@ -106,7 +108,6 @@
 
           // Simulate a library update
           setTimeout(function () {
-            console.log('updating');
             var originalComponent = editor.getComponent('core/Split');
             if (!originalComponent) {
               console.warn("Didn't find component. Something is amiss.");
@@ -116,6 +117,10 @@
             component.icon = 'github';
             component.inports.push({
               name: 'supercalifragilisticexpialidocious',
+              type: 'boolean'
+            });
+            component.outports.push({
+              name: 'boo',
               type: 'boolean'
             });
             editor.registerComponent(component);

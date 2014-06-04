@@ -3,9 +3,17 @@
 
   var TheGraph = context.TheGraph;
 
-  // PointerGestures monkeypatch
-  window.PointerGestures.dispatcher.recognizers.hold.HOLD_DELAY = 500;
-  window.PointerGestures.dispatcher.recognizers.track.WIGGLE_THRESHOLD = 8;
+  // PolymerGestures monkeypatch
+  PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
+    // hold
+    if (gesture.HOLD_DELAY) {
+      gesture.HOLD_DELAY = 500;
+    }
+    // track
+    if (gesture.WIGGLE_THRESHOLD) {
+      gesture.WIGGLE_THRESHOLD = 8;
+    }
+  });
 
   // Node view
   TheGraph.Node = React.createClass({
@@ -18,7 +26,7 @@
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onNodeSelection);
+        this.getDOMNode().addEventListener("tap", this.onNodeSelection, true);
       }
 
       // Context menu
@@ -45,6 +53,9 @@
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
 
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
+
       this.getDOMNode().addEventListener("track", this.onTrack);
       this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
 
@@ -58,6 +69,9 @@
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+
+      // Don't drag while pinching
+      if (this.props.app.pinching) { return; }
 
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );
@@ -127,8 +141,8 @@
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.clientX;
-      var y = event.clientY;
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
@@ -164,6 +178,7 @@
       var deltaY = nodeY - y;
       var ports = this.props.ports;
       var processKey = this.props.key;
+      var highlightPort = this.props.highlightPort;
 
       // If there is a preview edge started, only show connectable ports
       if (this.props.graphView.state.edgePreview) {
@@ -178,7 +193,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         } else {
           // Show inputs
@@ -191,7 +207,8 @@
             deltaX: deltaX,
             deltaY: deltaY,
             translateX: x,
-            translateY: y
+            translateY: y,
+            highlightPort: highlightPort
           });
         }
       }
@@ -212,7 +229,8 @@
         x: x,
         y: y,
         deltaX: deltaX,
-        deltaY: deltaY
+        deltaY: deltaY,
+        highlightPort: highlightPort
       });
     },
     getTooltipTrigger: function () {
@@ -224,11 +242,14 @@
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
       return (
-        nextProps.icon !== this.props.icon ||
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
+        nextProps.icon !== this.props.icon ||
+        nextProps.label !== this.props.label ||
+        nextProps.sublabel !== this.props.sublabel ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
+        nextProps.highlightPort !== this.props.highlightPort ||
         nextProps.ports.dirty
       );
     },
@@ -258,6 +279,7 @@
       var graph = this.props.graph;
       var isExport = (this.props.export !== undefined);
       var showContext = this.props.showContext;
+      var highlightPort = this.props.highlightPort;
 
       // Inports
       var inports = this.props.ports.inports;
@@ -278,7 +300,8 @@
           nodeY: y,
           x: info.x,
           y: info.y,
-          port: {node:processKey, port:info.label},
+          port: {process:processKey, port:info.label, type:info.type},
+          highlightPort: highlightPort,
           route: info.route,
           showContext: showContext
         };
@@ -303,7 +326,8 @@
           nodeY: y,
           x: info.x,
           y: info.y,
-          port: {node:processKey, port:info.label},
+          port: {process:processKey, port:info.label, type:info.type},
+          highlightPort: highlightPort,
           route: info.route,
           showContext: showContext
         };

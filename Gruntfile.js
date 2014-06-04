@@ -24,6 +24,9 @@
       exec: {
         build_stylus: {
           command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
+        },
+        build_fa: {
+          command: 'node ./scripts/build-font-awesome-javascript.js '
         }
       },
       jshint: {
@@ -104,7 +107,7 @@
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
-    this.registerTask('build', ['exec:build_stylus']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa']);
     this.registerTask('default', ['test']);
   };
 
