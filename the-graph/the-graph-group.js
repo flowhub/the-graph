@@ -78,6 +78,8 @@
         label.addEventListener("track", this.onTrack);
         label.addEventListener("trackend", this.onTrackEnd);
       }
+
+      this.props.graph.startTransaction('movegroup');
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -107,6 +109,8 @@
         label.removeEventListener("track", this.onTrack);
         label.removeEventListener("trackend", this.onTrackEnd);
       }
+
+      this.props.graph.endTransaction('movegroup');
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
