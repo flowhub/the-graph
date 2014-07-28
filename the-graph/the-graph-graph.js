@@ -109,7 +109,7 @@
           });
         } else {
           // Snap to grid
-          var snap = TheGraph.nodeSize/2;
+          var snap = TheGraph.config.nodeHeight / 2;
           graph.setNodeMetadata(node.id, {
             x: Math.round(node.metadata.x/snap) * snap,
             y: Math.round(node.metadata.y/snap) * snap
@@ -121,7 +121,9 @@
       return this.props.library[componentName];
     },
     portInfo: {},
-    getPorts: function (processName, componentName) {
+    getPorts: function (graph, processName, componentName) {
+      var node = graph.getNode(processName);
+
       var ports = this.portInfo[processName];
       if (!ports) {
         var inports = {};
@@ -143,8 +145,8 @@
             outports[port.name] = {
               label: port.name,
               type: port.type,
-              x: TheGraph.nodeSize,
-              y: TheGraph.nodeSize / (len+1) * (i+1)
+              x: node.metadata.width,
+              y: node.metadata.height / (len+1) * (i+1)
             };
           }
           for (i=0, len=component.inports.length; i<len; i++) {
@@ -154,7 +156,7 @@
               label: port.name,
               type: port.type,
               x: 0,
-              y: TheGraph.nodeSize / (len+1) * (i+1)
+              y: node.metadata.height / (len+1) * (i+1)
             };
           }
         }
@@ -166,13 +168,13 @@
       }
       return ports;
     },
-    getNodeOutport: function (processName, portName, route, componentName) {
-      var ports = this.getPorts(processName, componentName);
+    getNodeOutport: function (graph, processName, portName, route, componentName) {
+      var ports = this.getPorts(graph, processName, componentName);
       if ( !ports.outports[portName] ) {
         ports.outports[portName] = {
           label: portName,
-          x: TheGraph.nodeSize,
-          y: TheGraph.nodeSize/2
+          x: TheGraph.config.nodeWidth,
+          y: TheGraph.config.nodeHeight / 2
         };
         this.dirty = true;
       }
@@ -183,13 +185,13 @@
       }
       return port;
     },
-    getNodeInport: function (processName, portName, route, componentName) {
-      var ports = this.getPorts(processName, componentName);
+    getNodeInport: function (graph, processName, portName, route, componentName) {
+      var ports = this.getPorts(graph, processName, componentName);
       if ( !ports.inports[portName] ) {
         ports.inports[portName] = {
           label: portName,
           x: 0,
-          y: TheGraph.nodeSize/2
+          y: TheGraph.config.nodeHeight / 2
         };
         this.dirty = true;
       }
@@ -233,7 +235,7 @@
           type: "all",
           route: 5,
           x: 0,
-          y: TheGraph.nodeSize/2
+          y: TheGraph.config.nodeHeight / 2
         };
         this.graphOutports[key] = exp;
       }
@@ -248,8 +250,8 @@
           label: key,
           type: "all",
           route: 2,
-          x: TheGraph.nodeSize,
-          y: TheGraph.nodeSize/2
+          x: TheGraph.config.nodeWidth,
+          y: TheGraph.config.nodeHeight / 2
         };
         this.graphInports[key] = exp;
       }
@@ -339,6 +341,8 @@
         }
         if (node.metadata.x === undefined) { node.metadata.x = 0; }
         if (node.metadata.y === undefined) { node.metadata.y = 0; }
+        if (node.metadata.width === undefined) { node.metadata.width = TheGraph.config.nodeWidth; }
+        if (node.metadata.height === undefined) { node.metadata.height = TheGraph.config.nodeHeight; }
         if (!node.metadata.label || node.metadata.label === "") {
           node.metadata.label = key;
         }
@@ -354,13 +358,15 @@
           x: node.metadata.x,
           y: node.metadata.y,
           label: node.metadata.label,
-          sublabel: node.component,
+          sublabel: node.metadata.sublabel || node.component,
+          width: node.metadata.width,
+          height: node.metadata.height,
           app: self.props.app,
           graphView: self,
           graph: graph,
           node: node,
           icon: icon,
-          ports: self.getPorts(key, node.component),
+          ports: self.getPorts(graph, key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
           showContext: self.props.showContext,
@@ -382,8 +388,8 @@
         }
 
         // Initial ports from edges, and give port top/last edge color
-        var sourcePort = self.getNodeOutport(edge.from.node, edge.from.port, route, source.component);
-        var targetPort = self.getNodeInport(edge.to.node, edge.to.port, route, target.component);
+        var sourcePort = self.getNodeOutport(graph, edge.from.node, edge.from.port, route, source.component);
+        var targetPort = self.getNodeInport(graph, edge.to.node, edge.to.port, route, target.component);
 
         // Label
         var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
@@ -396,7 +402,7 @@
           graph: graph,
           edge: edge,
           app: self.props.app,
-          sX: source.metadata.x + TheGraph.nodeSize,
+          sX: source.metadata.x + source.metadata.width,
           sY: source.metadata.y + sourcePort.y,
           tX: target.metadata.x,
           tY: target.metadata.y + targetPort.y,
@@ -414,7 +420,7 @@
         var target = graph.getNode(iip.to.node);
         if (!target) { return; }
         
-        var targetPort = self.getNodeInport(iip.to.node, iip.to.port, 0, target.component);
+        var targetPort = self.getNodeInport(graph, iip.to.node, iip.to.port, 0, target.component);
         var tX = target.metadata.x;
         var tY = target.metadata.y + targetPort.y;
 
@@ -445,6 +451,8 @@
         var metadata = inport.metadata;
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
+        if (!metadata.width) { metadata.width = TheGraph.config.nodeWidth; }
+        if (!metadata.height) { metadata.height = TheGraph.config.nodeHeight; }
         // Private port info
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
@@ -469,6 +477,8 @@
           exportKey: key,
           x: metadata.x,
           y: metadata.y,
+          width: metadata.width,
+          height: metadata.height,
           label: label,
           app: self.props.app,
           graphView: self,
@@ -490,8 +500,8 @@
           route: (metadata.route ? metadata.route : 2),
           isIn: true,
           label: "export in " + label.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label,
-          sX: expNode.x + TheGraph.nodeSize,
-          sY: expNode.y + TheGraph.nodeSize/2,
+          sX: expNode.x + TheGraph.config.nodeWidth,
+          sY: expNode.y + TheGraph.config.nodeHeight / 2,
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y,
           showContext: self.props.showContext
@@ -514,6 +524,8 @@
         var metadata = outport.metadata;
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
+        if (!metadata.width) { metadata.width = TheGraph.config.nodeWidth; }
+        if (!metadata.height) { metadata.height = TheGraph.config.nodeHeight; }
         // Private port info
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
@@ -538,6 +550,8 @@
           exportKey: key,
           x: metadata.x,
           y: metadata.y,
+          width: metadata.width,
+          height: metadata.height,
           label: label,
           app: self.props.app,
           graphView: self,
@@ -562,7 +576,7 @@
           sX: privateNode.metadata.x + privatePort.x,
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
-          tY: expNode.y + TheGraph.nodeSize/2,
+          tY: expNode.y + TheGraph.config.nodeHeight / 2,
           showContext: self.props.showContext
         };
         edges.unshift(TheGraph.Edge(expEdge));
@@ -638,10 +652,10 @@
         var edgePreviewView;
         if (edgePreview.from) {
           var source = graph.getNode(edgePreview.from.process);
-          var sourcePort = this.getNodeOutport(edgePreview.from.process, edgePreview.from.port);
+          var sourcePort = this.getNodeOutport(graph, edgePreview.from.process, edgePreview.from.port);
           edgePreviewView = TheGraph.Edge({
             key: "edge-preview",
-            sX: source.metadata.x + TheGraph.nodeSize,
+            sX: source.metadata.x + source.metadata.width,
             sY: source.metadata.y + sourcePort.y,
             tX: this.state.edgePreviewX,
             tY: this.state.edgePreviewY,
@@ -650,7 +664,7 @@
           });
         } else {
           var target = graph.getNode(edgePreview.to.process);
-          var targetPort = this.getNodeInport(edgePreview.to.process, edgePreview.to.port);
+          var targetPort = this.getNodeInport(graph, edgePreview.to.process, edgePreview.to.port);
           edgePreviewView = TheGraph.Edge({
             key: "edge-preview",
             sX: this.state.edgePreviewX,

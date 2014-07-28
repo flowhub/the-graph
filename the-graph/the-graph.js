@@ -1,9 +1,12 @@
 (function (context) {
   "use strict";
 
+  var defaultNodeSize = 72;
+  var defaultNodeRadius = 8;
+
   // Dumb module setup
   var TheGraph = context.TheGraph = {
-    nodeSize: 72,
+    nodeSize: defaultNodeSize,
     nodeRadius: 8,
     nodeSide: 56,
     // Context menus
@@ -11,7 +14,14 @@
     // Zoom breakpoints
     zbpBig: 1.2,
     zbpNormal: 0.4,
-    zbpSmall: 0.01
+    zbpSmall: 0.01,
+    config: {
+      nodeSize: defaultNodeSize,
+      nodeWidth: defaultNodeSize,
+      nodeRadius: defaultNodeRadius,
+      nodeHeight: defaultNodeSize
+    },
+    factories: {}
   }; 
 
   // React setup
@@ -138,10 +148,10 @@
     if (!limits) {
       return {x:0, y:0, scale:1};
     }
-    limits.minX -= TheGraph.nodeSize;
-    limits.minY -= TheGraph.nodeSize;
-    limits.maxX += TheGraph.nodeSize * 2;
-    limits.maxY += TheGraph.nodeSize * 2;
+    limits.minX -= TheGraph.config.nodeSize;
+    limits.minY -= TheGraph.config.nodeSize;
+    limits.maxX += TheGraph.config.nodeSize * 2;
+    limits.maxY += TheGraph.config.nodeSize * 2;
 
     var gWidth = limits.maxX - limits.minX;
     var gHeight = limits.maxY - limits.minY;
@@ -240,5 +250,48 @@
     }
   });
 
+  // The `merge` function provides simple property merging.
+  TheGraph.merge = function(src, dest, overwrite) {
+    // Do nothing if neither are true objects.
+    if (Array.isArray(src) || Array.isArray(dest) || typeof src !== 'object' || typeof dest !== 'object')
+      return dest;
+
+    // Default overwriting of existing properties to false.
+    overwrite = overwrite || false;
+
+    for (var key in src) {
+      // Only copy properties, not functions.
+      if (typeof src[key] !== 'function' && (!dest[key] || overwrite))
+        dest[key] = src[key];
+    }
+
+    return dest;
+  }
+
+  TheGraph.factories.createGroup = function(options, content) {
+    var args = [options];
+
+    if (Array.isArray(content)) {
+      args = args.concat(content);
+    }
+
+    return React.DOM.g.apply(React.DOM.g, args);
+  };
+
+  TheGraph.factories.createRect = function(options) {
+    return React.DOM.rect(options);
+  };
+
+  TheGraph.factories.createText = function(options) {
+    return React.DOM.text(options);
+  };
+
+  TheGraph.factories.createCircle = function(options) {
+    return React.DOM.circle(options);
+  };
+
+  TheGraph.factories.createPath = function(options) {
+    return React.DOM.path(options);
+  };
 
 })(this);

@@ -3,6 +3,30 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.group = {
+    container: {
+      className: "group"
+    },
+    boxRect: {
+      ref: "box",
+      rx: TheGraph.config.nodeRadius,
+      ry: TheGraph.config.nodeRadius
+    },
+    labelText: {
+      ref: "label",
+      className: "group-label drag"
+    },
+    descriptionText: {
+      className: "group-description"
+    }
+  };
+
+  var factories = TheGraph.factories.group = {
+    createGroupGroup: TheGraph.factories.createGroup,
+    createGroupBoxRect: TheGraph.factories.createRect,
+    createGroupLabelText: TheGraph.factories.createText,
+    createGroupDescriptionText: TheGraph.factories.createText
+  };
 
   // Group view
 
@@ -121,40 +145,43 @@
       this.refs.box.getDOMNode().setAttribute("class", c);
     },
     render: function() {
-      var x = this.props.minX - TheGraph.nodeSize/2;
-      var y = this.props.minY - TheGraph.nodeSize/2;
+      var x = this.props.minX - TheGraph.config.nodeWidth / 2;
+      var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
-      return (
-        React.DOM.g(
-          {
-            className: "group"
-            // transform: "translate("+x+","+y+")"
-          },
-          React.DOM.rect({
-            ref: "box",
-            // className: "group-box color"+color, // See componentDidUpdate
-            x: x,
-            y: y,
-            rx: TheGraph.nodeRadius,
-            ry: TheGraph.nodeRadius,
-            width: this.props.maxX - this.props.minX + TheGraph.nodeSize*2,
-            height: this.props.maxY - this.props.minY + TheGraph.nodeSize*2
-          }),
-          React.DOM.text({
-            ref: "label",
-            className: "group-label drag",
-            x: x + TheGraph.nodeRadius,
-            y: y + 9,
-            children: this.props.label
-          }),
-          React.DOM.text({
-            className: "group-description",
-            x: x + TheGraph.nodeRadius,
-            y: y + 24,
-            children: this.props.description
-          })
-        )
-      );
+
+      var boxRectOptions = {
+        x: x,
+        y: y,
+        width: this.props.maxX - this.props.minX + TheGraph.config.nodeWidth * 2,
+        height: this.props.maxY - this.props.minY + TheGraph.config.nodeHeight * 2
+      };
+      boxRectOptions = TheGraph.merge(config.boxRect, boxRectOptions);
+      var boxRect =  factories.createGroupBoxRect.call(this, boxRectOptions);
+
+      var labelTextOptions = {
+        x: x + TheGraph.config.nodeRadius,
+        y: y + 9,
+        children: this.props.label
+      };
+      labelTextOptions = TheGraph.merge(config.labelText, labelTextOptions);
+      var labelText = factories.createGroupLabelText.call(this, labelTextOptions);
+
+      var descriptionTextOptions = {
+        x: x + TheGraph.nodeRadius,
+        y: y + 24,
+        children: this.props.description
+      };
+      descriptionTextOptions = TheGraph.merge(config.descriptionText, descriptionTextOptions);
+      var descriptionText = factories.createGroupDescriptionText.call(this, descriptionTextOptions);
+
+      var groupContents = [
+        boxRect,
+        labelText,
+        descriptionText
+      ];
+
+      return factories.createGroupGroup.call(this, config.container, groupContents);
+
     }
   });
 

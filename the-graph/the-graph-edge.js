@@ -3,8 +3,45 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.edge = {
+    curve: TheGraph.config.nodeSize,
+    container: {
+      className: "edge"
+    },
+    backgroundPath: {
+      className: "edge-bg"
+    },
+    foregroundPath: {
+      ref: "route",
+      className: "edge-fg stroke route"
+    },
+    touchPath: {
+      className: "edge-touch",
+      ref: "touch"
+    }
+  };
+
+  var factories = TheGraph.factories.edge = {
+    createEdgeGroup: TheGraph.factories.createGroup,
+    createEdgeBackgroundPath: TheGraph.factories.createPath,
+    createEdgeForegroundPath: TheGraph.factories.createPath,
+    createEdgeTouchPath: TheGraph.factories.createPath,
+    createEdgePathArray: createEdgePathArray
+  };
+
+  function createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY) {
+      return [
+        "M",
+        sourceX, sourceY,
+        "C",
+        c1X, c1Y,
+        c2X, c2Y,
+        targetX, targetY
+      ];
+  }
+
   // Const
-  var CURVE = TheGraph.nodeSize;
+  var CURVE = config.curve;
 
   // Point along cubic bezier curve
   // See http://en.wikipedia.org/wiki/File:Bezier_3_big.gif
@@ -134,7 +171,7 @@
       var c1X, c1Y, c2X, c2Y;
       if (targetX-5 < sourceX) {
         var curveFactor = (sourceX - targetX) * CURVE / 200;
-        if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
+        if (Math.abs(targetY-sourceY) < TheGraph.config.nodeSize/2) {
           // Loopback
           c1X = sourceX + curveFactor;
           c1Y = sourceY - curveFactor;
@@ -155,40 +192,24 @@
         c2Y = targetY;
       }
 
-      var path = [
-        "M",
-        sourceX, sourceY,
-        "C",
-        c1X, c1Y,
-        c2X, c2Y,
-        targetX, targetY
-      ];
       // Make SVG path
+
+      var path = factories.createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
       path = path.join(" ");
 
+      var backgroundPathOptions = TheGraph.merge(config.backgroundPath, { d: path });
+      var backgroundPath = factories.createEdgeBackgroundPath(backgroundPathOptions);
 
-      return (
-        React.DOM.g(
-          {
-            className: "edge",  // See componentDidUpdate
-            title: this.props.label
-          },
-          React.DOM.path({
-            className: "edge-bg",
-            d: path
-          }),
-          React.DOM.path({
-            ref: "route",
-            className: "edge-fg stroke route"+this.props.route,  // See componentDidUpdate
-            d: path
-          }),
-          React.DOM.path({
-            className: "edge-touch",
-            ref: "touch",
-            d: path
-          })
-        )
-      );
+      var foregroundPathClassName = config.foregroundPath.className + this.props.route;
+      var foregroundPathOptions = TheGraph.merge(config.foregroundPath, { d: path, className: foregroundPathClassName });
+      var foregroundPath = factories.createEdgeForegroundPath(foregroundPathOptions);
+
+      var touchPathOptions = TheGraph.merge(config.touchPath, { d: path });
+      var touchPath = factories.createEdgeTouchPath(touchPathOptions);
+
+      var containerOptions = TheGraph.merge(config.container, { title: this.props.label });
+      return factories.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
+
     }
   });
 

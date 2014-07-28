@@ -20,10 +20,11 @@
       for (var i=0; i<len; i++) {
         var key = keys[i];
         var port = ports[key];
+
         var x = (this.props.isIn ? -100 : 100);
         var y = 0 - h/2 + i*TheGraph.contextPortSize + TheGraph.contextPortSize/2;
-        var ox = (port.x - TheGraph.nodeSize/2) * scale + deltaX;
-        var oy = (port.y - TheGraph.nodeSize/2) * scale + deltaY;
+        var ox = (port.x - this.props.nodeWidth/2) * scale + deltaX;
+        var oy = (port.y - this.props.nodeHeight/2) * scale + deltaY;
 
         // Make path from graph port to menu port
         var line = React.DOM.path({
