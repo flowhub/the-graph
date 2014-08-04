@@ -29,6 +29,19 @@
           command: 'node ./scripts/build-font-awesome-javascript.js '
         }
       },
+      browserify: {
+        libs: {
+          files: {
+            'build/noflo.js': ['index.js'],
+          },
+          options: {
+            transform: ['coffeeify']
+          },
+          browserifyOptions: {
+            require: 'noflo'
+          }
+        }
+      },
       jshint: {
         options: jshintOptions,
         all: {
@@ -104,10 +117,11 @@
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-lint-inline');
     this.loadNpmTasks('grunt-contrib-connect');
+    this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('test', ['jshint:all', 'inlinelint:all']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
     this.registerTask('default', ['test']);
   };
 
