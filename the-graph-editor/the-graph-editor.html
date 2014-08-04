@@ -197,7 +197,20 @@
           this.nofloGraph = this.graph;
           return;
         }
-        require('noflo').graph.loadJSON(this.graph, function(nofloGraph){
+
+        var noflo;
+        if ('noflo' in window) {
+          noflo = window.noflo;
+        }
+        if (!noflo && 'require' in window) {
+          noflo = require('noflo');
+        }
+        if (!noflo) {
+          console.warn('Missing noflo dependency! Should be built with Component.io or Browserify to require it.');
+          return;
+        }
+
+        noflo.graph.loadJSON(this.graph, function(nofloGraph){
           this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
         }.bind(this));

@@ -250,7 +250,7 @@
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
         nextProps.highlightPort !== this.props.highlightPort ||
-        nextProps.ports.dirty
+        nextProps.ports.dirty === true
       );
     },
     componentDidUpdate: function (prevProps, prevState) {
