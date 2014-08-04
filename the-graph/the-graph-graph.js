@@ -96,8 +96,6 @@
     moveGroup: function (nodes, dx, dy) {
       var graph = this.state.graph;
 
-      graph.startTransaction('movegroup');
-
       // Move each group member
       var len = nodes.length;
       for (var i=0; i<len; i++) {
@@ -118,8 +116,6 @@
           });
         }
       }
-
-      graph.endTransaction('movegroup');
     },
     getComponentInfo: function (componentName) {
       return this.props.library[componentName];
