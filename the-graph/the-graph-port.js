@@ -180,8 +180,6 @@
         labelText
       ];
 
-      var portX = this.props
-
       var containerOptions = TheGraph.merge(config.container, { title: this.props.label, transform: "translate("+this.props.x+","+this.props.y+")" });
       return factories.createPortGroup.call(this, containerOptions, portContents);
 

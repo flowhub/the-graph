@@ -3,6 +3,80 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.graph = {
+    container: {},
+    groupsGroup: {
+      className: "groups"
+    },
+    edgesGroup: {
+      className: "edges"
+    },
+    iipsGroup: {
+      className: "iips"
+    },
+    nodesGroup: {
+      className: "nodes"
+    },
+    inportsGroup: {
+      className: "ex-inports"
+    },
+    outportsGroup: {
+      className: "ex-outports"
+    },
+    node: {},
+    iip: {},
+    inportEdge: {},
+    inportNode: {},
+    outportEdge: {},
+    outportNode: {},
+    nodeGroup: {},
+    selectionGroup: {
+      key: "selectiongroup",
+      isSelectionGroup: true,
+      label: "",
+      description: ""
+    },
+    edgePreview: {
+      key: "edge-preview",
+      label: ""
+    }
+  };
+
+  var factories = TheGraph.factories.graph = {
+    createGraphContainerGroup: TheGraph.factories.createGroup,
+    createGraphGroupsGroup: TheGraph.factories.createGroup,
+    createGraphEdgesGroup: TheGraph.factories.createGroup,
+    createGraphIIPGroup: TheGraph.factories.createGroup,
+    createGraphNodesGroup: TheGraph.factories.createGroup,
+    createGraphInportsGroup: TheGraph.factories.createGroup,
+    createGraphOutportsGroup: TheGraph.factories.createGroup,
+    createGraphNode: createGraphNode,
+    createGraphEdge: createGraphEdge,
+    createGraphIIP: createGraphIIP,
+    createGraphGroup: createGraphGroup,
+    createGraphEdgePreview: createGraphEdgePreview
+  };
+
+  function createGraphNode(options) {
+    return TheGraph.Node(options);
+  }
+
+  function createGraphEdge(options) {
+    return TheGraph.Edge(options);
+  }
+
+  function createGraphIIP(options) {
+    return TheGraph.IIP(options);
+  }
+
+  function createGraphGroup(options) {
+    return TheGraph.Group(options);
+  }
+
+  function createGraphEdgePreview(options) {
+    return TheGraph.Edge(options);
+  }
+
 
   // Graph view
 
@@ -353,7 +427,8 @@
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         }
-        return TheGraph.Node({
+
+        var nodeOptions = {
           key: key,
           x: node.metadata.x,
           y: node.metadata.y,
@@ -371,7 +446,10 @@
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
           showContext: self.props.showContext,
           highlightPort: highlightPort
-        });
+        };
+
+        nodeOptions = TheGraph.merge(config.node, nodeOptions);
+        return factories.createGraphNode.call(this, nodeOptions);
       });
 
       // Edges
@@ -397,7 +475,7 @@
         var key = edge.from.node + "() " + edge.from.port.toUpperCase() + " -> " + 
           edge.to.port.toUpperCase() + " " + edge.to.node + "()";
 
-        return TheGraph.Edge({
+        var edgeOptions = {
           key: key,
           graph: graph,
           edge: edge,
@@ -412,7 +490,10 @@
           selected: (self.state.selectedEdges.indexOf(edge) !== -1),
           animated: (self.state.animatedEdges.indexOf(edge) !== -1),
           showContext: self.props.showContext
-        });
+        };
+
+        edgeOptions = TheGraph.merge(config.edge, edgeOptions);
+        return factories.createGraphEdge.call(this, edgeOptions);
       });
 
       // IIPs
@@ -428,12 +509,15 @@
         var type = typeof data;
         var label = data === true || data === false || type === "number" || type === "string" ? data : type;
 
-        return TheGraph.IIP({
+        var iipOptions = {
           graph: graph,
           label: label,
           x: tX,
           y: tY
-        });
+        };
+
+        iipOptions = TheGraph.merge(config.iip, iipOptions);
+        return factories.createGraphIIP.call(this, iipOptions);
 
       });
 
@@ -489,6 +573,7 @@
           icon: "sign-in",
           showContext: self.props.showContext
         };
+        expNode = TheGraph.merge(config.inportNode, expNode);
         // Edge view
         var expEdge = {
           key: "inport.edge."+key,
@@ -506,8 +591,9 @@
           tY: privateNode.metadata.y + privatePort.y,
           showContext: self.props.showContext
         };
-        edges.unshift(TheGraph.Edge(expEdge));
-        return TheGraph.Node(expNode);
+        expEdge = TheGraph.merge(config.inportEdge, expEdge);
+        edges.unshift(factories.createGraphEdge.call(this, expEdge));
+        return factories.createGraphNode.call(this, expNode);
       });
 
 
@@ -562,6 +648,7 @@
           icon: "sign-out",
           showContext: self.props.showContext
         };
+        expNode = TheGraph.merge(config.outportNode, expNode);
         // Edge view
         var expEdge = {
           key: "outport.edge."+key,
@@ -579,8 +666,9 @@
           tY: expNode.y + TheGraph.config.nodeHeight / 2,
           showContext: self.props.showContext
         };
-        edges.unshift(TheGraph.Edge(expEdge));
-        return TheGraph.Node(expNode);
+        expEdge = TheGraph.merge(config.outportEdge, expEdge);
+        edges.unshift(factories.createGraphEdge.call(this, expEdge));
+        return factories.createGraphNode.call(this, expNode);
       });
 
 
@@ -593,7 +681,7 @@
         if (!limits) {
           return;
         }
-        return TheGraph.Group({
+        var groupOptions = {
           key: "group."+group.name,
           graph: graph,
           item: group,
@@ -609,7 +697,9 @@
           color: group.metadata.color,
           triggerMoveGroup: self.moveGroup,
           showContext: self.props.showContext
-        });
+        };
+        groupOptions = TheGraph.merge(config.nodeGroup, groupOptions);
+        return factories.createGraphGroup.call(this, groupOptions);
       });
 
       // Selection pseudo-group
@@ -624,9 +714,7 @@
             nodes: selectedIds,
             metadata: {color:1}
           };
-          var selectionGroup = TheGraph.Group({
-            key: "selectiongroup",
-            isSelectionGroup: true,
+          var selectionGroupOptions = {
             graph: graph,
             app: self.props.app,
             item: pseudoGroup,
@@ -635,12 +723,12 @@
             maxX: limits.maxX,
             maxY: limits.maxY,
             scale: self.props.scale,
-            label: "",
-            description: "",
             color: pseudoGroup.metadata.color,
             triggerMoveGroup: self.moveGroup,
             showContext: self.props.showContext
-          });
+          };
+          selectionGroupOptions = TheGraph.merge(config.selectionGroup, selectionGroupOptions);
+          var selectionGroup = factories.createGraphGroup.call(this, selectionGroupOptions);
           groups.push(selectionGroup);
         }
       }
@@ -649,65 +737,63 @@
       // Edge preview
       var edgePreview = this.state.edgePreview;
       if (edgePreview) {
-        var edgePreviewView;
+        var edgePreviewOptions;
         if (edgePreview.from) {
           var source = graph.getNode(edgePreview.from.process);
           var sourcePort = this.getNodeOutport(graph, edgePreview.from.process, edgePreview.from.port);
-          edgePreviewView = TheGraph.Edge({
-            key: "edge-preview",
+          edgePreviewOptions = {
             sX: source.metadata.x + source.metadata.width,
             sY: source.metadata.y + sourcePort.y,
             tX: this.state.edgePreviewX,
             tY: this.state.edgePreviewY,
-            label: "",
             route: edgePreview.metadata.route
-          });
+          };
         } else {
           var target = graph.getNode(edgePreview.to.process);
           var targetPort = this.getNodeInport(graph, edgePreview.to.process, edgePreview.to.port);
-          edgePreviewView = TheGraph.Edge({
-            key: "edge-preview",
+          edgePreviewOptions = {
             sX: this.state.edgePreviewX,
             sY: this.state.edgePreviewY,
             tX: target.metadata.x,
             tY: target.metadata.y + targetPort.y,
-            label: "",
             route: edgePreview.metadata.route
-          });
+          };
         }
+        edgePreviewOptions = TheGraph.merge(config.edgePreview, edgePreviewOptions);
+        var edgePreviewView = factories.createGraphEdgePreview.call(this, edgePreviewOptions);
         edges.push(edgePreviewView);
       }
 
+      var groupsOptions = TheGraph.merge(config.groupsGroup, { children: groups });
+      var groupsGroup = factories.createGraphGroupsGroup.call(this, groupsOptions);
 
-      return React.DOM.g(
-        {
-          // className: "graph" // See componentDidUpdate
-        },
-        React.DOM.g({
-          className: "groups",
-          children: groups
-        }),
-        React.DOM.g({
-          className: "edges",
-          children: edges
-        }),
-        React.DOM.g({
-          className: "iips",
-          children: iips
-        }),
-        React.DOM.g({
-          className: "nodes", 
-          children: nodes
-        }),
-        React.DOM.g({
-          className: "ex-inports", 
-          children: inports
-        }),
-        React.DOM.g({
-          className: "ex-outports", 
-          children: outports
-        })
-      );
+      var edgesOptions = TheGraph.merge(config.edgesGroup, { children: edges });
+      var edgesGroup = factories.createGraphEdgesGroup.call(this, edgesOptions);
+
+      var iipsOptions = TheGraph.merge(config.iipsGroup, { children: iips });
+      var iipsGroup = factories.createGraphIIPGroup.call(this, iipsOptions);
+
+      var nodesOptions = TheGraph.merge(config.nodesGroup, { children: nodes });
+      var nodesGroup = factories.createGraphNodesGroup.call(this, nodesOptions);
+
+      var inportsOptions = TheGraph.merge(config.inportsGroup, { children: inports });
+      var inportsGroup = factories.createGraphInportsGroup.call(this, inportsOptions);
+
+      var outportsOptions = TheGraph.merge(config.outportsGroup, { children: outports });
+      var outportsGroup = factories.createGraphGroupsGroup.call(this, outportsOptions);
+
+      var containerContents = [
+        groupsGroup,
+        edgesGroup,
+        iipsGroup,
+        nodesGroup,
+        inportsGroup,
+        outportsGroup
+      ];
+
+      var containerOptions = TheGraph.merge(config.container, {});
+      return factories.createGraphContainerGroup.call(this, containerOptions, containerContents);
+
     }
   });  
 

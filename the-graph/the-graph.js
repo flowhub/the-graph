@@ -7,7 +7,7 @@
   // Dumb module setup
   var TheGraph = context.TheGraph = {
     nodeSize: defaultNodeSize,
-    nodeRadius: 8,
+    nodeRadius: defaultNodeRadius,
     nodeSide: 56,
     // Context menus
     contextPortSize: 36,
@@ -292,6 +292,21 @@
 
   TheGraph.factories.createPath = function(options) {
     return React.DOM.path(options);
+  };
+
+  TheGraph.factories.createCanvas = function(options) {
+    return React.DOM.canvas(options);
+  };
+
+  TheGraph.factories.createSvg = function(options, content) {
+
+    var args = [options];
+
+    if (Array.isArray(content)) {
+      args = args.concat(content);
+    }
+
+    return React.DOM.svg.apply(React.DOM.svg, args);
   };
 
 })(this);

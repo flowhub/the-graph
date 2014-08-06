@@ -3,6 +3,30 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.iip = {
+    container: {
+      className: "iip"
+    },
+    path: {
+      className: "iip-path"
+    },
+    text: {
+      className: "iip-info",
+      height: 5,
+      halign: "right"
+    }
+  };
+
+  var factories = TheGraph.factories.iip = {
+    createIIPContainer: TheGraph.factories.createGroup,
+    createIIPPath: TheGraph.factories.createPath,
+    createIIPText: createIIPText
+  };
+
+  function createIIPText(options) {
+    return TheGraph.TextBG(options);
+  }
+
   // Const
   var CURVE = 50;
 
@@ -12,6 +36,7 @@
   TheGraph.IIP = React.createClass({
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
+
       return (
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
@@ -34,26 +59,16 @@
         label = label.slice(0, 9) + "...";
       }
 
-      return (
-        React.DOM.g(
-          {
-            className: "iip",
-            title: this.props.label
-          },
-          React.DOM.path({
-            className: "iip-path",
-            d: path
-          }),
-          TheGraph.TextBG({
-            className: "iip-info",
-            height: 5,
-            halign: "right",
-            x: x - 10,
-            y: y,
-            text: label
-          })
-        )
-      );
+      var pathOptions = TheGraph.merge(config.path, {d: path});
+      var path = factories.createIIPPath.call(this, pathOptions);
+
+      var textOptions = TheGraph.merge(config.text, {x: x - 10, y: y, text: label});
+      var text = factories.createIIPText.call(this, textOptions);
+
+      var containerContents = [path, text];
+
+      var containerOptions = TheGraph.merge(config.container, {title: this.props.label});
+      return factories.createIIPContainer.call(this, containerOptions, containerContents);
     }
   });
 

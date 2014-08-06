@@ -3,6 +3,65 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.app = {
+    container: {
+      className: "the-graph-app",
+      name: "app"
+    },
+    canvas: {
+      ref: "canvas",
+      className: "app-canvas"
+    },
+    svg: {
+      className: "app-svg"
+    },
+    svgGroup: {
+      className: "view"
+    },
+    graph: {
+      ref: "graph"
+    },
+    tooltip: {
+      ref: "tooltip"
+    },
+    modal: {
+      className: "context"
+    }
+  };
+
+  var factories = TheGraph.factories.app = {
+    createAppContainer: createAppContainer,
+    createAppCanvas: TheGraph.factories.createCanvas,
+    createAppSvg: TheGraph.factories.createSvg,
+    createAppSvgGroup: TheGraph.factories.createGroup,
+    createAppGraph: createAppGraph,
+    createAppTooltip: createAppTooltip,
+    createAppModalGroup: TheGraph.factories.createGroup,
+    createAppModalBackground: createAppModalBackground
+  };
+
+  // No need to promote DIV creation to TheGraph.js.
+  function createAppContainer(options, content) {
+    var args = [options];
+
+    if (Array.isArray(content)) {
+      args = args.concat(content);
+    }
+
+    return React.DOM.div.apply(React.DOM.div, args);
+  }
+
+  function createAppGraph(options) {
+    return TheGraph.Graph(options);
+  }
+
+  function createAppTooltip(options) {
+    return TheGraph.Tooltip(options);
+  }
+
+  function createAppModalBackground(options) {
+    return TheGraph.ModalBG(options);
+  }
 
   TheGraph.App = React.createClass({
     minZoom: 0.15,
@@ -349,71 +408,69 @@
         }
       }
       if (contextMenu) {
+
+        var modalBGOptions ={
+          width: this.state.width,
+          height: this.state.height,
+          triggerHideContext: this.hideContext,
+          children: contextMenu
+        };
+
         contextModal = [ 
-          TheGraph.ModalBG({
-            width: this.state.width,
-            height: this.state.height,
-            triggerHideContext: this.hideContext,
-            children: contextMenu
-          })
+          factories.createAppModalBackground(modalBGOptions)
         ];
         this.menuShown = true;
       } else {
         this.menuShown = false;
       }
 
-      return React.DOM.div(
-        {
-          className: "the-graph-app " + scaleClass,
-          name:"app", 
-          style: {
-            width: this.state.width,
-            height: this.state.height
-          }
-        },
-        React.DOM.canvas({
-          ref: "canvas",
-          className: "app-canvas",
-          width: this.state.width, 
-          height: this.state.height
-        }),
-        React.DOM.svg(
-          {
-            className: "app-svg",
-            width: this.state.width, 
-            height: this.state.height
-          },
-          React.DOM.g(
-            {
-              className: "view",
-              transform: transform
-            },
-            TheGraph.Graph({
-              ref: "graph",
-              graph: this.props.graph,
-              scale: this.state.scale,
-              app: this,
-              library: this.props.library,
-              onNodeSelection: this.props.onNodeSelection,
-              onEdgeSelection: this.props.onEdgeSelection,
-              showContext: this.showContext
-            })
-          ),
-          TheGraph.Tooltip({
-            ref: "tooltip",
-            x: this.state.tooltipX,
-            y: this.state.tooltipY,
-            visible: this.state.tooltipVisible,
-            label: this.state.tooltip
-          }),
-          React.DOM.g(
-            {
-              className: "context",
-              children: contextModal
-            }
-          )
-        )
-      );
+      var graphElementOptions = {
+        graph: this.props.graph,
+        scale: this.state.scale,
+        app: this,
+        library: this.props.library,
+        onNodeSelection: this.props.onNodeSelection,
+        onEdgeSelection: this.props.onEdgeSelection,
+        showContext: this.showContext
+      };
+      graphElementOptions = TheGraph.merge(config.graph, graphElementOptions);
+      var graphElement = factories.createAppGraph.call(this, graphElementOptions);
+
+      var svgGroupOptions = TheGraph.merge(config.svgGroup, { transform: transform });
+      var svgGroup = factories.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
+
+      var tooltipOptions = {
+        x: this.state.tooltipX,
+        y: this.state.tooltipY,
+        visible: this.state.tooltipVisible,
+        label: this.state.tooltip
+      };
+
+      tooltipOptions = TheGraph.merge(config.tooltip, tooltipOptions);
+      var tooltip = factories.createAppTooltip.call(this, tooltipOptions);
+
+      var modalGroupOptions = TheGraph.merge(config.modal, { children: contextModal });
+      var modalGroup = factories.createAppModalGroup.call(this, modalGroupOptions);
+
+      var svgContents = [
+        svgGroup,
+        tooltip,
+        modalGroup
+      ];
+
+      var svgOptions = TheGraph.merge(config.svg, { width: this.state.width, height: this.state.height });
+      var svg = factories.createAppSvg.call(this, svgOptions, svgContents);
+
+      var canvasOptions = TheGraph.merge(config.canvas, { width: this.state.width, height: this.state.height });
+      var canvas = factories.createAppCanvas.call(this, canvasOptions);
+
+      var appContents = [
+        canvas,
+        svg
+      ];
+      var containerOptions = TheGraph.merge(config.container, { style: { width: this.state.width, height: this.state.height } });
+      containerOptions.className += " " + scaleClass;
+      return factories.createAppContainer.call(this, containerOptions, appContents);
     }
   });
 
