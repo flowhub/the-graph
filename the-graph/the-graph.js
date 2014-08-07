@@ -6,6 +6,7 @@
 
   // Dumb module setup
   var TheGraph = context.TheGraph = {
+    // nodeSize and nodeRadius are deprecated, use TheGraph.config.(nodeSize/nodeRadius)
     nodeSize: defaultNodeSize,
     nodeRadius: defaultNodeRadius,
     nodeSide: 56,

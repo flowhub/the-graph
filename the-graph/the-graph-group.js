@@ -167,7 +167,7 @@
       var labelText = factories.createGroupLabelText.call(this, labelTextOptions);
 
       var descriptionTextOptions = {
-        x: x + TheGraph.nodeRadius,
+        x: x + TheGraph.config.nodeRadius,
         y: y + 24,
         children: this.props.description
       };

@@ -3,6 +3,31 @@
 
   var TheGraph = context.TheGraph;
 
+  var config = TheGraph.config.nodeMenuPorts = {
+    container: {},
+    linesGroup: {
+      className: "context-ports-lines"
+    },
+    portsGroup: {
+      className: "context-ports-ports"
+    },
+    portPath: {
+      className: "context-port-path"
+    },
+    nodeMenuPort: {}
+  };
+
+  var factories = TheGraph.factories.menuPorts = {
+    createNodeMenuPortsGroup: TheGraph.factories.createGroup,
+    createNodeMenuPortsLinesGroup: TheGraph.factories.createGroup,
+    createNodeMenuPortsPortsGroup: TheGraph.factories.createGroup,
+    createNodeMenuPortsPortPath: TheGraph.factories.createPath,
+    createNodeMenuPortsNodeMenuPort: createNodeMenuPort
+  };
+
+  function createNodeMenuPort(options) {
+    return TheGraph.NodeMenuPort(options);
+  }
 
   TheGraph.NodeMenuPorts = React.createClass({
     render: function() {
@@ -27,12 +52,10 @@
         var oy = (port.y - this.props.nodeHeight/2) * scale + deltaY;
 
         // Make path from graph port to menu port
-        var line = React.DOM.path({
-          className: "context-port-path",
-          d: [ "M", ox, oy, "L", x, y ].join(" ")
-        });
+        var lineOptions = TheGraph.merge(config.portPath, { d: [ "M", ox, oy, "L", x, y ].join(" ") });
+        var line = factories.createNodeMenuPortsPortPath.call(this, lineOptions);
 
-        var portView = TheGraph.NodeMenuPort({
+        var portViewOptions = {
           label: key,
           port: port,
           processKey: this.props.processKey,
@@ -41,7 +64,9 @@
           y: y,
           route: port.route,
           highlightPort: this.props.highlightPort
-        });
+        };
+        portViewOptions = TheGraph.merge(config.nodeMenuPort, portViewOptions);
+        var portView = factories.createNodeMenuPortsNodeMenuPort.call(this, portViewOptions);
 
         lines.push(line);
         portViews.push(portView);
@@ -52,22 +77,19 @@
         transform = "translate("+this.props.translateX+","+this.props.translateY+")";
       }
 
-      return (
-        React.DOM.g(
-          {
-            className: "context-ports context-ports-"+(this.props.isIn ? "in" : "out"),
-            transform: transform
-          },
-          React.DOM.g({
-            className: "context-ports-lines",
-            children: lines
-          }),
-          React.DOM.g({
-            className: "context-ports-ports",
-            children: portViews
-          })
-        )
-      );
+      var linesGroupOptions = TheGraph.merge(config.linesGroup, { children: lines });
+      var linesGroup = factories.createNodeMenuPortsLinesGroup.call(this, linesGroupOptions);
+
+      var portsGroupOptions = TheGraph.merge(config.portsGroup, { children: portViews });
+      var portsGroup = factories.createNodeMenuPortsGroup.call(this, portsGroupOptions);
+
+      var containerContents = [linesGroup, portsGroup];
+      var containerOptions = {
+        className: "context-ports context-ports-"+(this.props.isIn ? "in" : "out"),
+        transform: transform
+      };
+      containerOptions = TheGraph.merge(config.container, containerOptions);
+      return factories.createNodeMenuPortsGroup.call(this, containerOptions, containerContents);
     }
   });
 

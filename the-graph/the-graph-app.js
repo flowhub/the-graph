@@ -359,7 +359,7 @@
 
       // Background grid pattern
       var scale = this.state.scale;
-      var g = TheGraph.nodeSize * scale;
+      var g = TheGraph.config.nodeSize * scale;
 
       var dx = this.state.x % g;
       var dy = this.state.y % g;
