@@ -96,7 +96,8 @@
             onEdgeSelection: this.onEdgeSelection.bind(this),
             onNodeSelection: this.onNodeSelection.bind(this),
             onPanScale: this.onPanScale.bind(this),
-            getMenuDef: this.getMenuDef
+            getMenuDef: this.getMenuDef,
+            processErrors: this.processErrors,
           }),
           this.$.svgcontainer
         );
@@ -420,7 +421,10 @@
       toJSON: function () {
         if (!this.graph) { return {}; }
         return this.graph.toJSON();
-      }
+      },
+      setProcessErrors: function (errors) {
+        this.graphView.setProcessErrors(errors);
+      },
     });
 
   })();

@@ -1,19 +1,20 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges animatedEdges onContextMenu" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges animatedEdges onContextMenu processerror clearprocesserrors" touch-action="none">
   <template>
-    <the-graph id="graph" 
-      name="{{ graph.properties.name }}" 
-      graph="{{nofloGraph}}" 
-      menus="{{menus}}" 
-      width="{{width}}" height="{{height}}" 
-      pan="{{pan}}" scale="{{scale}}" 
-      autolayout="{{autolayout}}" 
-      theme="{{theme}}" 
-      selectedNodes="{{selectedNodes}}" 
-      selectedEdges="{{selectedEdges}}" 
-      animatedEdges="{{animatedEdges}}" 
-      getMenuDef="{{getMenuDef}}">
+    <the-graph id="graph"
+      name="{{ graph.properties.name }}"
+      graph="{{nofloGraph}}"
+      menus="{{menus}}"
+      width="{{width}}" height="{{height}}"
+      pan="{{pan}}" scale="{{scale}}"
+      autolayout="{{autolayout}}"
+      theme="{{theme}}"
+      selectedNodes="{{selectedNodes}}"
+      selectedEdges="{{selectedEdges}}"
+      animatedEdges="{{animatedEdges}}"
+      getMenuDef="{{getMenuDef}}"
+      processErrors="{{processErrors}}">
     </the-graph>
   </template>
   <script>
@@ -35,6 +36,8 @@
       selectedNodes: [],
       selectedEdges: [],
       animatedEdges: [],
+      processerror: null,
+      clearprocesserrors: null,
       created: function () {
         // Default pan
         this.pan = [0,0];
@@ -337,7 +340,17 @@
       },
       toJSON: function () {
         return this.nofloGraph.toJSON();
-      }
+      },
+      processErrors: {},
+      processerrorChanged: function() {
+          this.processErrors[this.processerror] = true;
+          this.processerror = null;
+          this.$.graph.setProcessErrors(this.processErrors);
+      },
+      clearprocesserrorsChanged: function() {
+          this.processErrors = {};
+          this.$.graph.setProcessErrors(this.processErrors);
+      },
     });
 
   })();

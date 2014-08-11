@@ -250,12 +250,14 @@
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
         nextProps.highlightPort !== this.props.highlightPort ||
-        nextProps.ports.dirty === true
+        nextProps.ports.dirty === true ||
+        nextProps.error !== this.props.error
       );
     },
     componentDidUpdate: function (prevProps, prevState) {
       // HACK to change SVG class https://github.com/facebook/react/issues/1139
       var groupClass = "node drag"+(this.props.selected ? " selected" : "");
+      groupClass += (this.props.error ? " error" : "");
       this.getDOMNode().setAttribute("class", groupClass);
     },
     render: function() {
