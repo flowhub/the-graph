@@ -57,8 +57,33 @@ svg {
   stroke: none;
 }
 
-.node:hover 
-  .node-rect 
+@-webkit-keyframes error {
+  0% { file: var-node; }
+  100% { file: var-node-error; }
+}
+@-moz-keyframes error {
+  0% { file: var-node; }
+  100% { file: var-node-error; }
+}
+@-o-keyframes error {
+  0% { file: var-node; }
+  100% { file: var-node-error; }
+}
+@keyframes error {
+  0% { file: var-node; }
+  100% { file: var-node-error; }
+}
+
+.node.error .node-rect {
+  -webkit-animation: error 1s linear infinite alternate;
+     -moz-animation: error 1s linear infinite alternate;
+       -o-animation: error 1s linear infinite alternate;
+          animation: error 1s linear infinite alternate;
+  stroke: none;
+}
+
+.node:hover
+  .node-rect
     fill: var-node-hover
   .node-border
     stroke: var-node-hover-border

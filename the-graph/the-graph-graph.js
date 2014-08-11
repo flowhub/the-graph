@@ -16,7 +16,8 @@
         edgePreviewY: 0,
         selectedNodes: [],
         selectedEdges: [],
-        animatedEdges: []
+        animatedEdges: [],
+        processErrors: {},
       };
     },
     componentDidMount: function () {
@@ -273,6 +274,12 @@
       });
       this.markDirty();
     },
+    setProcessErrors: function (errors) {
+      this.setState({
+        processErrors: errors
+      });
+      this.markDirty();
+    },
     updatedIcons: {},
     updateIcon: function (nodeId, icon) {
       this.updatedIcons[nodeId] = icon;
@@ -364,7 +371,8 @@
           onNodeSelection: self.props.onNodeSelection,
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
           showContext: self.props.showContext,
-          highlightPort: highlightPort
+          highlightPort: highlightPort,
+          error: (self.state.processErrors[node.id] ? true : false),
         });
       });
 
