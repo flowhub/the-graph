@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges animatedEdges getMenuDef pan scale">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
@@ -40,6 +40,7 @@
       snap: 36,
       theme: "dark",
       selectedNodes: [],
+      errorNodes: [],
       selectedEdges: [],
       animatedEdges: [],
       autolayouter: null,
@@ -96,8 +97,7 @@
             onEdgeSelection: this.onEdgeSelection.bind(this),
             onNodeSelection: this.onNodeSelection.bind(this),
             onPanScale: this.onPanScale.bind(this),
-            getMenuDef: this.getMenuDef,
-            processErrors: this.processErrors,
+            getMenuDef: this.getMenuDef
           }),
           this.$.svgcontainer
         );
@@ -159,6 +159,10 @@
       selectedNodesChanged: function () {
         if (!this.graphView) { return; }
         this.graphView.setSelectedNodes(this.selectedNodes);
+      },
+      errorNodesChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setErrorNodes(this.errorNodes);
       },
       selectedEdgesChanged: function () {
         if (!this.graphView) { return; }
@@ -421,10 +425,7 @@
       toJSON: function () {
         if (!this.graph) { return {}; }
         return this.graph.toJSON();
-      },
-      setProcessErrors: function (errors) {
-        this.graphView.setProcessErrors(errors);
-      },
+      }
     });
 
   })();

@@ -249,9 +249,9 @@
         nextProps.sublabel !== this.props.sublabel ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
+        nextProps.error !== this.props.error ||
         nextProps.highlightPort !== this.props.highlightPort ||
-        nextProps.ports.dirty === true ||
-        nextProps.error !== this.props.error
+        nextProps.ports.dirty === true
       );
     },
     componentDidUpdate: function (prevProps, prevState) {

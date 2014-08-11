@@ -138,7 +138,7 @@
             editor.updateIcon(randomNodeId, randomIcon);
           }, 1000);
 
-          // Simulate un/triggering animations
+          // Simulate un/triggering wire animations
           var animatingEdge1 = null;
           var animatingEdge2 = null;
           window.setInterval(function () {
@@ -153,6 +153,17 @@
             animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
             editor.animateEdge(animatingEdge1);
           }, 2014);
+
+          // Simulate un/triggering errors
+          var makeRandomError = function () {
+            if (!editor.nofloGraph) { return; }
+            var nodes = editor.nofloGraph.nodes;
+            var errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+            editor.clearErrorNodes();
+            editor.addErrorNode(errorNodeId);
+          };
+          window.setInterval(makeRandomError, 3551);
+          makeRandomError();
 
           // Autolayout button
           document.getElementById("autolayout").addEventListener("click", function () {

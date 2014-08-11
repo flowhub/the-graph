@@ -15,9 +15,9 @@
         edgePreviewX: 0,
         edgePreviewY: 0,
         selectedNodes: [],
+        errorNodes: [],
         selectedEdges: [],
-        animatedEdges: [],
-        processErrors: {},
+        animatedEdges: []
       };
     },
     componentDidMount: function () {
@@ -262,6 +262,12 @@
       });
       this.markDirty();
     },
+    setErrorNodes: function (errors) {
+      this.setState({
+        errorNodes: errors
+      });
+      this.markDirty();
+    },
     setSelectedEdges: function (edges) {
       this.setState({
         selectedEdges: edges
@@ -271,12 +277,6 @@
     setAnimatedEdges: function (edges) {
       this.setState({
         animatedEdges: edges
-      });
-      this.markDirty();
-    },
-    setProcessErrors: function (errors) {
-      this.setState({
-        processErrors: errors
       });
       this.markDirty();
     },
@@ -356,6 +356,9 @@
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         }
+        if (self.state.errorNodes.indexOf(node) !== -1) {
+          console.log(key);
+        }
         return TheGraph.Node({
           key: key,
           x: node.metadata.x,
@@ -370,11 +373,12 @@
           ports: self.getPorts(key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
+          error: (self.state.errorNodes.indexOf(key) !== -1),
           showContext: self.props.showContext,
-          highlightPort: highlightPort,
-          error: (self.state.processErrors[node.id] ? true : false),
+          highlightPort: highlightPort
         });
       });
+      
 
       // Edges
       var edges = graph.edges.map(function (edge) {
