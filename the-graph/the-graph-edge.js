@@ -115,15 +115,6 @@
     shouldShowTooltip: function () {
       return true;
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "edge"+
-        (this.props.selected ? " selected" : "")+
-        (this.props.animated ? " animated" : "");
-      this.getDOMNode().setAttribute("class", groupClass);
-      var fgClass = "edge-fg stroke route"+this.props.route;
-      this.refs.route.getDOMNode().setAttribute("class", fgClass);
-    },
     render: function () {
       var sourceX = this.props.sX;
       var sourceY = this.props.sY;
@@ -166,11 +157,12 @@
       // Make SVG path
       path = path.join(" ");
 
-
       return (
         React.DOM.g(
           {
-            className: "edge",  // See componentDidUpdate
+            className: "edge"+
+              (this.props.selected ? " selected" : "")+
+              (this.props.animated ? " animated" : ""),
             title: this.props.label
           },
           React.DOM.path({
@@ -179,7 +171,7 @@
           }),
           React.DOM.path({
             ref: "route",
-            className: "edge-fg stroke route"+this.props.route,  // See componentDidUpdate
+            className: "edge-fg stroke route"+this.props.route,
             d: path
           }),
           React.DOM.path({

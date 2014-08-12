@@ -24,9 +24,6 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
-
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      this.componentDidUpdate();
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -112,18 +109,11 @@
 
       this.props.graph.endTransaction('movegroup');
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "group-box color" + (this.props.color ? this.props.color : 0);
-      if (this.props.isSelectionGroup) { 
-        c += " selection drag";
-      }
-      this.refs.box.getDOMNode().setAttribute("class", c);
-    },
     render: function() {
       var x = this.props.minX - TheGraph.nodeSize/2;
       var y = this.props.minY - TheGraph.nodeSize/2;
       var color = (this.props.color ? this.props.color : 0);
+      var selection = (this.props.isSelectionGroup ? ' selection drag' : '0');
       return (
         React.DOM.g(
           {
@@ -132,7 +122,7 @@
           },
           React.DOM.rect({
             ref: "box",
-            // className: "group-box color"+color, // See componentDidUpdate
+            className: "group-box color"+color + selection,
             x: x,
             y: y,
             rx: TheGraph.nodeRadius,
