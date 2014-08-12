@@ -307,21 +307,13 @@
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
     },
-    componentDidUpdate: function () {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var d = this.getDOMNode();
-      var c = "graph";
-      if (this.state.selectedNodes.length > 0 || this.state.selectedEdges.length > 0) {
-        c += " selection";
-      }
-      d.setAttribute("class", c);
-    },
     render: function() {
       this.dirty = false;
 
       var self = this;
       var graph = this.state.graph;
       var library = this.props.library;
+      var selectedIds = [];
 
       // Reset ports if library has changed
       if (this.libraryDirty) {
@@ -356,8 +348,9 @@
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         }
-        if (self.state.errorNodes.indexOf(node) !== -1) {
-          console.log(key);
+        var selected = (self.state.selectedNodes[key] === true);
+        if (selected) {
+          selectedIds.push(key);
         }
         return TheGraph.Node({
           key: key,
@@ -372,8 +365,8 @@
           icon: icon,
           ports: self.getPorts(key, node.component),
           onNodeSelection: self.props.onNodeSelection,
-          selected: (self.state.selectedNodes.indexOf(node) !== -1),
-          error: (self.state.errorNodes.indexOf(key) !== -1),
+          selected: selected,
+          error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
           highlightPort: highlightPort
         });
@@ -611,10 +604,7 @@
       });
 
       // Selection pseudo-group
-      if (this.state.selectedNodes.length >= 2) {
-        var selectedIds = this.state.selectedNodes.map(function (node) {
-          return node.id;
-        });
+      if (selectedIds.length >= 2) {
         var limits = TheGraph.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
@@ -676,10 +666,11 @@
         edges.push(edgePreviewView);
       }
 
+      var selectedClass = (selectedIds.length>0) ? ' selection' : '';
 
       return React.DOM.g(
         {
-          // className: "graph" // See componentDidUpdate
+          className: "graph" + selectedClass
         },
         React.DOM.g({
           className: "groups",

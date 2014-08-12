@@ -39,8 +39,8 @@
       grid: 72,
       snap: 36,
       theme: "dark",
-      selectedNodes: [],
-      errorNodes: [],
+      selectedNodes: {},
+      errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
       autolayouter: null,
@@ -134,30 +134,25 @@
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          if (this.selectedNodes.length>0) {
-            this.selectedNodes = [];
-          }
+          this.selectedNodes = {};
           this.fire('nodes', this.selectedNodes);
           return;
         }
         if (toggle) {
-          var index = this.selectedNodes.indexOf(item);
-          var isSelected = (index !== -1);
-          var shallowClone = this.selectedNodes.slice();
-          if (isSelected) {
-            shallowClone.splice(index, 1);
-            this.selectedNodes = shallowClone;
-          } else {
-            shallowClone.push(item);
-            this.selectedNodes = shallowClone;
-          }
+          var isSelected = (this.selectedNodes[itemKey] === true);
+          this.selectedNodes[itemKey] = !isSelected;
+          // Object observer doesn't catch this?
+          this.selectedNodesChanged(); 
         } else {
-          this.selectedNodes = [item];
+          var newSelectedHash = {};
+          newSelectedHash[itemKey] = true;
+          this.selectedNodes = newSelectedHash;
         }
         this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
         if (!this.graphView) { return; }
+        console.log("selectedNodesChanged");
         this.graphView.setSelectedNodes(this.selectedNodes);
       },
       errorNodesChanged: function () {

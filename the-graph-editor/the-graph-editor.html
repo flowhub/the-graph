@@ -33,8 +33,8 @@
       menus: null,
       autolayout: false,
       theme: "dark",
-      selectedNodes: [],
-      errorNodes: [],
+      selectedNodes: {},
+      errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
       processerror: null,
@@ -333,6 +333,28 @@
           this.animatedEdges.splice(index, 1);
         }
       },
+      addErrorNode: function (id) {
+        this.errorNodes[id] = true;
+        this.updateErrorNodes();
+      },
+      removeErrorNode: function (id) {
+        this.errorNodes[id] = false;
+        this.updateErrorNodes();
+      },
+      updateErrorNodes: function () {
+        this.$.graph.errorNodesChanged();
+      },
+      addSelectedNode: function (id) {
+        this.selectedNodes[id] = true;
+        this.updateSelectedNodes();
+      },
+      removeSelectedNode: function (id) {
+        this.selectedNodes[id] = false;
+        this.updateSelectedNodes();
+      },
+      updateSelectedNodes: function () {
+        this.$.graph.selectedNodesChanged();
+      },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);
       },
@@ -341,14 +363,6 @@
       },
       toJSON: function () {
         return this.nofloGraph.toJSON();
-      },
-      addErrorNode: function (id) {
-        if (this.errorNodes.indexOf(id) === -1) {
-          this.errorNodes.push(id);
-        }
-      },
-      clearErrorNodes: function() {
-        this.errorNodes = [];
       }
     });
 
