@@ -33,7 +33,7 @@
       menus: null,
       autolayout: false,
       theme: "dark",
-      selectedNodes: {},
+      selectedNodes: [],
       errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
@@ -343,17 +343,6 @@
       },
       updateErrorNodes: function () {
         this.$.graph.errorNodesChanged();
-      },
-      addSelectedNode: function (id) {
-        this.selectedNodes[id] = true;
-        this.updateSelectedNodes();
-      },
-      removeSelectedNode: function (id) {
-        this.selectedNodes[id] = false;
-        this.updateSelectedNodes();
-      },
-      updateSelectedNodes: function () {
-        this.$.graph.selectedNodesChanged();
       },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);
