@@ -267,7 +267,7 @@
     }
 
     return dest;
-  }
+  };
 
   TheGraph.factories.createGroup = function(options, content) {
     var args = [options];

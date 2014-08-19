@@ -60,12 +60,12 @@
       }
 
       var pathOptions = TheGraph.merge(config.path, {d: path});
-      var path = factories.createIIPPath.call(this, pathOptions);
+      var iipPath = factories.createIIPPath.call(this, pathOptions);
 
       var textOptions = TheGraph.merge(config.text, {x: x - 10, y: y, text: label});
       var text = factories.createIIPText.call(this, textOptions);
 
-      var containerContents = [path, text];
+      var containerContents = [iipPath, text];
 
       var containerOptions = TheGraph.merge(config.container, {title: this.props.label});
       return factories.createIIPContainer.call(this, containerOptions, containerContents);

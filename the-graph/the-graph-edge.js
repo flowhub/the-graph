@@ -199,11 +199,11 @@
       var touchPath = factories.createEdgeTouchPath(touchPathOptions);
 
       var containerOptions = {
-            className: "edge"+
-              (this.props.selected ? " selected" : "")+
-              (this.props.animated ? " animated" : ""),
-            title: this.props.label
-          }
+        className: "edge"+
+          (this.props.selected ? " selected" : "")+
+          (this.props.animated ? " animated" : ""),
+        title: this.props.label
+      };
 
       containerOptions = TheGraph.merge(config.container, containerOptions);
       return factories.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);

@@ -75,6 +75,7 @@
   };
 
   function createMenuSlice(options) {
+    /*jshint validthis:true */
     var direction = options.direction;
     var arcPathOptions = TheGraph.merge(config.arcPath, { d: TheGraph.arcs[direction] });
     var children = [
