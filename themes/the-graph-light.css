@@ -37,6 +37,40 @@
   fill: rgba(230,238,240,0.94);
   stroke: none;
 }
+@-webkit-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@-moz-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@-o-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+.the-graph-light .node.error .node-rect {
+  -webkit-animation: error 1s linear infinite alternate;
+  -moz-animation: error 1s linear infinite alternate;
+  -o-animation: error 1s linear infinite alternate;
+  animation: error 1s linear infinite alternate;
+  stroke: none;
+}
 .the-graph-light .node:hover .node-rect {
   fill: rgba(230,238,240,0.97);
 }
@@ -670,6 +704,51 @@
 }
 .the-graph-light .fill.route10 {
   fill: #cc006d;
+}
+@-moz-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@-webkit-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@-o-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@-ms-keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
+}
+@keyframes error {
+  0% {
+    file: rgba(230,238,240,0.94);
+  }
+
+  100% {
+    file: rgba(0,0,0,0.94);
+  }
 }
 @-moz-keyframes heartbeats {
   0% {

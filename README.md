@@ -13,9 +13,11 @@ The project is the graph editing tool in [NoFlo UI](https://github.com/noflo/nof
 
 ## Installation
 
-Get these dependencies using [Bower](http://bower.io/):
+Get dependencies using [Bower](http://bower.io/) and Browserify (via npm and grunt):
 
-    $ bower install
+    bower install
+    npm install
+    grunt build
 
 ## Running
 

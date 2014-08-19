@@ -1,9 +1,10 @@
 {
   "name": "the-graph",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "polymer components for flow-based programming graph editing",
   "main": "the-graph-editor/index.html",
   "dependencies": {
+    "noflo": "^0.5.7"
   },
   "devDependencies": {
     "stylus": "~0.42.3",
@@ -12,7 +13,9 @@
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-lint-inline": "~0.3.1",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-connect": "~0.5.0"
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-browserify": "^2.1.4",
+    "coffeeify": "^0.7.0"
   },
   "scripts": {
     "test": "grunt test"
