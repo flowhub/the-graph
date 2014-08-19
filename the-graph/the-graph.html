@@ -39,7 +39,8 @@
       grid: 72,
       snap: 36,
       theme: "dark",
-      selectedNodes: {},
+      selectedNodes: [],
+      selectedNodesHash: {},
       errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
@@ -134,26 +135,30 @@
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          this.selectedNodes = {};
-          this.fire('nodes', this.selectedNodes);
-          return;
-        }
-        if (toggle) {
-          var isSelected = (this.selectedNodes[itemKey] === true);
-          this.selectedNodes[itemKey] = !isSelected;
-          // Object observer doesn't catch this?
-          this.selectedNodesChanged(); 
+          this.selectedNodes = [];
+        } else if (toggle) {
+          var index = this.selectedNodes.indexOf(item);
+          var isSelected = (index !== -1);
+          if (isSelected) {
+            this.selectedNodes.splice(index, 1);
+          } else {
+            this.selectedNodes.push(item);
+          }
         } else {
-          var newSelectedHash = {};
-          newSelectedHash[itemKey] = true;
-          this.selectedNodes = newSelectedHash;
+          this.selectedNodes = [item];
         }
         this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
+        var selectedNodesHash = {};
+        for (var i=0, len = this.selectedNodes.length; i<len; i++) {
+          selectedNodesHash[this.selectedNodes[i].id] = true;
+        }
+        this.selectedNodesHash = selectedNodesHash;
+      },
+      selectedNodesHashChanged: function () {
         if (!this.graphView) { return; }
-        console.log("selectedNodesChanged");
-        this.graphView.setSelectedNodes(this.selectedNodes);
+        this.graphView.setSelectedNodes(this.selectedNodesHash);
       },
       errorNodesChanged: function () {
         if (!this.graphView) { return; }
