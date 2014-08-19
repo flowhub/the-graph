@@ -152,15 +152,6 @@
     shouldShowTooltip: function () {
       return true;
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "edge"+
-        (this.props.selected ? " selected" : "")+
-        (this.props.animated ? " animated" : "");
-      this.getDOMNode().setAttribute("class", groupClass);
-      var fgClass = "edge-fg stroke route"+this.props.route;
-      this.refs.route.getDOMNode().setAttribute("class", fgClass);
-    },
     render: function () {
       var sourceX = this.props.sX;
       var sourceY = this.props.sY;
@@ -207,7 +198,14 @@
       var touchPathOptions = TheGraph.merge(config.touchPath, { d: path });
       var touchPath = factories.createEdgeTouchPath(touchPathOptions);
 
-      var containerOptions = TheGraph.merge(config.container, { title: this.props.label });
+      var containerOptions = {
+            className: "edge"+
+              (this.props.selected ? " selected" : "")+
+              (this.props.animated ? " animated" : ""),
+            title: this.props.label
+          }
+
+      containerOptions = TheGraph.merge(config.container, containerOptions);
       return factories.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
 
     }

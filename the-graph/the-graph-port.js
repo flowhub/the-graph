@@ -50,9 +50,6 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
-
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      this.componentDidUpdate();
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -134,11 +131,6 @@
       });
       event.relatedTarget.dispatchEvent(dropEvent);      
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "port-circle-small fill route"+this.props.route;
-      this.refs.circleSmall.getDOMNode().setAttribute("class", c);
-    },
     render: function() {
       var style;
       if (this.props.label.length > 7) {
@@ -162,7 +154,12 @@
       var arcOptions = TheGraph.merge(config.arc, { d: (this.props.isIn ? inArc : outArc) });
       var arc = factories.createPortArc.call(this, arcOptions);
 
-      var innerCircleOptions = TheGraph.merge(config.innerCircle, { r: r - 1.5 });
+      var innerCircleOptions = {
+        className: "port-circle-small fill route"+this.props.route,
+        r: r - 1.5
+      };
+      
+      innerCircleOptions = TheGraph.merge(config.innerCircle, innerCircleOptions);
       var innerCircle = factories.createPortInnerCircle.call(this, innerCircleOptions);
 
       var labelTextOptions = {

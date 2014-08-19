@@ -6,9 +6,7 @@
   // Initialize namespace for configuration and factory functions.
   var config = TheGraph.config.node = {
     snap: TheGraph.config.nodeSize,
-    container: {
-      className: "node drag"
-    },
+    container: {},
     background: {
       className: "node-bg"
     },
@@ -335,12 +333,6 @@
         nextProps.ports.dirty === true
       );
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "node drag"+(this.props.selected ? " selected" : "");
-      groupClass += (this.props.error ? " error" : "");
-      this.getDOMNode().setAttribute("class", groupClass);
-    },
     render: function() {
       if (this.props.ports.dirty) {
         // This tag is set when an edge or iip changes port colors
@@ -482,6 +474,9 @@
       ];
 
       var nodeOptions = {
+        className: "node drag"+
+          (this.props.selected ? " selected" : "")+
+          (this.props.error ? " error" : ""),
         name: this.props.key,
         key: this.props.key,
         title: label,

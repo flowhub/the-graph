@@ -48,9 +48,6 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
-
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      this.componentDidUpdate();
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -136,24 +133,17 @@
 
       this.props.graph.endTransaction('movegroup');
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "group-box color" + (this.props.color ? this.props.color : 0);
-      if (this.props.isSelectionGroup) { 
-        c += " selection drag";
-      }
-      this.refs.box.getDOMNode().setAttribute("class", c);
-    },
     render: function() {
       var x = this.props.minX - TheGraph.config.nodeWidth / 2;
       var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
-
+      var selection = (this.props.isSelectionGroup ? ' selection drag' : '0');
       var boxRectOptions = {
         x: x,
         y: y,
         width: this.props.maxX - this.props.minX + TheGraph.config.nodeWidth * 2,
-        height: this.props.maxY - this.props.minY + TheGraph.config.nodeHeight * 2
+        height: this.props.maxY - this.props.minY + TheGraph.config.nodeHeight * 2,
+        className: "group-box color"+color + selection
       };
       boxRectOptions = TheGraph.merge(config.boxRect, boxRectOptions);
       var boxRect =  factories.createGroupBoxRect.call(this, boxRectOptions);
@@ -180,7 +170,8 @@
         descriptionText
       ];
 
-      return factories.createGroupGroup.call(this, config.container, groupContents);
+      var containerOptions = TheGraph.merge(config.container, {});
+      return factories.createGroupGroup.call(this, containerOptions, groupContents);
 
     }
   });
