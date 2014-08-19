@@ -155,12 +155,16 @@
           }, 2014);
 
           // Simulate un/triggering errors
+          var errorNodeId = null;
           var makeRandomError = function () {
             if (!editor.nofloGraph) { return; }
+            if (errorNodeId) {
+              editor.removeErrorNode(errorNodeId);
+            }
             var nodes = editor.nofloGraph.nodes;
-            var errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
-            editor.clearErrorNodes();
+            errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
             editor.addErrorNode(errorNodeId);
+            editor.updateErrorNodes();
           };
           window.setInterval(makeRandomError, 3551);
           makeRandomError();
