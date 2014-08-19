@@ -89,9 +89,9 @@
         edgePreviewX: 0,
         edgePreviewY: 0,
         selectedNodes: [],
+        errorNodes: [],
         selectedEdges: [],
-        animatedEdges: [],
-        processErrors: {},
+        animatedEdges: []
       };
     },
     componentDidMount: function () {
@@ -338,6 +338,12 @@
       });
       this.markDirty();
     },
+    setErrorNodes: function (errors) {
+      this.setState({
+        errorNodes: errors
+      });
+      this.markDirty();
+    },
     setSelectedEdges: function (edges) {
       this.setState({
         selectedEdges: edges
@@ -347,12 +353,6 @@
     setAnimatedEdges: function (edges) {
       this.setState({
         animatedEdges: edges
-      });
-      this.markDirty();
-    },
-    setProcessErrors: function (errors) {
-      this.setState({
-        processErrors: errors
       });
       this.markDirty();
     },
@@ -451,14 +451,13 @@
           ports: self.getPorts(graph, key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: (self.state.selectedNodes.indexOf(node) !== -1),
+          error: (self.state.errorNodes.indexOf(key) !== -1),
           showContext: self.props.showContext,
-          highlightPort: highlightPort,
-          error: (self.state.processErrors[node.id] ? true : false)
+          highlightPort: highlightPort
         };
 
         nodeOptions = TheGraph.merge(config.node, nodeOptions);
         return factories.createGraphNode.call(this, nodeOptions);
-
       });
 
       // Edges

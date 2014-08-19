@@ -39,29 +39,29 @@
 }
 @-webkit-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-moz-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-o-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 .the-graph-dark .node.error .node-rect {
@@ -707,47 +707,47 @@
 }
 @-moz-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-webkit-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-o-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-ms-keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @keyframes error {
   0% {
-    file: rgba(230,238,240,0.94);
+    fill: rgba(230,238,240,0.94);
   }
 
   100% {
-    file: rgba(0,0,0,0.94);
+    fill: rgba(255,0,0,0.94);
   }
 }
 @-moz-keyframes heartbeats {

@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes selectedEdges animatedEdges onContextMenu processerror clearprocesserrors" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu processerror clearprocesserrors" touch-action="none">
   <template>
     <the-graph id="graph"
       name="{{ graph.properties.name }}"
@@ -11,10 +11,10 @@
       autolayout="{{autolayout}}"
       theme="{{theme}}"
       selectedNodes="{{selectedNodes}}"
+      errorNodes="{{errorNodes}}"
       selectedEdges="{{selectedEdges}}"
       animatedEdges="{{animatedEdges}}"
-      getMenuDef="{{getMenuDef}}"
-      processErrors="{{processErrors}}">
+      getMenuDef="{{getMenuDef}}">
     </the-graph>
   </template>
   <script>
@@ -34,6 +34,7 @@
       autolayout: false,
       theme: "dark",
       selectedNodes: [],
+      errorNodes: [],
       selectedEdges: [],
       animatedEdges: [],
       processerror: null,
@@ -341,16 +342,14 @@
       toJSON: function () {
         return this.nofloGraph.toJSON();
       },
-      processErrors: {},
-      processerrorChanged: function() {
-          this.processErrors[this.processerror] = true;
-          this.processerror = null;
-          this.$.graph.setProcessErrors(this.processErrors);
+      addErrorNode: function (id) {
+        if (this.errorNodes.indexOf(id) === -1) {
+          this.errorNodes.push(id);
+        }
       },
-      clearprocesserrorsChanged: function() {
-          this.processErrors = {};
-          this.$.graph.setProcessErrors(this.processErrors);
-      },
+      clearErrorNodes: function() {
+        this.errorNodes = [];
+      }
     });
 
   })();
