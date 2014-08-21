@@ -1,10 +1,10 @@
 {
   "name": "the-graph",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "polymer components for flow-based programming graph editing",
   "main": "the-graph-editor/index.html",
   "dependencies": {
-    "noflo": "^0.5.7"
+    "noflo": "^0.5.9"
   },
   "devDependencies": {
     "stylus": "~0.42.3",
