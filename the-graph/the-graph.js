@@ -23,7 +23,7 @@
       nodeHeight: defaultNodeSize,
       autoSizeNode: true,
       maxPortCount: 9,
-      nodeHeightIncrement: 22
+      nodeHeightIncrement: 12
     },
     factories: {}
   }; 
