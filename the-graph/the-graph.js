@@ -20,7 +20,10 @@
       nodeSize: defaultNodeSize,
       nodeWidth: defaultNodeSize,
       nodeRadius: defaultNodeRadius,
-      nodeHeight: defaultNodeSize
+      nodeHeight: defaultNodeSize,
+      autoSizeNode: true,
+      maxPortCount: 9,
+      nodeHeightIncrement: 22
     },
     factories: {}
   }; 

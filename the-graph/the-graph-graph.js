@@ -408,18 +408,34 @@
 
       // Nodes
       var nodes = graph.nodes.map(function (node) {
+        var componentInfo = self.getComponentInfo(node.component);
         var key = node.id;
         if (!node.metadata) {
           node.metadata = {};
         }
-        if (node.metadata.x === undefined) { node.metadata.x = 0; }
-        if (node.metadata.y === undefined) { node.metadata.y = 0; }
-        if (node.metadata.width === undefined) { node.metadata.width = TheGraph.config.nodeWidth; }
-        if (node.metadata.height === undefined) { node.metadata.height = TheGraph.config.nodeHeight; }
+        if (node.metadata.x === undefined) { 
+          node.metadata.x = 0; 
+        }
+        if (node.metadata.y === undefined) { 
+          node.metadata.y = 0; 
+        }
+        if (node.metadata.width === undefined) { 
+          node.metadata.width = TheGraph.config.nodeWidth; 
+        }
+        if (node.metadata.height === undefined) {
+          node.metadata.height = TheGraph.config.nodeHeight;
+          // Adjust node height based on number of ports.
+          if (TheGraph.config.autoSizeNode) {
+            var portCount = Math.max(componentInfo.inports.length, componentInfo.outports.length);
+            if (portCount > TheGraph.config.maxPortCount) {
+              var diff = portCount - TheGraph.config.maxPortCount;
+              node.metadata.height = TheGraph.config.nodeHeight + (diff * TheGraph.config.nodeHeightIncrement);
+            }
+          }
+        }
         if (!node.metadata.label || node.metadata.label === "") {
           node.metadata.label = key;
         }
-        var componentInfo = self.getComponentInfo(node.component);
         var icon = "cog";
         if (self.updatedIcons[key]) {
           icon = self.updatedIcons[key];
