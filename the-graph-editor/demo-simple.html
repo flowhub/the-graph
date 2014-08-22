@@ -80,6 +80,8 @@
       <button id="autolayout">autolayout</button>
       <button id="addnode">add node</button>
       <button id="addedge">add edge</button>
+      <button id="random">random graph</button>
+      <button id="clear">clear</button>
     </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
@@ -146,33 +148,53 @@
           var id = Math.round(Math.random()*100000).toString(36);
           var component = Math.random() > 0.5 ? 'basic' : 'tall';
           var metadata = {
-            label: 'label',
+            label: component,
             x: Math.round(Math.random()*800),
             y: Math.round(Math.random()*600)
           };
           var newNode = editor.nofloGraph.addNode(id, component, metadata);
-          console.log(newNode);
+          return newNode;
         };
         document.getElementById("addnode").addEventListener("click", addnode);
 
         // Add edge button
-        var addedge = function () {
+        var addedge = function (outNodeID) {
           var nodes = editor.nofloGraph.nodes;
           var len = nodes.length;
           if ( len<1 ) { return; }
-          var node1 = nodes[Math.floor(Math.random()*len)].id;
+          var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
           var node2 = nodes[Math.floor(Math.random()*len)].id;
           var port1 = 'out' + Math.floor(Math.random()*3);
           var port2 = 'in' + Math.floor(Math.random()*12);
           var meta = { route: Math.floor(Math.random()*10) };
           var newEdge = editor.nofloGraph.addEdge(node1, port1, node2, port2, meta);
-          console.log(newEdge);
+          return newEdge;
         };
         document.getElementById("addedge").addEventListener("click", addedge);
 
         // Autolayout button
         document.getElementById("autolayout").addEventListener("click", function () {
           editor.triggerAutolayout();
+        });
+
+        // Random graph button
+        document.getElementById("random").addEventListener("click", function () {
+          for (var i=0; i<20; i++) {
+            var node = addnode();
+            addedge(node.id);
+            addedge(node.id);
+          }
+          setTimeout(function(){
+            // b/c ports change
+            editor.libraryRefresh();
+            editor.triggerAutolayout();
+          }, 500);
+        });
+
+        // Clear button
+        document.getElementById("clear").addEventListener("click", function () {
+          graph = {};
+          editor.graph = graph;
         });
 
         // Resize to fill window and also have explicit w/h attributes
