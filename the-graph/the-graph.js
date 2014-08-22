@@ -106,8 +106,10 @@
       }
       if (node.metadata.x < minX) { minX = node.metadata.x; }
       if (node.metadata.y < minY) { minY = node.metadata.y; }
-      if (node.metadata.x > maxX) { maxX = node.metadata.x; }
-      if (node.metadata.y > maxY) { maxY = node.metadata.y; }
+      var x = node.metadata.x + node.metadata.width;
+      var y = node.metadata.y + node.metadata.height;
+      if (x > maxX) { maxX = x; }
+      if (y > maxY) { maxY = y; }
     }
     // Loop through exports
     var keys, exp;

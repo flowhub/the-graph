@@ -141,8 +141,8 @@
       var boxRectOptions = {
         x: x,
         y: y,
-        width: this.props.maxX - this.props.minX + TheGraph.config.nodeWidth * 2,
-        height: this.props.maxY - this.props.minY + TheGraph.config.nodeHeight * 2,
+        width: this.props.maxX - x + TheGraph.config.nodeWidth*0.5,
+        height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
         className: "group-box color"+color + selection
       };
       boxRectOptions = TheGraph.merge(config.boxRect, boxRectOptions);

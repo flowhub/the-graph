@@ -422,15 +422,13 @@
         if (node.metadata.width === undefined) { 
           node.metadata.width = TheGraph.config.nodeWidth; 
         }
-        if (node.metadata.height === undefined) {
-          node.metadata.height = TheGraph.config.nodeHeight;
+        node.metadata.height = TheGraph.config.nodeHeight;
+        if (TheGraph.config.autoSizeNode) {
           // Adjust node height based on number of ports.
-          if (TheGraph.config.autoSizeNode) {
-            var portCount = Math.max(componentInfo.inports.length, componentInfo.outports.length);
-            if (portCount > TheGraph.config.maxPortCount) {
-              var diff = portCount - TheGraph.config.maxPortCount;
-              node.metadata.height = TheGraph.config.nodeHeight + (diff * TheGraph.config.nodeHeightIncrement);
-            }
+          var portCount = Math.max(componentInfo.inports.length, componentInfo.outports.length);
+          if (portCount > TheGraph.config.maxPortCount) {
+            var diff = portCount - TheGraph.config.maxPortCount;
+            node.metadata.height = TheGraph.config.nodeHeight + (diff * TheGraph.config.nodeHeightIncrement);
           }
         }
         if (!node.metadata.label || node.metadata.label === "") {
