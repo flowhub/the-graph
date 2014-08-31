@@ -339,6 +339,10 @@
         this.errorNodes[id] = false;
         this.updateErrorNodes();
       },
+      clearErrorNodes: function () {
+        this.errorNodes = {};
+        this.updateErrorNodes();
+      },
       updateErrorNodes: function () {
         this.$.graph.errorNodesChanged();
       },
