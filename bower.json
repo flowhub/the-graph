@@ -8,7 +8,7 @@
   ],
   "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "polymer": "Polymer/polymer#0.3.4",
+    "polymer": "0.4.0",
     "hammerjs": "~1.1.2",
     "font-awesome": "~4.1.0",
     "react": "~0.11.1",

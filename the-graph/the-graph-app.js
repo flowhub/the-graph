@@ -189,8 +189,9 @@
     },
     onTrackStart: function (event) {
       event.preventTap();
-      this.getDOMNode().addEventListener("track", this.onTrack);
-      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.addEventListener("track", this.onTrack);
+      domNode.addEventListener("trackend", this.onTrackEnd);
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
@@ -203,8 +204,9 @@
       // Don't click app (unselect)
       event.stopPropagation();
 
-      this.getDOMNode().removeEventListener("track", this.onTrack);
-      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.removeEventListener("track", this.onTrack);
+      domNode.removeEventListener("trackend", this.onTrackEnd);
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
@@ -262,6 +264,16 @@
     componentDidMount: function () {
       var domNode = this.getDOMNode();
 
+      // Set up PolymerGestures for app and all children
+      var noop = function(){};
+      PolymerGestures.addEventListener(domNode, "up", noop);
+      PolymerGestures.addEventListener(domNode, "down", noop);
+      PolymerGestures.addEventListener(domNode, "tap", noop);
+      PolymerGestures.addEventListener(domNode, "trackstart", noop);
+      PolymerGestures.addEventListener(domNode, "track", noop);
+      PolymerGestures.addEventListener(domNode, "trackend", noop);
+      PolymerGestures.addEventListener(domNode, "hold", noop);
+
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
@@ -276,11 +288,11 @@
         });
       }
 
-      // Pointer gesture events for pan/zoom
+      // Pointer gesture event for pan
       domNode.addEventListener("trackstart", this.onTrackStart);
 
-      var is_touch_device = 'ontouchstart' in document.documentElement;
-      if( is_touch_device && Hammer ){
+      var isTouchDevice = 'ontouchstart' in document.documentElement;
+      if( isTouchDevice && Hammer ){
         Hammer(domNode).on("transformstart", this.onTransformStart);
         Hammer(domNode).on("transform", this.onTransform);
         Hammer(domNode).on("transformend", this.onTransformEnd);

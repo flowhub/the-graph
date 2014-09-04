@@ -94,12 +94,14 @@
       TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
+      var domNode = this.getDOMNode();
+      
       // Dragging
-      this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("trackstart", this.onTrackStart);
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onNodeSelection, true);
+        domNode.addEventListener("tap", this.onNodeSelection, true);
       }
 
       // Context menu
@@ -129,8 +131,9 @@
       // Don't drag while pinching
       if (this.props.app.pinching) { return; }
 
-      this.getDOMNode().addEventListener("track", this.onTrack);
-      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.addEventListener("track", this.onTrack);
+      domNode.addEventListener("trackend", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -142,9 +145,6 @@
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
-
-      // Don't drag while pinching
-      if (this.props.app.pinching) { return; }
 
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );
@@ -172,8 +172,9 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      this.getDOMNode().removeEventListener("track", this.onTrack);
-      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.removeEventListener("track", this.onTrack);
+      domNode.removeEventListener("trackend", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;

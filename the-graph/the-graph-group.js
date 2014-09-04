@@ -40,13 +40,15 @@
         this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       }
 
+      var domNode = this.getDOMNode();
+
       // Don't pan under menu
-      this.getDOMNode().addEventListener("trackstart", this.dontPan);
+      domNode.addEventListener("trackstart", this.dontPan);
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("hold", this.showContext);
       }
     },
     showContext: function (event) {
@@ -81,6 +83,7 @@
       });
     },
     dontPan: function (event) {
+      console.log("dontPan",this.props.app.menuShown);
       // Don't drag under menu
       if (this.props.app.menuShown) {
         event.stopPropagation();

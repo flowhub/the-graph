@@ -139,17 +139,20 @@
       edge.isIn = event.detail.isIn;
       edge.metadata = { route: event.detail.route };
       edge.type = event.detail.port.type;
-      this.props.app.getDOMNode().addEventListener("mousemove", this.renderPreviewEdge);
-      this.props.app.getDOMNode().addEventListener("track", this.renderPreviewEdge);
+
+      var appDomNode = this.props.app.getDOMNode();
+      appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
+      appDomNode.addEventListener("track", this.renderPreviewEdge);
       // TODO tap to add new node here
-      this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
+      appDomNode.addEventListener("tap", this.cancelPreviewEdge);
 
       this.setState({edgePreview: edge});
     },
     cancelPreviewEdge: function (event) {
-      this.props.app.getDOMNode().removeEventListener("mousemove", this.renderPreviewEdge);
-      this.props.app.getDOMNode().removeEventListener("track", this.renderPreviewEdge);
-      this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
+      var appDomNode = this.props.app.getDOMNode();
+      appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
+      appDomNode.removeEventListener("track", this.renderPreviewEdge);
+      appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
         this.markDirty();
