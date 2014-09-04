@@ -1,6 +1,6 @@
 {
   "name": "the-graph",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "polymer components for flow-based programming graph editing",
   "main": "the-graph-editor/index.html",
   "dependencies": {
