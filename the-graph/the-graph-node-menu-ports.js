@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.nodeMenuPorts = {
+  TheGraph.config.nodeMenuPorts = {
     container: {},
     linesGroup: {
       className: "context-ports-lines"
@@ -17,7 +17,7 @@
     nodeMenuPort: {}
   };
 
-  var factories = TheGraph.factories.menuPorts = {
+  TheGraph.factories.menuPorts = {
     createNodeMenuPortsGroup: TheGraph.factories.createGroup,
     createNodeMenuPortsLinesGroup: TheGraph.factories.createGroup,
     createNodeMenuPortsPortsGroup: TheGraph.factories.createGroup,
@@ -52,8 +52,8 @@
         var oy = (port.y - this.props.nodeHeight/2) * scale + deltaY;
 
         // Make path from graph port to menu port
-        var lineOptions = TheGraph.merge(config.portPath, { d: [ "M", ox, oy, "L", x, y ].join(" ") });
-        var line = factories.createNodeMenuPortsPortPath.call(this, lineOptions);
+        var lineOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.portPath, { d: [ "M", ox, oy, "L", x, y ].join(" ") });
+        var line = TheGraph.factories.menuPorts.createNodeMenuPortsPortPath.call(this, lineOptions);
 
         var portViewOptions = {
           label: key,
@@ -65,8 +65,8 @@
           route: port.route,
           highlightPort: this.props.highlightPort
         };
-        portViewOptions = TheGraph.merge(config.nodeMenuPort, portViewOptions);
-        var portView = factories.createNodeMenuPortsNodeMenuPort.call(this, portViewOptions);
+        portViewOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.nodeMenuPort, portViewOptions);
+        var portView = TheGraph.factories.menuPorts.createNodeMenuPortsNodeMenuPort.call(this, portViewOptions);
 
         lines.push(line);
         portViews.push(portView);
@@ -77,19 +77,19 @@
         transform = "translate("+this.props.translateX+","+this.props.translateY+")";
       }
 
-      var linesGroupOptions = TheGraph.merge(config.linesGroup, { children: lines });
-      var linesGroup = factories.createNodeMenuPortsLinesGroup.call(this, linesGroupOptions);
+      var linesGroupOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.linesGroup, { children: lines });
+      var linesGroup = TheGraph.factories.menuPorts.createNodeMenuPortsLinesGroup.call(this, linesGroupOptions);
 
-      var portsGroupOptions = TheGraph.merge(config.portsGroup, { children: portViews });
-      var portsGroup = factories.createNodeMenuPortsGroup.call(this, portsGroupOptions);
+      var portsGroupOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.portsGroup, { children: portViews });
+      var portsGroup = TheGraph.factories.menuPorts.createNodeMenuPortsGroup.call(this, portsGroupOptions);
 
       var containerContents = [linesGroup, portsGroup];
       var containerOptions = {
         className: "context-ports context-ports-"+(this.props.isIn ? "in" : "out"),
         transform: transform
       };
-      containerOptions = TheGraph.merge(config.container, containerOptions);
-      return factories.createNodeMenuPortsGroup.call(this, containerOptions, containerContents);
+      containerOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.container, containerOptions);
+      return TheGraph.factories.menuPorts.createNodeMenuPortsGroup.call(this, containerOptions, containerContents);
     }
   });
 
