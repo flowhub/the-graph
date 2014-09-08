@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.app = {
+  TheGraph.config.app = {
     container: {
       className: "the-graph-app",
       name: "app"
@@ -29,7 +29,7 @@
     }
   };
 
-  var factories = TheGraph.factories.app = {
+  TheGraph.factories.app = {
     createAppContainer: createAppContainer,
     createAppCanvas: TheGraph.factories.createCanvas,
     createAppSvg: TheGraph.factories.createSvg,
@@ -429,7 +429,7 @@
         };
 
         contextModal = [ 
-          factories.createAppModalBackground(modalBGOptions)
+          TheGraph.factories.app.createAppModalBackground(modalBGOptions)
         ];
         this.menuShown = true;
       } else {
@@ -445,11 +445,11 @@
         onEdgeSelection: this.props.onEdgeSelection,
         showContext: this.showContext
       };
-      graphElementOptions = TheGraph.merge(config.graph, graphElementOptions);
-      var graphElement = factories.createAppGraph.call(this, graphElementOptions);
+      graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
+      var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
 
-      var svgGroupOptions = TheGraph.merge(config.svgGroup, { transform: transform });
-      var svgGroup = factories.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
+      var svgGroupOptions = TheGraph.merge(TheGraph.config.app.svgGroup, { transform: transform });
+      var svgGroup = TheGraph.factories.app.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
 
       var tooltipOptions = {
         x: this.state.tooltipX,
@@ -458,11 +458,11 @@
         label: this.state.tooltip
       };
 
-      tooltipOptions = TheGraph.merge(config.tooltip, tooltipOptions);
-      var tooltip = factories.createAppTooltip.call(this, tooltipOptions);
+      tooltipOptions = TheGraph.merge(TheGraph.config.app.tooltip, tooltipOptions);
+      var tooltip = TheGraph.factories.app.createAppTooltip.call(this, tooltipOptions);
 
-      var modalGroupOptions = TheGraph.merge(config.modal, { children: contextModal });
-      var modalGroup = factories.createAppModalGroup.call(this, modalGroupOptions);
+      var modalGroupOptions = TheGraph.merge(TheGraph.config.app.modal, { children: contextModal });
+      var modalGroup = TheGraph.factories.app.createAppModalGroup.call(this, modalGroupOptions);
 
       var svgContents = [
         svgGroup,
@@ -470,19 +470,19 @@
         modalGroup
       ];
 
-      var svgOptions = TheGraph.merge(config.svg, { width: this.state.width, height: this.state.height });
-      var svg = factories.createAppSvg.call(this, svgOptions, svgContents);
+      var svgOptions = TheGraph.merge(TheGraph.config.app.svg, { width: this.state.width, height: this.state.height });
+      var svg = TheGraph.factories.app.createAppSvg.call(this, svgOptions, svgContents);
 
-      var canvasOptions = TheGraph.merge(config.canvas, { width: this.state.width, height: this.state.height });
-      var canvas = factories.createAppCanvas.call(this, canvasOptions);
+      var canvasOptions = TheGraph.merge(TheGraph.config.app.canvas, { width: this.state.width, height: this.state.height });
+      var canvas = TheGraph.factories.app.createAppCanvas.call(this, canvasOptions);
 
       var appContents = [
         canvas,
         svg
       ];
-      var containerOptions = TheGraph.merge(config.container, { style: { width: this.state.width, height: this.state.height } });
+      var containerOptions = TheGraph.merge(TheGraph.config.app.container, { style: { width: this.state.width, height: this.state.height } });
       containerOptions.className += " " + scaleClass;
-      return factories.createAppContainer.call(this, containerOptions, appContents);
+      return TheGraph.factories.app.createAppContainer.call(this, containerOptions, appContents);
     }
   });
 

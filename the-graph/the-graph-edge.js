@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.edge = {
+  TheGraph.config.edge = {
     curve: TheGraph.config.nodeSize,
     container: {
       className: "edge"
@@ -21,7 +21,7 @@
     }
   };
 
-  var factories = TheGraph.factories.edge = {
+  TheGraph.factories.edge = {
     createEdgeGroup: TheGraph.factories.createGroup,
     createEdgeBackgroundPath: TheGraph.factories.createPath,
     createEdgeForegroundPath: TheGraph.factories.createPath,
@@ -41,7 +41,7 @@
   }
 
   // Const
-  var CURVE = config.curve;
+  var CURVE = TheGraph.config.edge.curve;
 
   // Point along cubic bezier curve
   // See http://en.wikipedia.org/wiki/File:Bezier_3_big.gif
@@ -185,18 +185,18 @@
 
       // Make SVG path
 
-      var path = factories.createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
+      var path = TheGraph.factories.edge.createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
       path = path.join(" ");
 
-      var backgroundPathOptions = TheGraph.merge(config.backgroundPath, { d: path });
-      var backgroundPath = factories.createEdgeBackgroundPath(backgroundPathOptions);
+      var backgroundPathOptions = TheGraph.merge(TheGraph.config.edge.backgroundPath, { d: path });
+      var backgroundPath = TheGraph.factories.edge.createEdgeBackgroundPath(backgroundPathOptions);
 
-      var foregroundPathClassName = config.foregroundPath.className + this.props.route;
-      var foregroundPathOptions = TheGraph.merge(config.foregroundPath, { d: path, className: foregroundPathClassName });
-      var foregroundPath = factories.createEdgeForegroundPath(foregroundPathOptions);
+      var foregroundPathClassName = TheGraph.config.edge.foregroundPath.className + this.props.route;
+      var foregroundPathOptions = TheGraph.merge(TheGraph.config.edge.foregroundPath, { d: path, className: foregroundPathClassName });
+      var foregroundPath = TheGraph.factories.edge.createEdgeForegroundPath(foregroundPathOptions);
 
-      var touchPathOptions = TheGraph.merge(config.touchPath, { d: path });
-      var touchPath = factories.createEdgeTouchPath(touchPathOptions);
+      var touchPathOptions = TheGraph.merge(TheGraph.config.edge.touchPath, { d: path });
+      var touchPath = TheGraph.factories.edge.createEdgeTouchPath(touchPathOptions);
 
       var containerOptions = {
         className: "edge"+
@@ -205,8 +205,8 @@
         title: this.props.label
       };
 
-      containerOptions = TheGraph.merge(config.container, containerOptions);
-      return factories.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
+      containerOptions = TheGraph.merge(TheGraph.config.edge.container, containerOptions);
+      return TheGraph.factories.edge.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
 
     }
   });

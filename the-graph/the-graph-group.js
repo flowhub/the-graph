@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.group = {
+  TheGraph.config.group = {
     container: {
       className: "group"
     },
@@ -21,7 +21,7 @@
     }
   };
 
-  var factories = TheGraph.factories.group = {
+  TheGraph.factories.group = {
     createGroupGroup: TheGraph.factories.createGroup,
     createGroupBoxRect: TheGraph.factories.createRect,
     createGroupLabelText: TheGraph.factories.createText,
@@ -148,24 +148,24 @@
         height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
         className: "group-box color"+color + selection
       };
-      boxRectOptions = TheGraph.merge(config.boxRect, boxRectOptions);
-      var boxRect =  factories.createGroupBoxRect.call(this, boxRectOptions);
+      boxRectOptions = TheGraph.merge(TheGraph.config.group.boxRect, boxRectOptions);
+      var boxRect =  TheGraph.factories.group.createGroupBoxRect.call(this, boxRectOptions);
 
       var labelTextOptions = {
         x: x + TheGraph.config.nodeRadius,
         y: y + 9,
         children: this.props.label
       };
-      labelTextOptions = TheGraph.merge(config.labelText, labelTextOptions);
-      var labelText = factories.createGroupLabelText.call(this, labelTextOptions);
+      labelTextOptions = TheGraph.merge(TheGraph.config.group.labelText, labelTextOptions);
+      var labelText = TheGraph.factories.group.createGroupLabelText.call(this, labelTextOptions);
 
       var descriptionTextOptions = {
         x: x + TheGraph.config.nodeRadius,
         y: y + 24,
         children: this.props.description
       };
-      descriptionTextOptions = TheGraph.merge(config.descriptionText, descriptionTextOptions);
-      var descriptionText = factories.createGroupDescriptionText.call(this, descriptionTextOptions);
+      descriptionTextOptions = TheGraph.merge(TheGraph.config.group.descriptionText, descriptionTextOptions);
+      var descriptionText = TheGraph.factories.group.createGroupDescriptionText.call(this, descriptionTextOptions);
 
       var groupContents = [
         boxRect,
@@ -173,8 +173,8 @@
         descriptionText
       ];
 
-      var containerOptions = TheGraph.merge(config.container, {});
-      return factories.createGroupGroup.call(this, containerOptions, groupContents);
+      var containerOptions = TheGraph.merge(TheGraph.config.group.container, {});
+      return TheGraph.factories.group.createGroupGroup.call(this, containerOptions, groupContents);
 
     }
   });

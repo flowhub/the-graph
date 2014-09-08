@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.nodeMenu = {
+  TheGraph.config.nodeMenu = {
     container: {
       className: "context-node"
     },
@@ -15,7 +15,7 @@
     }
   };
 
-  var factories = TheGraph.factories.nodeMenu = {
+  TheGraph.factories.nodeMenu = {
     createNodeMenuGroup: TheGraph.factories.createGroup,
     createNodeMenuInports: createNodeMenuPorts,
     createNodeMenuOutports: createNodeMenuPorts,
@@ -61,8 +61,8 @@
         highlightPort: this.props.highlightPort
       };
 
-      inportsOptions = TheGraph.merge(config.inports, inportsOptions);
-      var inports = factories.createNodeMenuInports.call(this, inportsOptions);
+      inportsOptions = TheGraph.merge(TheGraph.config.nodeMenu.inports, inportsOptions);
+      var inports = TheGraph.factories.nodeMenu.createNodeMenuInports.call(this, inportsOptions);
 
       var outportsOptions = {
         ports: ports.outports,
@@ -76,8 +76,8 @@
         highlightPort: this.props.highlightPort
       };
 
-      outportsOptions = TheGraph.merge(config.outports, outportsOptions);
-      var outports = factories.createNodeMenuOutports.call(this, outportsOptions);
+      outportsOptions = TheGraph.merge(TheGraph.config.nodeMenu.outports, outportsOptions);
+      var outports = TheGraph.factories.nodeMenu.createNodeMenuOutports.call(this, outportsOptions);
 
       var menuOptions = {
         menu: this.props.menu,
@@ -87,8 +87,8 @@
         label: this.props.label
       };
 
-      menuOptions = TheGraph.merge(config.menu, menuOptions);
-      var menu = factories.createNodeMenuMenu.call(this, menuOptions);
+      menuOptions = TheGraph.merge(TheGraph.config.nodeMenu.menu, menuOptions);
+      var menu = TheGraph.factories.nodeMenu.createNodeMenuMenu.call(this, menuOptions);
 
       var children = [
         inports, outports, menu
@@ -98,8 +98,8 @@
         transform: "translate("+this.props.x+","+this.props.y+")",
         children: children
       };
-      containerOptions = TheGraph.merge(config.container, containerOptions);
-      return factories.createNodeMenuGroup.call(this, containerOptions);
+      containerOptions = TheGraph.merge(TheGraph.config.nodeMenu.container, containerOptions);
+      return TheGraph.factories.nodeMenu.createNodeMenuGroup.call(this, containerOptions);
 
     }
   });

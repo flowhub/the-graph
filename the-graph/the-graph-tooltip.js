@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.tooltip = {
+  TheGraph.config.tooltip = {
     container: {},
     rect: {
       className: "tooltip-bg",
@@ -19,7 +19,7 @@
     }
   };
 
-  var factories = TheGraph.factories.tooltip = {
+  TheGraph.factories.tooltip = {
     createTooltipGroup: TheGraph.factories.createGroup,
     createTooltipRect: TheGraph.factories.createRect,
     createTooltipText: TheGraph.factories.createText
@@ -30,11 +30,11 @@
   TheGraph.Tooltip = React.createClass({
     render: function() {
 
-      var rectOptions = TheGraph.merge(config.rect, {width: this.props.label.length * 6});
-      var rect = factories.createTooltipRect.call(this, rectOptions);
+      var rectOptions = TheGraph.merge(TheGraph.config.tooltip.rect, {width: this.props.label.length * 6});
+      var rect = TheGraph.factories.tooltip.createTooltipRect.call(this, rectOptions);
 
-      var textOptions = TheGraph.merge(config.text, { children: this.props.label });
-      var text = factories.createTooltipText.call(this, textOptions);
+      var textOptions = TheGraph.merge(TheGraph.config.tooltip.text, { children: this.props.label });
+      var text = TheGraph.factories.tooltip.createTooltipText.call(this, textOptions);
 
       var containerContents = [rect, text];
 
@@ -42,8 +42,8 @@
         className: "tooltip" + (this.props.visible ? "" : " hidden"),
         transform: "translate("+this.props.x+","+this.props.y+")",
       };
-      containerOptions = TheGraph.merge(config.container, containerOptions);
-      return factories.createTooltipGroup.call(this, containerOptions, containerContents);
+      containerOptions = TheGraph.merge(TheGraph.config.tooltip.container, containerOptions);
+      return TheGraph.factories.tooltip.createTooltipGroup.call(this, containerOptions, containerContents);
 
     }
   });

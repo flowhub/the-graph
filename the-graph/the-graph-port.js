@@ -4,7 +4,7 @@
   var TheGraph = context.TheGraph;
 
   // Initialize configuration for the Port view.
-  var config = TheGraph.config.port = {
+  TheGraph.config.port = {
     container: {
       className: "port arrow"
     },
@@ -23,7 +23,7 @@
     }
   };
 
-  var factories = TheGraph.factories.port = {
+  TheGraph.factories.port = {
     createPortGroup: TheGraph.factories.createGroup,
     createPortBackgroundCircle: TheGraph.factories.createCircle,
     createPortArc: TheGraph.factories.createPath,
@@ -148,27 +148,27 @@
         outArc = TheGraph.arcs.outportBig;
       }
 
-      var backgroundCircleOptions = TheGraph.merge(config.backgroundCircle, { r: r + 1 });
-      var backgroundCircle = factories.createPortBackgroundCircle.call(this, backgroundCircleOptions);
+      var backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
+      var backgroundCircle = TheGraph.factories.port.createPortBackgroundCircle.call(this, backgroundCircleOptions);
 
-      var arcOptions = TheGraph.merge(config.arc, { d: (this.props.isIn ? inArc : outArc) });
-      var arc = factories.createPortArc.call(this, arcOptions);
+      var arcOptions = TheGraph.merge(TheGraph.config.port.arc, { d: (this.props.isIn ? inArc : outArc) });
+      var arc = TheGraph.factories.port.createPortArc.call(this, arcOptions);
 
       var innerCircleOptions = {
         className: "port-circle-small fill route"+this.props.route,
         r: r - 1.5
       };
       
-      innerCircleOptions = TheGraph.merge(config.innerCircle, innerCircleOptions);
-      var innerCircle = factories.createPortInnerCircle.call(this, innerCircleOptions);
+      innerCircleOptions = TheGraph.merge(TheGraph.config.port.innerCircle, innerCircleOptions);
+      var innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
 
       var labelTextOptions = {
         x: (this.props.isIn ? 5 : -5),
         style: style,
         children: this.props.label
       };
-      labelTextOptions = TheGraph.merge(config.text, labelTextOptions);
-      var labelText = factories.createPortLabelText.call(this, labelTextOptions);
+      labelTextOptions = TheGraph.merge(TheGraph.config.port.text, labelTextOptions);
+      var labelText = TheGraph.factories.port.createPortLabelText.call(this, labelTextOptions);
 
       var portContents = [
         backgroundCircle,
@@ -177,8 +177,8 @@
         labelText
       ];
 
-      var containerOptions = TheGraph.merge(config.container, { title: this.props.label, transform: "translate("+this.props.x+","+this.props.y+")" });
-      return factories.createPortGroup.call(this, containerOptions, portContents);
+      var containerOptions = TheGraph.merge(TheGraph.config.port.container, { title: this.props.label, transform: "translate("+this.props.x+","+this.props.y+")" });
+      return TheGraph.factories.port.createPortGroup.call(this, containerOptions, portContents);
 
     }
   });
