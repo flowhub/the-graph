@@ -85,9 +85,11 @@
     getInitialState: function() {
       return {
         graph: this.props.graph,
+        displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
         edgePreviewY: 0,
+        forceSelection: false,
         selectedNodes: [],
         errorNodes: [],
         selectedEdges: [],
@@ -724,7 +726,8 @@
       });
 
       // Selection pseudo-group
-      if (selectedIds.length >= 2) {
+      if (this.state.displaySelectionGroup &&
+          selectedIds.length >= 2) {
         var limits = TheGraph.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
@@ -809,7 +812,8 @@
         outportsGroup
       ];
 
-      var selectedClass = (selectedIds.length>0) ? ' selection' : '';
+      var selectedClass = (this.state.forceSelection ||
+                           selectedIds.length>0) ? ' selection' : '';
 
       var containerOptions = TheGraph.merge(TheGraph.config.graph.container, { className: 'graph' + selectedClass });
       return TheGraph.factories.graph.createGraphContainerGroup.call(this, containerOptions, containerContents);
