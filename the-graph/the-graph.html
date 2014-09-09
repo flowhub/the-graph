@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale" touch-action="none">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale displaySelectionGroup" touch-action="none">
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
@@ -45,6 +45,7 @@
       selectedEdges: [],
       animatedEdges: [],
       autolayouter: null,
+      displaySelectionGroup: true,
       created: function () {
         this.library = {};
         // Default pan
@@ -98,7 +99,8 @@
             onEdgeSelection: this.onEdgeSelection.bind(this),
             onNodeSelection: this.onNodeSelection.bind(this),
             onPanScale: this.onPanScale.bind(this),
-            getMenuDef: this.getMenuDef
+            getMenuDef: this.getMenuDef,
+            displaySelectionGroup: this.displaySelectionGroup
           }),
           this.$.svgcontainer
         );
@@ -328,6 +330,12 @@
           return 1; 
         }
         return this.appView.state.scale;
+      },
+      displaySelectionGroupChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setState({
+          displaySelectionGroup: this.displaySelectionGroup
+        });
       },
       menusChanged: function () {
         // Only if the object itself changes, 

@@ -85,6 +85,7 @@
     getInitialState: function() {
       return {
         graph: this.props.graph,
+        displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
         edgePreviewY: 0,
@@ -724,7 +725,8 @@
       });
 
       // Selection pseudo-group
-      if (selectedIds.length >= 2) {
+      if (this.state.displaySelectionGroup &&
+          selectedIds.length >= 2) {
         var limits = TheGraph.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
