@@ -89,6 +89,7 @@
         edgePreview: null,
         edgePreviewX: 0,
         edgePreviewY: 0,
+        forceSelection: false,
         selectedNodes: [],
         errorNodes: [],
         selectedEdges: [],
@@ -811,7 +812,8 @@
         outportsGroup
       ];
 
-      var selectedClass = (selectedIds.length>0) ? ' selection' : '';
+      var selectedClass = (this.state.forceSelection ||
+                           selectedIds.length>0) ? ' selection' : '';
 
       var containerOptions = TheGraph.merge(TheGraph.config.graph.container, { className: 'graph' + selectedClass });
       return TheGraph.factories.graph.createGraphContainerGroup.call(this, containerOptions, containerContents);

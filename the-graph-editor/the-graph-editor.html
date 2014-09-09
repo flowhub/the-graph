@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu displaySelectionGroup" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu displaySelectionGroup forceSelection" touch-action="none">
   <template>
     <the-graph id="graph"
       name="{{ graph.properties.name }}"
@@ -15,6 +15,7 @@
       selectedEdges="{{selectedEdges}}"
       animatedEdges="{{animatedEdges}}"
       displaySelectionGroup="{{displaySelectionGroup}}"
+      forceSelection="{{forceSelection}}"
       getMenuDef="{{getMenuDef}}">
     </the-graph>
   </template>
@@ -39,6 +40,7 @@
       selectedEdges: [],
       animatedEdges: [],
       displaySelectionGroup: true,
+      forceSelection: false,
       created: function () {
         // Default pan
         this.pan = [0,0];
