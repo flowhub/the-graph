@@ -36,6 +36,7 @@
       autolayout: false,
       theme: "dark",
       selectedNodes: [],
+      copyNodes: [],
       errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
@@ -46,6 +47,18 @@
         this.pan = [0,0];
         // Default context menu defs
         this.menus = {
+          main: {
+              icon: "long-arrow-right",
+              iconLabel: "main",
+              e4: {
+                  icon: "paste",
+                  iconLabel: "paste",
+                  action: function (graph, itemKey, item) {
+                      Clipboard.paste(graph);
+                  }
+              }
+
+          },
           edge: {
             icon: "long-arrow-right",
             s4: {
@@ -62,6 +75,14 @@
               iconLabel: "delete",
               action: function (graph, itemKey, item) {
                 graph.removeNode( itemKey );
+              }
+            },
+            w4: {
+              icon: "copy",
+              iconLabel: "copy",
+              action: function (graph,itemKey,item) {
+                //TODO actually the node needs to be cloned so we can support Cut/Paste
+                Clipboard.copy(graph,[itemKey]);
               }
             }
           },
@@ -144,9 +165,20 @@
                 graph.removeGroup(itemKey);
               }
             }
+
           },
           selection: {
-            icon: "th"
+            icon: "th",
+            w4: {
+              icon: "copy",
+              iconLabel: "copy",
+              action: function (graph,itemKey,item) {
+                  //TODO actually the node needs to be cloned so we can support Cut/Paste
+
+                  Clipboard.copy(graph,item.nodes);
+              }
+            }
+
           }
         };
       },
