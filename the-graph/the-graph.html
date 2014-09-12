@@ -362,77 +362,61 @@
           this.rerender({libraryDirty:true});
         }.bind(this), 200);
       },
+      mergeComponentDefinition: function (component, definition) {
+        // In cases where a component / subgraph ports change, 
+        // we don't want the connections hanging in middle of node
+        // TODO visually indicate that port is a ghost
+        if (component === definition) {
+          return definition;
+        }
+        var _i, _j, _len, _len1, exists;
+        var cInports = component.inports;
+        var dInports = definition.inports;
+
+        if (cInports !== dInports) {
+          for (_i = 0, _len = cInports.length; _i < _len; _i++) {
+            var cInport = cInports[_i];
+            exists = false;
+            for (_j = 0, _len1 = dInports.length; _j < _len1; _j++) {
+              var dInport = dInports[_j];
+              if (cInport.name === dInport.name) {
+                exists = true;
+              }
+            }
+            if (!exists) {
+              dInports.push(cInport);
+            }
+          }
+        }
+
+        var cOutports = component.outports;
+        var dOutports = definition.outports;
+
+        if (cOutports !== dOutports) {
+          for (_i = 0, _len = cOutports.length; _i < _len; _i++) {
+            var cOutport = cOutports[_i];
+            exists = false;
+            for (_j = 0, _len1 = dOutports.length; _j < _len1; _j++) {
+              var dOutport = dOutports[_j];
+              if (cOutport.name === dOutport.name) {
+                exists = true;
+              }
+            }
+            if (!exists) {
+              dOutports.push(cOutport);
+            }
+          }
+        }
+
+        return definition;
+      },
       registerComponent: function (definition, generated) {
-        if (!this.library[definition.name]) {
-          // New component, register
-          this.library[definition.name] = definition;
-          // So changes are rendered
-          this.debounceLibraryRefesh();
-          return;
-        }
-        // Update existing
         var component = this.library[definition.name];
-        if (definition.description) {
-          component.description = definition.description;
+        var def = definition;
+        if (component) {
+          def = this.mergeComponentDefinition(component, definition);
         }
-        if (definition.icon && definition.icon!=="cog") {
-          component.icon = definition.icon;
-        }
-        var defInPorts = [];
-        var defOutPorts = [];
-        definition.inports.forEach(function (defPort) {
-          var port = null;
-          defInPorts.push(defPort.name);
-          component.inports.forEach(function (p) {
-            if (p.name === defPort.name) {
-              port = p;
-            }
-          });
-          if (port) {
-            port.type = defPort.type;
-            return;
-          }
-          component.inports.push({
-            name: defPort.name,
-            type: defPort.type,
-            array: defPort.array
-          });
-        });
-        definition.outports.forEach(function (defPort) {
-          var port = null;
-          defOutPorts.push(defPort.name);
-          component.outports.forEach(function (p) {
-            if (p.name === defPort.name) {
-              port = p;
-            }
-          });
-          if (port) {
-            port.type = defPort.type;
-            return;
-          }
-          component.outports.push({
-            name: defPort.name,
-            type: defPort.type,
-            array: defPort.array
-          });
-        });
-
-        if (generated) {
-          // So changes are rendered
-          this.debounceLibraryRefesh();
-          return;
-        }
-        component.inports.forEach(function (p, idx) {
-          if (defInPorts.indexOf(p.name) === -1) {
-            component.inports.splice(idx, 1);
-          }
-        });
-        component.outports.forEach(function (p, idx) {
-          if (defOutPorts.indexOf(p.name) === -1) {
-            component.outports.splice(idx, 1);
-          }
-        });
-
+        this.library[definition.name] = def;
         // So changes are rendered
         this.debounceLibraryRefesh();
       },
