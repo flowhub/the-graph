@@ -64,6 +64,7 @@
   }
 
   TheGraph.App = React.createClass({
+    mixins: [React.Animate],
     minZoom: 0.15,
     getInitialState: function() {
       // Autofit
@@ -80,7 +81,8 @@
         tooltipY: 0,
         tooltipVisible: false,
         contextElement: null,
-        contextType: null
+        contextType: null,
+        focusAnimationDuration: 1000
       };
     },
     zoomFactor: 0,
@@ -255,6 +257,40 @@
         y: fit.y,
         scale: fit.scale
       });
+    },
+    focusNode: function (node) {
+      var duration = this.state.focusAnimationDuration;
+      var fit = TheGraph.findNodeFit(node,
+                                     this.state.width,
+                                     this.state.height);
+      var start_point = {
+        x: -(this.state.x - this.state.width / 2) / this.state.scale,
+        y: -(this.state.y - this.state.height / 2) / this.state.scale,
+      }, end_point = {
+        x: node.metadata.x,
+        y: node.metadata.y,
+      };
+      var graphfit = TheGraph.findAreaFit(start_point,
+                                          end_point,
+                                          this.state.width,
+                                          this.state.height);
+
+      var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
+      var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
+      var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
+
+      // Animate zoom-out then zoom-in
+      this.animate({
+        x: graphfit.x,
+        y: graphfit.y,
+        scale: graphfit.scale,
+      }, duration * (scale_ratio_1 / scale_ratio_diff), 'in-quint', function() {
+        this.animate({
+          x: fit.x,
+          y: fit.y,
+          scale: fit.scale,
+        }, duration * (scale_ratio_2 / scale_ratio_diff), 'out-quint');
+      }.bind(this));
     },
     edgeStart: function (event) {
       // Listened from PortMenu.edgeStart() and Port.edgeStart()

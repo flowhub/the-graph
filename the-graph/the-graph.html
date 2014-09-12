@@ -346,6 +346,9 @@
           forceSelection: this.forceSelection
         });
       },
+      focusNode: function (node) {
+        this.appView.focusNode(node);
+      },
       menusChanged: function () {
         // Only if the object itself changes, 
         // otherwise builds menu from reference every time menu shown

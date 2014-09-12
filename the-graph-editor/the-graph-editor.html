@@ -350,6 +350,9 @@
       updateErrorNodes: function () {
         this.$.graph.errorNodesChanged();
       },
+      focusNode: function (node) {
+        this.$.graph.focusNode(node);
+      },
       getComponent: function (name) {
         return this.$.graph.getComponent(name);
       },
