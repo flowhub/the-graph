@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.iip = {
+  TheGraph.config.iip = {
     container: {
       className: "iip"
     },
@@ -17,7 +17,7 @@
     }
   };
 
-  var factories = TheGraph.factories.iip = {
+  TheGraph.factories.iip = {
     createIIPContainer: TheGraph.factories.createGroup,
     createIIPPath: TheGraph.factories.createPath,
     createIIPText: createIIPText
@@ -59,16 +59,16 @@
         label = label.slice(0, 9) + "...";
       }
 
-      var pathOptions = TheGraph.merge(config.path, {d: path});
-      var iipPath = factories.createIIPPath.call(this, pathOptions);
+      var pathOptions = TheGraph.merge(TheGraph.config.iip.path, {d: path});
+      var iipPath = TheGraph.factories.iip.createIIPPath.call(this, pathOptions);
 
-      var textOptions = TheGraph.merge(config.text, {x: x - 10, y: y, text: label});
-      var text = factories.createIIPText.call(this, textOptions);
+      var textOptions = TheGraph.merge(TheGraph.config.iip.text, {x: x - 10, y: y, text: label});
+      var text = TheGraph.factories.iip.createIIPText.call(this, textOptions);
 
       var containerContents = [iipPath, text];
 
-      var containerOptions = TheGraph.merge(config.container, {title: this.props.label});
-      return factories.createIIPContainer.call(this, containerOptions, containerContents);
+      var containerOptions = TheGraph.merge(TheGraph.config.iip.container, {title: this.props.label});
+      return TheGraph.factories.iip.createIIPContainer.call(this, containerOptions, containerContents);
     }
   });
 

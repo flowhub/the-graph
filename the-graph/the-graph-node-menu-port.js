@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.nodeMenuPort = {
+  TheGraph.config.nodeMenuPort = {
     container: {},
     backgroundRect: {
       rx: TheGraph.config.nodeRadius,
@@ -16,7 +16,7 @@
     text: {}
   };
 
-  var factories = TheGraph.factories.nodeMenuPort = {
+  TheGraph.factories.nodeMenuPort = {
     createNodeMenuPortGroup: TheGraph.factories.createGroup,
     createNodeMenuBackgroundRect: TheGraph.factories.createRect,
     createNodeMenuPortCircle: TheGraph.factories.createCircle,
@@ -62,16 +62,16 @@
         width: bgWidth
       };
 
-      rectOptions = TheGraph.merge(config.backgroundRect, rectOptions);
-      var rect = factories.createNodeMenuBackgroundRect.call(this, rectOptions);
+      rectOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.backgroundRect, rectOptions);
+      var rect = TheGraph.factories.nodeMenuPort.createNodeMenuBackgroundRect.call(this, rectOptions);
 
       var circleOptions = {
         className: "context-port-hole stroke route"+this.props.route,
         cx: this.props.x,
         cy: this.props.y,
       };
-      circleOptions = TheGraph.merge(config.circle, circleOptions);
-      var circle = factories.createNodeMenuPortCircle.call(this, circleOptions);
+      circleOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.circle, circleOptions);
+      var circle = TheGraph.factories.nodeMenuPort.createNodeMenuPortCircle.call(this, circleOptions);
 
       var textOptions = {
         className: "context-port-label fill route"+this.props.route,
@@ -80,13 +80,13 @@
         children: this.props.label.replace(/(.*)\/(.*)(_.*)\.(.*)/, '$2.$4')
       };
 
-      textOptions = TheGraph.merge(config.text, textOptions);
-      var text = factories.createNodeMenuPortText.call(this, textOptions);
+      textOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.text, textOptions);
+      var text = TheGraph.factories.nodeMenuPort.createNodeMenuPortText.call(this, textOptions);
 
       var containerContents = [rect, circle, text];
 
-      var containerOptions = TheGraph.merge(config.container, { className: "context-port click context-port-"+(this.props.isIn ? "in" : "out") });
-      return factories.createNodeMenuPortGroup.call(this, containerOptions, containerContents);
+      var containerOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.container, { className: "context-port click context-port-"+(this.props.isIn ? "in" : "out") });
+      return TheGraph.factories.nodeMenuPort.createNodeMenuPortGroup.call(this, containerOptions, containerContents);
 
     }
   });

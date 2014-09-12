@@ -3,7 +3,7 @@
 
   var TheGraph = context.TheGraph;
 
-  var config = TheGraph.config.menu = {
+  TheGraph.config.menu = {
     radius: 72,
     positions: {
       n4IconX: 0,
@@ -59,7 +59,7 @@
     }
   };
 
-  var factories = TheGraph.factories.menu = {
+  TheGraph.factories.menu = {
     createMenuGroup: TheGraph.factories.createGroup,
     createMenuSlice: createMenuSlice,
     createMenuSliceArcPath: TheGraph.factories.createPath,
@@ -77,39 +77,39 @@
   function createMenuSlice(options) {
     /*jshint validthis:true */
     var direction = options.direction;
-    var arcPathOptions = TheGraph.merge(config.arcPath, { d: TheGraph.arcs[direction] });
+    var arcPathOptions = TheGraph.merge(TheGraph.config.menu.arcPath, { d: TheGraph.arcs[direction] });
     var children = [
-      factories.createMenuSliceArcPath(arcPathOptions)
+      TheGraph.factories.menu.createMenuSliceArcPath(arcPathOptions)
     ];
 
     if (this.props.menu[direction]) {
       var slice = this.props.menu[direction];
       if (slice.icon) {
         var sliceIconTextOptions = {
-          x: config.positions[direction+"IconX"],
-          y: config.positions[direction+"IconY"],
+          x: TheGraph.config.menu.positions[direction+"IconX"],
+          y: TheGraph.config.menu.positions[direction+"IconY"],
           children: TheGraph.FONT_AWESOME[ slice.icon ]
         };
-        sliceIconTextOptions = TheGraph.merge(config.sliceIconText, sliceIconTextOptions);
-        children.push(factories.createMenuSliceIconText.call(this, sliceIconTextOptions));
+        sliceIconTextOptions = TheGraph.merge(TheGraph.config.menu.sliceIconText, sliceIconTextOptions);
+        children.push(TheGraph.factories.menu.createMenuSliceIconText.call(this, sliceIconTextOptions));
       }
       if (slice.label) {
         var sliceLabelTextOptions = {
-          x: config.positions[direction+"IconX"],
-          y: config.positions[direction+"IconY"],
+          x: TheGraph.config.menu.positions[direction+"IconX"],
+          y: TheGraph.config.menu.positions[direction+"IconY"],
           children: slice.label
         };
-        sliceLabelTextOptions = TheGraph.merge(config.sliceLabelText, sliceLabelTextOptions);
-        children.push(factories.createMenuSliceLabelText.call(this, sliceLabelTextOptions));
+        sliceLabelTextOptions = TheGraph.merge(TheGraph.config.menu.sliceLabelText, sliceLabelTextOptions);
+        children.push(TheGraph.factories.menu.createMenuSliceLabelText.call(this, sliceLabelTextOptions));
       }
       if (slice.iconLabel) {
         var sliceIconLabelTextOptions = {
-          x: config.positions[direction+"LabelX"],
-          y: config.positions[direction+"LabelY"],
+          x: TheGraph.config.menu.positions[direction+"LabelX"],
+          y: TheGraph.config.menu.positions[direction+"LabelY"],
           children: slice.iconLabel
         };
-        sliceIconLabelTextOptions = TheGraph.merge(config.sliceIconLabelText, sliceIconLabelTextOptions);
-        children.push(factories.createMenuSliceIconLabelText.call(this, sliceIconLabelTextOptions));
+        sliceIconLabelTextOptions = TheGraph.merge(TheGraph.config.menu.sliceIconLabelText, sliceIconLabelTextOptions);
+        children.push(TheGraph.factories.menu.createMenuSliceIconLabelText.call(this, sliceIconLabelTextOptions));
       }
     }
 
@@ -118,12 +118,12 @@
       className: "context-slice context-node-info" + (this.state[direction+"tappable"] ? " click" : ""),
       children: children
     };
-    containerOptions = TheGraph.merge(config.container, containerOptions);
-    return factories.createMenuGroup.call(this, containerOptions);
+    containerOptions = TheGraph.merge(TheGraph.config.menu.container, containerOptions);
+    return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
   }
 
   TheGraph.Menu = React.createClass({
-    radius: config.radius,
+    radius: TheGraph.config.menu.radius,
     getInitialState: function() {
       // Use these in CSS for cursor and hover, and to attach listeners
       return {
@@ -181,18 +181,18 @@
       var x = this.props.x !== undefined ? this.props.x : options.x;
       var y = this.props.y !== undefined ? this.props.y : options.y;
 
-      var circleXOptions = TheGraph.merge(config.circleXPath, {});
-      var outlineCircleOptions = TheGraph.merge(config.outlineCircle, {r: this.radius });
+      var circleXOptions = TheGraph.merge(TheGraph.config.menu.circleXPath, {});
+      var outlineCircleOptions = TheGraph.merge(TheGraph.config.menu.outlineCircle, {r: this.radius });
 
       var children = [
         // Directional slices
-        factories.createMenuSlice.call(this, { direction: "n4" }),
-        factories.createMenuSlice.call(this, { direction: "s4" }),
-        factories.createMenuSlice.call(this, { direction: "e4" }),
-        factories.createMenuSlice.call(this, { direction: "w4" }),
+        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "n4" }),
+        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "s4" }),
+        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "e4" }),
+        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "w4" }),
         // Outline and X
-        factories.createMenuCircleXPath.call(this, circleXOptions),
-        factories.createMenuOutlineCircle.call(this, outlineCircleOptions)
+        TheGraph.factories.menu.createMenuCircleXPath.call(this, circleXOptions),
+        TheGraph.factories.menu.createMenuOutlineCircle.call(this, outlineCircleOptions)
       ];
       // Menu label
       if (this.props.label || menu.icon) {
@@ -203,8 +203,8 @@
           children: (this.props.label ? this.props.label : menu.label)
         };
 
-        labelTextOptions = TheGraph.merge(config.labelText, labelTextOptions);
-        children.push(factories.createMenuLabelText.call(this, labelTextOptions));
+        labelTextOptions = TheGraph.merge(TheGraph.config.menu.labelText, labelTextOptions);
+        children.push(TheGraph.factories.menu.createMenuLabelText.call(this, labelTextOptions));
       }
       // Middle icon
       if (this.props.icon || menu.icon) {
@@ -214,15 +214,15 @@
           iconStyle = " fill route"+iconColor;
         }
 
-        var middleIconRectOptions = TheGraph.merge(config.iconRect, {});
-        var middleIcon = factories.createMenuMiddleIconRect.call(this, middleIconRectOptions);
+        var middleIconRectOptions = TheGraph.merge(TheGraph.config.menu.iconRect, {});
+        var middleIcon = TheGraph.factories.menu.createMenuMiddleIconRect.call(this, middleIconRectOptions);
 
         var middleIconTextOptions = {
           className: "icon context-node-icon"+iconStyle,
           children: TheGraph.FONT_AWESOME[ (this.props.icon ? this.props.icon : menu.icon) ]
         };
-        middleIconTextOptions = TheGraph.merge(config.iconText, middleIconTextOptions);
-        var iconText = factories.createMenuMiddleIconText.call(this, middleIconTextOptions);
+        middleIconTextOptions = TheGraph.merge(TheGraph.config.menu.iconText, middleIconTextOptions);
+        var iconText = TheGraph.factories.menu.createMenuMiddleIconText.call(this, middleIconTextOptions);
 
         children.push(middleIcon, iconText);
       }
@@ -232,13 +232,13 @@
         children: children
       };
 
-      containerOptions = TheGraph.merge(config.container, containerOptions);
-      return factories.createMenuGroup.call(this, containerOptions);
+      containerOptions = TheGraph.merge(TheGraph.config.menu.container, containerOptions);
+      return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
 
     }
   });
 
-  var modalConfig = TheGraph.config.modalBG = {
+  TheGraph.config.modalBG = {
     container: {},
     rect: {
       ref: "rect",
@@ -246,7 +246,7 @@
     }
   };
 
-  var modalFactories = TheGraph.factories.modalBG = {
+  TheGraph.factories.modalBG = {
     createModalBackgroundGroup: TheGraph.factories.createGroup,
     createModalBackgroundRect: TheGraph.factories.createRect
   };
@@ -276,12 +276,12 @@
         height: this.props.height
       };
 
-      rectOptions = TheGraph.merge(modalConfig.rect, rectOptions);
-      var rect = modalFactories.createModalBackgroundRect.call(this, rectOptions);
+      rectOptions = TheGraph.merge(TheGraph.config.modalBG.rect, rectOptions);
+      var rect = TheGraph.factories.modalBG.createModalBackgroundRect.call(this, rectOptions);
 
       var containerContents = [rect, this.props.children];
-      var containerOptions = TheGraph.merge(modalConfig.container, {});
-      return modalFactories.createModalBackgroundGroup.call(this, containerOptions, containerContents);
+      var containerOptions = TheGraph.merge(TheGraph.config.modalBG.container, {});
+      return TheGraph.factories.modalBG.createModalBackgroundGroup.call(this, containerOptions, containerContents);
     }
   });
 
