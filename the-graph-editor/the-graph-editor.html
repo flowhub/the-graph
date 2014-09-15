@@ -54,7 +54,7 @@
                   icon: "paste",
                   iconLabel: "paste",
                   action: function (graph, itemKey, item) {
-                      Clipboard.paste(graph);
+                      TheGraph.Clipboard.paste(graph);
                   }
               }
 
@@ -82,7 +82,7 @@
               iconLabel: "copy",
               action: function (graph,itemKey,item) {
                 //TODO actually the node needs to be cloned so we can support Cut/Paste
-                Clipboard.copy(graph,[itemKey]);
+                  TheGraph.Clipboard.copy(graph,[itemKey]);
               }
             }
           },
@@ -175,7 +175,7 @@
               action: function (graph,itemKey,item) {
                   //TODO actually the node needs to be cloned so we can support Cut/Paste
 
-                  Clipboard.copy(graph,item.nodes);
+                  TheGraph.Clipboard.copy(graph,item.nodes);
               }
             }
 
