@@ -5,6 +5,7 @@
     <meta charset="utf-8">
 
     <!-- Bower Libraries -->
+    <script src="../bower_components/underscore/underscore.js"></script>
     <script src="../bower_components/platform/platform.js"></script>
     <script src="../bower_components/react/react-with-addons.js"></script>
     <script src="../bower_components/klay-js/klay.js"></script>
@@ -83,6 +84,7 @@
     <div id="testing">
       <button id="autolayout">autolayout</button>
       <button id="theme">theme</button>
+      <button id="focus">focus</button>
     </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
@@ -182,6 +184,14 @@
             theme = (theme==="dark" ? "light" : "dark");
             editor.theme = theme;
           });
+
+          // Focus a node
+          document.getElementById("focus").addEventListener("click", function () {
+            var nodes = editor.nofloGraph.nodes;
+            var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
+            editor.focusNode(randomNode);
+        });
+
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
