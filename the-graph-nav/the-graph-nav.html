@@ -8,25 +8,25 @@
 <link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
 
 <polymer-element name="the-graph-nav" attributes="width height editor hide" touch-action="none">
-  <style>
-    #thumb, 
-    #outcanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      overflow: visible;
-    }
-    #viewrect {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 150px;
-      border: 1px solid hsla(190, 100%, 80%, 0.4);
-      border-style: dotted;
-    }
-  </style>
   <template>
+    <style>
+      #thumb, 
+      #outcanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: visible;
+      }
+      #viewrect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 150px;
+        border: 1px solid hsla(190, 100%, 80%, 0.4);
+        border-style: dotted;
+      }
+    </style>
     <the-graph-thumb id="thumb"
       graph="{{ editor.nofloGraph }}"
       thumbrectangle="{{thumbrectangle}}"
@@ -59,6 +59,12 @@
         this.style.cursor = "move";
         this.style.width = this.width + "px";
         this.style.height = this.height + "px";
+
+        // HACK way to make PolymerGestures work for now
+        var noop = function(){};
+        PolymerGestures.addEventListener(this, "track", noop);
+        PolymerGestures.addEventListener(this, "trackend", noop);
+        PolymerGestures.addEventListener(this, "tap", noop);
 
         // Pan graph by dragging map
         this.addEventListener("track", function (event) {
