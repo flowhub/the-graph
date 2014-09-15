@@ -23,7 +23,8 @@
       nodeHeight: defaultNodeSize,
       autoSizeNode: true,
       maxPortCount: 9,
-      nodeHeightIncrement: 12
+      nodeHeightIncrement: 12,
+      focusAnimationDuration: 1500
     },
     factories: {}
   }; 
