@@ -179,7 +179,7 @@
       return {
         x: this.props.x !== undefined ? this.props.x : this.props.options.x || 0,
         y: this.props.y !== undefined ? this.props.y : this.props.options.y || 0
-      }
+      };
     },
     render: function() {
       var menu = this.props.menu;

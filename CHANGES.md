@@ -1,3 +1,5 @@
+## 0.3.4 (dev)
+
 ## 0.3.3 (master)
 
 * Copy and paste (#167) thanks @mpricope
