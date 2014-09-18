@@ -26,15 +26,16 @@
     //decide if/how we will implement cross-document copy&paste will work there too
     clipboardContent = {nodes:[],edges:[]};
     var map = {};
-    for (var nodeKey in keys) {
-      var node = graph.getNode(keys[nodeKey]);
+    var i, len;
+    for (i = 0, len = keys.length; i < len; i++) {
+      var node = graph.getNode(keys[i]);
       var newNode = cloneObject(node);
       newNode.id = makeNewId(node.component);
       clipboardContent.nodes.push(newNode);
       map[node.id] = newNode.id;
     }
-    for (var edgeKey in graph.edges) {
-      var edge = graph.edges[edgeKey];
+    for (i = 0, len = graph.edges.length; i < len; i++) {
+      var edge = graph.edges[i];
       var fromNode = edge.from.node;
       var toNode = edge.to.node;
       if (map.hasOwnProperty(fromNode) && map.hasOwnProperty(toNode)) {
@@ -49,16 +50,17 @@
 
   TheGraph.Clipboard.paste = function (graph) {
     var map = {};
-    for (var nodeKey in clipboardContent.nodes) {
-      var node = clipboardContent.nodes[nodeKey];
+    var i, len;
+    for (i = 0, len = clipboardContent.nodes.length; i < len; i++) {
+      var node = clipboardContent.nodes[i];
       var meta = cloneObject(node.metadata);
       meta.x += 10;
       meta.y += 10;
       var newNode = graph.addNode(makeNewId(node.component), node.component, meta);
       map[node.id] = newNode.id;
     }
-    for (var edgeKey in clipboardContent.edges) {
-      var edge = clipboardContent.edges[edgeKey];
+    for (i = 0, len = clipboardContent.edges.length; i < len; i++) {
+      var edge = clipboardContent.edges[i];
       var fromNode = edge.from.node;
       var toNode = edge.to.node;
       var newEdgeMeta = cloneObject(edge.metadata);
