@@ -24,7 +24,7 @@
     //Duplicate all the nodes before putting them in clipboard
     //this will make this work also with cut/Paste and once we
     //decide if/how we will implement cross-document copy&paste will work there too
-    clipboardContent = {nodes:[],edges:[]};
+    clipboardContent = {nodes:[], edges:[]};
     var map = {};
     var i, len;
     for (i = 0, len = keys.length; i < len; i++) {
@@ -50,30 +50,32 @@
 
   TheGraph.Clipboard.paste = function (graph) {
     var map = {};
+    var pasted = {nodes:[], edges:[]};
     var i, len;
     for (i = 0, len = clipboardContent.nodes.length; i < len; i++) {
       var node = clipboardContent.nodes[i];
       var meta = cloneObject(node.metadata);
-      meta.x += 10;
-      meta.y += 10;
+      meta.x += 36;
+      meta.y += 36;
       var newNode = graph.addNode(makeNewId(node.component), node.component, meta);
       map[node.id] = newNode.id;
+      pasted.nodes.push(newNode);
     }
     for (i = 0, len = clipboardContent.edges.length; i < len; i++) {
       var edge = clipboardContent.edges[i];
-      var fromNode = edge.from.node;
-      var toNode = edge.to.node;
       var newEdgeMeta = cloneObject(edge.metadata);
+      var newEdge;
       if (edge.from.hasOwnProperty('index') || edge.to.hasOwnProperty('index')) {
         // One or both ports are addressable
         var fromIndex = edge.from.index || null;
         var toIndex = edge.to.index || null;
-        graph.addEdgeIndex(map[fromNode], edge.from.port, fromIndex, map[toNode], edge.to.port, toIndex, newEdgeMeta);
+        newEdge = graph.addEdgeIndex(map[edge.from.node], edge.from.port, fromIndex, map[edge.to.node], edge.to.port, toIndex, newEdgeMeta);
       } else {
-        graph.addEdge(map[fromNode], edge.from.port, map[toNode], edge.to.port, newEdgeMeta);
+        newEdge = graph.addEdge(map[edge.from.node], edge.from.port, map[edge.to.node], edge.to.port, newEdgeMeta);
       }
+      pasted.edges.push(newEdge);
     }
-
+    return pasted;
   };
 
 })(this);

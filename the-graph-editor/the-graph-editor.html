@@ -43,21 +43,22 @@
       displaySelectionGroup: true,
       forceSelection: false,
       created: function () {
-        // Default pan
         this.pan = [0,0];
+        var pasteAction = function (graph, itemKey, item) {
+          var pasted = TheGraph.Clipboard.paste(graph);
+          console.log(pasted);
+          this.selectedNodes = pasted.nodes;
+        }.bind(this);
+        var pasteMenu = {
+          icon: "paste",
+          iconLabel: "paste",
+          action: pasteAction
+        };
         // Default context menu defs
         this.menus = {
           main: {
-              icon: "long-arrow-right",
-              iconLabel: "main",
-              e4: {
-                  icon: "paste",
-                  iconLabel: "paste",
-                  action: function (graph, itemKey, item) {
-                      TheGraph.Clipboard.paste(graph);
-                  }
-              }
-
+            icon: "sitemap",
+            e4: pasteMenu
           },
           edge: {
             icon: "long-arrow-right",
@@ -65,7 +66,7 @@
               icon: "trash-o",
               iconLabel: "delete",
               action: function (graph, itemKey, item) {
-                graph.removeEdge( item.from.node, item.from.port, item.to.node, item.to.port );
+                graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
               }
             }
           },
@@ -74,15 +75,14 @@
               icon: "trash-o",
               iconLabel: "delete",
               action: function (graph, itemKey, item) {
-                graph.removeNode( itemKey );
+                graph.removeNode(itemKey);
               }
             },
             w4: {
               icon: "copy",
               iconLabel: "copy",
-              action: function (graph,itemKey,item) {
-                //TODO actually the node needs to be cloned so we can support Cut/Paste
-                  TheGraph.Clipboard.copy(graph,[itemKey]);
+              action: function (graph, itemKey, item) {
+                TheGraph.Clipboard.copy(graph, [itemKey]);
               }
             }
           },
@@ -164,21 +164,20 @@
               action: function (graph, itemKey, item) {
                 graph.removeGroup(itemKey);
               }
-            }
-
+            },
+            // TODO copy group?
+            e4: pasteMenu
           },
           selection: {
             icon: "th",
             w4: {
               icon: "copy",
               iconLabel: "copy",
-              action: function (graph,itemKey,item) {
-                  //TODO actually the node needs to be cloned so we can support Cut/Paste
-
-                  TheGraph.Clipboard.copy(graph,item.nodes);
+              action: function (graph, itemKey, item) {
+                TheGraph.Clipboard.copy(graph, item.nodes);
               }
-            }
-
+            },
+            e4: pasteMenu
           }
         };
       },

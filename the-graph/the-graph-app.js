@@ -365,26 +365,24 @@
       }.bind(this), 500);
     },
     onShowContext: function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.preventTap) { event.preventTap(); }
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
 
-        // Get mouse position
-        var x = event.x || event.clientX || 0;
-        var y = event.y || event.clientY || 0;
+      // Get mouse position
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
-        // App.showContext
-        this.showContext({
-            element: this,
-            type: "main",
-            x: x,
-            y: y,
-            graph: this.props.graph,
-            itemKey: (this.props.export ? this.props.exportKey : this.props.key),
-            item: (this.props.export ? this.props.export : this.props.node)
-        });
-        console.log("Context Menu");
-
+      // App.showContext
+      this.showContext({
+        element: this,
+        type: "main",
+        x: x,
+        y: y,
+        graph: this.props.graph,
+        itemKey: 'graph',
+        item: this.props.graph
+      });
     },
     keyDown: function (event) {
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29

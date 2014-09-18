@@ -175,11 +175,16 @@
         }
       }, false);
     },
+    getPosition: function () {
+      return {
+        x: this.props.x !== undefined ? this.props.x : this.props.options.x || 0,
+        y: this.props.y !== undefined ? this.props.y : this.props.options.y || 0
+      }
+    },
     render: function() {
       var menu = this.props.menu;
       var options = this.props.options;
-      var x = this.props.x !== undefined ? this.props.x : options.x;
-      var y = this.props.y !== undefined ? this.props.y : options.y;
+      var position = this.getPosition();
 
       var circleXOptions = TheGraph.merge(TheGraph.config.menu.circleXPath, {});
       var outlineCircleOptions = TheGraph.merge(TheGraph.config.menu.outlineCircle, {r: this.radius });
@@ -228,7 +233,7 @@
       }
 
       var containerOptions = {
-        transform: "translate("+x+","+y+")",
+        transform: "translate("+position.x+","+position.y+")",
         children: children
       };
 

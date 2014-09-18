@@ -109,6 +109,10 @@
       // Don't show native context menu
       event.preventDefault();
 
+      // Don't tap graph on hold event
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
+
       // Get mouse position
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
