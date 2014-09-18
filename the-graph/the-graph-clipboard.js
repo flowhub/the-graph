@@ -62,8 +62,14 @@
       var fromNode = edge.from.node;
       var toNode = edge.to.node;
       var newEdgeMeta = cloneObject(edge.metadata);
-      // TODO check if we need to addEdgeIndex for addressable ports
-      graph.addEdge(map[fromNode], edge.from.port, map[toNode], edge.to.port, newEdgeMeta);
+      if (edge.from.hasOwnProperty('index') || edge.to.hasOwnProperty('index')) {
+        // One or both ports are addressable
+        var fromIndex = edge.from.index || null;
+        var toIndex = edge.to.index || null;
+        graph.addEdgeIndex(map[fromNode], edge.from.port, fromIndex, map[toNode], edge.to.port, toIndex, newEdgeMeta);
+      } else {
+        graph.addEdge(map[fromNode], edge.from.port, map[toNode], edge.to.port, newEdgeMeta);
+      }
     }
 
   };
