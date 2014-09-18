@@ -343,6 +343,8 @@
       // Edge preview
       domNode.addEventListener("the-graph-edge-start", this.edgeStart);
 
+      domNode.addEventListener("contextmenu",this.onShowContext);
+
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
@@ -356,10 +358,33 @@
       this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
+
       // Rerender graph once to fix edges
       setTimeout(function () {
         this.renderGraph();
       }.bind(this), 500);
+    },
+    onShowContext: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.preventTap) { event.preventTap(); }
+
+        // Get mouse position
+        var x = event.x || event.clientX || 0;
+        var y = event.y || event.clientY || 0;
+
+        // App.showContext
+        this.showContext({
+            element: this,
+            type: "main",
+            x: x,
+            y: y,
+            graph: this.props.graph,
+            itemKey: (this.props.export ? this.props.exportKey : this.props.key),
+            item: (this.props.export ? this.props.export : this.props.node)
+        });
+        console.log("Context Menu");
+
     },
     keyDown: function (event) {
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
@@ -427,6 +452,31 @@
         }
       }
 
+    },
+
+    getContext: function (menu, options, hide) {
+        var processKey = this.props.key;
+
+        return TheGraph.Menu({
+            menu: menu,
+            options: options,
+            triggerHideContext: hide,
+            label: "Hello",
+            graph: this.props.graph,
+//            graphView: this.props.graphView,
+            node: this,
+//            icon: this.props.icon,
+            ports: [],
+            process: [],
+            processKey: processKey,
+            x: options.x,
+            y: options.y,
+            nodeWidth: this.props.width,
+            nodeHeight: this.props.height,
+            deltaX: 0,
+            deltaY: 0,
+            highlightPort: false
+        });
     },
     render: function() {
       // console.timeEnd("App.render");
