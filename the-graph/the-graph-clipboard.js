@@ -9,7 +9,18 @@
     TheGraph.Clipboard = {};
     var clipboardContent = {};
 
-    TheGraph.Clipboard.copy = function (graph,keys) {
+    var cloneObject = function (obj) {
+        return JSON.parse(JSON.stringify(obj));
+    };
+
+    var makeNewId = function (label) {
+        var num = 60466176; // 36^5
+        num = Math.floor(Math.random() * num);
+        var id = label + '_' + num.toString(36);
+        return id;
+    };
+
+    TheGraph.Clipboard.copy = function (graph, keys) {
         //Duplicate all the nodes before putting them in clipboard
         //this will make this work also with cut/Paste and once we
         //decide if/how we will implement cross-document copy&paste will work there too
@@ -17,25 +28,19 @@
         var map = {};
         for (var nodeKey in keys) {
             var node = graph.getNode(keys[nodeKey]);
-            var meta = JSON.parse(JSON.stringify(node.metadata));
-            meta.x += 10;
-            meta.y += 10;
-            var newNode = {id:TheGraph.Clipboard.makeNewId(node.component),component:node.component,metadata:meta};
+            var newNode = cloneObject(node);
+            newNode.id = makeNewId(node.component);
             clipboardContent.nodes.push(newNode);
             map[node.id] = newNode.id;
-
         }
         for (var edgeKey in graph.edges) {
             var edge = graph.edges[edgeKey];
             var fromNode = edge.from.node;
             var toNode = edge.to.node;
             if (map.hasOwnProperty(fromNode) && map.hasOwnProperty(toNode)) {
-                var newEdgeMeta = JSON.parse(JSON.stringify(edge.metadata));
-                var newEdge = {
-                    from:{node:map[edge.from.node],port:edge.from.port},
-                    to:{node:map[edge.to.node],port:edge.to.port},
-                    metadata:newEdgeMeta
-                };
+                var newEdge = cloneObject(edge);
+                newEdge.from.node = map[fromNode];
+                newEdge.to.node = map[toNode];
                 clipboardContent.edges.push(newEdge);
             }
         }
@@ -46,29 +51,21 @@
         var map = {};
         for (var nodeKey in clipboardContent.nodes) {
             var node = clipboardContent.nodes[nodeKey];
-            var meta = JSON.parse(JSON.stringify(node.metadata));
+            var meta = cloneObject(node.metadata);
             meta.x += 10;
             meta.y += 10;
-            var newNode = graph.addNode(TheGraph.Clipboard.makeNewId(node.component),node.component,meta);
+            var newNode = graph.addNode(makeNewId(node.component), node.component, meta);
             map[node.id] = newNode.id;
-
         }
         for (var edgeKey in clipboardContent.edges) {
             var edge = clipboardContent.edges[edgeKey];
             var fromNode = edge.from.node;
             var toNode = edge.to.node;
-            var newEdgeMeta = JSON.parse(JSON.stringify(edge.metadata));
-            graph.addEdge(map[edge.from.node],edge.from.port,map[edge.to.node],edge.to.port,newEdgeMeta);
+            var newEdgeMeta = cloneObject(edge.metadata);
+            // TODO check if we need to addEdgeIndex for addressable ports
+            graph.addEdge(map[fromNode], edge.from.port, map[toNode], edge.to.port, newEdgeMeta);
         }
 
-    };
-
-
-    TheGraph.Clipboard.makeNewId = function(label) {
-        var num = 60466176; // 36^5
-        num = Math.floor(Math.random() * num);
-        var id = label + '_' + num.toString(36);
-        return id;
     };
 
 })(this);
