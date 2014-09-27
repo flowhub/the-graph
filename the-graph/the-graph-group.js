@@ -140,7 +140,7 @@
       var x = this.props.minX - TheGraph.config.nodeWidth / 2;
       var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
-      var selection = (this.props.isSelectionGroup ? ' selection drag' : '0');
+      var selection = (this.props.isSelectionGroup ? ' selection drag' : '');
       var boxRectOptions = {
         x: x,
         y: y,
