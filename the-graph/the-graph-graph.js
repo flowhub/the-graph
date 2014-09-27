@@ -440,10 +440,13 @@
           node.metadata.label = key;
         }
         var icon = "cog";
+        var iconsvg = "";
         if (self.updatedIcons[key]) {
           icon = self.updatedIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
+        } else if (componentInfo && componentInfo.iconsvg) {
+          iconsvg = componentInfo.iconsvg
         }
         var selected = (self.state.selectedNodes[key] === true);
         if (selected) {
@@ -463,6 +466,7 @@
           graph: graph,
           node: node,
           icon: icon,
+          iconsvg: iconsvg,
           ports: self.getPorts(graph, key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: selected,
