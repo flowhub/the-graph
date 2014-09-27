@@ -600,7 +600,7 @@
           node: {},
           ports: self.getGraphInport(key),
           isIn: true,
-          icon: "sign-in",
+          icon: (metadata.icon ? metadata.icon : "sign-in"),
           showContext: self.props.showContext
         };
         expNode = TheGraph.merge(TheGraph.config.graph.inportNode, expNode);
@@ -675,7 +675,7 @@
           node: {},
           ports: self.getGraphOutport(key),
           isIn: false,
-          icon: "sign-out",
+          icon: (metadata.icon ? metadata.icon : "sign-out"),
           showContext: self.props.showContext
         };
         expNode = TheGraph.merge(TheGraph.config.graph.outportNode, expNode);
