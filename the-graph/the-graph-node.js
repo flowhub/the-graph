@@ -429,8 +429,8 @@
         icon = TheGraph.FONT_AWESOME.cog;
       }
 
-      var iconContent
-      if (this.props.iconsvg && this.props.iconsvg != "") {
+      var iconContent;
+      if (this.props.iconsvg && this.props.iconsvg !== "") {
           var iconSVGOptions = TheGraph.merge(TheGraph.config.node.iconsvg, {
               src: this.props.iconsvg,
               x: TheGraph.config.nodeRadius - 4,

@@ -446,7 +446,7 @@
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         } else if (componentInfo && componentInfo.iconsvg) {
-          iconsvg = componentInfo.iconsvg
+          iconsvg = componentInfo.iconsvg;
         }
         var selected = (self.state.selectedNodes[key] === true);
         if (selected) {
