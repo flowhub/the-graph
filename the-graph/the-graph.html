@@ -412,6 +412,11 @@
           }
         }
 
+        // we should use the icon from the library
+        definition.icon = component.icon;
+        // a component could also define a svg icon
+        definition.iconsvg = component.iconsvg;
+
         return definition;
       },
       registerComponent: function (definition, generated) {
