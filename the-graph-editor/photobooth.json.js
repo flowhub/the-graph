@@ -13,7 +13,7 @@ loadGraph({
   },
   "inports": { 
     "prev": {
-      "process": 'routers/KickRouter_bzaiw',
+      "process": "routers/KickRouter_bzaiw",
       "port": "prev",
       "metadata": {
         "x": 0,
@@ -21,13 +21,13 @@ loadGraph({
       }
     },
     "next": {
-      "process": 'routers/KickRouter_bzaiw',
+      "process": "routers/KickRouter_bzaiw",
       "port": "next"
     }
   },
   "outports": {
     "image": {
-      "process": 'core/Split_xyb8x',
+      "process": "core/Split_xyb8x",
       "port": "out",
       "metadata": {
         "x": 2000,
