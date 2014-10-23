@@ -1,4 +1,9 @@
-## 0.3.4 (dev)
+## 0.3.5 (dev)
+
+## 0.3.4 (London, 2014 October 23)
+
+* Enable SVG icon to be loaded (#178) thanks @lhausermann
+* font-awesome to 4.2.0
 
 ## 0.3.3 (2014 September 18)
 
