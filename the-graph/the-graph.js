@@ -279,6 +279,22 @@
 
 
   // Reusable React classes
+  TheGraph.SVGImage = React.createClass({
+    render: function() {
+        var html = '<image ';
+        html = html +'xlink:href="'+ this.props.src + '"';
+        html = html +'x="' + this.props.x + '"';
+        html = html +'y="' + this.props.y + '"';
+        html = html +'width="' + this.props.width + '"';
+        html = html +'height="' + this.props.height + '"';
+        html = html +'/>';
+
+        return React.DOM.g({
+            dangerouslySetInnerHTML:{__html: html}
+        });
+    }
+  });
+
   TheGraph.TextBG = React.createClass({
     render: function() {
       var text = this.props.text;
@@ -368,6 +384,10 @@
 
   TheGraph.factories.createPath = function(options) {
     return React.DOM.path(options);
+  };
+
+  TheGraph.factories.createImg = function(options) {
+    return TheGraph.SVGImage(options);
   };
 
   TheGraph.factories.createCanvas = function(options) {

@@ -26,6 +26,9 @@
       ref: "icon",
       className: "icon node-icon drag"
     },
+    iconsvg: {
+      className: "icon node-icon drag"
+    },
     inports: {
       className: "inports"
     },
@@ -61,6 +64,7 @@
     createNodeBorderRect: TheGraph.factories.createRect,
     createNodeInnerRect: TheGraph.factories.createRect,
     createNodeIconText: TheGraph.factories.createText,
+    createNodeIconSVG: TheGraph.factories.createImg,
     createNodeInportsGroup: TheGraph.factories.createGroup,
     createNodeOutportsGroup: TheGraph.factories.createGroup,
     createNodeLabelGroup: TheGraph.factories.createGroup,
@@ -419,10 +423,28 @@
         return TheGraph.factories.node.createNodePort(props);
       });
 
-      // Make sure icon exists
+      // Node Icon
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
-      if (!icon) { 
+      if (!icon) {
         icon = TheGraph.FONT_AWESOME.cog;
+      }
+
+      var iconContent;
+      if (this.props.iconsvg && this.props.iconsvg !== "") {
+          var iconSVGOptions = TheGraph.merge(TheGraph.config.node.iconsvg, {
+              src: this.props.iconsvg,
+              x: TheGraph.config.nodeRadius - 4,
+              y: TheGraph.config.nodeRadius - 4,
+              width: this.props.width - 10,
+              height: this.props.height - 10
+          });
+          iconContent = TheGraph.factories.node.createNodeIconSVG.call(this, iconSVGOptions);
+      } else {
+          var iconOptions = TheGraph.merge(TheGraph.config.node.icon, {
+              x: this.props.width / 2,
+              y: this.props.height / 2,
+              children: icon });
+          iconContent = TheGraph.factories.node.createNodeIconText.call(this, iconOptions);
       }
 
       var backgroundRectOptions = TheGraph.merge(TheGraph.config.node.background, { width: this.props.width, height: this.props.height + 25 });
@@ -434,9 +456,6 @@
       var innerRectOptions = TheGraph.merge(TheGraph.config.node.innerRect, { width: this.props.width - 6, height: this.props.height - 6 });
       var innerRect = TheGraph.factories.node.createNodeInnerRect.call(this, innerRectOptions);
 
-      var iconOptions = TheGraph.merge(TheGraph.config.node.icon, { x: this.props.width / 2, y: this.props.height / 2, children: icon });
-      var iconText = TheGraph.factories.node.createNodeIconText.call(this, iconOptions);
-      
       var inportsOptions = TheGraph.merge(TheGraph.config.node.inports, { children: inportViews });
       var inportsGroup = TheGraph.factories.node.createNodeInportsGroup.call(this, inportsOptions);
 
@@ -467,7 +486,7 @@
         backgroundRect,
         borderRect,
         innerRect,
-        iconText,
+        iconContent,
         inportsGroup,
         outportsGroup,
         labelGroup,

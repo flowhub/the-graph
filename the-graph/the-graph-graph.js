@@ -440,10 +440,13 @@
           node.metadata.label = key;
         }
         var icon = "cog";
+        var iconsvg = "";
         if (self.updatedIcons[key]) {
           icon = self.updatedIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
+        } else if (componentInfo && componentInfo.iconsvg) {
+          iconsvg = componentInfo.iconsvg;
         }
         var selected = (self.state.selectedNodes[key] === true);
         if (selected) {
@@ -463,6 +466,7 @@
           graph: graph,
           node: node,
           icon: icon,
+          iconsvg: iconsvg,
           ports: self.getPorts(graph, key, node.component),
           onNodeSelection: self.props.onNodeSelection,
           selected: selected,
@@ -600,7 +604,7 @@
           node: {},
           ports: self.getGraphInport(key),
           isIn: true,
-          icon: "sign-in",
+          icon: (metadata.icon ? metadata.icon : "sign-in"),
           showContext: self.props.showContext
         };
         expNode = TheGraph.merge(TheGraph.config.graph.inportNode, expNode);
@@ -675,7 +679,7 @@
           node: {},
           ports: self.getGraphOutport(key),
           isIn: false,
-          icon: "sign-out",
+          icon: (metadata.icon ? metadata.icon : "sign-out"),
           showContext: self.props.showContext
         };
         expNode = TheGraph.merge(TheGraph.config.graph.outportNode, expNode);
