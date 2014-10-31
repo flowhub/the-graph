@@ -27,6 +27,9 @@
         },
         build_fa: {
           command: 'node ./scripts/build-font-awesome-javascript.js '
+        },
+        mocha: {
+          command: 'node ./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register ./test/*/*.coffee'
         }
       },
       browserify: {
@@ -120,7 +123,7 @@
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'exec:mocha']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
     this.registerTask('default', ['test']);
   };

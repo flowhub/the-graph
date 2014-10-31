@@ -1,0 +1,515 @@
+{
+  "dom/GetElement": {
+    "name": "dom/GetElement",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "selector",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "element",
+        "type": "all"
+      }
+    ]
+  },
+  "interaction/ListenMouse": {
+    "name": "interaction/ListenMouse",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "element",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "click",
+        "type": "all"
+      }
+    ]
+  },
+  "gum/GetUserMedia": {
+    "name": "gum/GetUserMedia",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "start",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "url",
+        "type": "all"
+      }
+    ]
+  },
+  "dom/SetAttribute": {
+    "name": "dom/SetAttribute",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "attribute",
+        "type": "all"
+      },
+      {
+        "name": "value",
+        "type": "all"
+      },
+      {
+        "name": "element",
+        "type": "all"
+      }
+    ],
+    "outports": []
+  },
+  "seriously/SetSource": {
+    "name": "seriously/SetSource",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/Ascii": {
+    "name": "seriously/Ascii",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/SetTarget": {
+    "name": "seriously/SetTarget",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      },
+      {
+        "name": "target",
+        "type": "all"
+      }
+    ],
+    "outports": []
+  },
+  "routers/KickRouter": {
+    "name": "routers/KickRouter",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "prev",
+        "type": "all"
+      },
+      {
+        "name": "next",
+        "type": "all"
+      },
+      {
+        "name": "in",
+        "type": "all"
+      },
+      {
+        "name": "index",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/TVGlitch": {
+    "name": "seriously/TVGlitch",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "verticalsync",
+        "type": "all"
+      },
+      {
+        "name": "linesync",
+        "type": "all"
+      },
+      {
+        "name": "time",
+        "type": "all"
+      },
+      {
+        "name": "bars",
+        "type": "all"
+      },
+      {
+        "name": "scanlines",
+        "type": "all"
+      },
+      {
+        "name": "source",
+        "type": "all"
+      },
+      {
+        "name": "distortion",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/Hex": {
+    "name": "seriously/Hex",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      },
+      {
+        "name": "size",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/Edge": {
+    "name": "seriously/Edge",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/Invert": {
+    "name": "seriously/Invert",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "source",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/Split": {
+    "name": "seriously/Split",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "fuzzy",
+        "type": "all"
+      },
+      {
+        "name": "split",
+        "type": "all"
+      },
+      {
+        "name": "sourcea",
+        "type": "all"
+      },
+      {
+        "name": "sourceb",
+        "type": "all"
+      },
+      {
+        "name": "angle",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "core/Split": {
+    "name": "core/Split",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "seriously/HueSaturation": {
+    "name": "seriously/HueSaturation",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "saturation",
+        "type": "all"
+      },
+      {
+        "name": "source",
+        "type": "all"
+      },
+      {
+        "name": "hue",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "core/Kick": {
+    "name": "core/Kick",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "data",
+        "type": "all"
+      },
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "core/MakeFunction": {
+    "name": "core/MakeFunction",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "function",
+        "type": "all"
+      },
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "dom/CreateElement": {
+    "name": "dom/CreateElement",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "container",
+        "type": "all"
+      },
+      {
+        "name": "tagname",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "element",
+        "type": "all"
+      }
+    ]
+  },
+  "core/RepeatAsync": {
+    "name": "core/RepeatAsync",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "strings/SendString": {
+    "name": "strings/SendString",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "string",
+        "type": "all"
+      },
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "interaction/ListenChange": {
+    "name": "interaction/ListenChange",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "element",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "value",
+        "type": "all"
+      }
+    ]
+  },
+  "math/Multiply": {
+    "name": "math/Multiply",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "multiplier",
+        "type": "all"
+      },
+      {
+        "name": "multiplicand",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "product",
+        "type": "all"
+      }
+    ]
+  },
+  "core/RunTimeout": {
+    "name": "core/RunTimeout",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "time",
+        "type": "all"
+      },
+      {
+        "name": "start",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "dom/AddClass": {
+    "name": "dom/AddClass",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "element",
+        "type": "all"
+      },
+      {
+        "name": "class",
+        "type": "all"
+      }
+    ],
+    "outports": []
+  },
+  "dom/RemoveClass": {
+    "name": "dom/RemoveClass",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "element",
+        "type": "all"
+      },
+      {
+        "name": "class",
+        "type": "all"
+      }
+    ],
+    "outports": []
+  }
+}
