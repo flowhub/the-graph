@@ -1,4 +1,8 @@
-## 0.3.5 (dev)
+## 0.4.0 (dev) Breaking changes!
+
+* [Fluxify](https://github.com/facebook/flux) the-graph
+* Move state logic to stores (#176)
+* Experiment with moving some drawing to 2D canvas
 
 ## 0.3.4 (London, 2014 October 23)
 
