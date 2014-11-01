@@ -10,7 +10,8 @@
       scripts: ['Gruntfile.js', 'the-*/*.js'],
       elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
-      css: ['themes/*.css']
+      css: ['themes/*.css'],
+      browserify: ['src/*/*.coffee']
     };
 
     var jshintOptions = { 
@@ -22,17 +23,15 @@
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
       exec: {
-        build_stylus: {
-          command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
-        },
-        build_fa: {
-          command: 'node ./scripts/build-font-awesome-javascript.js '
-        }
+        build_stylus: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl',
+        build_fa: 'node ./scripts/build-font-awesome-javascript.js',
+        mocha: 'node ./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register ./test/*/*.coffee',
+        browserify: 'npm run build'
       },
       browserify: {
         libs: {
           files: {
-            'build/noflo.js': ['index.js'],
+            'build/noflo.js': ['./index.js'],
           },
           options: {
             transform: ['coffeeify']
@@ -76,7 +75,6 @@
           files: sources.scripts,
           tasks: ['jshint:force'],
           options: {
-            // nospawn: true,
             livereload: true
           }
         },
@@ -84,7 +82,6 @@
           files: sources.elements,
           tasks: ['inlinelint:force'],
           options: {
-            // nospawn: true,
             livereload: true
           }
         },
@@ -92,14 +89,19 @@
           files: sources.stylus,
           tasks: ['exec:build_stylus'],
           options: {
-            // nospawn: true,
             livereload: false
           }
         },
         css: {
           files: sources.css,
           options: {
-            // nospawn: true,
+            livereload: true
+          }
+        },
+        browserify: {
+          files: sources.browserify,
+          tasks: ['exec:mocha', 'exec:browserify'],
+          options: {
             livereload: true
           }
         }
@@ -120,8 +122,8 @@
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'exec:mocha']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'exec:browserify']);
     this.registerTask('default', ['test']);
   };
 

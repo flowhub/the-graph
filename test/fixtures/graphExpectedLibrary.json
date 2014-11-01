@@ -1,0 +1,36 @@
+{
+  "fixture/foo": {
+    "name": "fixture/foo",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "in",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out",
+        "type": "all"
+      }
+    ]
+  },
+  "fixture/bar": {
+    "name": "fixture/bar",
+    "icon": "cog",
+    "description": "",
+    "inports": [
+      {
+        "name": "in0",
+        "type": "all"
+      }
+    ],
+    "outports": [
+      {
+        "name": "out0",
+        "type": "all"
+      }
+    ]
+  }
+}

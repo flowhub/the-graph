@@ -1,0 +1,123 @@
+{
+    "properties": {
+        "name": "main",
+        "id": "fixture/main",
+        "project": "fixture",
+        "environment": {
+            "type": "noflo-browser"
+        },
+        "changed": true
+    },
+    "inports": {
+        "in": {
+            "process": "foo0",
+            "port": "in",
+            "metadata": {
+                "x": 36,
+                "y": 288,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "outports": {
+        "out0": {
+            "process": "bar0",
+            "port": "out0",
+            "metadata": {
+                "x": 756,
+                "y": 216,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "groups": [
+        {
+            "name": "group0",
+            "nodes": [
+                "bar0",
+                "foo0"
+            ],
+            "metadata": {
+                "description": "group0 description"
+            }
+        },
+        {
+            "name": "group1",
+            "nodes": [
+                "bar1",
+                "foo1"
+            ],
+            "metadata": {
+                "description": "group1 description"
+            }
+        }
+    ],
+    "processes": {
+        "foo0": {
+            "component": "fixture/foo",
+            "metadata": {
+                "label": "foo0",
+                "x": 468,
+                "y": 180,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "bar0": {
+            "component": "fixture/bar",
+            "metadata": {
+                "label": "bar0",
+                "x": 612,
+                "y": 180,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "foo1": {
+            "component": "fixture/foo",
+            "metadata": {
+                "label": "foo1",
+                "x": 180,
+                "y": 36,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "bar1": {
+            "component": "fixture/bar",
+            "metadata": {
+                "label": "bar1",
+                "x": 288,
+                "y": 36,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "connections": [
+        {
+            "src": {
+                "process": "foo0",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "bar0",
+                "port": "in0"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "foo1",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "bar1",
+                "port": "in0"
+            },
+            "metadata": {}
+        }
+    ]
+}
