@@ -3,7 +3,7 @@
 class LibraryStore
   data: null
   constructor: (graph) ->
-    unless graph?.nodes?.length?
+    unless graph?.addNode?
       throw new Error 'Call constructor with instance of noflo.Graph'
     @data = {}
     components = makeInitialComponents graph

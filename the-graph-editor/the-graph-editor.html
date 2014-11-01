@@ -19,6 +19,10 @@
       getMenuDef="{{getMenuDef}}">
     </the-graph>
   </template>
+
+  <!-- fluxified work -->
+  <script type="text/javascript" src="../build/TheGraphApp.js"></script>
+
   <script>
   (function () {
     "use strict";
@@ -230,7 +234,6 @@
       },
       graphChanged: function () {
         if (typeof this.graph.addNode === 'function') {
-          this.buildInitialLibrary(this.graph);
           this.nofloGraph = this.graph;
           return;
         }
@@ -243,103 +246,25 @@
           noflo = require('noflo');
         }
         if (!noflo) {
-          console.warn('Missing noflo dependency! Should be built with Component.io or Browserify to require it.');
-          return;
+          throw new Error('Missing noflo dependency! Should be built with Browserify to require it.');
         }
 
         noflo.graph.loadJSON(this.graph, function(nofloGraph){
-          this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
         }.bind(this));
       },
-      buildInitialLibrary: function (nofloGraph) {
-        /*if (Object.keys(this.$.graph.library).length !== 0) {
-          // We already have a library, skip
-          // TODO what about loading a new graph? Are we making a new editor?
+      nofloGraphChanged: function (oldGraph, newGraph) {
+        if (typeof newGraph.addNode !== 'function') {
           return;
-        }*/
-
-        nofloGraph.nodes.forEach(function (node) {
-          var component = {
-            name: node.component,
-            icon: 'cog',
-            description: '',
-            inports: [],
-            outports: []
-          };
-
-          Object.keys(nofloGraph.inports).forEach(function (pub) {
-            var exported = nofloGraph.inports[pub];
-            if (exported.process === node.id) {
-              for (var i = 0; i < component.inports.length; i++) {
-                if (component.inports[i].name === exported.port) {
-                  return;
-                }
-              }
-              component.inports.push({
-                name: exported.port,
-                type: 'all'
-              });
-            }
-          });
-          Object.keys(nofloGraph.outports).forEach(function (pub) {
-            var exported = nofloGraph.outports[pub];
-            if (exported.process === node.id) {
-              for (var i = 0; i < component.outports.length; i++) {
-                if (component.outports[i].name === exported.port) {
-                  return;
-                }
-              }
-              component.outports.push({
-                name: exported.port,
-                type: 'all'
-              });
-            }
-          });
-          nofloGraph.initializers.forEach(function (iip) {
-            if (iip.to.node === node.id) {
-              for (var i = 0; i < component.inports.length; i++) {
-                if (component.inports[i].name === iip.to.port) {
-                  return;
-                }
-              }
-              component.inports.push({
-                name: iip.to.port,
-                type: 'all'
-              });
-            }
-          });
-
-          nofloGraph.edges.forEach(function (edge) {
-            var i;
-            if (edge.from.node === node.id) {
-              for (i = 0; i < component.outports.length; i++) {
-                if (component.outports[i].name === edge.from.port) {
-                  return;
-                }
-              }
-              component.outports.push({
-                name: edge.from.port,
-                type: 'all'
-              });
-            }
-            if (edge.to.node === node.id) {
-              for (i = 0; i < component.inports.length; i++) {
-                if (component.inports[i].name === edge.to.port) {
-                  return;
-                }
-              }
-              component.inports.push({
-                name: edge.to.port,
-                type: 'all'
-              });
-            }
-          });
-          this.registerComponent(component, true);
-        }.bind(this));
+        }
+        this.app = new window.TheGraphApp({graph:newGraph});
+        this.$.graph.library = this.app.library.toJSON();
       },
       registerComponent: function (definition, generated) {
-        this.$.graph.registerComponent(definition, generated);
+        if (this.app) {
+          this.app.registerComponent(definition);
+        }
+        this.$.graph.debounceLibraryRefesh();
       },
       updateIcon: function (nodeId, icon) {
         this.$.graph.updateIcon(nodeId, icon);
