@@ -1,8 +1,11 @@
 {
   "name": "the-graph",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "polymer components for flow-based programming graph editing",
-  "main": "the-graph-editor/index.html",
+  "main": "src/app/GraphApp.coffee",
+  "browserify": {
+    "transform": [ "coffeeify" ]
+  },
   "dependencies": {
     "noflo": "^0.5.9"
   },
@@ -18,10 +21,12 @@
     "coffeeify": "^0.7.0",
     "mocha": "^2.0.1",
     "chai": "^1.9.2",
-    "coffee-script": "^1.8.0"
+    "coffee-script": "^1.8.0",
+    "browserify": "^6.2.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "build": "browserify --extension='.coffee' . > build/TheGraphApp.js"
   },
   "repository": {
     "type": "git",
