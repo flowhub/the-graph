@@ -1,16 +1,20 @@
 # Library store
 
+# emitter = require 'event-emitter'
+
 module.exports = class Library
-  library: null
+  data: null
   constructor: (graph) ->
     unless graph?.nodes?.length?
       throw new Error 'Call constructor with instance of noflo.Graph'
-    @library = {}
+    @data = {}
     components = makeInitialComponents graph
     for component in components
       @registerComponent component
   registerComponent: (definition) ->
-    mergeComponentDefinition definition, @library
+    mergeComponentDefinition definition, @data
+  toJSON: () ->
+    return @data
 
 makeInitialComponents = (graph) ->
   components = []
@@ -55,24 +59,23 @@ checkPort = (graphItem, componentPorts) ->
     name: graphItem.port
     type: 'all'
   return newDef
-mergeComponentDefinition = (definition, library) ->
-  # console.log definition
-  component = library[definition.name]
-  unless component
-    library[definition.name] = definition
-    return
-  for dInport in definition.inports
+chackAndMergePorts = (definitionPorts, componentPorts) ->
+  for port, index in definitionPorts
     exists = false
-    for cInport in component.inports
-      if cInport.name is dInport.name
+    for cPort in componentPorts
+      if cPort.name is port.name
+        if port.type? and port.type isnt cPort.type
+          cPort.type = port.type
         exists = true
     unless exists
-      component.inports.push dInport
-  for dOutport in definition.outports
-    exists = false
-    for cOutport in component.outports
-      if cOutport.name is dOutport.name
-        exists = true
-    unless exists
-      component.outports.push dOutport
-  component.icon = definition.icon;
+      componentPorts.splice index, 0, port
+mergeComponentDefinition = (definition, data) ->
+  component = data[definition.name]
+  if component?
+    if definition.inports?
+      chackAndMergePorts definition.inports, component.inports
+    if definition.outports?
+      chackAndMergePorts definition.outports, component.outports
+    component.icon = definition.icon
+  else
+    data[definition.name] = definition
