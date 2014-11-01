@@ -4,8 +4,7 @@
   "description": "polymer components for flow-based programming graph editing",
   "main": "the-graph-editor/index.html",
   "dependencies": {
-    "noflo": "^0.5.9",
-    "event-emitter": "^0.3.1"
+    "noflo": "^0.5.9"
   },
   "devDependencies": {
     "stylus": "~0.49.0",

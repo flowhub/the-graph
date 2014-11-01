@@ -1,8 +1,6 @@
-# Library store
+# emitter = require('events').EventEmitter
 
-# emitter = require 'event-emitter'
-
-module.exports = class Library
+class LibraryStore
   data: null
   constructor: (graph) ->
     unless graph?.nodes?.length?
@@ -79,3 +77,5 @@ mergeComponentDefinition = (definition, data) ->
     component.icon = definition.icon
   else
     data[definition.name] = definition
+
+module.exports = LibraryStore
