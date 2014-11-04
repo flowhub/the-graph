@@ -1,22 +1,25 @@
 # emitter = require('events').EventEmitter
 
 LibraryStore = require './LibraryStore'
+Constants = require '../constants/GraphConstants'
 
-class GraphStore
+module.exports = class GraphStore
   graph: null
   library: null
   constructor: (options) ->
     unless options?.graph?.addNode?
-      throw new Error 'Constructor called without options.graph'
+      throw new Error Constants.Error.NEED_NOFLO_GRAPH
     @graph = options.graph
-    @library = new LibraryStore @graph
-  registerComponent: (definition) ->
-    @library?.registerComponent definition
+    @library = new LibraryStore {graph: @graph}
   setGraph: (@graph) ->
     @library = new LibraryStore @graph
   setIcon: (nodeID, icon) ->
   setError: (nodeID, hasError) ->
   setSelectedNodes: (nodes) ->
   setSelectedEdges: (edges) ->
-
-module.exports = GraphStore
+  handleAction: (action) =>
+    switch action.type
+      when Constants.Runtime.UPDATE_ICON
+        return
+      when Constants.Runtime.REGISTER_COMPONENT
+        @library?.registerComponent action.definition

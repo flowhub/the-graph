@@ -3,6 +3,7 @@ chai.should()
 
 Noflo = require 'noflo'
 LibraryStore = require '../../src/stores/LibraryStore'
+Constants = require '../../src/constants/GraphConstants'
 graphJSON = require '../fixtures/graph.json'
 expectedLibraryJSON = require '../fixtures/graphExpectedLibrary.json'
 
@@ -18,10 +19,10 @@ describe 'LibraryStore: model for component library', ->
   it 'should throw when not started with noflo graph', ->
     fail = () ->
       library = new LibraryStore {}
-    fail.should.throw('Call constructor with instance of noflo.Graph')
+    fail.should.throw(Constants.Error.NEED_NOFLO_GRAPH)
 
   it 'should correctly build initial library from graph', ->
-    library = new LibraryStore graph
+    library = new LibraryStore {graph}
     library.data.should.deep.equal expectedLibraryJSON
 
   describe 'with an existing def', ->

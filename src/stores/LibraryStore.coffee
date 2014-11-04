@@ -1,12 +1,14 @@
 # emitter = require('events').EventEmitter
 
-class LibraryStore
+Constants = require '../constants/GraphConstants'
+
+module.exports = class LibraryStore
   data: null
-  constructor: (graph) ->
-    unless graph?.addNode?
-      throw new Error 'Call constructor with instance of noflo.Graph'
+  constructor: (options) ->
+    unless options?.graph?.addNode?
+      throw new Error Constants.Error.NEED_NOFLO_GRAPH
     @data = {}
-    components = makeInitialComponents graph
+    components = makeInitialComponents options.graph
     for component in components
       @registerComponent component
   registerComponent: (definition) ->
@@ -77,5 +79,3 @@ mergeComponentDefinition = (definition, data) ->
     component.icon = definition.icon
   else
     data[definition.name] = definition
-
-module.exports = LibraryStore
