@@ -11,7 +11,7 @@
       elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
       css: ['themes/*.css'],
-      browserify: ['src/*/*.coffee']
+      browserify: ['src/*/*.coffee', 'test/*/*.coffee']
     };
 
     var jshintOptions = { 
@@ -61,6 +61,10 @@
           options: { force: true }
         }
       },
+      coffeelint: {
+        browserify: sources.browserify,
+        options: {'max_line_length': {'level': 'ignore'}}
+      },
       connect: {
         server: {
           options: {
@@ -100,7 +104,7 @@
         },
         browserify: {
           files: sources.browserify,
-          tasks: ['exec:mocha', 'exec:browserify'],
+          tasks: ['coffeelint:browserify', 'exec:mocha', 'exec:browserify'],
           options: {
             livereload: true
           }
@@ -120,9 +124,10 @@
     this.loadNpmTasks('grunt-lint-inline');
     this.loadNpmTasks('grunt-contrib-connect');
     this.loadNpmTasks('grunt-browserify');
+    this.loadNpmTasks('grunt-coffeelint');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'exec:mocha']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'coffeelint', 'exec:mocha']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'exec:browserify']);
     this.registerTask('default', ['test']);
   };

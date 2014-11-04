@@ -4,7 +4,9 @@
   "description": "polymer components for flow-based programming graph editing",
   "main": "src/app/GraphApp.coffee",
   "browserify": {
-    "transform": [ "coffeeify" ]
+    "transform": [
+      "coffeeify"
+    ]
   },
   "dependencies": {
     "noflo": "^0.5.9"
@@ -22,7 +24,9 @@
     "mocha": "^2.0.1",
     "chai": "^1.9.2",
     "coffee-script": "^1.8.0",
-    "browserify": "^6.2.0"
+    "browserify": "^6.2.0",
+    "coffeelint": "^1.6.1",
+    "grunt-coffeelint": "0.0.13"
   },
   "scripts": {
     "test": "grunt test",
