@@ -12,7 +12,9 @@
     "hammerjs": "~1.1.2",
     "font-awesome": "4.2.0",
     "react": "~0.11.1",
-    "klay-js": "~0.1.0"
+    "klay-js": "~0.1.0",
+    "ease-djdeath": "#5b49e8e9cac9134a417b64c244ae5bc9c7c0eb9c",
+    "react.animate-djdeath": "0.0.3"
   },
   "license": "MIT",
   "ignore": [
