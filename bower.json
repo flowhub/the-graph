@@ -16,6 +16,7 @@
     "core-component-page": "noflo/core-component-page#0.4.0-lockdeps",
     "react.animate-djdeath": "0.0.3"
   },
+  "main": "the-graph/the-graph.html",
   "resolutions": {
     "polymer": "0.4.0-lockdeps",
     "core-component-page": "0.4.0-lockdeps",
