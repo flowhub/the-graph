@@ -8,12 +8,18 @@
   ],
   "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "polymer": "0.4.0",
     "hammerjs": "~1.1.2",
     "font-awesome": "~4.2.0",
     "react": "~0.11.1",
     "klay-js": "~0.1.0",
+    "polymer": "noflo/polymer#0.4.0-lockdeps",
+    "core-component-page": "noflo/core-component-page#0.4.0-lockdeps",
     "react.animate-djdeath": "0.0.3"
+  },
+  "resolutions": {
+    "polymer": "0.4.0-lockdeps",
+    "core-component-page": "0.4.0-lockdeps",
+    "platform": "0.4.0"
   },
   "license": "MIT",
   "ignore": [
