@@ -120,8 +120,8 @@
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'build']);
     this.registerTask('default', ['test']);
   };
 
