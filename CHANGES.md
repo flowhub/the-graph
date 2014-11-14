@@ -1,4 +1,8 @@
-## 0.3.5 (dev)
+## 0.3.6 (dev)
+
+## 0.3.5 (Durham, 2014 November 14)
+
+* Update to [Polymer 0.5.1](https://github.com/Polymer/polymer/releases/tag/0.5.1)
 
 ## 0.3.4 (London, 2014 October 23)
 

@@ -1,6 +1,6 @@
 {
   "name": "the-graph",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "keywords": [
     "graph",
     "flow",
@@ -12,16 +12,10 @@
     "font-awesome": "~4.2.0",
     "react": "~0.11.1",
     "klay-js": "~0.1.0",
-    "polymer": "noflo/polymer#0.4.0-lockdeps",
-    "core-component-page": "noflo/core-component-page#0.4.0-lockdeps",
+    "polymer": "0.5.1",
     "react.animate-djdeath": "0.0.3"
   },
   "main": "the-graph/the-graph.html",
-  "resolutions": {
-    "polymer": "0.4.0-lockdeps",
-    "core-component-page": "0.4.0-lockdeps",
-    "platform": "0.4.0"
-  },
   "license": "MIT",
   "ignore": [
     "**/.*",
