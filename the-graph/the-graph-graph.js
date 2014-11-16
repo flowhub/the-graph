@@ -163,6 +163,9 @@
     renderPreviewEdge: function (event) {
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      var offset = this.getOffset();
+      x -= offset.left;
+      y -= offset.top;
       var scale = this.props.app.state.scale;
       this.setState({
         edgePreviewX: (x - this.props.app.state.x) / scale,
@@ -400,7 +403,7 @@
         parentOffset = getElementOffset(element.offsetParent);
         offset.top += parentOffset.top;
         offset.left += parentOffset.left;
-        return offset
+        return offset;
       };
       try{
         return getElementOffset(this.getDOMNode());
@@ -786,23 +789,22 @@
       var edgePreview = this.state.edgePreview;
       if (edgePreview) {
         var edgePreviewOptions;
-        var offset = this.getOffset();
         if (edgePreview.from) {
           var source = graph.getNode(edgePreview.from.process);
           var sourcePort = this.getNodeOutport(graph, edgePreview.from.process, edgePreview.from.port);
           edgePreviewOptions = {
             sX: source.metadata.x + source.metadata.width,
             sY: source.metadata.y + sourcePort.y,
-            tX: this.state.edgePreviewX - offset.left,
-            tY: this.state.edgePreviewY - offset.top,
+            tX: this.state.edgePreviewX,
+            tY: this.state.edgePreviewY,
             route: edgePreview.metadata.route
           };
         } else {
           var target = graph.getNode(edgePreview.to.process);
           var targetPort = this.getNodeInport(graph, edgePreview.to.process, edgePreview.to.port);
           edgePreviewOptions = {
-            sX: this.state.edgePreviewX - offset.left,
-            sY: this.state.edgePreviewY - offset.top,
+            sX: this.state.edgePreviewX,
+            sY: this.state.edgePreviewY,
             tX: target.metadata.x,
             tY: target.metadata.y + targetPort.y,
             route: edgePreview.metadata.route
