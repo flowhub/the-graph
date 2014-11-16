@@ -388,6 +388,26 @@
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
     },
+    getOffset: function(){
+      var getElementOffset = function(element){
+        var offset = { top: 0, left: 0},
+            parentOffset;
+        if(!element){
+          return offset;
+        }
+        offset.top += (element.offsetTop || 0);
+        offset.left += (element.offsetLeft || 0);
+        parentOffset = getElementOffset(element.offsetParent);
+        offset.top += parentOffset.top;
+        offset.left += parentOffset.left;
+        return offset
+      };
+      try{
+        return getElementOffset(this.getDOMNode());
+      }catch(e){
+        return getElementOffset();
+      }
+    },
     render: function() {
       this.dirty = false;
 
@@ -766,22 +786,23 @@
       var edgePreview = this.state.edgePreview;
       if (edgePreview) {
         var edgePreviewOptions;
+        var offset = this.getOffset();
         if (edgePreview.from) {
           var source = graph.getNode(edgePreview.from.process);
           var sourcePort = this.getNodeOutport(graph, edgePreview.from.process, edgePreview.from.port);
           edgePreviewOptions = {
             sX: source.metadata.x + source.metadata.width,
             sY: source.metadata.y + sourcePort.y,
-            tX: this.state.edgePreviewX,
-            tY: this.state.edgePreviewY,
+            tX: this.state.edgePreviewX - offset.left,
+            tY: this.state.edgePreviewY - offset.top,
             route: edgePreview.metadata.route
           };
         } else {
           var target = graph.getNode(edgePreview.to.process);
           var targetPort = this.getNodeInport(graph, edgePreview.to.process, edgePreview.to.port);
           edgePreviewOptions = {
-            sX: this.state.edgePreviewX,
-            sY: this.state.edgePreviewY,
+            sX: this.state.edgePreviewX - offset.left,
+            sY: this.state.edgePreviewY - offset.top,
             tX: target.metadata.x,
             tY: target.metadata.y + targetPort.y,
             route: edgePreview.metadata.route
