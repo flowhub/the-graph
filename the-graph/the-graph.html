@@ -161,6 +161,7 @@
           selectedNodesHash[this.selectedNodes[i].id] = true;
         }
         this.selectedNodesHash = selectedNodesHash;
+        this.fire('nodes', this.selectedNodes);
       },
       selectedNodesHashChanged: function () {
         if (!this.graphView) { return; }
@@ -173,6 +174,7 @@
       selectedEdgesChanged: function () {
         if (!this.graphView) { return; }
         this.graphView.setSelectedEdges(this.selectedEdges);
+        this.fire('edges', this.selectedEdges);
       },
       animatedEdgesChanged: function () {
         if (!this.graphView) { return; }
