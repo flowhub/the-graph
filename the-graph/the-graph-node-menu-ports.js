@@ -29,7 +29,8 @@
     return TheGraph.NodeMenuPort(options);
   }
 
-  TheGraph.NodeMenuPorts = React.createClass({
+  TheGraph.NodeMenuPorts = React.createFactory( React.createClass({
+    displayName: "TheGraphNodeMenuPorts",
     render: function() {
       var portViews = [];
       var lines = [];
@@ -91,7 +92,7 @@
       containerOptions = TheGraph.merge(TheGraph.config.nodeMenuPorts.container, containerOptions);
       return TheGraph.factories.menuPorts.createNodeMenuPortsGroup.call(this, containerOptions, containerContents);
     }
-  });
+  }));
 
 
 })(this);

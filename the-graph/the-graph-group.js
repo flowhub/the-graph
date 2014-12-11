@@ -30,7 +30,8 @@
 
   // Group view
 
-  TheGraph.Group = React.createClass({
+  TheGraph.Group = React.createFactory( React.createClass({
+    displayName: "TheGraphGroup",
     componentDidMount: function () {
       // Move group
       if (this.props.isSelectionGroup) {
@@ -177,7 +178,7 @@
       return TheGraph.factories.group.createGroupGroup.call(this, containerOptions, groupContents);
 
     }
-  });
+  }));
 
 
 })(this);

@@ -27,7 +27,8 @@
 
   // Port view
 
-  TheGraph.Tooltip = React.createClass({
+  TheGraph.Tooltip = React.createFactory( React.createClass({
+    displayName: "TheGraphTooltip",
     render: function() {
 
       var rectOptions = TheGraph.merge(TheGraph.config.tooltip.rect, {width: this.props.label.length * 6});
@@ -46,7 +47,7 @@
       return TheGraph.factories.tooltip.createTooltipGroup.call(this, containerOptions, containerContents);
 
     }
-  });
+  }));
 
 
 })(this);

@@ -63,7 +63,8 @@
     return TheGraph.ModalBG(options);
   }
 
-  TheGraph.App = React.createClass({
+  TheGraph.App = React.createFactory( React.createClass({
+    displayName: "TheGraphApp",
     mixins: [React.Animate],
     minZoom: 0.15,
     getInitialState: function() {
@@ -561,7 +562,7 @@
       containerOptions.className += " " + scaleClass;
       return TheGraph.factories.app.createAppContainer.call(this, containerOptions, appContents);
     }
-  });
+  }));
 
 
 })(this);

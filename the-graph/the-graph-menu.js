@@ -122,7 +122,8 @@
     return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
   }
 
-  TheGraph.Menu = React.createClass({
+  TheGraph.Menu = React.createFactory( React.createClass({
+    displayName: "TheGraphMenu",
     radius: TheGraph.config.menu.radius,
     getInitialState: function() {
       // Use these in CSS for cursor and hover, and to attach listeners
@@ -241,7 +242,7 @@
       return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
 
     }
-  });
+  }));
 
   TheGraph.config.modalBG = {
     container: {},
@@ -257,7 +258,8 @@
   };
 
 
-  TheGraph.ModalBG = React.createClass({
+  TheGraph.ModalBG = React.createFactory( React.createClass({
+    displayName: "TheGraphModalBG",
     componentDidMount: function () {
       var domNode = this.getDOMNode();
       var rectNode = this.refs.rect.getDOMNode();
@@ -288,7 +290,7 @@
       var containerOptions = TheGraph.merge(TheGraph.config.modalBG.container, {});
       return TheGraph.factories.modalBG.createModalBackgroundGroup.call(this, containerOptions, containerContents);
     }
-  });
+  }));
 
 
 })(this);

@@ -279,7 +279,8 @@
 
 
   // Reusable React classes
-  TheGraph.SVGImage = React.createClass({
+  TheGraph.SVGImage = React.createFactory( React.createClass({
+    displayName: "TheGraphSVGImage",
     render: function() {
         var html = '<image ';
         html = html +'xlink:href="'+ this.props.src + '"';
@@ -293,9 +294,10 @@
             dangerouslySetInnerHTML:{__html: html}
         });
     }
-  });
+  }));
 
-  TheGraph.TextBG = React.createClass({
+  TheGraph.TextBG = React.createFactory( React.createClass({
+    displayName: "TheGraphTextBG",
     render: function() {
       var text = this.props.text;
       if (!text) {
@@ -340,7 +342,7 @@
         })
       );
     }
-  });
+  }));
 
   // The `merge` function provides simple property merging.
   TheGraph.merge = function(src, dest, overwrite) {

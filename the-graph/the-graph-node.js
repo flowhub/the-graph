@@ -93,7 +93,8 @@
   });
 
   // Node view
-  TheGraph.Node = React.createClass({
+  TheGraph.Node = React.createFactory( React.createClass({
+    displayName: "TheGraphNode",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
@@ -147,6 +148,7 @@
       }
     },
     onTrack: function (event) {
+      console.log(event, this.key);
       // Don't fire on graph
       event.stopPropagation();
 
@@ -166,7 +168,7 @@
           this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
         }
       } else {
-        this.props.graph.setNodeMetadata(this.props.key, {
+        this.props.graph.setNodeMetadata(this.key, {
           x: this.props.node.metadata.x + deltaX,
           y: this.props.node.metadata.y + deltaY
         });
@@ -196,7 +198,7 @@
             this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
           }
         } else {
-          this.props.graph.setNodeMetadata(this.props.key, {
+          this.props.graph.setNodeMetadata(this.key, {
             x: Math.round(this.props.node.metadata.x/snap) * snap,
             y: Math.round(this.props.node.metadata.y/snap) * snap
           });
@@ -506,7 +508,7 @@
 
       return TheGraph.factories.node.createNodeGroup.call(this, nodeOptions, nodeContents);
     }
-  });
+  }));
 
   function buildLabelRectOptions(height, x, y, len, className) {
 

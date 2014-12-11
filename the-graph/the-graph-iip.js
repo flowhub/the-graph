@@ -33,7 +33,8 @@
 
   // Edge view
 
-  TheGraph.IIP = React.createClass({
+  TheGraph.IIP = React.createFactory( React.createClass({
+    displayName: "TheGraphIIP",
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
 
@@ -70,6 +71,6 @@
       var containerOptions = TheGraph.merge(TheGraph.config.iip.container, {title: this.props.label});
       return TheGraph.factories.iip.createIIPContainer.call(this, containerOptions, containerContents);
     }
-  });
+  }));
 
 })(this);

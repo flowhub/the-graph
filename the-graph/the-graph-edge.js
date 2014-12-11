@@ -69,7 +69,8 @@
 
   // Edge view
 
-  TheGraph.Edge = React.createClass({
+  TheGraph.Edge = React.createFactory( React.createClass({
+    displayName: "TheGraphEdge",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
@@ -213,6 +214,6 @@
       return TheGraph.factories.edge.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
 
     }
-  });
+  }));
 
 })(this);

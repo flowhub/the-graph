@@ -24,7 +24,8 @@
   };
 
 
-  TheGraph.NodeMenuPort = React.createClass({
+  TheGraph.NodeMenuPort = React.createFactory( React.createClass({
+    displayName: "TheGraphNodeMenuPort",
     componentDidMount: function () {
       this.getDOMNode().addEventListener("up", this.edgeStart);
     },
@@ -89,7 +90,7 @@
       return TheGraph.factories.nodeMenuPort.createNodeMenuPortGroup.call(this, containerOptions, containerContents);
 
     }
-  });
+  }));
 
 
 })(this);

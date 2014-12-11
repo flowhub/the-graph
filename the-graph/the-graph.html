@@ -91,9 +91,8 @@
 
         // Setup app
         this.$.svgcontainer.innerHTML = "";
-        var App = React.createFactory(window.TheGraph.App);
         this.appView = React.render(
-          App({
+          window.TheGraph.App({
             graph: this.graph,
             width: this.width,
             height: this.height,

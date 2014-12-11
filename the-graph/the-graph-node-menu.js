@@ -30,7 +30,8 @@
     return TheGraph.Menu(options);
   }
 
-  TheGraph.NodeMenu = React.createClass({
+  TheGraph.NodeMenu = React.createFactory( React.createClass({
+    displayName: "TheGraphNodeMenu",
     radius: 72,
     stopPropagation: function (event) {
       // Don't drag graph
@@ -102,7 +103,7 @@
       return TheGraph.factories.nodeMenu.createNodeMenuGroup.call(this, containerOptions);
 
     }
-  });
+  }));
 
 
 })(this);

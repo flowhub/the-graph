@@ -80,7 +80,8 @@
 
   // Graph view
 
-  TheGraph.Graph = React.createClass({
+  TheGraph.Graph = React.createFactory( React.createClass({
+    displayName: "TheGraphGraph",
     mixins: [TheGraph.mixins.FakeMouse],
     getInitialState: function() {
       return {
@@ -830,6 +831,6 @@
       return TheGraph.factories.graph.createGraphContainerGroup.call(this, containerOptions, containerContents);
 
     }
-  });  
+  }));  
 
 })(this);

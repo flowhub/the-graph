@@ -33,7 +33,8 @@
 
   // Port view
 
-  TheGraph.Port = React.createClass({
+  TheGraph.Port = React.createFactory( React.createClass({
+    displayName: "TheGraphPort",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
@@ -135,7 +136,7 @@
       var style;
       if (this.props.label.length > 7) {
         var fontSize = 6 * (30 / (4 * this.props.label.length));
-        style = { "font-size": fontSize+"px" };
+        style = { 'fontSize': fontSize+'px' };
       }
       var r = 4;
       // Highlight matching ports
@@ -181,7 +182,7 @@
       return TheGraph.factories.port.createPortGroup.call(this, containerOptions, portContents);
 
     }
-  });
+  }));
 
 
 })(this);
