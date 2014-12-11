@@ -1,12 +1,15 @@
-## 0.3.7 (dev)
+## 0.3.8 (dev)
+
+## 0.3.7 (2014 December 11)
+
+* `React.createFactory` and `displayName` for all React elements
+* Can't access element `key` in React >=0.12.0 ([reduced case](http://jsbin.com/wuseho/1/edit?js,output))
 
 ## 0.3.6 (2014 December 11)
 
 * Update to [React 0.12.1](https://github.com/facebook/react/releases/tag/v0.12.1)
 * Move to [klayjs-noflo](https://github.com/noflo/klayjs-noflo)
 * Fix Windows build (#192)
-* `React.createFactory` and `displayName` for all React elements
-* Can't access element `key` in React >=0.12.0
 
 ## 0.3.5 (Durham, 2014 November 14)
 
