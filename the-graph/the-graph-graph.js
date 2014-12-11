@@ -456,6 +456,7 @@
 
         var nodeOptions = {
           key: key,
+          nodeID: key,
           x: node.metadata.x,
           y: node.metadata.y,
           label: node.metadata.label,
@@ -512,6 +513,7 @@
 
         var edgeOptions = {
           key: key,
+          edgeID: key,
           graph: graph,
           edge: edge,
           app: self.props.app,

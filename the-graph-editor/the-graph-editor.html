@@ -46,7 +46,6 @@
         this.pan = [0,0];
         var pasteAction = function (graph, itemKey, item) {
           var pasted = TheGraph.Clipboard.paste(graph);
-          console.log(pasted);
           this.selectedNodes = pasted.nodes;
         }.bind(this);
         var pasteMenu = {

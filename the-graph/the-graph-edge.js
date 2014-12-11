@@ -104,7 +104,7 @@
       event.stopPropagation();
 
       var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
-      this.props.onEdgeSelection(this.props.key, this.props.edge, toggle);
+      this.props.onEdgeSelection(this.props.edgeID, this.props.edge, toggle);
     },
     showContext: function (event) {
       // Don't show native context menu

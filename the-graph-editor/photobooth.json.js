@@ -17,7 +17,7 @@ loadGraph({
       "port": "prev",
       "metadata": {
         "x": 0,
-        "y": 0
+        "y": 144
       }
     },
     "next": {

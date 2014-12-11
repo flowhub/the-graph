@@ -121,7 +121,7 @@
       event.stopPropagation();
 
       var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
-      this.props.onNodeSelection(this.props.key, this.props.node, toggle);
+      this.props.onNodeSelection(this.props.nodeID, this.props.node, toggle);
     },
     onTrackStart: function (event) {
       // Don't drag graph
@@ -148,7 +148,6 @@
       }
     },
     onTrack: function (event) {
-      console.log(event, this.key);
       // Don't fire on graph
       event.stopPropagation();
 
@@ -168,7 +167,7 @@
           this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
         }
       } else {
-        this.props.graph.setNodeMetadata(this.key, {
+        this.props.graph.setNodeMetadata(this.props.nodeID, {
           x: this.props.node.metadata.x + deltaX,
           y: this.props.node.metadata.y + deltaY
         });
@@ -198,7 +197,7 @@
             this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
           }
         } else {
-          this.props.graph.setNodeMetadata(this.key, {
+          this.props.graph.setNodeMetadata(this.props.nodeID, {
             x: Math.round(this.props.node.metadata.x/snap) * snap,
             y: Math.round(this.props.node.metadata.y/snap) * snap
           });
@@ -231,7 +230,7 @@
         x: x,
         y: y,
         graph: this.props.graph,
-        itemKey: (this.props.export ? this.props.exportKey : this.props.key),
+        itemKey: (this.props.export ? this.props.exportKey : this.props.nodeID),
         item: (this.props.export ? this.props.export : this.props.node)
       });
     },
@@ -257,7 +256,7 @@
       var deltaX = nodeX - x;
       var deltaY = nodeY - y;
       var ports = this.props.ports;
-      var processKey = this.props.key;
+      var processKey = this.props.nodeID;
       var highlightPort = this.props.highlightPort;
 
       // If there is a preview edge started, only show connectable ports
@@ -358,7 +357,7 @@
 
       // Ports
       var keys, count;
-      var processKey = this.props.key;
+      var processKey = this.props.nodeID;
       var app = this.props.app;
       var graph = this.props.graph;
       var node = this.props.node;
@@ -499,8 +498,8 @@
         className: "node drag"+
           (this.props.selected ? " selected" : "")+
           (this.props.error ? " error" : ""),
-        name: this.props.key,
-        key: this.props.key,
+        name: this.props.nodeID,
+        key: this.props.nodeID,
         title: label,
         transform: "translate("+x+","+y+")"
       };

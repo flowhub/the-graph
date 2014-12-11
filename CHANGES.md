@@ -6,6 +6,7 @@
 * Move to [klayjs-noflo](https://github.com/noflo/klayjs-noflo)
 * Fix Windows build (#192)
 * `React.createFactory` and `displayName` for all React elements
+* Can't access element `key` in React >=0.12.0
 
 ## 0.3.5 (Durham, 2014 November 14)
 

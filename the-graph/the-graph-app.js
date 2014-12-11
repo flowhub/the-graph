@@ -454,20 +454,16 @@
     },
 
     getContext: function (menu, options, hide) {
-        var processKey = this.props.key;
-
         return TheGraph.Menu({
             menu: menu,
             options: options,
             triggerHideContext: hide,
             label: "Hello",
             graph: this.props.graph,
-//            graphView: this.props.graphView,
             node: this,
-//            icon: this.props.icon,
             ports: [],
             process: [],
-            processKey: processKey,
+            processKey: null,
             x: options.x,
             y: options.y,
             nodeWidth: this.props.width,
