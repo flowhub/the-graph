@@ -341,6 +341,9 @@
       registerComponent: function (definition, generated) {
         this.$.graph.registerComponent(definition, generated);
       },
+      libraryRefresh: function () {
+        this.$.graph.debounceLibraryRefesh();
+      },
       updateIcon: function (nodeId, icon) {
         this.$.graph.updateIcon(nodeId, icon);
       },

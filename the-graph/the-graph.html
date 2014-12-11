@@ -54,9 +54,9 @@
         // Default pan
         this.pan = [0,0];
         // Initializes the autolayouter
-        this.autolayouter = klay.init({
+        this.autolayouter = klayNoflo.init({
           onSuccess: this.applyAutolayout.bind(this),
-          workerScript: "../bower_components/klay-js/klay-worker.js"
+          workerScript: "../bower_components/klayjs/klay.js"
         });
       },
       ready: function () {
@@ -91,8 +91,9 @@
 
         // Setup app
         this.$.svgcontainer.innerHTML = "";
-        this.appView = React.renderComponent(
-          window.TheGraph.App({
+        var App = React.createFactory(window.TheGraph.App);
+        this.appView = React.render(
+          App({
             graph: this.graph,
             width: this.width,
             height: this.height,

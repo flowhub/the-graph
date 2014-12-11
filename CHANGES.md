@@ -1,4 +1,10 @@
-## 0.3.6 (dev)
+## 0.3.7 (dev)
+
+## 0.3.6 (2014 December 11)
+
+* Update to [React 0.12.1](https://github.com/facebook/react/releases/tag/v0.12.1)
+* Move to [klayjs-noflo](https://github.com/noflo/klayjs-noflo)
+* Fix Windows build (#192)
 
 ## 0.3.5 (Durham, 2014 November 14)
 

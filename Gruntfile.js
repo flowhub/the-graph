@@ -13,6 +13,9 @@
       css: ['themes/*.css']
     };
 
+    var glob = require('glob');
+    var stylExpand = glob.sync('./themes/*.styl').join(' ');
+
     var jshintOptions = { 
       strict: true,
       newcap: false,
@@ -32,10 +35,10 @@
       },
       exec: {
         build_stylus: {
-          command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
+          command: 'node ./node_modules/stylus/bin/stylus ' + stylExpand
         },
         build_fa: {
-          command: 'node ./scripts/build-font-awesome-javascript.js '
+          command: 'node ./scripts/build-font-awesome-javascript.js'
         }
       },
       browserify: {
