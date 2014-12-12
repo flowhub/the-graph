@@ -1,4 +1,5 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes selectedEdges animatedEdges getMenuDef pan scale">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale displaySelectionGroup forceSelection" touch-action="none">
+
 
   <template>
     <link rel="stylesheet" href="../themes/the-graph-dark.css">
@@ -20,6 +21,7 @@
   <script type="text/javascript" src="./the-graph-group.js"></script>
   <script type="text/javascript" src="./the-graph-tooltip.js"></script>
   <script type="text/javascript" src="./the-graph-menu.js"></script>
+  <script type="text/javascript" src="./the-graph-clipboard.js"></script>
 
   <script>
   (function(){
@@ -40,17 +42,21 @@
       snap: 36,
       theme: "dark",
       selectedNodes: [],
+      selectedNodesHash: {},
+      errorNodes: {},
       selectedEdges: [],
       animatedEdges: [],
       autolayouter: null,
+      displaySelectionGroup: true,
+      forceSelection: false,
       created: function () {
         this.library = {};
         // Default pan
         this.pan = [0,0];
         // Initializes the autolayouter
-        this.autolayouter = klay.init({
+        this.autolayouter = klayNoflo.init({
           onSuccess: this.applyAutolayout.bind(this),
-          workerScript: "../bower_components/klay-js/klay-worker.js"
+          workerScript: "../bower_components/klayjs/klay.js"
         });
       },
       ready: function () {
@@ -85,7 +91,7 @@
 
         // Setup app
         this.$.svgcontainer.innerHTML = "";
-        this.appView = React.renderComponent(
+        this.appView = React.render(
           window.TheGraph.App({
             graph: this.graph,
             width: this.width,
@@ -96,7 +102,9 @@
             onEdgeSelection: this.onEdgeSelection.bind(this),
             onNodeSelection: this.onNodeSelection.bind(this),
             onPanScale: this.onPanScale.bind(this),
-            getMenuDef: this.getMenuDef
+            getMenuDef: this.getMenuDef,
+            displaySelectionGroup: this.displaySelectionGroup,
+            forceSelection: this.forceSelection,
           }),
           this.$.svgcontainer
         );
@@ -133,22 +141,14 @@
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          if (this.selectedNodes.length>0) {
-            this.selectedNodes = [];
-          }
-          this.fire('nodes', this.selectedNodes);
-          return;
-        }
-        if (toggle) {
+          this.selectedNodes = [];
+        } else if (toggle) {
           var index = this.selectedNodes.indexOf(item);
           var isSelected = (index !== -1);
-          var shallowClone = this.selectedNodes.slice();
           if (isSelected) {
-            shallowClone.splice(index, 1);
-            this.selectedNodes = shallowClone;
+            this.selectedNodes.splice(index, 1);
           } else {
-            shallowClone.push(item);
-            this.selectedNodes = shallowClone;
+            this.selectedNodes.push(item);
           }
         } else {
           this.selectedNodes = [item];
@@ -156,8 +156,19 @@
         this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
+        var selectedNodesHash = {};
+        for (var i=0, len = this.selectedNodes.length; i<len; i++) {
+          selectedNodesHash[this.selectedNodes[i].id] = true;
+        }
+        this.selectedNodesHash = selectedNodesHash;
+      },
+      selectedNodesHashChanged: function () {
         if (!this.graphView) { return; }
-        this.graphView.setSelectedNodes(this.selectedNodes);
+        this.graphView.setSelectedNodes(this.selectedNodesHash);
+      },
+      errorNodesChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setErrorNodes(this.errorNodes);
       },
       selectedEdgesChanged: function () {
         if (!this.graphView) { return; }
@@ -324,6 +335,21 @@
         }
         return this.appView.state.scale;
       },
+      displaySelectionGroupChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setState({
+          displaySelectionGroup: this.displaySelectionGroup
+        });
+      },
+      forceSelectionChanged: function () {
+        if (!this.graphView) { return; }
+        this.graphView.setState({
+          forceSelection: this.forceSelection
+        });
+      },
+      focusNode: function (node) {
+        this.appView.focusNode(node);
+      },
       menusChanged: function () {
         // Only if the object itself changes, 
         // otherwise builds menu from reference every time menu shown
@@ -340,77 +366,66 @@
           this.rerender({libraryDirty:true});
         }.bind(this), 200);
       },
+      mergeComponentDefinition: function (component, definition) {
+        // In cases where a component / subgraph ports change, 
+        // we don't want the connections hanging in middle of node
+        // TODO visually indicate that port is a ghost
+        if (component === definition) {
+          return definition;
+        }
+        var _i, _j, _len, _len1, exists;
+        var cInports = component.inports;
+        var dInports = definition.inports;
+
+        if (cInports !== dInports) {
+          for (_i = 0, _len = cInports.length; _i < _len; _i++) {
+            var cInport = cInports[_i];
+            exists = false;
+            for (_j = 0, _len1 = dInports.length; _j < _len1; _j++) {
+              var dInport = dInports[_j];
+              if (cInport.name === dInport.name) {
+                exists = true;
+              }
+            }
+            if (!exists) {
+              dInports.push(cInport);
+            }
+          }
+        }
+
+        var cOutports = component.outports;
+        var dOutports = definition.outports;
+
+        if (cOutports !== dOutports) {
+          for (_i = 0, _len = cOutports.length; _i < _len; _i++) {
+            var cOutport = cOutports[_i];
+            exists = false;
+            for (_j = 0, _len1 = dOutports.length; _j < _len1; _j++) {
+              var dOutport = dOutports[_j];
+              if (cOutport.name === dOutport.name) {
+                exists = true;
+              }
+            }
+            if (!exists) {
+              dOutports.push(cOutport);
+            }
+          }
+        }
+
+        // we should use the icon from the library
+        definition.icon = component.icon;
+        // a component could also define a svg icon
+        definition.iconsvg = component.iconsvg;
+
+        return definition;
+      },
       registerComponent: function (definition, generated) {
-        if (!this.library[definition.name]) {
-          // New component, register
-          this.library[definition.name] = definition;
-          // So changes are rendered
-          this.debounceLibraryRefesh();
-          return;
-        }
-        // Update existing
         var component = this.library[definition.name];
-        if (definition.description) {
-          component.description = definition.description;
+        var def = definition;
+        if (component) {
+          def = this.mergeComponentDefinition(component, definition);
         }
-        if (definition.icon && definition.icon!=="cog") {
-          component.icon = definition.icon;
-        }
-        var defInPorts = [];
-        var defOutPorts = [];
-        definition.inports.forEach(function (defPort) {
-          var port = null;
-          defInPorts.push(defPort.name);
-          component.inports.forEach(function (p) {
-            if (p.name === defPort.name) {
-              port = p;
-            }
-          });
-          if (port) {
-            port.type = defPort.type;
-            return;
-          }
-          component.inports.push({
-            name: defPort.name,
-            type: defPort.type,
-            array: defPort.array
-          });
-        });
-        definition.outports.forEach(function (defPort) {
-          var port = null;
-          defOutPorts.push(defPort.name);
-          component.outports.forEach(function (p) {
-            if (p.name === defPort.name) {
-              port = p;
-            }
-          });
-          if (port) {
-            port.type = defPort.type;
-            return;
-          }
-          component.outports.push({
-            name: defPort.name,
-            type: defPort.type,
-            array: defPort.array
-          });
-        });
-
-        if (generated) {
-          // So changes are rendered
-          this.debounceLibraryRefesh();
-          return;
-        }
-        component.inports.forEach(function (p, idx) {
-          if (defInPorts.indexOf(p.name) === -1) {
-            component.inports.splice(idx, 1);
-          }
-        });
-        component.outports.forEach(function (p, idx) {
-          if (defOutPorts.indexOf(p.name) === -1) {
-            component.outports.splice(idx, 1);
-          }
-        });
-
+        this.library[definition.name] = def;
         // So changes are rendered
         this.debounceLibraryRefesh();
       },

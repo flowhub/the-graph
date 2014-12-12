@@ -3,8 +3,45 @@
 
   var TheGraph = context.TheGraph;
 
+  TheGraph.config.edge = {
+    curve: TheGraph.config.nodeSize,
+    container: {
+      className: "edge"
+    },
+    backgroundPath: {
+      className: "edge-bg"
+    },
+    foregroundPath: {
+      ref: "route",
+      className: "edge-fg stroke route"
+    },
+    touchPath: {
+      className: "edge-touch",
+      ref: "touch"
+    }
+  };
+
+  TheGraph.factories.edge = {
+    createEdgeGroup: TheGraph.factories.createGroup,
+    createEdgeBackgroundPath: TheGraph.factories.createPath,
+    createEdgeForegroundPath: TheGraph.factories.createPath,
+    createEdgeTouchPath: TheGraph.factories.createPath,
+    createEdgePathArray: createEdgePathArray
+  };
+
+  function createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY) {
+      return [
+        "M",
+        sourceX, sourceY,
+        "C",
+        c1X, c1Y,
+        c2X, c2Y,
+        targetX, targetY
+      ];
+  }
+
   // Const
-  var CURVE = TheGraph.nodeSize;
+  var CURVE = TheGraph.config.edge.curve;
 
   // Point along cubic bezier curve
   // See http://en.wikipedia.org/wiki/File:Bezier_3_big.gif
@@ -32,7 +69,8 @@
 
   // Edge view
 
-  TheGraph.Edge = React.createClass({
+  TheGraph.Edge = React.createFactory( React.createClass({
+    displayName: "TheGraphEdge",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
@@ -66,11 +104,15 @@
       event.stopPropagation();
 
       var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
-      this.props.onEdgeSelection(this.props.key, this.props.edge, toggle);
+      this.props.onEdgeSelection(this.props.edgeID, this.props.edge, toggle);
     },
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
+
+      // Don't tap graph on hold event
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
       var x = event.x || event.clientX || 0;
@@ -115,15 +157,6 @@
     shouldShowTooltip: function () {
       return true;
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "edge"+
-        (this.props.selected ? " selected" : "")+
-        (this.props.animated ? " animated" : "");
-      this.getDOMNode().setAttribute("class", groupClass);
-      var fgClass = "edge-fg stroke route"+this.props.route;
-      this.refs.route.getDOMNode().setAttribute("class", fgClass);
-    },
     render: function () {
       var sourceX = this.props.sX;
       var sourceY = this.props.sY;
@@ -134,7 +167,7 @@
       var c1X, c1Y, c2X, c2Y;
       if (targetX-5 < sourceX) {
         var curveFactor = (sourceX - targetX) * CURVE / 200;
-        if (Math.abs(targetY-sourceY) < TheGraph.nodeSize/2) {
+        if (Math.abs(targetY-sourceY) < TheGraph.config.nodeSize/2) {
           // Loopback
           c1X = sourceX + curveFactor;
           c1Y = sourceY - curveFactor;
@@ -155,41 +188,32 @@
         c2Y = targetY;
       }
 
-      var path = [
-        "M",
-        sourceX, sourceY,
-        "C",
-        c1X, c1Y,
-        c2X, c2Y,
-        targetX, targetY
-      ];
       // Make SVG path
+
+      var path = TheGraph.factories.edge.createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
       path = path.join(" ");
 
+      var backgroundPathOptions = TheGraph.merge(TheGraph.config.edge.backgroundPath, { d: path });
+      var backgroundPath = TheGraph.factories.edge.createEdgeBackgroundPath(backgroundPathOptions);
 
-      return (
-        React.DOM.g(
-          {
-            className: "edge",  // See componentDidUpdate
-            title: this.props.label
-          },
-          React.DOM.path({
-            className: "edge-bg",
-            d: path
-          }),
-          React.DOM.path({
-            ref: "route",
-            className: "edge-fg stroke route"+this.props.route,  // See componentDidUpdate
-            d: path
-          }),
-          React.DOM.path({
-            className: "edge-touch",
-            ref: "touch",
-            d: path
-          })
-        )
-      );
+      var foregroundPathClassName = TheGraph.config.edge.foregroundPath.className + this.props.route;
+      var foregroundPathOptions = TheGraph.merge(TheGraph.config.edge.foregroundPath, { d: path, className: foregroundPathClassName });
+      var foregroundPath = TheGraph.factories.edge.createEdgeForegroundPath(foregroundPathOptions);
+
+      var touchPathOptions = TheGraph.merge(TheGraph.config.edge.touchPath, { d: path });
+      var touchPath = TheGraph.factories.edge.createEdgeTouchPath(touchPathOptions);
+
+      var containerOptions = {
+        className: "edge"+
+          (this.props.selected ? " selected" : "")+
+          (this.props.animated ? " animated" : ""),
+        title: this.props.label
+      };
+
+      containerOptions = TheGraph.merge(TheGraph.config.edge.container, containerOptions);
+      return TheGraph.factories.edge.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
+
     }
-  });
+  }));
 
 })(this);

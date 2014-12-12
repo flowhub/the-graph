@@ -3,15 +3,41 @@
 
   var TheGraph = context.TheGraph;
 
+  TheGraph.config.iip = {
+    container: {
+      className: "iip"
+    },
+    path: {
+      className: "iip-path"
+    },
+    text: {
+      className: "iip-info",
+      height: 5,
+      halign: "right"
+    }
+  };
+
+  TheGraph.factories.iip = {
+    createIIPContainer: TheGraph.factories.createGroup,
+    createIIPPath: TheGraph.factories.createPath,
+    createIIPText: createIIPText
+  };
+
+  function createIIPText(options) {
+    return TheGraph.TextBG(options);
+  }
+
   // Const
   var CURVE = 50;
 
 
   // Edge view
 
-  TheGraph.IIP = React.createClass({
+  TheGraph.IIP = React.createFactory( React.createClass({
+    displayName: "TheGraphIIP",
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
+
       return (
         nextProps.x !== this.props.x || 
         nextProps.y !== this.props.y ||
@@ -34,27 +60,17 @@
         label = label.slice(0, 9) + "...";
       }
 
-      return (
-        React.DOM.g(
-          {
-            className: "iip",
-            title: this.props.label
-          },
-          React.DOM.path({
-            className: "iip-path",
-            d: path
-          }),
-          TheGraph.TextBG({
-            className: "iip-info",
-            height: 5,
-            halign: "right",
-            x: x - 10,
-            y: y,
-            text: label
-          })
-        )
-      );
+      var pathOptions = TheGraph.merge(TheGraph.config.iip.path, {d: path});
+      var iipPath = TheGraph.factories.iip.createIIPPath.call(this, pathOptions);
+
+      var textOptions = TheGraph.merge(TheGraph.config.iip.text, {x: x - 10, y: y, text: label});
+      var text = TheGraph.factories.iip.createIIPText.call(this, textOptions);
+
+      var containerContents = [iipPath, text];
+
+      var containerOptions = TheGraph.merge(TheGraph.config.iip.container, {title: this.props.label});
+      return TheGraph.factories.iip.createIIPContainer.call(this, containerOptions, containerContents);
     }
-  });
+  }));
 
 })(this);

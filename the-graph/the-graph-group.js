@@ -3,10 +3,35 @@
 
   var TheGraph = context.TheGraph;
 
+  TheGraph.config.group = {
+    container: {
+      className: "group"
+    },
+    boxRect: {
+      ref: "box",
+      rx: TheGraph.config.nodeRadius,
+      ry: TheGraph.config.nodeRadius
+    },
+    labelText: {
+      ref: "label",
+      className: "group-label drag"
+    },
+    descriptionText: {
+      className: "group-description"
+    }
+  };
+
+  TheGraph.factories.group = {
+    createGroupGroup: TheGraph.factories.createGroup,
+    createGroupBoxRect: TheGraph.factories.createRect,
+    createGroupLabelText: TheGraph.factories.createText,
+    createGroupDescriptionText: TheGraph.factories.createText
+  };
 
   // Group view
 
-  TheGraph.Group = React.createClass({
+  TheGraph.Group = React.createFactory( React.createClass({
+    displayName: "TheGraphGroup",
     componentDidMount: function () {
       // Move group
       if (this.props.isSelectionGroup) {
@@ -16,17 +41,16 @@
         this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
       }
 
+      var domNode = this.getDOMNode();
+
       // Don't pan under menu
-      this.getDOMNode().addEventListener("trackstart", this.dontPan);
+      domNode.addEventListener("trackstart", this.dontPan);
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("hold", this.showContext);
       }
-
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      this.componentDidUpdate();
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -60,6 +84,7 @@
       });
     },
     dontPan: function (event) {
+      console.log("dontPan",this.props.app.menuShown);
       // Don't drag under menu
       if (this.props.app.menuShown) {
         event.stopPropagation();
@@ -112,51 +137,48 @@
 
       this.props.graph.endTransaction('movegroup');
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "group-box color" + (this.props.color ? this.props.color : 0);
-      if (this.props.isSelectionGroup) { 
-        c += " selection drag";
-      }
-      this.refs.box.getDOMNode().setAttribute("class", c);
-    },
     render: function() {
-      var x = this.props.minX - TheGraph.nodeSize/2;
-      var y = this.props.minY - TheGraph.nodeSize/2;
+      var x = this.props.minX - TheGraph.config.nodeWidth / 2;
+      var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
-      return (
-        React.DOM.g(
-          {
-            className: "group"
-            // transform: "translate("+x+","+y+")"
-          },
-          React.DOM.rect({
-            ref: "box",
-            // className: "group-box color"+color, // See componentDidUpdate
-            x: x,
-            y: y,
-            rx: TheGraph.nodeRadius,
-            ry: TheGraph.nodeRadius,
-            width: this.props.maxX - this.props.minX + TheGraph.nodeSize*2,
-            height: this.props.maxY - this.props.minY + TheGraph.nodeSize*2
-          }),
-          React.DOM.text({
-            ref: "label",
-            className: "group-label drag",
-            x: x + TheGraph.nodeRadius,
-            y: y + 9,
-            children: this.props.label
-          }),
-          React.DOM.text({
-            className: "group-description",
-            x: x + TheGraph.nodeRadius,
-            y: y + 24,
-            children: this.props.description
-          })
-        )
-      );
+      var selection = (this.props.isSelectionGroup ? ' selection drag' : '');
+      var boxRectOptions = {
+        x: x,
+        y: y,
+        width: this.props.maxX - x + TheGraph.config.nodeWidth*0.5,
+        height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
+        className: "group-box color"+color + selection
+      };
+      boxRectOptions = TheGraph.merge(TheGraph.config.group.boxRect, boxRectOptions);
+      var boxRect =  TheGraph.factories.group.createGroupBoxRect.call(this, boxRectOptions);
+
+      var labelTextOptions = {
+        x: x + TheGraph.config.nodeRadius,
+        y: y + 9,
+        children: this.props.label
+      };
+      labelTextOptions = TheGraph.merge(TheGraph.config.group.labelText, labelTextOptions);
+      var labelText = TheGraph.factories.group.createGroupLabelText.call(this, labelTextOptions);
+
+      var descriptionTextOptions = {
+        x: x + TheGraph.config.nodeRadius,
+        y: y + 24,
+        children: this.props.description
+      };
+      descriptionTextOptions = TheGraph.merge(TheGraph.config.group.descriptionText, descriptionTextOptions);
+      var descriptionText = TheGraph.factories.group.createGroupDescriptionText.call(this, descriptionTextOptions);
+
+      var groupContents = [
+        boxRect,
+        labelText,
+        descriptionText
+      ];
+
+      var containerOptions = TheGraph.merge(TheGraph.config.group.container, {});
+      return TheGraph.factories.group.createGroupGroup.call(this, containerOptions, groupContents);
+
     }
-  });
+  }));
 
 
 })(this);

@@ -3,8 +3,69 @@
 
   var TheGraph = context.TheGraph;
 
+  TheGraph.config.app = {
+    container: {
+      className: "the-graph-app",
+      name: "app"
+    },
+    canvas: {
+      ref: "canvas",
+      className: "app-canvas"
+    },
+    svg: {
+      className: "app-svg"
+    },
+    svgGroup: {
+      className: "view"
+    },
+    graph: {
+      ref: "graph"
+    },
+    tooltip: {
+      ref: "tooltip"
+    },
+    modal: {
+      className: "context"
+    }
+  };
 
-  TheGraph.App = React.createClass({
+  TheGraph.factories.app = {
+    createAppContainer: createAppContainer,
+    createAppCanvas: TheGraph.factories.createCanvas,
+    createAppSvg: TheGraph.factories.createSvg,
+    createAppSvgGroup: TheGraph.factories.createGroup,
+    createAppGraph: createAppGraph,
+    createAppTooltip: createAppTooltip,
+    createAppModalGroup: TheGraph.factories.createGroup,
+    createAppModalBackground: createAppModalBackground
+  };
+
+  // No need to promote DIV creation to TheGraph.js.
+  function createAppContainer(options, content) {
+    var args = [options];
+
+    if (Array.isArray(content)) {
+      args = args.concat(content);
+    }
+
+    return React.DOM.div.apply(React.DOM.div, args);
+  }
+
+  function createAppGraph(options) {
+    return TheGraph.Graph(options);
+  }
+
+  function createAppTooltip(options) {
+    return TheGraph.Tooltip(options);
+  }
+
+  function createAppModalBackground(options) {
+    return TheGraph.ModalBG(options);
+  }
+
+  TheGraph.App = React.createFactory( React.createClass({
+    displayName: "TheGraphApp",
+    mixins: [React.Animate],
     minZoom: 0.15,
     getInitialState: function() {
       // Autofit
@@ -130,8 +191,9 @@
     },
     onTrackStart: function (event) {
       event.preventTap();
-      this.getDOMNode().addEventListener("track", this.onTrack);
-      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.addEventListener("track", this.onTrack);
+      domNode.addEventListener("trackend", this.onTrackEnd);
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
@@ -144,8 +206,9 @@
       // Don't click app (unselect)
       event.stopPropagation();
 
-      this.getDOMNode().removeEventListener("track", this.onTrack);
-      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.removeEventListener("track", this.onTrack);
+      domNode.removeEventListener("trackend", this.onTrackEnd);
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
@@ -195,6 +258,34 @@
         scale: fit.scale
       });
     },
+    focusNode: function (node) {
+      var duration = TheGraph.config.focusAnimationDuration;
+      var fit = TheGraph.findNodeFit(node, this.state.width, this.state.height);
+      var start_point = {
+        x: -(this.state.x - this.state.width / 2) / this.state.scale,
+        y: -(this.state.y - this.state.height / 2) / this.state.scale,
+      }, end_point = {
+        x: node.metadata.x,
+        y: node.metadata.y,
+      };
+      var graphfit = TheGraph.findAreaFit(start_point, end_point, this.state.width, this.state.height);
+      var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
+      var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
+      var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
+
+      // Animate zoom-out then zoom-in
+      this.animate({
+        x: graphfit.x,
+        y: graphfit.y,
+        scale: graphfit.scale,
+      }, duration * (scale_ratio_1 / scale_ratio_diff), 'in-quint', function() {
+        this.animate({
+          x: fit.x,
+          y: fit.y,
+          scale: fit.scale,
+        }, duration * (scale_ratio_2 / scale_ratio_diff), 'out-quint');
+      }.bind(this));
+    },
     edgeStart: function (event) {
       // Listened from PortMenu.edgeStart() and Port.edgeStart()
       this.refs.graph.edgeStart(event);
@@ -202,6 +293,16 @@
     },
     componentDidMount: function () {
       var domNode = this.getDOMNode();
+
+      // Set up PolymerGestures for app and all children
+      var noop = function(){};
+      PolymerGestures.addEventListener(domNode, "up", noop);
+      PolymerGestures.addEventListener(domNode, "down", noop);
+      PolymerGestures.addEventListener(domNode, "tap", noop);
+      PolymerGestures.addEventListener(domNode, "trackstart", noop);
+      PolymerGestures.addEventListener(domNode, "track", noop);
+      PolymerGestures.addEventListener(domNode, "trackend", noop);
+      PolymerGestures.addEventListener(domNode, "hold", noop);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
@@ -217,11 +318,11 @@
         });
       }
 
-      // Pointer gesture events for pan/zoom
+      // Pointer gesture event for pan
       domNode.addEventListener("trackstart", this.onTrackStart);
 
-      var is_touch_device = 'ontouchstart' in document.documentElement;
-      if( is_touch_device && Hammer ){
+      var isTouchDevice = 'ontouchstart' in document.documentElement;
+      if( isTouchDevice && Hammer ){
         Hammer(domNode).on("transformstart", this.onTransformStart);
         Hammer(domNode).on("transform", this.onTransform);
         Hammer(domNode).on("transformend", this.onTransformEnd);
@@ -243,6 +344,8 @@
       // Edge preview
       domNode.addEventListener("the-graph-edge-start", this.edgeStart);
 
+      domNode.addEventListener("contextmenu",this.onShowContext);
+
       // Start zoom from middle if zoom before mouse move
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
@@ -256,10 +359,31 @@
       this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
+
       // Rerender graph once to fix edges
       setTimeout(function () {
         this.renderGraph();
       }.bind(this), 500);
+    },
+    onShowContext: function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.preventTap) { event.preventTap(); }
+
+      // Get mouse position
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
+
+      // App.showContext
+      this.showContext({
+        element: this,
+        type: "main",
+        x: x,
+        y: y,
+        graph: this.props.graph,
+        itemKey: 'graph',
+        item: this.props.graph
+      });
     },
     keyDown: function (event) {
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
@@ -300,7 +424,7 @@
 
       // Background grid pattern
       var scale = this.state.scale;
-      var g = TheGraph.nodeSize * scale;
+      var g = TheGraph.config.nodeSize * scale;
 
       var dx = this.state.x % g;
       var dy = this.state.y % g;
@@ -328,6 +452,27 @@
       }
 
     },
+
+    getContext: function (menu, options, hide) {
+        return TheGraph.Menu({
+            menu: menu,
+            options: options,
+            triggerHideContext: hide,
+            label: "Hello",
+            graph: this.props.graph,
+            node: this,
+            ports: [],
+            process: [],
+            processKey: null,
+            x: options.x,
+            y: options.y,
+            nodeWidth: this.props.width,
+            nodeHeight: this.props.height,
+            deltaX: 0,
+            deltaY: 0,
+            highlightPort: false
+        });
+    },
     render: function() {
       // console.timeEnd("App.render");
       // console.time("App.render");
@@ -349,73 +494,71 @@
         }
       }
       if (contextMenu) {
+
+        var modalBGOptions ={
+          width: this.state.width,
+          height: this.state.height,
+          triggerHideContext: this.hideContext,
+          children: contextMenu
+        };
+
         contextModal = [ 
-          TheGraph.ModalBG({
-            width: this.state.width,
-            height: this.state.height,
-            triggerHideContext: this.hideContext,
-            children: contextMenu
-          })
+          TheGraph.factories.app.createAppModalBackground(modalBGOptions)
         ];
         this.menuShown = true;
       } else {
         this.menuShown = false;
       }
 
-      return React.DOM.div(
-        {
-          className: "the-graph-app " + scaleClass,
-          name:"app", 
-          style: {
-            width: this.state.width,
-            height: this.state.height
-          }
-        },
-        React.DOM.canvas({
-          ref: "canvas",
-          className: "app-canvas",
-          width: this.state.width, 
-          height: this.state.height
-        }),
-        React.DOM.svg(
-          {
-            className: "app-svg",
-            width: this.state.width, 
-            height: this.state.height
-          },
-          React.DOM.g(
-            {
-              className: "view",
-              transform: transform
-            },
-            TheGraph.Graph({
-              ref: "graph",
-              graph: this.props.graph,
-              scale: this.state.scale,
-              app: this,
-              library: this.props.library,
-              onNodeSelection: this.props.onNodeSelection,
-              onEdgeSelection: this.props.onEdgeSelection,
-              showContext: this.showContext
-            })
-          ),
-          TheGraph.Tooltip({
-            ref: "tooltip",
-            x: this.state.tooltipX,
-            y: this.state.tooltipY,
-            visible: this.state.tooltipVisible,
-            label: this.state.tooltip
-          }),
-          React.DOM.g(
-            {
-              className: "context",
-              children: contextModal
-            }
-          )
-        )
-      );
+      var graphElementOptions = {
+        graph: this.props.graph,
+        scale: this.state.scale,
+        app: this,
+        library: this.props.library,
+        onNodeSelection: this.props.onNodeSelection,
+        onEdgeSelection: this.props.onEdgeSelection,
+        showContext: this.showContext
+      };
+      graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
+      var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
+
+      var svgGroupOptions = TheGraph.merge(TheGraph.config.app.svgGroup, { transform: transform });
+      var svgGroup = TheGraph.factories.app.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
+
+      var tooltipOptions = {
+        x: this.state.tooltipX,
+        y: this.state.tooltipY,
+        visible: this.state.tooltipVisible,
+        label: this.state.tooltip
+      };
+
+      tooltipOptions = TheGraph.merge(TheGraph.config.app.tooltip, tooltipOptions);
+      var tooltip = TheGraph.factories.app.createAppTooltip.call(this, tooltipOptions);
+
+      var modalGroupOptions = TheGraph.merge(TheGraph.config.app.modal, { children: contextModal });
+      var modalGroup = TheGraph.factories.app.createAppModalGroup.call(this, modalGroupOptions);
+
+      var svgContents = [
+        svgGroup,
+        tooltip,
+        modalGroup
+      ];
+
+      var svgOptions = TheGraph.merge(TheGraph.config.app.svg, { width: this.state.width, height: this.state.height });
+      var svg = TheGraph.factories.app.createAppSvg.call(this, svgOptions, svgContents);
+
+      var canvasOptions = TheGraph.merge(TheGraph.config.app.canvas, { width: this.state.width, height: this.state.height });
+      var canvas = TheGraph.factories.app.createAppCanvas.call(this, canvasOptions);
+
+      var appContents = [
+        canvas,
+        svg
+      ];
+      var containerOptions = TheGraph.merge(TheGraph.config.app.container, { style: { width: this.state.width, height: this.state.height } });
+      containerOptions.className += " " + scaleClass;
+      return TheGraph.factories.app.createAppContainer.call(this, containerOptions, appContents);
     }
-  });
+  }));
 
 
 })(this);

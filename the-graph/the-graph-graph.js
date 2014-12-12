@@ -3,18 +3,96 @@
 
   var TheGraph = context.TheGraph;
 
+  TheGraph.config.graph = {
+    container: {},
+    groupsGroup: {
+      className: "groups"
+    },
+    edgesGroup: {
+      className: "edges"
+    },
+    iipsGroup: {
+      className: "iips"
+    },
+    nodesGroup: {
+      className: "nodes"
+    },
+    inportsGroup: {
+      className: "ex-inports"
+    },
+    outportsGroup: {
+      className: "ex-outports"
+    },
+    node: {},
+    iip: {},
+    inportEdge: {},
+    inportNode: {},
+    outportEdge: {},
+    outportNode: {},
+    nodeGroup: {},
+    selectionGroup: {
+      key: "selectiongroup",
+      isSelectionGroup: true,
+      label: "",
+      description: ""
+    },
+    edgePreview: {
+      key: "edge-preview",
+      label: ""
+    }
+  };
+
+  TheGraph.factories.graph = {
+    createGraphContainerGroup: TheGraph.factories.createGroup,
+    createGraphGroupsGroup: TheGraph.factories.createGroup,
+    createGraphEdgesGroup: TheGraph.factories.createGroup,
+    createGraphIIPGroup: TheGraph.factories.createGroup,
+    createGraphNodesGroup: TheGraph.factories.createGroup,
+    createGraphInportsGroup: TheGraph.factories.createGroup,
+    createGraphOutportsGroup: TheGraph.factories.createGroup,
+    createGraphNode: createGraphNode,
+    createGraphEdge: createGraphEdge,
+    createGraphIIP: createGraphIIP,
+    createGraphGroup: createGraphGroup,
+    createGraphEdgePreview: createGraphEdgePreview
+  };
+
+  function createGraphNode(options) {
+    return TheGraph.Node(options);
+  }
+
+  function createGraphEdge(options) {
+    return TheGraph.Edge(options);
+  }
+
+  function createGraphIIP(options) {
+    return TheGraph.IIP(options);
+  }
+
+  function createGraphGroup(options) {
+    return TheGraph.Group(options);
+  }
+
+  function createGraphEdgePreview(options) {
+    return TheGraph.Edge(options);
+  }
+
 
   // Graph view
 
-  TheGraph.Graph = React.createClass({
+  TheGraph.Graph = React.createFactory( React.createClass({
+    displayName: "TheGraphGraph",
     mixins: [TheGraph.mixins.FakeMouse],
     getInitialState: function() {
       return {
         graph: this.props.graph,
+        displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
         edgePreviewY: 0,
+        forceSelection: false,
         selectedNodes: [],
+        errorNodes: [],
         selectedEdges: [],
         animatedEdges: []
       };
@@ -64,17 +142,20 @@
       edge.isIn = event.detail.isIn;
       edge.metadata = { route: event.detail.route };
       edge.type = event.detail.port.type;
-      this.props.app.getDOMNode().addEventListener("mousemove", this.renderPreviewEdge);
-      this.props.app.getDOMNode().addEventListener("track", this.renderPreviewEdge);
+
+      var appDomNode = this.props.app.getDOMNode();
+      appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
+      appDomNode.addEventListener("track", this.renderPreviewEdge);
       // TODO tap to add new node here
-      this.props.app.getDOMNode().addEventListener("tap", this.cancelPreviewEdge);
+      appDomNode.addEventListener("tap", this.cancelPreviewEdge);
 
       this.setState({edgePreview: edge});
     },
     cancelPreviewEdge: function (event) {
-      this.props.app.getDOMNode().removeEventListener("mousemove", this.renderPreviewEdge);
-      this.props.app.getDOMNode().removeEventListener("track", this.renderPreviewEdge);
-      this.props.app.getDOMNode().removeEventListener("tap", this.cancelPreviewEdge);
+      var appDomNode = this.props.app.getDOMNode();
+      appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
+      appDomNode.removeEventListener("track", this.renderPreviewEdge);
+      appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
         this.markDirty();
@@ -109,7 +190,7 @@
           });
         } else {
           // Snap to grid
-          var snap = TheGraph.nodeSize/2;
+          var snap = TheGraph.config.nodeHeight / 2;
           graph.setNodeMetadata(node.id, {
             x: Math.round(node.metadata.x/snap) * snap,
             y: Math.round(node.metadata.y/snap) * snap
@@ -121,7 +202,9 @@
       return this.props.library[componentName];
     },
     portInfo: {},
-    getPorts: function (processName, componentName) {
+    getPorts: function (graph, processName, componentName) {
+      var node = graph.getNode(processName);
+
       var ports = this.portInfo[processName];
       if (!ports) {
         var inports = {};
@@ -143,8 +226,8 @@
             outports[port.name] = {
               label: port.name,
               type: port.type,
-              x: TheGraph.nodeSize,
-              y: TheGraph.nodeSize / (len+1) * (i+1)
+              x: node.metadata.width,
+              y: node.metadata.height / (len+1) * (i+1)
             };
           }
           for (i=0, len=component.inports.length; i<len; i++) {
@@ -154,7 +237,7 @@
               label: port.name,
               type: port.type,
               x: 0,
-              y: TheGraph.nodeSize / (len+1) * (i+1)
+              y: node.metadata.height / (len+1) * (i+1)
             };
           }
         }
@@ -166,13 +249,13 @@
       }
       return ports;
     },
-    getNodeOutport: function (processName, portName, route, componentName) {
-      var ports = this.getPorts(processName, componentName);
+    getNodeOutport: function (graph, processName, portName, route, componentName) {
+      var ports = this.getPorts(graph, processName, componentName);
       if ( !ports.outports[portName] ) {
         ports.outports[portName] = {
           label: portName,
-          x: TheGraph.nodeSize,
-          y: TheGraph.nodeSize/2
+          x: TheGraph.config.nodeWidth,
+          y: TheGraph.config.nodeHeight / 2
         };
         this.dirty = true;
       }
@@ -183,13 +266,13 @@
       }
       return port;
     },
-    getNodeInport: function (processName, portName, route, componentName) {
-      var ports = this.getPorts(processName, componentName);
+    getNodeInport: function (graph, processName, portName, route, componentName) {
+      var ports = this.getPorts(graph, processName, componentName);
       if ( !ports.inports[portName] ) {
         ports.inports[portName] = {
           label: portName,
           x: 0,
-          y: TheGraph.nodeSize/2
+          y: TheGraph.config.nodeHeight / 2
         };
         this.dirty = true;
       }
@@ -233,7 +316,7 @@
           type: "all",
           route: 5,
           x: 0,
-          y: TheGraph.nodeSize/2
+          y: TheGraph.config.nodeHeight / 2
         };
         this.graphOutports[key] = exp;
       }
@@ -248,8 +331,8 @@
           label: key,
           type: "all",
           route: 2,
-          x: TheGraph.nodeSize,
-          y: TheGraph.nodeSize/2
+          x: TheGraph.config.nodeWidth,
+          y: TheGraph.config.nodeHeight / 2
         };
         this.graphInports[key] = exp;
       }
@@ -258,6 +341,12 @@
     setSelectedNodes: function (nodes) {
       this.setState({
         selectedNodes: nodes
+      });
+      this.markDirty();
+    },
+    setErrorNodes: function (errors) {
+      this.setState({
+        errorNodes: errors
       });
       this.markDirty();
     },
@@ -300,21 +389,13 @@
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
     },
-    componentDidUpdate: function () {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var d = this.getDOMNode();
-      var c = "graph";
-      if (this.state.selectedNodes.length > 0 || this.state.selectedEdges.length > 0) {
-        c += " selection";
-      }
-      d.setAttribute("class", c);
-    },
     render: function() {
       this.dirty = false;
 
       var self = this;
       var graph = this.state.graph;
       var library = this.props.library;
+      var selectedIds = [];
 
       // Reset ports if library has changed
       if (this.libraryDirty) {
@@ -333,39 +414,71 @@
 
       // Nodes
       var nodes = graph.nodes.map(function (node) {
+        var componentInfo = self.getComponentInfo(node.component);
         var key = node.id;
         if (!node.metadata) {
           node.metadata = {};
         }
-        if (node.metadata.x === undefined) { node.metadata.x = 0; }
-        if (node.metadata.y === undefined) { node.metadata.y = 0; }
+        if (node.metadata.x === undefined) { 
+          node.metadata.x = 0; 
+        }
+        if (node.metadata.y === undefined) { 
+          node.metadata.y = 0; 
+        }
+        if (node.metadata.width === undefined) { 
+          node.metadata.width = TheGraph.config.nodeWidth; 
+        }
+        node.metadata.height = TheGraph.config.nodeHeight;
+        if (TheGraph.config.autoSizeNode && componentInfo) {
+          // Adjust node height based on number of ports.
+          var portCount = Math.max(componentInfo.inports.length, componentInfo.outports.length);
+          if (portCount > TheGraph.config.maxPortCount) {
+            var diff = portCount - TheGraph.config.maxPortCount;
+            node.metadata.height = TheGraph.config.nodeHeight + (diff * TheGraph.config.nodeHeightIncrement);
+          }
+        }
         if (!node.metadata.label || node.metadata.label === "") {
           node.metadata.label = key;
         }
-        var componentInfo = self.getComponentInfo(node.component);
         var icon = "cog";
+        var iconsvg = "";
         if (self.updatedIcons[key]) {
           icon = self.updatedIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
+        } else if (componentInfo && componentInfo.iconsvg) {
+          iconsvg = componentInfo.iconsvg;
         }
-        return TheGraph.Node({
+        var selected = (self.state.selectedNodes[key] === true);
+        if (selected) {
+          selectedIds.push(key);
+        }
+
+        var nodeOptions = {
           key: key,
+          nodeID: key,
           x: node.metadata.x,
           y: node.metadata.y,
           label: node.metadata.label,
-          sublabel: node.component,
+          sublabel: node.metadata.sublabel || node.component,
+          width: node.metadata.width,
+          height: node.metadata.height,
           app: self.props.app,
           graphView: self,
           graph: graph,
           node: node,
           icon: icon,
-          ports: self.getPorts(key, node.component),
+          iconsvg: iconsvg,
+          ports: self.getPorts(graph, key, node.component),
           onNodeSelection: self.props.onNodeSelection,
-          selected: (self.state.selectedNodes.indexOf(node) !== -1),
+          selected: selected,
+          error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
           highlightPort: highlightPort
-        });
+        };
+
+        nodeOptions = TheGraph.merge(TheGraph.config.graph.node, nodeOptions);
+        return TheGraph.factories.graph.createGraphNode.call(this, nodeOptions);
       });
 
       // Edges
@@ -382,21 +495,29 @@
         }
 
         // Initial ports from edges, and give port top/last edge color
-        var sourcePort = self.getNodeOutport(edge.from.node, edge.from.port, route, source.component);
-        var targetPort = self.getNodeInport(edge.to.node, edge.to.port, route, target.component);
+        var sourcePort = self.getNodeOutport(graph, edge.from.node, edge.from.port, route, source.component);
+        var targetPort = self.getNodeInport(graph, edge.to.node, edge.to.port, route, target.component);
 
-        // Label
-        var label = source.metadata.label + " " + edge.from.port.toUpperCase() + " -> " + 
-          edge.to.port.toUpperCase() + " " + target.metadata.label;
-        var key = edge.from.node + "() " + edge.from.port.toUpperCase() + " -> " + 
-          edge.to.port.toUpperCase() + " " + edge.to.node + "()";
+        var label = source.metadata.label + '() ' +
+          edge.from.port.toUpperCase() +
+          (edge.from.hasOwnProperty('index') ? '['+edge.from.index+']' : '') + ' -> ' +
+          edge.to.port.toUpperCase() +
+          (edge.to.hasOwnProperty('index') ? '['+edge.to.index+']' : '') + ' ' +
+          target.metadata.label + '()';
+        var key = edge.from.node + '() ' +
+          edge.from.port.toUpperCase() +
+          (edge.from.hasOwnProperty('index') ? '['+edge.from.index+']' : '') + ' -> ' +
+          edge.to.port.toUpperCase() +
+          (edge.to.hasOwnProperty('index') ? '['+edge.to.index+']' : '') + ' ' +
+          edge.to.node + '()';
 
-        return TheGraph.Edge({
+        var edgeOptions = {
           key: key,
+          edgeID: key,
           graph: graph,
           edge: edge,
           app: self.props.app,
-          sX: source.metadata.x + TheGraph.nodeSize,
+          sX: source.metadata.x + source.metadata.width,
           sY: source.metadata.y + sourcePort.y,
           tX: target.metadata.x,
           tY: target.metadata.y + targetPort.y,
@@ -406,7 +527,10 @@
           selected: (self.state.selectedEdges.indexOf(edge) !== -1),
           animated: (self.state.animatedEdges.indexOf(edge) !== -1),
           showContext: self.props.showContext
-        });
+        };
+
+        edgeOptions = TheGraph.merge(TheGraph.config.graph.edge, edgeOptions);
+        return TheGraph.factories.graph.createGraphEdge.call(this, edgeOptions);
       });
 
       // IIPs
@@ -414,7 +538,7 @@
         var target = graph.getNode(iip.to.node);
         if (!target) { return; }
         
-        var targetPort = self.getNodeInport(iip.to.node, iip.to.port, 0, target.component);
+        var targetPort = self.getNodeInport(graph, iip.to.node, iip.to.port, 0, target.component);
         var tX = target.metadata.x;
         var tY = target.metadata.y + targetPort.y;
 
@@ -422,12 +546,15 @@
         var type = typeof data;
         var label = data === true || data === false || type === "number" || type === "string" ? data : type;
 
-        return TheGraph.IIP({
+        var iipOptions = {
           graph: graph,
           label: label,
           x: tX,
           y: tY
-        });
+        };
+
+        iipOptions = TheGraph.merge(TheGraph.config.graph.iip, iipOptions);
+        return TheGraph.factories.graph.createGraphIIP.call(this, iipOptions);
 
       });
 
@@ -445,6 +572,8 @@
         var metadata = inport.metadata;
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
+        if (!metadata.width) { metadata.width = TheGraph.config.nodeWidth; }
+        if (!metadata.height) { metadata.height = TheGraph.config.nodeHeight; }
         // Private port info
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
@@ -469,6 +598,8 @@
           exportKey: key,
           x: metadata.x,
           y: metadata.y,
+          width: metadata.width,
+          height: metadata.height,
           label: label,
           app: self.props.app,
           graphView: self,
@@ -476,9 +607,10 @@
           node: {},
           ports: self.getGraphInport(key),
           isIn: true,
-          icon: "sign-in",
+          icon: (metadata.icon ? metadata.icon : "sign-in"),
           showContext: self.props.showContext
         };
+        expNode = TheGraph.merge(TheGraph.config.graph.inportNode, expNode);
         // Edge view
         var expEdge = {
           key: "inport.edge."+key,
@@ -490,14 +622,15 @@
           route: (metadata.route ? metadata.route : 2),
           isIn: true,
           label: "export in " + label.toUpperCase() + " -> " + portKey.toUpperCase() + " " + privateNode.metadata.label,
-          sX: expNode.x + TheGraph.nodeSize,
-          sY: expNode.y + TheGraph.nodeSize/2,
+          sX: expNode.x + TheGraph.config.nodeWidth,
+          sY: expNode.y + TheGraph.config.nodeHeight / 2,
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y,
           showContext: self.props.showContext
         };
-        edges.unshift(TheGraph.Edge(expEdge));
-        return TheGraph.Node(expNode);
+        expEdge = TheGraph.merge(TheGraph.config.graph.inportEdge, expEdge);
+        edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
+        return TheGraph.factories.graph.createGraphNode.call(this, expNode);
       });
 
 
@@ -514,6 +647,8 @@
         var metadata = outport.metadata;
         if (!metadata.x) { metadata.x = 0; }
         if (!metadata.y) { metadata.y = 0; }
+        if (!metadata.width) { metadata.width = TheGraph.config.nodeWidth; }
+        if (!metadata.height) { metadata.height = TheGraph.config.nodeHeight; }
         // Private port info
         var portInfo = self.portInfo[nodeKey];
         if (!portInfo) {
@@ -538,6 +673,8 @@
           exportKey: key,
           x: metadata.x,
           y: metadata.y,
+          width: metadata.width,
+          height: metadata.height,
           label: label,
           app: self.props.app,
           graphView: self,
@@ -545,9 +682,10 @@
           node: {},
           ports: self.getGraphOutport(key),
           isIn: false,
-          icon: "sign-out",
+          icon: (metadata.icon ? metadata.icon : "sign-out"),
           showContext: self.props.showContext
         };
+        expNode = TheGraph.merge(TheGraph.config.graph.outportNode, expNode);
         // Edge view
         var expEdge = {
           key: "outport.edge."+key,
@@ -562,11 +700,12 @@
           sX: privateNode.metadata.x + privatePort.x,
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
-          tY: expNode.y + TheGraph.nodeSize/2,
+          tY: expNode.y + TheGraph.config.nodeHeight / 2,
           showContext: self.props.showContext
         };
-        edges.unshift(TheGraph.Edge(expEdge));
-        return TheGraph.Node(expNode);
+        expEdge = TheGraph.merge(TheGraph.config.graph.outportEdge, expEdge);
+        edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
+        return TheGraph.factories.graph.createGraphNode.call(this, expNode);
       });
 
 
@@ -579,7 +718,7 @@
         if (!limits) {
           return;
         }
-        return TheGraph.Group({
+        var groupOptions = {
           key: "group."+group.name,
           graph: graph,
           item: group,
@@ -595,14 +734,14 @@
           color: group.metadata.color,
           triggerMoveGroup: self.moveGroup,
           showContext: self.props.showContext
-        });
+        };
+        groupOptions = TheGraph.merge(TheGraph.config.graph.nodeGroup, groupOptions);
+        return TheGraph.factories.graph.createGraphGroup.call(this, groupOptions);
       });
 
       // Selection pseudo-group
-      if (this.state.selectedNodes.length >= 2) {
-        var selectedIds = this.state.selectedNodes.map(function (node) {
-          return node.id;
-        });
+      if (this.state.displaySelectionGroup &&
+          selectedIds.length >= 2) {
         var limits = TheGraph.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
@@ -610,9 +749,7 @@
             nodes: selectedIds,
             metadata: {color:1}
           };
-          var selectionGroup = TheGraph.Group({
-            key: "selectiongroup",
-            isSelectionGroup: true,
+          var selectionGroupOptions = {
             graph: graph,
             app: self.props.app,
             item: pseudoGroup,
@@ -621,12 +758,12 @@
             maxX: limits.maxX,
             maxY: limits.maxY,
             scale: self.props.scale,
-            label: "",
-            description: "",
             color: pseudoGroup.metadata.color,
             triggerMoveGroup: self.moveGroup,
             showContext: self.props.showContext
-          });
+          };
+          selectionGroupOptions = TheGraph.merge(TheGraph.config.graph.selectionGroup, selectionGroupOptions);
+          var selectionGroup = TheGraph.factories.graph.createGraphGroup.call(this, selectionGroupOptions);
           groups.push(selectionGroup);
         }
       }
@@ -635,66 +772,67 @@
       // Edge preview
       var edgePreview = this.state.edgePreview;
       if (edgePreview) {
-        var edgePreviewView;
+        var edgePreviewOptions;
         if (edgePreview.from) {
           var source = graph.getNode(edgePreview.from.process);
-          var sourcePort = this.getNodeOutport(edgePreview.from.process, edgePreview.from.port);
-          edgePreviewView = TheGraph.Edge({
-            key: "edge-preview",
-            sX: source.metadata.x + TheGraph.nodeSize,
+          var sourcePort = this.getNodeOutport(graph, edgePreview.from.process, edgePreview.from.port);
+          edgePreviewOptions = {
+            sX: source.metadata.x + source.metadata.width,
             sY: source.metadata.y + sourcePort.y,
             tX: this.state.edgePreviewX,
             tY: this.state.edgePreviewY,
-            label: "",
             route: edgePreview.metadata.route
-          });
+          };
         } else {
           var target = graph.getNode(edgePreview.to.process);
-          var targetPort = this.getNodeInport(edgePreview.to.process, edgePreview.to.port);
-          edgePreviewView = TheGraph.Edge({
-            key: "edge-preview",
+          var targetPort = this.getNodeInport(graph, edgePreview.to.process, edgePreview.to.port);
+          edgePreviewOptions = {
             sX: this.state.edgePreviewX,
             sY: this.state.edgePreviewY,
             tX: target.metadata.x,
             tY: target.metadata.y + targetPort.y,
-            label: "",
             route: edgePreview.metadata.route
-          });
+          };
         }
+        edgePreviewOptions = TheGraph.merge(TheGraph.config.graph.edgePreview, edgePreviewOptions);
+        var edgePreviewView = TheGraph.factories.graph.createGraphEdgePreview.call(this, edgePreviewOptions);
         edges.push(edgePreviewView);
       }
 
+      var groupsOptions = TheGraph.merge(TheGraph.config.graph.groupsGroup, { children: groups });
+      var groupsGroup = TheGraph.factories.graph.createGraphGroupsGroup.call(this, groupsOptions);
 
-      return React.DOM.g(
-        {
-          // className: "graph" // See componentDidUpdate
-        },
-        React.DOM.g({
-          className: "groups",
-          children: groups
-        }),
-        React.DOM.g({
-          className: "edges",
-          children: edges
-        }),
-        React.DOM.g({
-          className: "iips",
-          children: iips
-        }),
-        React.DOM.g({
-          className: "nodes", 
-          children: nodes
-        }),
-        React.DOM.g({
-          className: "ex-inports", 
-          children: inports
-        }),
-        React.DOM.g({
-          className: "ex-outports", 
-          children: outports
-        })
-      );
+      var edgesOptions = TheGraph.merge(TheGraph.config.graph.edgesGroup, { children: edges });
+      var edgesGroup = TheGraph.factories.graph.createGraphEdgesGroup.call(this, edgesOptions);
+
+      var iipsOptions = TheGraph.merge(TheGraph.config.graph.iipsGroup, { children: iips });
+      var iipsGroup = TheGraph.factories.graph.createGraphIIPGroup.call(this, iipsOptions);
+
+      var nodesOptions = TheGraph.merge(TheGraph.config.graph.nodesGroup, { children: nodes });
+      var nodesGroup = TheGraph.factories.graph.createGraphNodesGroup.call(this, nodesOptions);
+
+      var inportsOptions = TheGraph.merge(TheGraph.config.graph.inportsGroup, { children: inports });
+      var inportsGroup = TheGraph.factories.graph.createGraphInportsGroup.call(this, inportsOptions);
+
+      var outportsOptions = TheGraph.merge(TheGraph.config.graph.outportsGroup, { children: outports });
+      var outportsGroup = TheGraph.factories.graph.createGraphGroupsGroup.call(this, outportsOptions);
+
+      var containerContents = [
+        groupsGroup,
+        edgesGroup,
+        iipsGroup,
+        nodesGroup,
+        inportsGroup,
+        outportsGroup
+      ];
+
+      var selectedClass = (this.state.forceSelection ||
+                           selectedIds.length>0) ? ' selection' : '';
+
+      var containerOptions = TheGraph.merge(TheGraph.config.graph.container, { className: 'graph' + selectedClass });
+      return TheGraph.factories.graph.createGraphContainerGroup.call(this, containerOptions, containerContents);
+
     }
-  });  
+  }));  
 
 })(this);

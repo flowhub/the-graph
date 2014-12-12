@@ -13,6 +13,9 @@
       css: ['themes/*.css']
     };
 
+    var glob = require('glob');
+    var stylExpand = glob.sync('./themes/*.styl').join(' ');
+
     var jshintOptions = { 
       strict: true,
       newcap: false,
@@ -21,12 +24,21 @@
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
+      'bower-install-simple': {
+        deps: {
+          options: {
+            interactive: false,
+            forceLatest: false,
+            directory: 'bower_components'
+          }
+        }
+      },
       exec: {
         build_stylus: {
-          command: 'node ./node_modules/stylus/bin/stylus ./themes/*.styl'
+          command: 'node ./node_modules/stylus/bin/stylus ' + stylExpand
         },
         build_fa: {
-          command: 'node ./scripts/build-font-awesome-javascript.js '
+          command: 'node ./scripts/build-font-awesome-javascript.js'
         }
       },
       browserify: {
@@ -112,6 +124,7 @@
     //   this.config('inlinelint.all.src', filepath);
     // }.bind(this));
 
+    this.loadNpmTasks('grunt-bower-install-simple');
     this.loadNpmTasks('grunt-exec');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
@@ -120,8 +133,8 @@
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'build']);
     this.registerTask('default', ['test']);
   };
 

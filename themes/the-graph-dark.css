@@ -37,6 +37,37 @@
   fill: rgba(230,238,240,0.94);
   stroke: none;
 }
+@-webkit-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+@-moz-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+@-o-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+.the-graph-dark .node.error .node-rect {
+  -webkit-animation: error 1s linear infinite alternate;
+  -moz-animation: error 1s linear infinite alternate;
+  -o-animation: error 1s linear infinite alternate;
+  animation: error 1s linear infinite alternate;
+  stroke: none;
+}
 .the-graph-dark .node:hover .node-rect {
   fill: rgba(230,238,240,0.97);
 }
@@ -153,19 +184,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }
@@ -174,19 +201,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }
@@ -195,19 +218,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }
@@ -223,8 +242,7 @@
 }
 .the-graph-dark text {
   font-family: "SourceCodePro", "Source Code Pro", Helvetica, Arial, sans-serif;
-  text-rendering: geometricPrecision;
-/* makes text scale smoothly */
+  text-rendering: geometricPrecision; /* makes text scale smoothly */
   font-size: 14px;
   fill: #fff;
   text-anchor: middle;
@@ -671,23 +689,51 @@
 .the-graph-dark .fill.route10 {
   fill: #e80262;
 }
+@-moz-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+@-webkit-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+@-o-keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
+@keyframes error {
+  0% {
+    fill: rgba(230,238,240,0.94);
+  }
+  100% {
+    fill: rgba(255,0,0,0.94);
+  }
+}
 @-moz-keyframes heartbeats {
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }
@@ -696,19 +742,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }
@@ -717,40 +759,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
-  60% {
-    stroke-width: 12px;
-  }
-}
-@-ms-keyframes heartbeats {
-  0% {
-    stroke-width: 12px;
-  }
-
-  10% {
-    stroke-width: 18px;
-  }
-
-  30% {
-    stroke-width: 12px;
-  }
-
-  40% {
-    stroke-width: 18px;
-  }
-
   60% {
     stroke-width: 12px;
   }
@@ -759,19 +776,15 @@
   0% {
     stroke-width: 12px;
   }
-
   10% {
     stroke-width: 18px;
   }
-
   30% {
     stroke-width: 12px;
   }
-
   40% {
     stroke-width: 18px;
   }
-
   60% {
     stroke-width: 12px;
   }

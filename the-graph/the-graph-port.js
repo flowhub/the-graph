@@ -3,10 +3,38 @@
 
   var TheGraph = context.TheGraph;
 
+  // Initialize configuration for the Port view.
+  TheGraph.config.port = {
+    container: {
+      className: "port arrow"
+    },
+    backgroundCircle: {
+      className: "port-circle-bg"
+    },
+    arc: {
+      className: "port-arc"
+    },
+    innerCircle: {
+      ref: "circleSmall"
+    },
+    text: {
+      ref: "label",
+      className: "port-label drag"
+    }
+  };
+
+  TheGraph.factories.port = {
+    createPortGroup: TheGraph.factories.createGroup,
+    createPortBackgroundCircle: TheGraph.factories.createCircle,
+    createPortArc: TheGraph.factories.createPath,
+    createPortInnerCircle: TheGraph.factories.createCircle,
+    createPortLabelText: TheGraph.factories.createText
+  };
 
   // Port view
 
-  TheGraph.Port = React.createClass({
+  TheGraph.Port = React.createFactory( React.createClass({
+    displayName: "TheGraphPort",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
@@ -23,9 +51,6 @@
         this.getDOMNode().addEventListener("contextmenu", this.showContext);
         this.getDOMNode().addEventListener("hold", this.showContext);
       }
-
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      this.componentDidUpdate();
     },
     getTooltipTrigger: function () {
       return this.getDOMNode();
@@ -107,16 +132,11 @@
       });
       event.relatedTarget.dispatchEvent(dropEvent);      
     },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var c = "port-circle-small fill route"+this.props.route;
-      this.refs.circleSmall.getDOMNode().setAttribute("class", c);
-    },
     render: function() {
       var style;
       if (this.props.label.length > 7) {
         var fontSize = 6 * (30 / (4 * this.props.label.length));
-        style = { "font-size": fontSize+"px" };
+        style = { 'fontSize': fontSize+'px' };
       }
       var r = 4;
       // Highlight matching ports
@@ -128,37 +148,41 @@
         inArc = TheGraph.arcs.inportBig;
         outArc = TheGraph.arcs.outportBig;
       }
-      return (
-        React.DOM.g(
-          {
-            className: "port arrow",
-            title: this.props.label,
-            transform: "translate("+this.props.x+","+this.props.y+")"
-          },
-          React.DOM.circle({
-            className: "port-circle-bg", // Transparent, for hit region
-            r: r+1
-          }),
-          React.DOM.path({
-            className: "port-arc",
-            d: (this.props.isIn ? inArc : outArc)
-          }),
-          React.DOM.circle({
-            ref: "circleSmall",
-            // className: "port-circle-small fill route"+this.props.route,  // See componentDidUpdate
-            r: r-1.5
-          }),
-          React.DOM.text({
-            ref: "label",
-            className: "port-label drag",
-            x: (this.props.isIn ? 5 : -5),
-            style: style,
-            children: this.props.label
-          })
-        )
-      );
+
+      var backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
+      var backgroundCircle = TheGraph.factories.port.createPortBackgroundCircle.call(this, backgroundCircleOptions);
+
+      var arcOptions = TheGraph.merge(TheGraph.config.port.arc, { d: (this.props.isIn ? inArc : outArc) });
+      var arc = TheGraph.factories.port.createPortArc.call(this, arcOptions);
+
+      var innerCircleOptions = {
+        className: "port-circle-small fill route"+this.props.route,
+        r: r - 1.5
+      };
+      
+      innerCircleOptions = TheGraph.merge(TheGraph.config.port.innerCircle, innerCircleOptions);
+      var innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
+
+      var labelTextOptions = {
+        x: (this.props.isIn ? 5 : -5),
+        style: style,
+        children: this.props.label
+      };
+      labelTextOptions = TheGraph.merge(TheGraph.config.port.text, labelTextOptions);
+      var labelText = TheGraph.factories.port.createPortLabelText.call(this, labelTextOptions);
+
+      var portContents = [
+        backgroundCircle,
+        arc,
+        innerCircle,
+        labelText
+      ];
+
+      var containerOptions = TheGraph.merge(TheGraph.config.port.container, { title: this.props.label, transform: "translate("+this.props.x+","+this.props.y+")" });
+      return TheGraph.factories.port.createPortGroup.call(this, containerOptions, portContents);
+
     }
-  });
+  }));
 
 
 })(this);

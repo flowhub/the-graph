@@ -3,6 +3,83 @@
 
   var TheGraph = context.TheGraph;
 
+  // Initialize namespace for configuration and factory functions.
+  TheGraph.config.node = {
+    snap: TheGraph.config.nodeSize,
+    container: {},
+    background: {
+      className: "node-bg"
+    },
+    border: {
+      className: "node-border drag",
+      rx: TheGraph.config.nodeRadius,
+      ry: TheGraph.config.nodeRadius
+    },
+    innerRect: {
+      className: "node-rect drag",
+      x: 3,
+      y: 3,
+      rx: TheGraph.config.nodeRadius - 2,
+      ry: TheGraph.config.nodeRadius - 2
+    },
+    icon: {
+      ref: "icon",
+      className: "icon node-icon drag"
+    },
+    iconsvg: {
+      className: "icon node-icon drag"
+    },
+    inports: {
+      className: "inports"
+    },
+    outports: {
+      className: "outports"
+    },
+    labelBackground: {
+      className: "node-label-bg"
+    },
+    labelRect: {
+      className: "text-bg-rect"
+    },
+    labelText: {
+      className: "node-label"
+    },
+    sublabelBackground: {
+      className: "node-sublabel-bg"
+    },
+    sublabelRect: {
+      className: "text-bg-rect"
+    },
+    sublabelText: {
+      className: "node-sublabel"
+    }
+  };
+
+  // These factories use generic factories from the core, but
+  // each is called separately allowing developers to intercept
+  // individual elements of the node creation.
+  TheGraph.factories.node = {
+    createNodeGroup: TheGraph.factories.createGroup,
+    createNodeBackgroundRect: TheGraph.factories.createRect,
+    createNodeBorderRect: TheGraph.factories.createRect,
+    createNodeInnerRect: TheGraph.factories.createRect,
+    createNodeIconText: TheGraph.factories.createText,
+    createNodeIconSVG: TheGraph.factories.createImg,
+    createNodeInportsGroup: TheGraph.factories.createGroup,
+    createNodeOutportsGroup: TheGraph.factories.createGroup,
+    createNodeLabelGroup: TheGraph.factories.createGroup,
+    createNodeLabelRect: TheGraph.factories.createRect,
+    createNodeLabelText: TheGraph.factories.createText,
+    createNodeSublabelGroup: TheGraph.factories.createGroup,
+    createNodeSublabelRect: TheGraph.factories.createRect,
+    createNodeSublabelText: TheGraph.factories.createText,
+    createNodePort: createNodePort
+  };
+
+  function createNodePort(options) {
+    return TheGraph.Port(options);
+  }
+
   // PolymerGestures monkeypatch
   PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
     // hold
@@ -16,17 +93,20 @@
   });
 
   // Node view
-  TheGraph.Node = React.createClass({
+  TheGraph.Node = React.createFactory( React.createClass({
+    displayName: "TheGraphNode",
     mixins: [
       TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
+      var domNode = this.getDOMNode();
+      
       // Dragging
-      this.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("trackstart", this.onTrackStart);
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        this.getDOMNode().addEventListener("tap", this.onNodeSelection, true);
+        domNode.addEventListener("tap", this.onNodeSelection, true);
       }
 
       // Context menu
@@ -41,7 +121,7 @@
       event.stopPropagation();
 
       var toggle = (TheGraph.metaKeyPressed || event.pointerType==="touch");
-      this.props.onNodeSelection(this.props.key, this.props.node, toggle);
+      this.props.onNodeSelection(this.props.nodeID, this.props.node, toggle);
     },
     onTrackStart: function (event) {
       // Don't drag graph
@@ -56,8 +136,9 @@
       // Don't drag while pinching
       if (this.props.app.pinching) { return; }
 
-      this.getDOMNode().addEventListener("track", this.onTrack);
-      this.getDOMNode().addEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.addEventListener("track", this.onTrack);
+      domNode.addEventListener("trackend", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -69,9 +150,6 @@
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
-
-      // Don't drag while pinching
-      if (this.props.app.pinching) { return; }
 
       var scale = this.props.app.state.scale;
       var deltaX = Math.round( event.ddx / scale );
@@ -89,7 +167,7 @@
           this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
         }
       } else {
-        this.props.graph.setNodeMetadata(this.props.key, {
+        this.props.graph.setNodeMetadata(this.props.nodeID, {
           x: this.props.node.metadata.x + deltaX,
           y: this.props.node.metadata.y + deltaY
         });
@@ -99,12 +177,13 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      this.getDOMNode().removeEventListener("track", this.onTrack);
-      this.getDOMNode().removeEventListener("trackend", this.onTrackEnd);
+      var domNode = this.getDOMNode();
+      domNode.removeEventListener("track", this.onTrack);
+      domNode.removeEventListener("trackend", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;
-      var snap = TheGraph.nodeSize/2;
+      var snap = TheGraph.config.node.snap / 2;
       if (snapToGrid) {
         var x, y;
         if (this.props.export) {
@@ -118,7 +197,7 @@
             this.props.graph.setOutportMetadata(this.props.exportKey, newPos);
           }
         } else {
-          this.props.graph.setNodeMetadata(this.props.key, {
+          this.props.graph.setNodeMetadata(this.props.nodeID, {
             x: Math.round(this.props.node.metadata.x/snap) * snap,
             y: Math.round(this.props.node.metadata.y/snap) * snap
           });
@@ -151,7 +230,7 @@
         x: x,
         y: y,
         graph: this.props.graph,
-        itemKey: (this.props.export ? this.props.exportKey : this.props.key),
+        itemKey: (this.props.export ? this.props.exportKey : this.props.nodeID),
         item: (this.props.export ? this.props.export : this.props.node)
       });
     },
@@ -172,12 +251,12 @@
       var scale = this.props.app.state.scale;
       var appX = this.props.app.state.x;
       var appY = this.props.app.state.y;
-      var nodeX = (this.props.x + TheGraph.nodeSize/2) * scale + appX;
-      var nodeY = (this.props.y + TheGraph.nodeSize/2) * scale + appY;
+      var nodeX = (this.props.x + this.props.width / 2) * scale + appX;
+      var nodeY = (this.props.y + this.props.height / 2) * scale + appY;
       var deltaX = nodeX - x;
       var deltaY = nodeY - y;
       var ports = this.props.ports;
-      var processKey = this.props.key;
+      var processKey = this.props.nodeID;
       var highlightPort = this.props.highlightPort;
 
       // If there is a preview edge started, only show connectable ports
@@ -194,6 +273,8 @@
             deltaY: deltaY,
             translateX: x,
             translateY: y,
+            nodeWidth: this.props.width,
+            nodeHeight: this.props.height,
             highlightPort: highlightPort
           });
         } else {
@@ -208,6 +289,8 @@
             deltaY: deltaY,
             translateX: x,
             translateY: y,
+            nodeWidth: this.props.width,
+            nodeHeight: this.props.height,
             highlightPort: highlightPort
           });
         }
@@ -228,6 +311,8 @@
         processKey: processKey,
         x: x,
         y: y,
+        nodeWidth: this.props.width,
+        nodeHeight: this.props.height,
         deltaX: deltaX,
         deltaY: deltaY,
         highlightPort: highlightPort
@@ -249,14 +334,10 @@
         nextProps.sublabel !== this.props.sublabel ||
         nextProps.ports !== this.props.ports ||
         nextProps.selected !== this.props.selected ||
+        nextProps.error !== this.props.error ||
         nextProps.highlightPort !== this.props.highlightPort ||
         nextProps.ports.dirty === true
       );
-    },
-    componentDidUpdate: function (prevProps, prevState) {
-      // HACK to change SVG class https://github.com/facebook/react/issues/1139
-      var groupClass = "node drag"+(this.props.selected ? " selected" : "");
-      this.getDOMNode().setAttribute("class", groupClass);
     },
     render: function() {
       if (this.props.ports.dirty) {
@@ -271,12 +352,15 @@
       }
       var x = this.props.x;
       var y = this.props.y;
+      var width = this.props.width;
+      var height = this.props.height;
 
       // Ports
       var keys, count;
-      var processKey = this.props.key;
+      var processKey = this.props.nodeID;
       var app = this.props.app;
       var graph = this.props.graph;
+      var node = this.props.node;
       var isExport = (this.props.export !== undefined);
       var showContext = this.props.showContext;
       var highlightPort = this.props.highlightPort;
@@ -291,6 +375,7 @@
         var props = {
           app: app,
           graph: graph,
+          node: node,
           key: processKey + ".in." + info.label,
           label: info.label,
           processKey: processKey,
@@ -298,6 +383,8 @@
           isExport: isExport,
           nodeX: x,
           nodeY: y,
+          nodeWidth: width,
+          nodeHeight: height,
           x: info.x,
           y: info.y,
           port: {process:processKey, port:info.label, type:info.type},
@@ -305,7 +392,7 @@
           route: info.route,
           showContext: showContext
         };
-        return TheGraph.Port(props);
+        return TheGraph.factories.node.createNodePort(props);
       });
 
       // Outports
@@ -317,6 +404,7 @@
         var props = {
           app: app,
           graph: graph,
+          node: node,
           key: processKey + ".out." + info.label,
           label: info.label,
           processKey: processKey,
@@ -324,6 +412,8 @@
           isExport: isExport,
           nodeX: x,
           nodeY: y,
+          nodeWidth: width,
+          nodeHeight: height,
           x: info.x,
           y: info.y,
           port: {process:processKey, port:info.label, type:info.type},
@@ -331,82 +421,112 @@
           route: info.route,
           showContext: showContext
         };
-        return TheGraph.Port(props);
+        return TheGraph.factories.node.createNodePort(props);
       });
 
-      // Make sure icon exists
+      // Node Icon
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
-      if (!icon) { 
+      if (!icon) {
         icon = TheGraph.FONT_AWESOME.cog;
       }
 
-      return (
-        React.DOM.g(
-          {
-            className: "node drag", // See componentDidUpdate
-            name: this.props.key,
-            key: this.props.key,
-            title: label,
-            transform: "translate("+x+","+y+")"
-          },
-          React.DOM.rect({
-            className: "node-bg", // HACK to make the whole g draggable
-            width: TheGraph.nodeSize,
-            height: TheGraph.nodeSize + 35
-          }),
-          React.DOM.rect({
-            className: "node-border drag",
-            width: TheGraph.nodeSize,
-            height: TheGraph.nodeSize,
-            rx: TheGraph.nodeRadius,
-            ry: TheGraph.nodeRadius
-          }),
-          React.DOM.rect({
-            className: "node-rect drag",
-            width: TheGraph.nodeSize - 6,
-            height: TheGraph.nodeSize - 6,
-            x: 3,
-            y: 3,
-            rx: TheGraph.nodeRadius-2,
-            ry: TheGraph.nodeRadius-2
-          }),
-          React.DOM.text({
-            ref: "icon",
-            className: "icon node-icon drag",
-            x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize/2,
-            children: icon
-          }),
-          React.DOM.g({
-            className: "inports",
-            children: inportViews
-          }),
-          React.DOM.g({
-            className: "outports",
-            children: outportViews
-          }),
-          TheGraph.TextBG({
-            className: "node-label-bg",
-            textClassName: "node-label",
-            height: 14,
-            halign: "center",
-            x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + (this.props.export ? 7 : 15),
-            text: label
-          }),
-          TheGraph.TextBG({
-            className: "node-sublabel-bg",
-            textClassName: "node-sublabel",
-            height: 9,
-            halign: "center",
-            x: TheGraph.nodeSize/2,
-            y: TheGraph.nodeSize + 30,
-            text: sublabel
-          })
-        )
-      );
-    }
-  });
+      var iconContent;
+      if (this.props.iconsvg && this.props.iconsvg !== "") {
+          var iconSVGOptions = TheGraph.merge(TheGraph.config.node.iconsvg, {
+              src: this.props.iconsvg,
+              x: TheGraph.config.nodeRadius - 4,
+              y: TheGraph.config.nodeRadius - 4,
+              width: this.props.width - 10,
+              height: this.props.height - 10
+          });
+          iconContent = TheGraph.factories.node.createNodeIconSVG.call(this, iconSVGOptions);
+      } else {
+          var iconOptions = TheGraph.merge(TheGraph.config.node.icon, {
+              x: this.props.width / 2,
+              y: this.props.height / 2,
+              children: icon });
+          iconContent = TheGraph.factories.node.createNodeIconText.call(this, iconOptions);
+      }
 
+      var backgroundRectOptions = TheGraph.merge(TheGraph.config.node.background, { width: this.props.width, height: this.props.height + 25 });
+      var backgroundRect = TheGraph.factories.node.createNodeBackgroundRect.call(this, backgroundRectOptions);
+
+      var borderRectOptions = TheGraph.merge(TheGraph.config.node.border, { width: this.props.width, height: this.props.height });
+      var borderRect = TheGraph.factories.node.createNodeBorderRect.call(this, borderRectOptions);
+      
+      var innerRectOptions = TheGraph.merge(TheGraph.config.node.innerRect, { width: this.props.width - 6, height: this.props.height - 6 });
+      var innerRect = TheGraph.factories.node.createNodeInnerRect.call(this, innerRectOptions);
+
+      var inportsOptions = TheGraph.merge(TheGraph.config.node.inports, { children: inportViews });
+      var inportsGroup = TheGraph.factories.node.createNodeInportsGroup.call(this, inportsOptions);
+
+      var outportsOptions = TheGraph.merge(TheGraph.config.node.outports, { children: outportViews });
+      var outportsGroup = TheGraph.factories.node.createNodeOutportsGroup.call(this, outportsOptions);
+
+      var labelTextOptions = TheGraph.merge(TheGraph.config.node.labelText, { x: this.props.width / 2, y: this.props.height + 15, children: label });
+      var labelText = TheGraph.factories.node.createNodeLabelText.call(this, labelTextOptions);
+
+      var labelRectX = this.props.width / 2;
+      var labelRectY = this.props.height + 15;
+      var labelRectOptions = buildLabelRectOptions(14, labelRectX, labelRectY, label.length, TheGraph.config.node.labelRect.className);
+      labelRectOptions = TheGraph.merge(TheGraph.config.node.labelRect, labelRectOptions);
+      var labelRect = TheGraph.factories.node.createNodeLabelRect.call(this, labelRectOptions);
+      var labelGroup = TheGraph.factories.node.createNodeLabelGroup.call(this, TheGraph.config.node.labelBackground, [labelRect, labelText]);
+
+      var sublabelTextOptions = TheGraph.merge(TheGraph.config.node.sublabelText, { x: this.props.width / 2, y: this.props.height + 30, children: sublabel });
+      var sublabelText = TheGraph.factories.node.createNodeSublabelText.call(this, sublabelTextOptions);
+
+      var sublabelRectX = this.props.width / 2;
+      var sublabelRectY = this.props.height + 30;
+      var sublabelRectOptions = buildLabelRectOptions(9, sublabelRectX, sublabelRectY, sublabel.length, TheGraph.config.node.sublabelRect.className);
+      sublabelRectOptions = TheGraph.merge(TheGraph.config.node.sublabelRect, sublabelRectOptions);
+      var sublabelRect = TheGraph.factories.node.createNodeSublabelRect.call(this, sublabelRectOptions);
+      var sublabelGroup = TheGraph.factories.node.createNodeSublabelGroup.call(this, TheGraph.config.node.sublabelBackground, [sublabelRect, sublabelText]);
+
+      var nodeContents = [
+        backgroundRect,
+        borderRect,
+        innerRect,
+        iconContent,
+        inportsGroup,
+        outportsGroup,
+        labelGroup,
+        sublabelGroup
+      ];
+
+      var nodeOptions = {
+        className: "node drag"+
+          (this.props.selected ? " selected" : "")+
+          (this.props.error ? " error" : ""),
+        name: this.props.nodeID,
+        key: this.props.nodeID,
+        title: label,
+        transform: "translate("+x+","+y+")"
+      };
+      nodeOptions = TheGraph.merge(TheGraph.config.node.container, nodeOptions);
+
+      return TheGraph.factories.node.createNodeGroup.call(this, nodeOptions, nodeContents);
+    }
+  }));
+
+  function buildLabelRectOptions(height, x, y, len, className) {
+
+    var width = len * height * 2/3;
+    var radius = height / 2;
+    x -= width / 2;
+    y -= height / 2;
+
+    var result = {
+      className: className,
+      height: height * 1.1,
+      width: width,
+      rx: radius,
+      ry: radius,
+      x: x,
+      y: y
+    };
+
+    return result;
+  }
 
 })(this);
