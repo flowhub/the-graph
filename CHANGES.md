@@ -1,4 +1,8 @@
-## 0.3.8 (dev)
+## 0.3.9 (dev)
+
+## 0.3.8 (2014 December 19)
+
+* Update to Polymer 0.5.2
 
 ## 0.3.7 (2014 December 11)
 
