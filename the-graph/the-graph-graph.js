@@ -93,7 +93,9 @@
         selectedNodes: [],
         errorNodes: [],
         selectedEdges: [],
-        animatedEdges: []
+        animatedEdges: [],
+        offsetX: this.props.offsetX,
+        offsetY: this.props.offsetY
       };
     },
     componentDidMount: function () {
@@ -163,9 +165,8 @@
     renderPreviewEdge: function (event) {
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
-      var offset = this.getOffset();
-      x -= offset.left;
-      y -= offset.top;
+      x -= this.props.app.state.offsetX || 0;
+      y -= this.props.app.state.offsetY || 0;
       var scale = this.props.app.state.scale;
       this.setState({
         edgePreviewX: (x - this.props.app.state.x) / scale,
@@ -390,26 +391,6 @@
     shouldComponentUpdate: function () {
       // If ports change or nodes move, then edges need to rerender, so we do the whole graph
       return this.dirty;
-    },
-    getOffset: function(){
-      var getElementOffset = function(element){
-        var offset = { top: 0, left: 0},
-            parentOffset;
-        if(!element){
-          return offset;
-        }
-        offset.top += (element.offsetTop || 0);
-        offset.left += (element.offsetLeft || 0);
-        parentOffset = getElementOffset(element.offsetParent);
-        offset.top += parentOffset.top;
-        offset.left += parentOffset.left;
-        return offset;
-      };
-      try{
-        return getElementOffset(this.getDOMNode());
-      }catch(e){
-        return getElementOffset();
-      }
     },
     render: function() {
       this.dirty = false;
