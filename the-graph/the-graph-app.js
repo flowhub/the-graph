@@ -81,7 +81,9 @@
         tooltipY: 0,
         tooltipVisible: false,
         contextElement: null,
-        contextType: null
+        contextType: null,
+        offsetY: this.props.offsetY,
+        offsetX: this.props.offsetX
       };
     },
     zoomFactor: 0,
