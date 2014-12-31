@@ -290,6 +290,7 @@
         html = html +'/>';
 
         return React.DOM.g({
+            className: this.props.className,
             dangerouslySetInnerHTML:{__html: html}
         });
     }
