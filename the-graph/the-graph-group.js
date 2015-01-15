@@ -84,7 +84,6 @@
       });
     },
     dontPan: function (event) {
-      console.log("dontPan",this.props.app.menuShown);
       // Don't drag under menu
       if (this.props.app.menuShown) {
         event.stopPropagation();

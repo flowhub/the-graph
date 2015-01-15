@@ -82,6 +82,7 @@
       <button id="autolayout">autolayout</button>
       <button id="theme">theme</button>
       <button id="focus">focus</button>
+      <button id="refresh">refresh</button>
     </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>
@@ -103,6 +104,7 @@
           // Load graph
           var editor = document.getElementById('editor');
           var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
+          var graphString = JSON.stringify(graph);
           editor.graph = graph;
 
           // Attach editor to nav
@@ -134,9 +136,11 @@
           window.setInterval(function () {
             if (!editor.nofloGraph) { return; }
             var nodes = editor.nofloGraph.nodes;
-            var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
-            var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
-            editor.updateIcon(randomNodeId, randomIcon);
+            if (nodes.length>0) {
+              var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+              var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
+              editor.updateIcon(randomNodeId, randomIcon);
+            }
           }, 1000);
 
           // Simulate un/triggering wire animations
@@ -151,8 +155,10 @@
               animatingEdge2 = animatingEdge1;
             }
             var edges = editor.nofloGraph.edges;
-            animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
-            editor.animateEdge(animatingEdge1);
+            if (edges.length>0) {
+              animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
+              editor.animateEdge(animatingEdge1);
+            }
           }, 2014);
 
           // Simulate un/triggering errors
@@ -163,9 +169,11 @@
               editor.removeErrorNode(errorNodeId);
             }
             var nodes = editor.nofloGraph.nodes;
-            errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
-            editor.addErrorNode(errorNodeId);
-            editor.updateErrorNodes();
+            if (nodes.length>0) {
+              errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+              editor.addErrorNode(errorNodeId);
+              editor.updateErrorNodes();
+            }
           };
           window.setInterval(makeRandomError, 3551);
           makeRandomError();
@@ -187,7 +195,13 @@
             var nodes = editor.nofloGraph.nodes;
             var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
             editor.focusNode(randomNode);
-        });
+          });
+
+          // Refresh graph
+          document.getElementById("refresh").addEventListener("click", function () {
+            if (!editor.nofloGraph) { return; }
+            editor.graph = JSON.parse(graphString);
+          });
 
         };
         var body = document.querySelector('body');
