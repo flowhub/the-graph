@@ -94,7 +94,9 @@
         selectedNodes: [],
         errorNodes: [],
         selectedEdges: [],
-        animatedEdges: []
+        animatedEdges: [],
+        offsetX: this.props.offsetX,
+        offsetY: this.props.offsetY
       };
     },
     componentDidMount: function () {
@@ -164,6 +166,8 @@
     renderPreviewEdge: function (event) {
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      x -= this.props.app.state.offsetX || 0;
+      y -= this.props.app.state.offsetY || 0;
       var scale = this.props.app.state.scale;
       this.setState({
         edgePreviewX: (x - this.props.app.state.x) / scale,
