@@ -206,42 +206,42 @@ path {
 /* marching ants for animated edges */
 
 @-webkit-keyframes heartbeats {
-  0% { stroke-width: (var-edge-width * 4); }
-  10% { stroke-width: (var-edge-width * 6); }
-  30% { stroke-width: (var-edge-width * 4); }
-  40% { stroke-width: (var-edge-width * 6); }
-  60% { stroke-width: (var-edge-width * 4); }
+  0% { stroke-width: (var-edge-width * 2); }
+  10% { stroke-width: (var-edge-width * 4); }
+  30% { stroke-width: (var-edge-width * 2); }
+  40% { stroke-width: (var-edge-width * 4); }
+  60% { stroke-width: (var-edge-width * 2); }
 }
 @-moz-keyframes heartbeats {
-  0% { stroke-width: (var-edge-width * 4); }
-  10% { stroke-width: (var-edge-width * 6); }
-  30% { stroke-width: (var-edge-width * 4); }
-  40% { stroke-width: (var-edge-width * 6); }
-  60% { stroke-width: (var-edge-width * 4); }
+  0% { stroke-width: (var-edge-width * 2); }
+  10% { stroke-width: (var-edge-width * 4); }
+  30% { stroke-width: (var-edge-width * 2); }
+  40% { stroke-width: (var-edge-width * 4); }
+  60% { stroke-width: (var-edge-width * 2); }
 }
 @-o-keyframes heartbeats {
-  0% { stroke-width: (var-edge-width * 4); }
-  10% { stroke-width: (var-edge-width * 6); }
-  30% { stroke-width: (var-edge-width * 4); }
-  40% { stroke-width: (var-edge-width * 6); }
-  60% { stroke-width: (var-edge-width * 4); }
+  0% { stroke-width: (var-edge-width * 2); }
+  10% { stroke-width: (var-edge-width * 4); }
+  30% { stroke-width: (var-edge-width * 2); }
+  40% { stroke-width: (var-edge-width * 4); }
+  60% { stroke-width: (var-edge-width * 2); }
 }
 @keyframes heartbeats {
-  0% { stroke-width: (var-edge-width * 4); }
-  10% { stroke-width: (var-edge-width * 6); }
-  30% { stroke-width: (var-edge-width * 4); }
-  40% { stroke-width: (var-edge-width * 6); }
-  60% { stroke-width: (var-edge-width * 4); }
+  0% { stroke-width: (var-edge-width * 2); }
+  10% { stroke-width: (var-edge-width * 4); }
+  30% { stroke-width: (var-edge-width * 2); }
+  40% { stroke-width: (var-edge-width * 4); }
+  60% { stroke-width: (var-edge-width * 2); }
 }
 .edge.animated .edge-bg {
   stroke-linecap: round;
-  stroke-width: (var-edge-width * 4);
+  stroke-width: (var-edge-width * 2);
   stroke: var-selection-box-border;
 
-  -webkit-animation: heartbeats 1s linear infinite; 
-     -moz-animation: heartbeats 1s linear infinite; 
-       -o-animation: heartbeats 1s linear infinite; 
-          animation: heartbeats 1s linear infinite;   
+  -webkit-animation: heartbeats 4s linear infinite;
+     -moz-animation: heartbeats 4s linear infinite;
+       -o-animation: heartbeats 4s linear infinite;
+          animation: heartbeats 4s linear infinite;
 }
 
 
