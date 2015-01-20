@@ -1,6 +1,9 @@
 ## 0.3.9 (dev)
 
 * Define offset of graph editor (#190) thanks @fabiancook
+* Improve heartbeats for animated edges (#194) thanks @lhausermann
+* Fire "nodes" event when selected nodes change
+* Fire "edges" event when selected edges change
 * Remove selection on delete (#195)
 
 ## 0.3.8 (2014 December 19)
