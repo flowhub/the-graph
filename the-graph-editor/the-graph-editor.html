@@ -47,6 +47,7 @@
         var pasteAction = function (graph, itemKey, item) {
           var pasted = TheGraph.Clipboard.paste(graph);
           this.selectedNodes = pasted.nodes;
+          this.selectedEdges = [];
         }.bind(this);
         var pasteMenu = {
           icon: "paste",
@@ -66,7 +67,16 @@
               iconLabel: "delete",
               action: function (graph, itemKey, item) {
                 graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
-              }
+                // Remove selection
+                var newSelection = [];
+                for (var i=0, len=this.selectedEdges.length; i<len; i++){
+                  var selected = this.selectedEdges[i];
+                  if (selected !== item) {
+                    newSelection.push(selected);
+                  }
+                }
+                this.selectedEdges = newSelection;
+              }.bind(this)
             }
           },
           node: {
@@ -75,7 +85,16 @@
               iconLabel: "delete",
               action: function (graph, itemKey, item) {
                 graph.removeNode(itemKey);
-              }
+                // Remove selection
+                var newSelection = [];
+                for (var i=0, len=this.selectedNodes.length; i<len; i++){
+                  var selected = this.selectedNodes[i];
+                  if (selected !== item) {
+                    newSelection.push(selected);
+                  }
+                }
+                this.selectedNodes = newSelection;
+              }.bind(this)
             },
             w4: {
               icon: "copy",

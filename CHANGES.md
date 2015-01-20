@@ -1,5 +1,8 @@
 ## 0.3.9 (dev)
 
+* Define offset of graph editor (#190) thanks @fabiancook
+* Remove selection on delete (#195)
+
 ## 0.3.8 (2014 December 19)
 
 * Update to Polymer 0.5.2
