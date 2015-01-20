@@ -1,4 +1,6 @@
-## 0.3.9 (dev)
+## 0.3.10 (dev)
+
+## 0.3.9 (2015 January 20)
 
 * Define offset of graph editor (#190) thanks @fabiancook
 * Improve heartbeats for animated edges (#194) thanks @lhausermann
