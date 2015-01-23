@@ -4,7 +4,7 @@
 
 * Font Awesome 4.3.0
 * React 0.12.2
-* Polymer 0.5.3
+* ~~Polymer 0.5.3~~ (doesn't work in Safari 7-8)
 
 ## 0.3.9 (2015 January 20)
 
