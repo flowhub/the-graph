@@ -1,6 +1,6 @@
 {
   "name": "the-graph",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "keywords": [
     "graph",
     "flow",
@@ -8,11 +8,11 @@
   ],
   "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "font-awesome": "~4.2.0",
+    "font-awesome": "~4.3.0",
     "hammerjs": "~1.1.2",
     "klayjs-noflo": "~0.3.0",
-    "polymer": "0.5.2",
-    "react": "~0.12.1",
+    "polymer": "~0.5.3",
+    "react": "~0.12.2",
     "react.animate-djdeath": "0.0.3"
   },
   "main": "the-graph/the-graph.html",

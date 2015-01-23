@@ -1,4 +1,10 @@
-## 0.3.10 (dev)
+## 0.3.11 (dev)
+
+## 0.3.10 (2015 January 23)
+
+* Font Awesome 4.3.0
+* React 0.12.2
+* Polymer 0.5.3
 
 ## 0.3.9 (2015 January 20)
 
