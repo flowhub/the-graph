@@ -139,7 +139,7 @@
                 while (graph.outports[pub]) {
                   count++;
                   pub = item.port + count;
-                } 
+                }
                 var priNode = graph.getNode(item.process);
                 var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
                 graph.addOutport(pub, item.process, item.port, metadata);
@@ -268,6 +268,7 @@
         noflo.graph.loadJSON(this.graph, function(nofloGraph){
           this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
+          this.fire('graphInitialised', this);
         }.bind(this));
       },
       buildInitialLibrary: function (nofloGraph) {
