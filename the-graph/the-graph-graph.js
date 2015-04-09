@@ -164,11 +164,22 @@
       }
     },
     renderPreviewEdge: function (event) {
+      // get pointer position relative to the DOM node containing the editor
+      var appDomNode = this.props.app.getDOMNode();
+      var bounds = appDomNode.getBoundingClientRect();
+      var appDomNodeLeft = bounds.left;
+      var appDomNodeTop = bounds.top;
+
       var x = event.x || event.clientX || 0;
+      x -= appDomNodeLeft;
+
       var y = event.y || event.clientY || 0;
+      y -= appDomNodeTop;
+
       x -= this.props.app.state.offsetX || 0;
       y -= this.props.app.state.offsetY || 0;
       var scale = this.props.app.state.scale;
+
       this.setState({
         edgePreviewX: (x - this.props.app.state.x) / scale,
         edgePreviewY: (y - this.props.app.state.y) / scale
@@ -222,7 +233,7 @@
               outports: outports
             };
           }
-          
+
           var i, port, len;
           for (i=0, len=component.outports.length; i<len; i++) {
             port = component.outports[i];
@@ -423,14 +434,14 @@
         if (!node.metadata) {
           node.metadata = {};
         }
-        if (node.metadata.x === undefined) { 
-          node.metadata.x = 0; 
+        if (node.metadata.x === undefined) {
+          node.metadata.x = 0;
         }
-        if (node.metadata.y === undefined) { 
-          node.metadata.y = 0; 
+        if (node.metadata.y === undefined) {
+          node.metadata.y = 0;
         }
-        if (node.metadata.width === undefined) { 
-          node.metadata.width = TheGraph.config.nodeWidth; 
+        if (node.metadata.width === undefined) {
+          node.metadata.width = TheGraph.config.nodeWidth;
         }
         node.metadata.height = TheGraph.config.nodeHeight;
         if (TheGraph.config.autoSizeNode && componentInfo) {
@@ -541,7 +552,7 @@
       var iips = graph.initializers.map(function (iip) {
         var target = graph.getNode(iip.to.node);
         if (!target) { return; }
-        
+
         var targetPort = self.getNodeInport(graph, iip.to.node, iip.to.port, 0, target.component);
         var tX = target.metadata.x;
         var tY = target.metadata.y + targetPort.y;
@@ -570,8 +581,8 @@
         var label = key;
         var nodeKey = inport.process;
         var portKey = inport.port;
-        if (!inport.metadata) { 
-          inport.metadata = {x:0, y:0}; 
+        if (!inport.metadata) {
+          inport.metadata = {x:0, y:0};
         }
         var metadata = inport.metadata;
         if (!metadata.x) { metadata.x = 0; }
@@ -645,8 +656,8 @@
         var label = key;
         var nodeKey = outport.process;
         var portKey = outport.port;
-        if (!outport.metadata) { 
-          outport.metadata = {x:0, y:0}; 
+        if (!outport.metadata) {
+          outport.metadata = {x:0, y:0};
         }
         var metadata = outport.metadata;
         if (!metadata.x) { metadata.x = 0; }
@@ -837,6 +848,6 @@
       return TheGraph.factories.graph.createGraphContainerGroup.call(this, containerOptions, containerContents);
 
     }
-  }));  
+  }));
 
 })(this);
