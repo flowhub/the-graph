@@ -27,7 +27,7 @@
       focusAnimationDuration: 1500
     },
     factories: {}
-  }; 
+  };
 
   // React setup
   React.initializeTouchEvents(true);
@@ -47,12 +47,12 @@
     showTooltip: function (event) {
       if ( !this.shouldShowTooltip() ) { return; }
 
-      var tooltipEvent = new CustomEvent('the-graph-tooltip', { 
+      var tooltipEvent = new CustomEvent('the-graph-tooltip', {
         detail: {
           tooltip: this.props.label,
           x: event.clientX,
           y: event.clientY
-        }, 
+        },
         bubbles: true
       });
       this.getDOMNode().dispatchEvent(tooltipEvent);
@@ -60,7 +60,7 @@
     hideTooltip: function (event) {
       if ( !this.shouldShowTooltip() ) { return; }
 
-      var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
+      var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', {
         bubbles: true
       });
       if (this._lifeCycleState === "MOUNTED") {
@@ -261,7 +261,7 @@
     return radius * Math.sin(2*Math.PI * percent);
   };
   var makeArcPath = function (startPercent, endPercent, radius) {
-    return [ 
+    return [
       "M", angleToX(startPercent, radius), angleToY(startPercent, radius),
       "A", radius, radius, 0, 0, 0, angleToX(endPercent, radius), angleToY(endPercent, radius)
     ].join(" ");
@@ -407,7 +407,7 @@
 
     return React.DOM.svg.apply(React.DOM.svg, args);
   };
-  
+
   TheGraph.getOffset = function(domNode){
     var getElementOffset = function(element){
       var offset = { top: 0, left: 0},
@@ -417,6 +417,11 @@
       }
       offset.top += (element.offsetTop || 0);
       offset.left += (element.offsetLeft || 0);
+
+      var bounds = element.getBoundingClientRect();
+      offset.top += bounds.top;
+      offset.left += bounds.left;
+
       parentOffset = getElementOffset(element.offsetParent);
       offset.top += parentOffset.top;
       offset.left += parentOffset.left;
