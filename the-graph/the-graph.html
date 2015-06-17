@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale displaySelectionGroup forceSelection offsetY offsetX" touch-action="none">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale maxZoom minZoom displaySelectionGroup forceSelection offsetY offsetX" touch-action="none">
 
 
   <template>
@@ -34,6 +34,8 @@
       width: 800,
       height: 600,
       scale: 1,
+      minZoom: 0.15,
+      maxZoom: 15,
       appView: null,
       graphView: null,
       editable: true,
@@ -97,6 +99,8 @@
           window.TheGraph.App({
             graph: this.graph,
             width: this.width,
+            minZoom: this.minZoom,
+            maxZoom: this.maxZoom,
             height: this.height,
             library: this.library,
             menus: this.menus,
@@ -284,7 +288,7 @@
             }
           }
         }
-  
+
         this.graph.endTransaction("autolayout");
 
         // Fit to window
@@ -322,8 +326,8 @@
         this.graph.addNode(id, component, metadata);
       },
       getPan: function () {
-        if (!this.appView) { 
-          return [0, 0]; 
+        if (!this.appView) {
+          return [0, 0];
         }
         return [this.appView.state.x, this.appView.state.y];
       },
@@ -336,8 +340,8 @@
         });
       },
       getScale: function () {
-        if (!this.appView) { 
-          return 1; 
+        if (!this.appView) {
+          return 1;
         }
         return this.appView.state.scale;
       },
@@ -357,7 +361,7 @@
         this.appView.focusNode(node);
       },
       menusChanged: function () {
-        // Only if the object itself changes, 
+        // Only if the object itself changes,
         // otherwise builds menu from reference every time menu shown
         if (!this.appView) { return; }
         this.appView.setProps({menus: this.menus});
@@ -373,7 +377,7 @@
         }.bind(this), 200);
       },
       mergeComponentDefinition: function (component, definition) {
-        // In cases where a component / subgraph ports change, 
+        // In cases where a component / subgraph ports change,
         // we don't want the connections hanging in middle of node
         // TODO visually indicate that port is a ghost
         if (component === definition) {
