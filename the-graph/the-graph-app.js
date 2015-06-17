@@ -66,7 +66,6 @@
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: [React.Animate],
-    minZoom: 0.15,
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -77,6 +76,8 @@
         scale: fit.scale,
         width: this.props.width,
         height: this.props.height,
+        minZoom: this.props.minZoom,
+        maxZoom: this.props.maxZoom,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
@@ -113,8 +114,11 @@
       var scale = this.state.scale + (this.state.scale * zoomFactor);
       this.zoomFactor = 0;
 
-      if (scale < this.minZoom) { 
-        scale = this.minZoom;
+      if (scale < this.state.minZoom) {
+        scale = this.state.minZoom;
+      }
+      else if (scale > this.state.maxZoom) {
+        scale = this.state.maxZoom;
       }
       if (scale === this.state.scale) { return; }
 
@@ -315,7 +319,7 @@
       if (Hammer) {
         Hammer(domNode, {
           tap: false,
-          hold: false, 
+          hold: false,
           transform: true
         });
       }
@@ -389,8 +393,8 @@
     },
     keyDown: function (event) {
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      if (event.metaKey || event.ctrlKey) { 
-        TheGraph.metaKeyPressed = true; 
+      if (event.metaKey || event.ctrlKey) {
+        TheGraph.metaKeyPressed = true;
       }
     },
     keyUp: function (event) {
@@ -402,8 +406,8 @@
         this.refs.graph.cancelPreviewEdge();
       }
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      if (TheGraph.metaKeyPressed) { 
-        TheGraph.metaKeyPressed = false; 
+      if (TheGraph.metaKeyPressed) {
+        TheGraph.metaKeyPressed = false;
       }
     },
     unselectAll: function (event) {
@@ -437,7 +441,7 @@
       var or = Math.floor(this.state.y / g) + (this.state.y<0 ? 1 : 0);
 
       while (row--) {
-        var col = cols; 
+        var col = cols;
         while (col--) {
           var x = Math.round(col*g+dx);
           var y = Math.round(row*g+dy);
@@ -504,7 +508,7 @@
           children: contextMenu
         };
 
-        contextModal = [ 
+        contextModal = [
           TheGraph.factories.app.createAppModalBackground(modalBGOptions)
         ];
         this.menuShown = true;
