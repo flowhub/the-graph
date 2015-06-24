@@ -111,8 +111,8 @@
       }
       // Don't tap graph
       event.stopPropagation();
-      
-      var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
+
+      var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
           isIn: this.props.isIn,
           port: this.props.port,
@@ -121,16 +121,16 @@
         },
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(edgeStartEvent);      
+      this.getDOMNode().dispatchEvent(edgeStartEvent);
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
       if (!event.relatedTarget) { return; }
-      var dropEvent = new CustomEvent('the-graph-edge-drop', { 
+      var dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,
         bubbles: true
       });
-      event.relatedTarget.dispatchEvent(dropEvent);      
+      event.relatedTarget.dispatchEvent(dropEvent);
     },
     render: function() {
       var style;
@@ -143,7 +143,7 @@
       var highlightPort = this.props.highlightPort;
       var inArc = TheGraph.arcs.inport;
       var outArc = TheGraph.arcs.outport;
-      if (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type) {
+      if (highlightPort && highlightPort.isIn === this.props.isIn && (highlightPort.type === this.props.port.type || this.props.port.type === 'any')) {
         r = 6;
         inArc = TheGraph.arcs.inportBig;
         outArc = TheGraph.arcs.outportBig;
@@ -159,7 +159,7 @@
         className: "port-circle-small fill route"+this.props.route,
         r: r - 1.5
       };
-      
+
       innerCircleOptions = TheGraph.merge(TheGraph.config.port.innerCircle, innerCircleOptions);
       var innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
 
