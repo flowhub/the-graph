@@ -422,8 +422,13 @@
           }
         }
 
-        // we should use the icon from the library
-        definition.icon = component.icon;
+        if (definition.icon !== 'cog') {
+          // Use the latest icon given
+          component.icon = definition.icon;
+        } else {
+          // we should use the icon from the library
+          definition.icon = component.icon;
+        }
         // a component could also define a svg icon
         definition.iconsvg = component.iconsvg;
 
@@ -433,6 +438,10 @@
         var component = this.library[definition.name];
         var def = definition;
         if (component) {
+          if (generated) {
+            // Don't override real one with generated dummy
+            return;
+          }
           def = this.mergeComponentDefinition(component, definition);
         }
         this.library[definition.name] = def;
