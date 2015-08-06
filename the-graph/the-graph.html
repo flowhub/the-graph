@@ -422,13 +422,13 @@
           }
         }
 
-        if (definition.icon && component.icon === 'cog') {
-          // Prefer custom icon over fallback
+        if (definition.icon !== 'cog') {
+          // Use the latest icon given
           component.icon = definition.icon;
+        } else {
+          // we should use the icon from the library
+          definition.icon = component.icon;
         }
-
-        // we should use the icon from the library
-        definition.icon = component.icon;
         // a component could also define a svg icon
         definition.iconsvg = component.iconsvg;
 
