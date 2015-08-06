@@ -1,4 +1,15 @@
-## 0.3.11 (dev)
+## 0.3.12 (dev)
+
+## 0.3.11 (2015 August 6)
+
+* Fire graphInitialised event (#204)
+* Allow max/min zoom parameterised (#218)
+* Ports of type 'any' highlight for incoming edges (#220)
+* Better thumbnail drawing (#221)
+* (previous 4 thanks @townxelliot)
+* Icon/library fix (#223)
+* Font Awesome 4.4.0
+* React 0.13.3
 
 ## 0.3.10 (2015 January 23)
 
