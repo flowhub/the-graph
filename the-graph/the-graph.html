@@ -433,6 +433,10 @@
         var component = this.library[definition.name];
         var def = definition;
         if (component) {
+          if (generated) {
+            // Don't override real one with generated dummy
+            return;
+          }
           def = this.mergeComponentDefinition(component, definition);
         }
         this.library[definition.name] = def;
