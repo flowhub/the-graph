@@ -422,6 +422,11 @@
           }
         }
 
+        if (definition.icon && component.icon === 'cog') {
+          // Prefer custom icon over fallback
+          component.icon = definition.icon;
+        }
+
         // we should use the icon from the library
         definition.icon = component.icon;
         // a component could also define a svg icon
