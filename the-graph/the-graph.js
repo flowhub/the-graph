@@ -63,7 +63,7 @@
       var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
         bubbles: true
       });
-      if (this._lifeCycleState === "MOUNTED") {
+      if (this.isMounted()) {
         this.getDOMNode().dispatchEvent(tooltipEvent);
       }
     },
