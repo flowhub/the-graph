@@ -1,4 +1,12 @@
-## 0.3.12 (dev)
+## 0.3.13 (dev)
+
+## 0.3.12 (2015 September 30)
+
+* Build dependencies
+* JSHint with inline scripts; remove grunt-lint-inline
+* Polymer 0.5.6
+* Fix tooltip bug (#226)
+* Fix pinch-to-zoom crash (introduced with #218)
 
 ## 0.3.11 (2015 August 6)
 

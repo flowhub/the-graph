@@ -167,7 +167,7 @@
       var scaleDelta = 1 + (scaleEvent - this.lastScale);
       this.lastScale = scaleEvent;
       var scale = scaleDelta * currentScale;
-      scale = Math.max(scale, this.minZoom);
+      scale = Math.max(scale, this.props.minZoom);
 
       // Zoom and pan transform-origin equivalent
       var oX = event.gesture.center.clientX;
