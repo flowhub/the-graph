@@ -5,7 +5,7 @@
     <meta charset="utf-8">
 
     <!-- Bower Libraries -->
-    <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/react/react-with-addons.js"></script>
     <script src="../bower_components/klayjs-noflo/klay-noflo.js"></script>
     <script src="../bower_components/hammerjs/hammer.min.js"></script>
@@ -16,7 +16,7 @@
     <script src="../build/noflo.js"></script>
 
     <!-- Custom elements -->
-    <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../bower_components/polymer/polymer-mini.html">
     <link rel="import" href="./the-graph-editor.html">
     <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
@@ -27,10 +27,10 @@
       @font-face {
         /* we want the svg version */
         font-family: 'FontAwesomeSVG';
-        src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), 
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
+        src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.4.0#fontawesomeregular') format('svg'),
+          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.4.0') format('embedded-opentype'), 
+          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.4.0') format('woff'), 
+          url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.4.0') format('truetype');
         font-weight: normal;
         font-style: normal;
       }
@@ -53,6 +53,8 @@
         position: absolute;
         top: 0;
         left: 0;
+        width: 800px;
+        height: 800px;
       }
       #nav {
         position: absolute; 
@@ -76,7 +78,8 @@
       theme="dark">
     </the-graph-editor>
 
-    <the-graph-nav id="nav" width="216" height="162"></the-graph-nav>
+    <the-graph-nav id="nav" width="216" height="162">
+    </the-graph-nav>
 
     <div id="testing">
       <button id="autolayout">autolayout</button>
@@ -90,7 +93,7 @@
     </div>
     <script type="text/javascript">
       Polymer.veiledElements = ["the-graph-editor"];
-      window.addEventListener('polymer-ready', function() {
+      window.addEventListener('WebComponentsReady', function() {
         "use strict";
 
         // Remove loading message
@@ -113,6 +116,7 @@
 
           // Simulate a library update
           setTimeout(function () {
+            if (!editor.$ || !editor.nofloGraph) { return; }
             var originalComponent = editor.getComponent('core/Split');
             if (!originalComponent) {
               console.warn("Didn't find component. Something is amiss.");
@@ -134,7 +138,7 @@
           // Simulate node icon updates
           var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.$ || !editor.nofloGraph) { return; }
             var nodes = editor.nofloGraph.nodes;
             if (nodes.length>0) {
               var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
@@ -147,7 +151,7 @@
           var animatingEdge1 = null;
           var animatingEdge2 = null;
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.$ || !editor.nofloGraph) { return; }
             if (animatingEdge2) {
               editor.unanimateEdge(animatingEdge2);
             }
@@ -164,7 +168,7 @@
           // Simulate un/triggering errors
           var errorNodeId = null;
           var makeRandomError = function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.$ || !editor.nofloGraph) { return; }
             if (errorNodeId) {
               editor.removeErrorNode(errorNodeId);
             }
@@ -226,8 +230,8 @@
           editor.setAttribute("height", window.innerHeight);
         };
         window.addEventListener("resize", resize);
-
         resize();
+
       });
       
     </script>

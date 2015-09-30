@@ -11,8 +11,8 @@
     "font-awesome": "~4.4.0",
     "hammerjs": "~1.1.2",
     "klayjs-noflo": "~0.3.0",
-    "polymer": "0.5.2",
-    "webcomponentsjs": "Polymer/webcomponentsjs#0.5.2",
+    "polymer": "1.0.6",
+    "polymer-gestures": "git@github.com:Polymer/polymer-gestures.git",
     "react": "0.13.3",
     "react.animate-djdeath": "0.0.3"
   },
