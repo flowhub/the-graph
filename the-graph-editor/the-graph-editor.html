@@ -1,75 +1,157 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu displaySelectionGroup forceSelection" touch-action="none">
+<dom-module id="the-graph-editor">
   <template>
-    <the-graph id="graph"
-      name="{{ graph.properties.name }}"
-      graph="{{nofloGraph}}"
-      menus="{{menus}}"
-      width="{{width}}" height="{{height}}"
-      pan="{{pan}}" scale="{{scale}}"
-      autolayout="{{autolayout}}"
-      theme="{{theme}}"
-      selectedNodes="{{selectedNodes}}"
-      errorNodes="{{errorNodes}}"
-      selectedEdges="{{selectedEdges}}"
-      animatedEdges="{{animatedEdges}}"
-      displaySelectionGroup="{{displaySelectionGroup}}"
-      forceSelection="{{forceSelection}}"
-      getMenuDef="{{getMenuDef}}">
+    <h1>wat</h1>
+    <the-graph id="graph" 
+      name="{{ graph.properties.name }}" 
+      graph="{{nofloGraph}}" 
+      menus="{{menus}}" 
+      width="{{width}}" 
+      height="{{height}}" 
+      pan="{{pan}}" 
+      scale="{{scale}}" 
+      autolayout="{{autolayout}}" 
+      theme="{{theme}}" 
+      selectednodes="{{selectedNodes}}" 
+      errornodes="{{errorNodes}}" 
+      selectededges="{{selectedEdges}}" 
+      animatededges="{{animatedEdges}}" 
+      displayselectiongroup="{{displaySelectionGroup}}" 
+      forceselection="{{forceSelection}}" 
+      getmenudef="{{getMenuDef}}">
     </the-graph>
   </template>
-  <script>
-  (function () {
-    "use strict";
 
-    Polymer('the-graph-editor', {
-      graph: null,
-      grid: 72,
-      snap: 36,
-      width: 800,
-      height: 600,
-      scale: 1,
-      plugins: {},
-      nofloGraph: null,
-      menus: null,
-      autolayout: false,
-      theme: "dark",
-      selectedNodes: [],
-      copyNodes: [],
-      errorNodes: {},
-      selectedEdges: [],
-      animatedEdges: [],
-      displaySelectionGroup: true,
-      forceSelection: false,
+  <script>
+    Polymer({
+      is: 'the-graph-editor',
+      properties: {
+        animatedEdges: {
+          type: Array,
+          value: function () {
+            return [];
+          },
+          notify: true
+        },
+        autolayout: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        copyNodes: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+        displaySelectionGroup: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        errorNodes: {
+          type: Object,
+          value: function () {
+            return {};
+          },
+          notify: true
+        },
+        forceSelection: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        graph: {
+          value: null,
+          observer: 'graphChanged'
+        },
+        grid: {
+          type: Number,
+          value: 72,
+          notify: true
+        },
+        height: {
+          type: Number,
+          value: 600,
+          notify: true,
+          observer: 'heightChanged'
+        },
+        menus: { value: null },
+        nofloGraph: { value: null },
+        onContextMenu: { notify: true },
+        plugins: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+        scale: {
+          type: Number,
+          value: 1
+        },
+        selectedEdges: {
+          type: Array,
+          value: function () {
+            return [];
+          },
+          notify: true
+        },
+        selectedNodes: {
+          type: Array,
+          value: function () {
+            return [];
+          },
+          notify: true
+        },
+        snap: {
+          type: Number,
+          value: 36,
+          notify: true
+        },
+        theme: {
+          type: String,
+          value: 'dark',
+          notify: true
+        },
+        width: {
+          type: Number,
+          value: 800,
+          notify: true,
+          observer: 'widthChanged'
+        }
+      },
       created: function () {
-        this.pan = [0,0];
+        this.pan = [
+          0,
+          0
+        ];
         var pasteAction = function (graph, itemKey, item) {
           var pasted = TheGraph.Clipboard.paste(graph);
           this.selectedNodes = pasted.nodes;
           this.selectedEdges = [];
         }.bind(this);
         var pasteMenu = {
-          icon: "paste",
-          iconLabel: "paste",
+          icon: 'paste',
+          iconLabel: 'paste',
           action: pasteAction
-        };
+        };  // Default context menu defs
         // Default context menu defs
         this.menus = {
           main: {
-            icon: "sitemap",
+            icon: 'sitemap',
             e4: pasteMenu
           },
           edge: {
-            icon: "long-arrow-right",
+            icon: 'long-arrow-right',
             s4: {
-              icon: "trash-o",
-              iconLabel: "delete",
+              icon: 'trash-o',
+              iconLabel: 'delete',
               action: function (graph, itemKey, item) {
-                graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
+                graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);  // Remove selection
                 // Remove selection
                 var newSelection = [];
-                for (var i=0, len=this.selectedEdges.length; i<len; i++){
+                for (var i = 0, len = this.selectedEdges.length; i < len; i++) {
                   var selected = this.selectedEdges[i];
                   if (selected !== item) {
                     newSelection.push(selected);
@@ -81,13 +163,13 @@
           },
           node: {
             s4: {
-              icon: "trash-o",
-              iconLabel: "delete",
+              icon: 'trash-o',
+              iconLabel: 'delete',
               action: function (graph, itemKey, item) {
-                graph.removeNode(itemKey);
+                graph.removeNode(itemKey);  // Remove selection
                 // Remove selection
                 var newSelection = [];
-                for (var i=0, len=this.selectedNodes.length; i<len; i++){
+                for (var i = 0, len = this.selectedNodes.length; i < len; i++) {
                   var selected = this.selectedNodes[i];
                   if (selected !== item) {
                     newSelection.push(selected);
@@ -97,8 +179,8 @@
               }.bind(this)
             },
             w4: {
-              icon: "copy",
-              iconLabel: "copy",
+              icon: 'copy',
+              iconLabel: 'copy',
               action: function (graph, itemKey, item) {
                 TheGraph.Clipboard.copy(graph, [itemKey]);
               }
@@ -106,8 +188,8 @@
           },
           nodeInport: {
             w4: {
-              icon: "sign-in",
-              iconLabel: "export",
+              icon: 'sign-in',
+              iconLabel: 'export',
               action: function (graph, itemKey, item) {
                 var pub = item.port;
                 if (pub === 'start') {
@@ -116,69 +198,71 @@
                 if (pub === 'graph') {
                   pub = 'graph1';
                 }
-                var count = 0;
+                var count = 0;  // Make sure public is unique
                 // Make sure public is unique
                 while (graph.inports[pub]) {
                   count++;
                   pub = item.port + count;
                 }
                 var priNode = graph.getNode(item.process);
-                var metadata = {x:priNode.metadata.x-144, y:priNode.metadata.y};
+                var metadata = {
+                  x: priNode.metadata.x - 144,
+                  y: priNode.metadata.y
+                };
                 graph.addInport(pub, item.process, item.port, metadata);
               }
             }
           },
           nodeOutport: {
             e4: {
-              icon: "sign-out",
-              iconLabel: "export",
+              icon: 'sign-out',
+              iconLabel: 'export',
               action: function (graph, itemKey, item) {
                 var pub = item.port;
-                var count = 0;
+                var count = 0;  // Make sure public is unique
                 // Make sure public is unique
                 while (graph.outports[pub]) {
                   count++;
                   pub = item.port + count;
                 }
                 var priNode = graph.getNode(item.process);
-                var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
+                var metadata = {
+                  x: priNode.metadata.x + 144,
+                  y: priNode.metadata.y
+                };
                 graph.addOutport(pub, item.process, item.port, metadata);
               }
             }
           },
           graphInport: {
-            icon: "sign-in",
+            icon: 'sign-in',
             iconColor: 2,
-            n4: {
-              label: "inport"
-            },
+            n4: { label: 'inport' },
             s4: {
-              icon: "trash-o",
-              iconLabel: "delete",
+              icon: 'trash-o',
+              iconLabel: 'delete',
               action: function (graph, itemKey, item) {
                 graph.removeInport(itemKey);
               }
             }
           },
           graphOutport: {
-            icon: "sign-out",
+            icon: 'sign-out',
             iconColor: 5,
-            n4: {
-              label: "outport"
-            },
+            n4: { label: 'outport' },
             s4: {
-              icon: "trash-o",
-              iconLabel: "delete",
+              icon: 'trash-o',
+              iconLabel: 'delete',
               action: function (graph, itemKey, item) {
                 graph.removeOutport(itemKey);
               }
             }
           },
           group: {
-            icon: "th",
+            icon: 'th',
             s4: {
-              icon: "trash-o",
-              iconLabel: "ungroup",
+              icon: 'trash-o',
+              iconLabel: 'ungroup',
               action: function (graph, itemKey, item) {
                 graph.removeGroup(itemKey);
               }
@@ -187,10 +271,10 @@
             e4: pasteMenu
           },
           selection: {
-            icon: "th",
+            icon: 'th',
             w4: {
-              icon: "copy",
-              iconLabel: "copy",
+              icon: 'copy',
+              iconLabel: 'copy',
               action: function (graph, itemKey, item) {
                 TheGraph.Clipboard.copy(graph, item.nodes);
               }
@@ -199,7 +283,8 @@
           }
         };
       },
-      ready: function () {},
+      ready: function () {
+      },
       attached: function () {
       },
       detached: function () {
@@ -241,10 +326,11 @@
         return null;
       },
       widthChanged: function () {
-        this.style.width = this.width + "px";
+        console.log(this.style);
+        this.style.width = this.width + 'px';
       },
       heightChanged: function () {
-        this.style.height = this.height + "px";
+        this.style.height = this.height + 'px';
       },
       graphChanged: function () {
         if (typeof this.graph.addNode === 'function') {
@@ -252,7 +338,6 @@
           this.nofloGraph = this.graph;
           return;
         }
-
         var noflo;
         if ('noflo' in window) {
           noflo = window.noflo;
@@ -264,8 +349,7 @@
           console.warn('Missing noflo dependency! Should be built with Component.io or Browserify to require it.');
           return;
         }
-
-        noflo.graph.loadJSON(this.graph, function(nofloGraph){
+        noflo.graph.loadJSON(this.graph, function (nofloGraph) {
           this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
           this.fire('graphInitialised', this);
@@ -277,7 +361,6 @@
           // TODO what about loading a new graph? Are we making a new editor?
           return;
         }*/
-
         nofloGraph.nodes.forEach(function (node) {
           var component = {
             name: node.component,
@@ -286,7 +369,6 @@
             inports: [],
             outports: []
           };
-
           Object.keys(nofloGraph.inports).forEach(function (pub) {
             var exported = nofloGraph.inports[pub];
             if (exported.process === node.id) {
@@ -328,7 +410,6 @@
               });
             }
           });
-
           nofloGraph.edges.forEach(function (edge) {
             var i;
             if (edge.from.node === node.id) {
@@ -407,6 +488,7 @@
         this.$.graph.focusNode(node);
       },
       getComponent: function (name) {
+        console.log(this, this.$);
         return this.$.graph.getComponent(name);
       },
       getLibrary: function () {
@@ -414,9 +496,9 @@
       },
       toJSON: function () {
         return this.nofloGraph.toJSON();
-      }
+      },
+      hostAttributes: { 'touch-action': 'none' }
     });
-
-  })();
   </script>
-</polymer-element>
+
+</dom-module>
