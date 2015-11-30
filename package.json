@@ -16,7 +16,7 @@
     "grunt-browserify": "~4.0.1",
     "grunt-bower-install-simple": "^1.1.4",
     "coffeeify": "^1.1.0",
-    "glob": "^5.0.15"
+    "glob": "^6.0.1"
   },
   "scripts": {
     "start": "grunt dev",
