@@ -197,7 +197,7 @@
     },
     onTrackStart: function (event) {
       event.preventTap();
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("track", this.onTrack);
       domNode.addEventListener("trackend", this.onTrackEnd);
     },
@@ -212,7 +212,7 @@
       // Don't click app (unselect)
       event.stopPropagation();
 
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("track", this.onTrack);
       domNode.removeEventListener("trackend", this.onTrackEnd);
     },
@@ -298,7 +298,7 @@
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
 
       // Set up PolymerGestures for app and all children
       var noop = function(){};
@@ -361,7 +361,7 @@
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(this.refs.canvas.getDOMNode());
+      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
       this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 

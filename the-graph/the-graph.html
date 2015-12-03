@@ -95,7 +95,7 @@
 
         // Setup app
         this.$.svgcontainer.innerHTML = "";
-        this.appView = React.render(
+        this.appView = ReactDOM.render(
           window.TheGraph.App({
             graph: this.graph,
             width: this.width,

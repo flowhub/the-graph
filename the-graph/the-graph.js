@@ -27,10 +27,7 @@
       focusAnimationDuration: 1500
     },
     factories: {}
-  }; 
-
-  // React setup
-  React.initializeTouchEvents(true);
+  };
 
   // rAF shim
   window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -55,7 +52,7 @@
         }, 
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(tooltipEvent);
+      ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
     },
     hideTooltip: function (event) {
       if ( !this.shouldShowTooltip() ) { return; }
@@ -64,7 +61,7 @@
         bubbles: true
       });
       if (this.isMounted()) {
-        this.getDOMNode().dispatchEvent(tooltipEvent);
+        ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
       }
     },
     componentDidMount: function () {

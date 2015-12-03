@@ -40,20 +40,20 @@
     ],
     componentDidMount: function () {
       // Preview edge start
-      this.getDOMNode().addEventListener("tap", this.edgeStart);
-      this.getDOMNode().addEventListener("trackstart", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("trackstart", this.edgeStart);
       // Make edge
-      this.getDOMNode().addEventListener("trackend", this.triggerDropOnTarget);
-      this.getDOMNode().addEventListener("the-graph-edge-drop", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("trackend", this.triggerDropOnTarget);
+      ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
       }
     },
     getTooltipTrigger: function () {
-      return this.getDOMNode();
+      return ReactDOM.findDOMNode(this);
     },
     shouldShowTooltip: function () {
       return (
@@ -67,7 +67,7 @@
         return;
       }
       // Click on label, pass context menu to node
-      if (event && (event.target === this.refs.label.getDOMNode())) {
+      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't show native context menu
@@ -106,7 +106,7 @@
         return;
       }
       // Click on label, pass context menu to node
-      if (event && (event.target === this.refs.label.getDOMNode())) {
+      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't tap graph
@@ -121,7 +121,7 @@
         },
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(edgeStartEvent);
+      ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
