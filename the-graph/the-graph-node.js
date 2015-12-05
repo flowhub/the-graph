@@ -99,7 +99,7 @@
       TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
       domNode.addEventListener("trackstart", this.onTrackStart);
@@ -111,8 +111,8 @@
 
       // Context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
       }
 
     },
@@ -136,7 +136,7 @@
       // Don't drag while pinching
       if (this.props.app.pinching) { return; }
 
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("track", this.onTrack);
       domNode.addEventListener("trackend", this.onTrackEnd);
 
@@ -177,7 +177,7 @@
       // Don't fire on graph
       event.stopPropagation();
 
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("track", this.onTrack);
       domNode.removeEventListener("trackend", this.onTrackEnd);
 
@@ -319,7 +319,7 @@
       });
     },
     getTooltipTrigger: function () {
-      return this.getDOMNode();
+      return ReactDOM.findDOMNode(this);
     },
     shouldShowTooltip: function () {
       return (this.props.app.state.scale < TheGraph.zbpNormal);

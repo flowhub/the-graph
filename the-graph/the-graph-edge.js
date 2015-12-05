@@ -77,7 +77,7 @@
     componentWillMount: function() {
     },
     componentDidMount: function () {
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
 
       // Dragging
       domNode.addEventListener("trackstart", this.dontPan);
@@ -152,7 +152,7 @@
       );
     },
     getTooltipTrigger: function () {
-      return this.refs.touch.getDOMNode();
+      return ReactDOM.findDOMNode(this.refs.touch);
     },
     shouldShowTooltip: function () {
       return true;

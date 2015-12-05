@@ -36,12 +36,12 @@
       // Move group
       if (this.props.isSelectionGroup) {
         // Drag selection by bg
-        this.refs.box.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+        ReactDOM.findDOMNode(this.refs.box).addEventListener("trackstart", this.onTrackStart);
       } else {
-        this.refs.label.getDOMNode().addEventListener("trackstart", this.onTrackStart);
+        ReactDOM.findDOMNode(this.refs.label).addEventListener("trackstart", this.onTrackStart);
       }
 
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
 
       // Don't pan under menu
       domNode.addEventListener("trackstart", this.dontPan);
@@ -94,11 +94,11 @@
       event.stopPropagation();
 
       if (this.props.isSelectionGroup) {
-        var box = this.refs.box.getDOMNode();
+        var box = ReactDOM.findDOMNode(this.refs.box);
         box.addEventListener("track", this.onTrack);
         box.addEventListener("trackend", this.onTrackEnd);
       } else {
-        var label = this.refs.label.getDOMNode();
+        var label = ReactDOM.findDOMNode(this.refs.label);
         label.addEventListener("track", this.onTrack);
         label.addEventListener("trackend", this.onTrackEnd);
       }
@@ -125,11 +125,11 @@
       this.props.triggerMoveGroup(this.props.item.nodes);
 
       if (this.props.isSelectionGroup) {
-        var box = this.refs.box.getDOMNode();
+        var box = ReactDOM.findDOMNode(this.refs.box);
         box.removeEventListener("track", this.onTrack);
         box.removeEventListener("trackend", this.onTrackEnd);
       } else {
-        var label = this.refs.label.getDOMNode();
+        var label = ReactDOM.findDOMNode(this.refs.label);
         label.removeEventListener("track", this.onTrack);
         label.removeEventListener("trackend", this.onTrackEnd);
       }

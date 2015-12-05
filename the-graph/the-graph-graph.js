@@ -112,7 +112,7 @@
       this.props.graph.on("changeOutport", this.markDirty);
       this.props.graph.on("endTransaction", this.markDirty);
 
-      this.getDOMNode().addEventListener("the-graph-node-remove", this.removeNode);
+      ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
     },
     edgePreview: null,
     edgeStart: function (event) {
@@ -145,7 +145,7 @@
       edge.metadata = { route: event.detail.route };
       edge.type = event.detail.port.type;
 
-      var appDomNode = this.props.app.getDOMNode();
+      var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
       appDomNode.addEventListener("track", this.renderPreviewEdge);
       // TODO tap to add new node here
@@ -154,7 +154,7 @@
       this.setState({edgePreview: edge});
     },
     cancelPreviewEdge: function (event) {
-      var appDomNode = this.props.app.getDOMNode();
+      var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
       appDomNode.removeEventListener("track", this.renderPreviewEdge);
       appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
