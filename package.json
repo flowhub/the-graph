@@ -1,6 +1,6 @@
 {
   "name": "the-graph",
-  "version": "0.3.12",
+  "version": "0.4.0",
   "description": "polymer components for flow-based programming graph editing",
   "author": "Forrest Oliphant, the Grid",
   "license": "MIT",

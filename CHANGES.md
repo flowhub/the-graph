@@ -1,4 +1,8 @@
-## 0.3.13 (dev)
+## 0.4.1 (dev)
+
+## 0.4.0 (2015 December 5)
+
+* React 0.13.3 (#231) thanks @u39kun
 
 ## 0.3.12 (2015 September 30)
 
