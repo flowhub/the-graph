@@ -27,7 +27,7 @@
   TheGraph.NodeMenuPort = React.createFactory( React.createClass({
     displayName: "TheGraphNodeMenuPort",
     componentDidMount: function () {
-      this.getDOMNode().addEventListener("up", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("up", this.edgeStart);
     },
     edgeStart: function (event) {
       // Don't tap graph
@@ -47,7 +47,7 @@
         },
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(edgeStartEvent);
+      ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
     render: function() {
       var labelLen = this.props.label.length;
