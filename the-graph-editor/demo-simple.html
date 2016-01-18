@@ -84,6 +84,7 @@
       <button id="addnode">add node</button>
       <button id="addedge">add edge</button>
       <button id="random">random graph</button>
+      <button id="get">get graph</button>
       <button id="clear">clear</button>
     </div>
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
@@ -192,6 +193,13 @@
             editor.libraryRefresh();
             editor.triggerAutolayout();
           }, 500);
+        });
+
+        // Get graph button
+        document.getElementById("get").addEventListener("click", function () {
+          var graphJSON = JSON.stringify(editor.nofloGraph);
+          alert(graphJSON);
+          //you can use the var graphJSON to save the graph definition in a file/database
         });
 
         // Clear button
