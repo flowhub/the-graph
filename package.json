@@ -19,7 +19,7 @@
     "grunt-contrib-jshint": "~0.11.3",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-exec": "~0.4.6",
-    "stylus": "~0.52.4"
+    "stylus": "~0.54.1"
   },
   "scripts": {
     "start": "grunt dev",
