@@ -420,6 +420,25 @@
               selectedEdges.map(function (edge) {
                 menus.edge.actions.delete(graph, null, edge);
               });
+            }.bind(this),
+            // f for fit
+            70: function () {
+              this.triggerFit();
+            }.bind(this),
+            // s for selected
+            83: function () {
+              var graph = this.refs.graph.state.graph,
+                  selectedNodes = this.refs.graph.state.selectedNodes,
+                  nodeKey = null,
+                  node = null;
+
+              for (nodeKey in selectedNodes) {
+                if (selectedNodes.hasOwnProperty(nodeKey)) {
+                  node = graph.getNode(nodeKey);
+                  this.focusNode(node);
+                  break;
+                }
+              }
             }.bind(this)
           };
 
