@@ -136,14 +136,30 @@
       }
 
       var edge;
+      var typeRoutes = {
+        all: 0,
+        bang: 0,
+        object: 1,
+        buffer: 2,
+        array: 3,
+        string: 4,
+        "function": 5,
+        number: 6,
+        "int": 7,
+        color: 8,
+        date: 9
+      };
+
       if (event.detail.isIn) {
         edge = { to: port };
       } else {
         edge = { from: port };
       }
       edge.isIn = event.detail.isIn;
-      edge.metadata = { route: event.detail.route };
       edge.type = event.detail.port.type;
+      edge.metadata = {
+        route: event.detail.route || typeRoutes[edge.type]
+      };
 
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
