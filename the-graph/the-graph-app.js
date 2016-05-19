@@ -256,13 +256,22 @@
         tooltipVisible: false
       });
     },
+    getFit: function () {
+      return TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+    },
     triggerFit: function (event) {
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = this.getFit();
       this.setState({
         x: fit.x,
         y: fit.y,
         scale: fit.scale
       });
+    },
+    triggerFitAnimated: function () {
+      var duration = TheGraph.config.focusAnimationDuration;
+      var fit = this.getFit();
+
+      this.animate(fit, duration, 'out-quint', function() {});
     },
     focusNode: function (node) {
       var duration = TheGraph.config.focusAnimationDuration;
@@ -395,6 +404,55 @@
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
+      }
+
+      var key = event.keyCode,
+          hotKeys = {
+            // Delete
+            46: function () {
+              var graph = this.refs.graph.state.graph,
+                  selectedNodes = this.refs.graph.state.selectedNodes,
+                  selectedEdges = this.refs.graph.state.selectedEdges,
+                  menus = this.props.menus,
+                  menuOption = null,
+                  menuAction = null,
+                  nodeKey = null,
+                  node = null,
+                  edge = null;
+
+              for (nodeKey in selectedNodes) {
+                if (selectedNodes.hasOwnProperty(nodeKey)) {
+                  node = graph.getNode(nodeKey);
+                  menus.node.actions.delete(graph, nodeKey, node);
+                }
+              }
+              selectedEdges.map(function (edge) {
+                menus.edge.actions.delete(graph, null, edge);
+              });
+            }.bind(this),
+            // f for fit
+            70: function () {
+              this.triggerFitAnimated();
+            }.bind(this),
+            // s for selected
+            83: function () {
+              var graph = this.refs.graph.state.graph,
+                  selectedNodes = this.refs.graph.state.selectedNodes,
+                  nodeKey = null,
+                  node = null;
+
+              for (nodeKey in selectedNodes) {
+                if (selectedNodes.hasOwnProperty(nodeKey)) {
+                  node = graph.getNode(nodeKey);
+                  this.focusNode(node);
+                  break;
+                }
+              }
+            }.bind(this)
+          };
+
+      if (hotKeys[key]) {
+        hotKeys[key]();
       }
     },
     keyUp: function (event) {
