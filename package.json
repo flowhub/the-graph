@@ -27,7 +27,7 @@
     "build": "grunt build",
     "postinstall": "bower install",
     "preversion": "grunt test",
-    "postversion": "git push $$ git push --tags"
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
