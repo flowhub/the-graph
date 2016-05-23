@@ -1,4 +1,8 @@
-## 0.4.1 (dev)
+## dev
+
+## 0.4.1 (2016 May 23)
+
+* Hotkeys: <kbd>delete</kbd>, <kbd>f</kbd> for fit, <kbd>s</kbd> to zoom selection (#272) thanks @ifitzpatrick
 
 ## 0.4.0 (2015 December 5)
 
