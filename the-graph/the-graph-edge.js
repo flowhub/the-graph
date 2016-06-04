@@ -26,7 +26,8 @@
     createEdgeBackgroundPath: TheGraph.factories.createPath,
     createEdgeForegroundPath: TheGraph.factories.createPath,
     createEdgeTouchPath: TheGraph.factories.createPath,
-    createEdgePathArray: createEdgePathArray
+    createEdgePathArray: createEdgePathArray,
+    createArrow: TheGraph.factories.createPolygon
   };
 
   function createEdgePathArray(sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY) {
@@ -47,7 +48,7 @@
   // See http://en.wikipedia.org/wiki/File:Bezier_3_big.gif
   var findPointOnCubicBezier = function (p, sx, sy, c1x, c1y, c2x, c2y, ex, ey) {
     // p is percentage from 0 to 1
-    var op = 1 - t;
+    var op = 1 - p;
     // 3 green points between 4 points that define curve
     var g1x = sx * p + c1x * op;
     var g1y = sy * p + c1y * op;
@@ -211,8 +212,67 @@
       };
 
       containerOptions = TheGraph.merge(TheGraph.config.edge.container, containerOptions);
-      return TheGraph.factories.edge.createEdgeGroup(containerOptions, [backgroundPath, foregroundPath, touchPath ]);
 
+      var epsilon = 0.01;
+      var center = findPointOnCubicBezier(0.5, sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
+
+      // estimate slope and intercept of tangent line
+      var getShiftedPoint = function (epsilon) {
+        return findPointOnCubicBezier(
+          0.5 + epsilon, sourceX, sourceY, c1X, c1Y, c2X, c2Y, targetX, targetY);
+      };
+      var plus = getShiftedPoint(epsilon);
+      var minus = getShiftedPoint(-epsilon);
+      var m = 1 * (plus[1] - minus[1]) / (plus[0] - minus[0]);
+      var b = center[1] - (m * center[0]);
+
+      // find point on line y = mx + b that is `offset` away from x,y
+      var findLinePoint = function (x, y, m, b, offset, flip) {
+        var x1 = x + offset/Math.sqrt(1 + m*m);
+        var y1;
+        if (Math.abs(m) === Infinity) {
+          y1 = y + (flip || 1) *offset;
+        } else {
+          y1 = (m * x1) + b;
+        }
+        return [x1, y1];
+      };
+
+      // find points of perpendicular line length l centered at x,y
+      var perpendicular = function (x, y, oldM, l) {
+        var m = -1/oldM;
+        var b = y - m*x;
+        var point1 = findLinePoint(x, y, m, b, l/2);
+        var point2 = findLinePoint(x, y, m, b, l/-2);
+        return [point1, point2];
+      };
+
+      var arrowLength = 15;
+      // Which direction should arrow point
+      if (plus[0] > minus[0]) {
+        arrowLength *= -1;
+      }
+
+      var points = perpendicular(center[0], center[1], m, arrowLength * 0.9);
+      // For m === 0, figure out if arrow should be straight up or down
+      var flip = plus[1] > minus[1] ? -1 : 1;
+      var arrowTip = findLinePoint(center[0], center[1], m, b, arrowLength, flip);
+      points.push(arrowTip);
+
+      var pointsArray = points.map(
+        function (point) {return point.join(',');}).join(' ');
+      var arrowBg = TheGraph.factories.edge.createArrow({
+        points: pointsArray,
+        className: 'edge-bg'
+      });
+
+      var arrow = TheGraph.factories.edge.createArrow({
+        points: pointsArray,
+        className: 'arrow fill route' + this.props.route
+      });
+
+      return TheGraph.factories.edge.createEdgeGroup(containerOptions,
+         [backgroundPath, arrowBg, foregroundPath, touchPath, arrow]);
     }
   }));
 

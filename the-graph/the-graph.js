@@ -386,6 +386,10 @@
     return React.DOM.path(options);
   };
 
+  TheGraph.factories.createPolygon = function(options) {
+    return React.DOM.polygon(options);
+  };
+
   TheGraph.factories.createImg = function(options) {
     return TheGraph.SVGImage(options);
   };
