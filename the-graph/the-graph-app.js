@@ -256,13 +256,22 @@
         tooltipVisible: false
       });
     },
+    getFit: function () {
+      return TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+    },
     triggerFit: function (event) {
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = this.getFit();
       this.setState({
         x: fit.x,
         y: fit.y,
         scale: fit.scale
       });
+    },
+    triggerFitAnimated: function () {
+      var duration = TheGraph.config.focusAnimationDuration;
+      var fit = this.getFit();
+
+      this.animate(fit, duration, 'out-quint', function() {});
     },
     focusNode: function (node) {
       var duration = TheGraph.config.focusAnimationDuration;
@@ -423,7 +432,7 @@
             }.bind(this),
             // f for fit
             70: function () {
-              this.triggerFit();
+              this.triggerFitAnimated();
             }.bind(this),
             // s for selected
             83: function () {
