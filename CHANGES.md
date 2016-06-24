@@ -1,5 +1,9 @@
 ## dev
 
+## 0.4.2 (2016 June 24)
+
+* Fix pinch on touch screens (#286)
+
 ## 0.4.1 (2016 May 23)
 
 * Hotkeys: <kbd>delete</kbd>, <kbd>f</kbd> for fit, <kbd>s</kbd> to zoom selection (#272) thanks @ifitzpatrick
