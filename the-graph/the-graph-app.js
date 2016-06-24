@@ -154,7 +154,6 @@
       this.pinching = true;
     },
     onTransform: function (event) {
-      console.log(event)
       // Don't drag nodes
       event.srcEvent.stopPropagation();
       event.srcEvent.stopImmediatePropagation();

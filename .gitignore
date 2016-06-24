@@ -2,3 +2,4 @@ bower_components/
 node_modules/
 /.idea
 /build
+npm-debug.log
