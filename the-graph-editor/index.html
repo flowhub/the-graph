@@ -204,6 +204,9 @@
             editor.graph = JSON.parse(graphString);
           });
 
+          // Log some stuff
+          window.editor = editor;
+          console.log(editor);
         };
         var body = document.querySelector('body');
         var script = document.createElement('script');
