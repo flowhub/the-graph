@@ -238,6 +238,13 @@
         return [x1, y1];
       };
 
+      var arrowLength = 12;
+      // Which direction should arrow point
+      if (plus[0] > minus[0]) {
+        arrowLength *= -1;
+      }
+      center = findLinePoint(center[0], center[1], m, b, -1*arrowLength/2);
+
       // find points of perpendicular line length l centered at x,y
       var perpendicular = function (x, y, oldM, l) {
         var m = -1/oldM;
@@ -246,12 +253,6 @@
         var point2 = findLinePoint(x, y, m, b, l/-2);
         return [point1, point2];
       };
-
-      var arrowLength = 15;
-      // Which direction should arrow point
-      if (plus[0] > minus[0]) {
-        arrowLength *= -1;
-      }
 
       var points = perpendicular(center[0], center[1], m, arrowLength * 0.9);
       // For m === 0, figure out if arrow should be straight up or down
