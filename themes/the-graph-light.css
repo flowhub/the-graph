@@ -656,38 +656,85 @@
 .the-graph-light .selection .stroke.route10 {
   stroke: #ffcce7;
 }
-.the-graph-light .fill.route0 {
+.the-graph-light .fill,
+.the-graph-light .fill.route0,
+.the-graph-light .selection .selected .fill,
+.the-graph-light .selection .selected .fill.route0 {
   fill: #bfbfbf;
 }
-.the-graph-light .fill.route1 {
+.the-graph-light .fill.route1,
+.the-graph-light .selection .selected .fill.route1 {
   fill: #c00;
 }
-.the-graph-light .fill.route2 {
+.the-graph-light .fill.route2,
+.the-graph-light .selection .selected .fill.route2 {
   fill: #cc6300;
 }
-.the-graph-light .fill.route3 {
+.the-graph-light .fill.route3,
+.the-graph-light .selection .selected .fill.route3 {
   fill: #ffc800;
 }
-.the-graph-light .fill.route4 {
+.the-graph-light .fill.route4,
+.the-graph-light .selection .selected .fill.route4 {
   fill: #00cc3d;
 }
-.the-graph-light .fill.route5 {
+.the-graph-light .fill.route5,
+.the-graph-light .selection .selected .fill.route5 {
   fill: #abf2da;
 }
-.the-graph-light .fill.route6 {
+.the-graph-light .fill.route6,
+.the-graph-light .selection .selected .fill.route6 {
   fill: #00c9cc;
 }
-.the-graph-light .fill.route7 {
+.the-graph-light .fill.route7,
+.the-graph-light .selection .selected .fill.route7 {
   fill: #0052cc;
 }
-.the-graph-light .fill.route8 {
+.the-graph-light .fill.route8,
+.the-graph-light .selection .selected .fill.route8 {
   fill: #40c;
 }
-.the-graph-light .fill.route9 {
+.the-graph-light .fill.route9,
+.the-graph-light .selection .selected .fill.route9 {
   fill: #ffa8ba;
 }
-.the-graph-light .fill.route10 {
+.the-graph-light .fill.route10,
+.the-graph-light .selection .selected .fill.route10 {
   fill: #cc006d;
+}
+.the-graph-light .selection .fill,
+.the-graph-light .selection .fill.route0 {
+  fill: #e6e6e6;
+}
+.the-graph-light .selection .fill.route1 {
+  fill: #fcc;
+}
+.the-graph-light .selection .fill.route2 {
+  fill: #ffe5cc;
+}
+.the-graph-light .selection .fill.route3 {
+  fill: #fff4cc;
+}
+.the-graph-light .selection .fill.route4 {
+  fill: #ccffdb;
+}
+.the-graph-light .selection .fill.route5 {
+  fill: #d3f8ec;
+}
+.the-graph-light .selection .fill.route6 {
+  fill: #ccfeff;
+}
+.the-graph-light .selection .fill.route7 {
+  fill: #cce0ff;
+}
+.the-graph-light .selection .fill.route8 {
+  fill: #dcf;
+}
+.the-graph-light .selection .fill.route9 {
+  fill: #ffccd6;
+}
+.the-graph-light .selection .fill.route10 {
+  fill: #ffcce7;
 }
 @-moz-keyframes error {
   0% {
