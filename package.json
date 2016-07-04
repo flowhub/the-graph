@@ -9,7 +9,7 @@
     "noflo": "^0.5.21"
   },
   "devDependencies": {
-    "bower": "^1.6.9",
+    "bower": "^1.7.6",
     "coffeeify": "^1.2.0",
     "glob": "^6.0.1",
     "grunt": "~0.4.5",
