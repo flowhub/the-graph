@@ -264,7 +264,7 @@
         function (point) {return point.join(',');}).join(' ');
       var arrowBg = TheGraph.factories.edge.createArrow({
         points: pointsArray,
-        className: 'edge-bg'
+        className: 'arrow-bg'
       });
 
       var arrow = TheGraph.factories.edge.createArrow({
