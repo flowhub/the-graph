@@ -176,11 +176,6 @@ path {
   stroke: var-edge-bg;
   stroke-width: ((var-edge-width+1)/2);
 }
-.edge.selected .arrow-bg {
-  stroke: var-selection-box-border;
-  stroke-width: var-edge-width + 1;
-}
-
 .edge-bg {
   stroke: var-edge-bg;
   stroke-width: (var-edge-width + 2);
@@ -197,7 +192,11 @@ path {
   opacity: 0;
 }
 .edge:hover .edge-bg, .edge:hover .arrow-bg {
-  stroke: var-edge-hover-bg;  
+  stroke: var-edge-hover-bg;
+}
+.edge.selected .arrow-bg {
+  stroke: var-selection-box-border;
+  stroke-width: var-edge-width + 1;
 }
 .edge.selected .edge-bg {
   stroke-width: (var-edge-width * 2 + 2);
@@ -213,32 +212,32 @@ path {
 
 /* marching ants for animated arrows */
 
-@-webkit-keyframes heartbeats {
+@-webkit-keyframes arrow-heartbeats {
   0% { stroke-width: (var-edge-width + 1); }
-  10% { stroke-width: (var-edge-width + 2); }
+  10% { stroke-width: ((var-edge-width + 1) * 2); }
   30% { stroke-width: (var-edge-width + 1); }
-  40% { stroke-width: (var-edge-width + 2); }
+  40% { stroke-width: ((var-edge-width + 1) * 2); }
   60% { stroke-width: (var-edge-width + 1); }
 }
-@-moz-keyframes heartbeats {
+@-moz-keyframes arrow-heartbeats {
   0% { stroke-width: (var-edge-width + 1); }
-  10% { stroke-width: (var-edge-width + 2); }
+  10% { stroke-width: ((var-edge-width + 1) * 2); }
   30% { stroke-width: (var-edge-width + 1); }
-  40% { stroke-width: (var-edge-width + 2); }
+  40% { stroke-width: ((var-edge-width + 1) * 2); }
   60% { stroke-width: (var-edge-width + 1); }
 }
-@-o-keyframes heartbeats {
+@-o-keyframes arrow-heartbeats {
   0% { stroke-width: (var-edge-width + 1); }
-  10% { stroke-width: (var-edge-width + 2); }
+  10% { stroke-width: ((var-edge-width + 1) * 2); }
   30% { stroke-width: (var-edge-width + 1); }
-  40% { stroke-width: (var-edge-width + 2); }
+  40% { stroke-width: ((var-edge-width + 1) * 2); }
   60% { stroke-width: (var-edge-width + 1); }
 }
-@keyframes heartbeats {
+@keyframes arrow-heartbeats {
   0% { stroke-width: (var-edge-width + 1); }
-  10% { stroke-width: (var-edge-width + 2); }
+  10% { stroke-width: ((var-edge-width + 1) * 2); }
   30% { stroke-width: (var-edge-width + 1); }
-  40% { stroke-width: (var-edge-width + 2); }
+  40% { stroke-width: ((var-edge-width + 1) * 2); }
   60% { stroke-width: (var-edge-width + 1); }
 }
 .edge.animated .arrow-bg {
@@ -246,10 +245,10 @@ path {
   stroke-width: (var-edge-width + 1);
   stroke: var-selection-box-border;
 
-  -webkit-animation: heartbeats 4s linear infinite;
-     -moz-animation: heartbeats 4s linear infinite;
-       -o-animation: heartbeats 4s linear infinite;
-          animation: heartbeats 4s linear infinite;
+  -webkit-animation: arrow-heartbeats 4s linear infinite;
+     -moz-animation: arrow-heartbeats 4s linear infinite;
+       -o-animation: arrow-heartbeats 4s linear infinite;
+          animation: arrow-heartbeats 4s linear infinite;
 }
 
 
