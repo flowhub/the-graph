@@ -13,15 +13,16 @@ The project is the graph editing tool in [NoFlo UI](https://github.com/noflo/nof
 
 ## Installation
 
-Get dependencies using [Bower](http://bower.io/) and Browserify (via npm and grunt):
+Get dependencies and build:
 
-    bower install
     npm install
-    grunt build
+    npm run build
 
 ## Running
 
-You need a local web server. Place these files into somewhere where they can be served, and access the `the-graph-editor/index.html` file with your browser.
+   npm start
+
+And open http://localhost:3000/the-graph-editor/index.html
 
 ## License
 
