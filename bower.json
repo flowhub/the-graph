@@ -8,7 +8,7 @@
   ],
   "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "font-awesome": "~4.4.0",
+    "font-awesome": "~4.6.3",
     "hammerjs": "~2.0.8",
     "klayjs-noflo": "~0.3.0",
     "polymer": "0.5.2",
