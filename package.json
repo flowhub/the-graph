@@ -1,6 +1,6 @@
 {
   "name": "the-graph",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "flow-based programming graph editing",
   "author": "Forrest Oliphant, the Grid",
   "license": "MIT",
