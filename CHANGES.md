@@ -1,6 +1,6 @@
 ## dev
 
-## 0.4.3 (2016 July 27)
+## 0.4.4 (2016 July 27)
 
 * Arrows on edges (#277) thanks @ifitzpatrick
 * Font Awesome 4.6.3
