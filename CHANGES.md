@@ -1,5 +1,10 @@
 ## dev
 
+## 0.4.3 (2016 July 27)
+
+* Arrows on edges (#277) thanks @ifitzpatrick
+* Font Awesome 4.6.3
+
 ## 0.4.2 (2016 June 24)
 
 * Fix pinch on touch screens (#286)
