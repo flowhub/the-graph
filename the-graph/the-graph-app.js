@@ -88,6 +88,12 @@
         offsetX: this.props.offsetX
       };
     },
+    getDefaultProps: function () {
+      return {
+        snap: TheGraph.config.nodeSize / 2,
+        grid: TheGraph.config.nodeSize
+      };
+    },
     zoomFactor: 0,
     zoomX: 0,
     zoomY: 0,
@@ -477,7 +483,7 @@
 
       // Background grid pattern
       var scale = this.state.scale;
-      var g = TheGraph.config.nodeSize * scale;
+      var g = this.props.grid * scale;
 
       var dx = this.state.x % g;
       var dy = this.state.y % g;
@@ -566,6 +572,8 @@
       var graphElementOptions = {
         graph: this.props.graph,
         scale: this.state.scale,
+        grid: this.props.grid,
+        snap: this.props.snap,
         app: this,
         library: this.props.library,
         onNodeSelection: this.props.onNodeSelection,
