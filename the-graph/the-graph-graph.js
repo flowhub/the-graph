@@ -478,7 +478,8 @@
           selected: selected,
           error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
-          highlightPort: highlightPort
+          highlightPort: highlightPort,
+          subgraph: componentInfo ? componentInfo.subgraph : false
         };
 
         nodeOptions = TheGraph.merge(TheGraph.config.graph.node, nodeOptions);

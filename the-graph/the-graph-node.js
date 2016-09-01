@@ -226,7 +226,8 @@
       // App.showContext
       this.props.showContext({
         element: this,
-        type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") : "node"),
+        type: (this.props.export ? (this.props.isIn ? "graphInport" : "graphOutport") :
+               this.props.subgraph ? "subgraph" : "node"),
         x: x,
         y: y,
         graph: this.props.graph,
