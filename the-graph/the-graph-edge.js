@@ -81,7 +81,7 @@
       var domNode = ReactDOM.findDOMNode(this);
 
       // Dragging
-      domNode.addEventListener("trackstart", this.dontPan);
+      domNode.addEventListener("trackstart", this.onTrackStart);
 
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
@@ -94,11 +94,66 @@
         domNode.addEventListener("hold", this.showContext);
       }
     },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) { 
-        event.stopPropagation();
+    onTrackStart: function (event) {
+      event.stopPropagation();
+
+      var distance = function (x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      };
+
+      var sourceX = this.props.sX;
+      var sourceY = this.props.sY;
+      var targetX = this.props.tX;
+      var targetY = this.props.tY;
+      var scale = this.props.app.state.scale;
+      var clientX = (event.clientX - this.props.app.state.x) / scale;
+      var clientY = (event.clientY - this.props.app.state.y) / scale;
+
+      var graph = this.props.graph;
+      var edge = this.props.edge;
+      var edgePort;
+      var isIn;
+      if (distance(clientX, clientY, sourceX, sourceY) <= 36) {
+        edgePort = edge.to;
+        isIn = true;
+      } else if (distance(clientX, clientY, targetX, targetY) <= 36) {
+        edgePort = edge.from;
+        isIn = false;
+      } else {
+        return;
       }
+
+      var node = graph.getNode(edgePort.node);
+      var library = this.props.app.props.library;
+      var component = library[node.component];
+      var componentPort = component[isIn ? 'inports' : 'outports'].filter(
+        function (p) {return p.name == edgePort.port}
+      )[0];
+
+      var port = {
+        process: edgePort.node,
+        port: edgePort.port,
+        type: componentPort.type
+      };
+
+      if (edgePort.index !== undefined && edgePort.index !== null) {
+        port.index = edgePort.index;
+      } else {
+        port.addressable = componentPort.addressable;
+      }
+
+      this.props.app.props.menus.edge.actions.delete(
+        this.props.graph, null, this.props.edge);
+
+      var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
+        detail: {
+          isIn: isIn,
+          port: port,
+          route: this.props.route
+        },
+        bubbles: true
+      });
+      ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
     onEdgeSelection: function (event) {
       // Don't click app
