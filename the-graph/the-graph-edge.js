@@ -127,7 +127,7 @@
       var library = this.props.app.props.library;
       var component = library[node.component];
       var componentPort = component[isIn ? 'inports' : 'outports'].filter(
-        function (p) {return p.name == edgePort.port}
+        function (p) {return p.name == edgePort.port};
       )[0];
 
       var port = {
