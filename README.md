@@ -22,7 +22,7 @@ Get dependencies and build:
 
     npm start
 
-And open http://localhost:3000/the-graph-editor/index.html
+And open [http://localhost:3000/examples/demo-full.html](http://localhost:3000/examples/demo-full.html)
 
 ## License
 
