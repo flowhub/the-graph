@@ -2,8 +2,7 @@
   this file is generated via `grunt build` 
 */
 
-(function (context) {
-"use strict";
+module.exports.register = function (context) {
 
 context.TheGraph.FONT_AWESOME = {
   "500px": "",
@@ -738,4 +737,4 @@ context.TheGraph.FONT_AWESOME = {
   "youtube-square": ""
 };
 
-})(this);
+};

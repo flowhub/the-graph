@@ -54,17 +54,17 @@
             'build/the-graph.js': ['index.js'],
           },
           options: {
-            transform: ['coffeeify']
-          },
-          browserifyOptions: {
-            require: 'noflo'
+            transform: ['coffeeify'],
+            browserifyOptions: {
+              standalone: 'TheGraph'
+            }
           }
         }
       },
       jshint: {
         options: { 
           extract: 'auto',
-          strict: true,
+          strict: false,
           newcap: false,
           "globals": { "Polymer": true }
         },
