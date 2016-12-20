@@ -81,16 +81,19 @@
   }
 
   // PolymerGestures monkeypatch
-  PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
-    // hold
-    if (gesture.HOLD_DELAY) {
-      gesture.HOLD_DELAY = 500;
-    }
-    // track
-    if (gesture.WIGGLE_THRESHOLD) {
-      gesture.WIGGLE_THRESHOLD = 8;
-    }
-  });
+  function patchGestures() {
+    PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
+      // hold
+      if (gesture.HOLD_DELAY) {
+        gesture.HOLD_DELAY = 500;
+      }
+      // track
+      if (gesture.WIGGLE_THRESHOLD) {
+        gesture.WIGGLE_THRESHOLD = 8;
+      }
+    });
+  }
+
 
   // Node view
   TheGraph.Node = React.createFactory( React.createClass({
@@ -99,6 +102,7 @@
       TheGraph.mixins.Tooltip
     ],
     componentDidMount: function () {
+      patchGestures();
       var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
