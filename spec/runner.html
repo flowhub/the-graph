@@ -4,13 +4,30 @@
     <meta charset="utf-8">
     <title>the-graph browser tests</title>
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+
+    <!-- Bower Libraries -->
+    <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
+    <script src="../bower_components/react/react-with-addons.js"></script>
+    <script src="../bower_components/react/react-dom.js"></script>
+    <script src="../bower_components/klayjs-noflo/klay-noflo.js"></script>
+    <script src="../bower_components/hammerjs/hammer.min.js"></script>
+    <script src="../bower_components/ease-djdeath/index.js"></script>
+    <script src="../bower_components/react.animate-djdeath/react.animate.js"></script>
+
+    <!-- Browserify Libraries -->
+    <script src="../build/the-graph.js"></script>
+
+    <!-- Custom elements -->
+    <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../the-graph-editor/the-graph-editor.html">
+
     <style type="text/css">
-      #app {
-        width: 800px;
-        height: 600px;
-        position: fixed;
-        right: 0px;
-        top: 100px;
+      #editor {
+        width: 400px;
+        height: 300px;
+        position: absolute;
+        top: 0;
+        right: 400px;
         border: none;
       }
     </style>
@@ -21,8 +38,18 @@
   </head>
   <body>
     <div id="mocha"></div>
-    <iframe id="app"></iframe>
 
+    <!-- Stuff under test -->
+   <the-graph-editor id="editor"
+      width="400" height="300"
+      grid="72"
+      snap="36"
+      theme="dark">
+    </the-graph-editor>
+
+    <the-graph-nav id="nav" width="216" height="162"></the-graph-nav>
+
+    <script src="basics.coffee" type="text/coffeescript"></script>
     <script src="editing.coffee" type="text/coffeescript"></script>
     <script src="graphchanges.coffee" type="text/coffeescript"></script>
     <script src="runmocha.coffee" type="text/coffeescript"></script>
