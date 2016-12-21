@@ -11,15 +11,19 @@
   },
   "devDependencies": {
     "bower": "^1.7.9",
+    "chai": "^3.5.0",
+    "coffee-script": "^1.12.2",
     "coffeeify": "^2.0.1",
     "glob": "^7.0.6",
     "grunt": "~1.0.1",
     "grunt-bower-install-simple": "^1.2.3",
     "grunt-browserify": "~5.0.0",
-    "grunt-contrib-connect": "~1.0.2",
+    "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-jshint": "~1.0.0",
     "grunt-contrib-watch": "~1.0.0",
     "grunt-exec": "~1.0.1",
+    "grunt-mocha-phantomjs": "^4.0.0",
+    "mocha": "^3.2.0",
     "stylus": "~0.54.5"
   },
   "scripts": {
