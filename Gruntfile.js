@@ -38,7 +38,7 @@
       browserify: {
         libs: {
           files: {
-            'build/noflo.js': ['index.js'],
+            'build/the-graph.js': ['index.js'],
           },
           options: {
             transform: ['coffeeify']
