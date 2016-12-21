@@ -39,7 +39,7 @@
     },
     componentDidMount: function () {
       // Prevent context menu
-      this.getDOMNode().addEventListener("contextmenu", function (event) {
+      ReactDOM.findDOMNode(this).addEventListener("contextmenu", function (event) {
         event.stopPropagation();
         event.preventDefault();
       }, false);

@@ -1,5 +1,5 @@
-<!-- 
-  
+<!--
+
 * Renders a noflo graph instance into a canvas
 * Autoscales the render to fit, and exposes the scale as thumbscale, thumbrectangle, viewrectangle
 
@@ -105,14 +105,14 @@
         }
       },
       redrawGraph: function () {
-        if (!this.graph || !this.graph.edges.length) {
+        if (!this.graph) {
           return;
         }
         var context = this.$.canvas.getContext("2d");
-        if (!context) { 
-          // ??? 
+        if (!context) {
+          // ???
           setTimeout( this.redrawGraph.bind(this), 500);
-          return; 
+          return;
         }
         // Need the actual context, not polymer-wrapped one
         context = unwrap(context);

@@ -1,4 +1,58 @@
-## 0.3.8 (dev)
+## dev
+
+## 0.4.4 (2016 July 27)
+
+* Arrows on edges (#277) thanks @ifitzpatrick
+* Font Awesome 4.6.3
+
+## 0.4.2 (2016 June 24)
+
+* Fix pinch on touch screens (#286)
+
+## 0.4.1 (2016 May 23)
+
+* Hotkeys: <kbd>delete</kbd>, <kbd>f</kbd> for fit, <kbd>s</kbd> to zoom selection (#272) thanks @ifitzpatrick
+
+## 0.4.0 (2015 December 5)
+
+* React 0.14.3 (#231) thanks @u39kun
+
+## 0.3.12 (2015 September 30)
+
+* Build dependencies
+* JSHint with inline scripts; remove grunt-lint-inline
+* Polymer 0.5.6
+* Fix tooltip bug (#226)
+* Fix pinch-to-zoom crash (introduced with #218)
+
+## 0.3.11 (2015 August 6)
+
+* Fire graphInitialised event (#204)
+* Allow max/min zoom parameterised (#218)
+* Ports of type 'any' highlight for incoming edges (#220)
+* Better thumbnail drawing (#221)
+* (previous 4 thanks @townxelliot)
+* Icon/library fix (#223)
+* Font Awesome 4.4.0
+* React 0.13.3
+
+## 0.3.10 (2015 January 23)
+
+* Font Awesome 4.3.0
+* React 0.12.2
+* ~~Polymer 0.5.3~~ (doesn't work in Safari 7-8)
+
+## 0.3.9 (2015 January 20)
+
+* Define offset of graph editor (#190) thanks @fabiancook
+* Improve heartbeats for animated edges (#194) thanks @lhausermann
+* Fire "nodes" event when selected nodes change
+* Fire "edges" event when selected edges change
+* Remove selection on delete (#195)
+
+## 0.3.8 (2014 December 19)
+
+* Update to Polymer 0.5.2
 
 ## 0.3.7 (2014 December 11)
 

@@ -40,20 +40,20 @@
     ],
     componentDidMount: function () {
       // Preview edge start
-      this.getDOMNode().addEventListener("tap", this.edgeStart);
-      this.getDOMNode().addEventListener("trackstart", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("trackstart", this.edgeStart);
       // Make edge
-      this.getDOMNode().addEventListener("trackend", this.triggerDropOnTarget);
-      this.getDOMNode().addEventListener("the-graph-edge-drop", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("trackend", this.triggerDropOnTarget);
+      ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        this.getDOMNode().addEventListener("contextmenu", this.showContext);
-        this.getDOMNode().addEventListener("hold", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
+        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
       }
     },
     getTooltipTrigger: function () {
-      return this.getDOMNode();
+      return ReactDOM.findDOMNode(this);
     },
     shouldShowTooltip: function () {
       return (
@@ -67,7 +67,7 @@
         return;
       }
       // Click on label, pass context menu to node
-      if (event && (event.target === this.refs.label.getDOMNode())) {
+      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't show native context menu
@@ -106,13 +106,13 @@
         return;
       }
       // Click on label, pass context menu to node
-      if (event && (event.target === this.refs.label.getDOMNode())) {
+      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't tap graph
       event.stopPropagation();
-      
-      var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
+
+      var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
           isIn: this.props.isIn,
           port: this.props.port,
@@ -121,16 +121,16 @@
         },
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(edgeStartEvent);      
+      ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
       if (!event.relatedTarget) { return; }
-      var dropEvent = new CustomEvent('the-graph-edge-drop', { 
+      var dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,
         bubbles: true
       });
-      event.relatedTarget.dispatchEvent(dropEvent);      
+      event.relatedTarget.dispatchEvent(dropEvent);
     },
     render: function() {
       var style;
@@ -143,7 +143,7 @@
       var highlightPort = this.props.highlightPort;
       var inArc = TheGraph.arcs.inport;
       var outArc = TheGraph.arcs.outport;
-      if (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type) {
+      if (highlightPort && highlightPort.isIn === this.props.isIn && (highlightPort.type === this.props.port.type || this.props.port.type === 'any')) {
         r = 6;
         inArc = TheGraph.arcs.inportBig;
         outArc = TheGraph.arcs.outportBig;
@@ -159,7 +159,7 @@
         className: "port-circle-small fill route"+this.props.route,
         r: r - 1.5
       };
-      
+
       innerCircleOptions = TheGraph.merge(TheGraph.config.port.innerCircle, innerCircleOptions);
       var innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
 

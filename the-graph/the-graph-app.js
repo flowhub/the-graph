@@ -66,7 +66,6 @@
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: [React.Animate],
-    minZoom: 0.15,
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -77,12 +76,16 @@
         scale: fit.scale,
         width: this.props.width,
         height: this.props.height,
+        minZoom: this.props.minZoom,
+        maxZoom: this.props.maxZoom,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
         tooltipVisible: false,
         contextElement: null,
-        contextType: null
+        contextType: null,
+        offsetY: this.props.offsetY,
+        offsetX: this.props.offsetX
       };
     },
     zoomFactor: 0,
@@ -111,8 +114,11 @@
       var scale = this.state.scale + (this.state.scale * zoomFactor);
       this.zoomFactor = 0;
 
-      if (scale < this.minZoom) { 
-        scale = this.minZoom;
+      if (scale < this.state.minZoom) {
+        scale = this.state.minZoom;
+      }
+      else if (scale > this.state.maxZoom) {
+        scale = this.state.maxZoom;
       }
       if (scale === this.state.scale) { return; }
 
@@ -138,34 +144,34 @@
     pinching: false,
     onTransformStart: function (event) {
       // Don't drag nodes
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      event.srcEvent.stopPropagation();
+      event.srcEvent.stopImmediatePropagation();
 
       // Hammer.js
       this.lastScale = 1;
-      this.lastX = event.gesture.center.clientX;
-      this.lastY = event.gesture.center.clientY;
+      this.lastX = event.center.x;
+      this.lastY = event.center.y;
       this.pinching = true;
     },
     onTransform: function (event) {
       // Don't drag nodes
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      event.srcEvent.stopPropagation();
+      event.srcEvent.stopImmediatePropagation();
 
       // Hammer.js
       var currentScale = this.state.scale;
       var currentX = this.state.x;
       var currentY = this.state.y;
 
-      var scaleEvent = event.gesture.scale;
+      var scaleEvent = event.scale;
       var scaleDelta = 1 + (scaleEvent - this.lastScale);
       this.lastScale = scaleEvent;
       var scale = scaleDelta * currentScale;
-      scale = Math.max(scale, this.minZoom);
+      scale = Math.max(scale, this.props.minZoom);
 
       // Zoom and pan transform-origin equivalent
-      var oX = event.gesture.center.clientX;
-      var oY = event.gesture.center.clientY;
+      var oX = event.center.x;
+      var oY = event.center.y;
       var deltaX = oX - this.lastX;
       var deltaY = oY - this.lastY;
       var x = scaleDelta * (currentX - oX) + oX + deltaX;
@@ -183,15 +189,15 @@
     },
     onTransformEnd: function (event) {
       // Don't drag nodes
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      event.srcEvent.stopPropagation();
+      event.srcEvent.stopImmediatePropagation();
 
       // Hammer.js
       this.pinching = false;
     },
     onTrackStart: function (event) {
       event.preventTap();
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("track", this.onTrack);
       domNode.addEventListener("trackend", this.onTrackEnd);
     },
@@ -206,7 +212,7 @@
       // Don't click app (unselect)
       event.stopPropagation();
 
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("track", this.onTrack);
       domNode.removeEventListener("trackend", this.onTrackEnd);
     },
@@ -292,7 +298,7 @@
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = this.getDOMNode();
+      var domNode = ReactDOM.findDOMNode(this);
 
       // Set up PolymerGestures for app and all children
       var noop = function(){};
@@ -310,22 +316,20 @@
       }
 
       // Don't let Hammer.js collide with polymer-gestures
+      var hammertime;
       if (Hammer) {
-        Hammer(domNode, {
-          tap: false,
-          hold: false, 
-          transform: true
-        });
+        hammertime = new Hammer(domNode, {});
+        hammertime.get('pinch').set({ enable: true });
       }
 
       // Pointer gesture event for pan
       domNode.addEventListener("trackstart", this.onTrackStart);
 
       var isTouchDevice = 'ontouchstart' in document.documentElement;
-      if( isTouchDevice && Hammer ){
-        Hammer(domNode).on("transformstart", this.onTransformStart);
-        Hammer(domNode).on("transform", this.onTransform);
-        Hammer(domNode).on("transformend", this.onTransformEnd);
+      if( isTouchDevice && hammertime ){
+        hammertime.on("pinchstart", this.onTransformStart);
+        hammertime.on("pinch", this.onTransform);
+        hammertime.on("pinchend", this.onTransformEnd);
       }
 
       // Wheel to zoom
@@ -355,7 +359,7 @@
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(this.refs.canvas.getDOMNode());
+      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
       this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
@@ -387,8 +391,57 @@
     },
     keyDown: function (event) {
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      if (event.metaKey || event.ctrlKey) { 
-        TheGraph.metaKeyPressed = true; 
+      if (event.metaKey || event.ctrlKey) {
+        TheGraph.metaKeyPressed = true;
+      }
+
+      var key = event.keyCode,
+          hotKeys = {
+            // Delete
+            46: function () {
+              var graph = this.refs.graph.state.graph,
+                  selectedNodes = this.refs.graph.state.selectedNodes,
+                  selectedEdges = this.refs.graph.state.selectedEdges,
+                  menus = this.props.menus,
+                  menuOption = null,
+                  menuAction = null,
+                  nodeKey = null,
+                  node = null,
+                  edge = null;
+
+              for (nodeKey in selectedNodes) {
+                if (selectedNodes.hasOwnProperty(nodeKey)) {
+                  node = graph.getNode(nodeKey);
+                  menus.node.actions.delete(graph, nodeKey, node);
+                }
+              }
+              selectedEdges.map(function (edge) {
+                menus.edge.actions.delete(graph, null, edge);
+              });
+            }.bind(this),
+            // f for fit
+            70: function () {
+              this.triggerFit();
+            }.bind(this),
+            // s for selected
+            83: function () {
+              var graph = this.refs.graph.state.graph,
+                  selectedNodes = this.refs.graph.state.selectedNodes,
+                  nodeKey = null,
+                  node = null;
+
+              for (nodeKey in selectedNodes) {
+                if (selectedNodes.hasOwnProperty(nodeKey)) {
+                  node = graph.getNode(nodeKey);
+                  this.focusNode(node);
+                  break;
+                }
+              }
+            }.bind(this)
+          };
+
+      if (hotKeys[key]) {
+        hotKeys[key]();
       }
     },
     keyUp: function (event) {
@@ -400,8 +453,8 @@
         this.refs.graph.cancelPreviewEdge();
       }
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
-      if (TheGraph.metaKeyPressed) { 
-        TheGraph.metaKeyPressed = false; 
+      if (TheGraph.metaKeyPressed) {
+        TheGraph.metaKeyPressed = false;
       }
     },
     unselectAll: function (event) {
@@ -435,7 +488,7 @@
       var or = Math.floor(this.state.y / g) + (this.state.y<0 ? 1 : 0);
 
       while (row--) {
-        var col = cols; 
+        var col = cols;
         while (col--) {
           var x = Math.round(col*g+dx);
           var y = Math.round(row*g+dy);
@@ -502,7 +555,7 @@
           children: contextMenu
         };
 
-        contextModal = [ 
+        contextModal = [
           TheGraph.factories.app.createAppModalBackground(modalBGOptions)
         ];
         this.menuShown = true;

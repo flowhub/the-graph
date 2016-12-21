@@ -1,5 +1,14 @@
 language: node_js
 node_js:
-- '0.10'
+- node
+- '4.2'
 before_script:
 - npm install -g grunt-cli
+deploy:
+  provider: npm
+  email: jononor@gmail.com
+  api_key:
+    secure: JFtg/9ULiKrFDc+LreeBo2HV81f5U1BDv/8kgPGEgK4bngp/aP0qARnajtnp3Iki4yIXsny70OxVqg2aehJhPXXpbeObLnsqGj0z2uAasKzbSHl1gYF6S934DeXgihdyXDw0hoU6MTytQIZHPKYl+DxqHGS5RFw02JfytH4ZpHQ=
+  on:
+    tags: true
+    repo: flowhub/the-graph

@@ -27,10 +27,7 @@
       focusAnimationDuration: 1500
     },
     factories: {}
-  }; 
-
-  // React setup
-  React.initializeTouchEvents(true);
+  };
 
   // rAF shim
   window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -55,7 +52,7 @@
         }, 
         bubbles: true
       });
-      this.getDOMNode().dispatchEvent(tooltipEvent);
+      ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
     },
     hideTooltip: function (event) {
       if ( !this.shouldShowTooltip() ) { return; }
@@ -63,8 +60,8 @@
       var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
         bubbles: true
       });
-      if (this._lifeCycleState === "MOUNTED") {
-        this.getDOMNode().dispatchEvent(tooltipEvent);
+      if (this.isMounted()) {
+        ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
       }
     },
     componentDidMount: function () {
@@ -291,6 +288,7 @@
         html = html +'/>';
 
         return React.DOM.g({
+            className: this.props.className,
             dangerouslySetInnerHTML:{__html: html}
         });
     }
@@ -388,6 +386,10 @@
     return React.DOM.path(options);
   };
 
+  TheGraph.factories.createPolygon = function(options) {
+    return React.DOM.polygon(options);
+  };
+
   TheGraph.factories.createImg = function(options) {
     return TheGraph.SVGImage(options);
   };
@@ -405,6 +407,27 @@
     }
 
     return React.DOM.svg.apply(React.DOM.svg, args);
+  };
+  
+  TheGraph.getOffset = function(domNode){
+    var getElementOffset = function(element){
+      var offset = { top: 0, left: 0},
+          parentOffset;
+      if(!element){
+        return offset;
+      }
+      offset.top += (element.offsetTop || 0);
+      offset.left += (element.offsetLeft || 0);
+      parentOffset = getElementOffset(element.offsetParent);
+      offset.top += parentOffset.top;
+      offset.left += parentOffset.left;
+      return offset;
+    };
+    try{
+      return getElementOffset( domNode );
+    }catch(e){
+      return getElementOffset();
+    }
   };
 
 })(this);

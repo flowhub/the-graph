@@ -7,20 +7,14 @@
       "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>; Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n";
 
     var sources = {
-      scripts: ['Gruntfile.js', 'the-*/*.js'],
-      elements: ['the-*/*.html'],
+      scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html'],
+      // elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
       css: ['themes/*.css']
     };
 
     var glob = require('glob');
     var stylExpand = glob.sync('./themes/*.styl').join(' ');
-
-    var jshintOptions = { 
-      strict: true,
-      newcap: false,
-      "globals": { "Polymer": true }
-    };
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
@@ -44,7 +38,7 @@
       browserify: {
         libs: {
           files: {
-            'build/noflo.js': ['index.js'],
+            'build/the-graph.js': ['index.js'],
           },
           options: {
             transform: ['coffeeify']
@@ -55,22 +49,17 @@
         }
       },
       jshint: {
-        options: jshintOptions,
+        options: { 
+          extract: 'auto',
+          strict: true,
+          newcap: false,
+          "globals": { "Polymer": true }
+        },
         all: {
           src: sources.scripts
         },
         force: {
           src: sources.scripts,
-          options: { force: true }
-        }
-      },
-      inlinelint: {
-        options: jshintOptions,
-        all: {
-          src: sources.elements,
-        },
-        force: {
-          src: sources.elements,
           options: { force: true }
         }
       },
@@ -88,15 +77,6 @@
           files: sources.scripts,
           tasks: ['jshint:force'],
           options: {
-            // nospawn: true,
-            livereload: true
-          }
-        },
-        elements: {
-          files: sources.elements,
-          tasks: ['inlinelint:force'],
-          options: {
-            // nospawn: true,
             livereload: true
           }
         },
@@ -104,37 +84,28 @@
           files: sources.stylus,
           tasks: ['exec:build_stylus'],
           options: {
-            // nospawn: true,
             livereload: false
           }
         },
         css: {
           files: sources.css,
           options: {
-            // nospawn: true,
             livereload: true
           }
         }
       }
     });
 
-    // Only lint changed file
-    // this.event.on('watch', function(action, filepath) {
-    //   this.config('jshint.all.src', filepath);
-    //   this.config('inlinelint.all.src', filepath);
-    // }.bind(this));
-
     this.loadNpmTasks('grunt-bower-install-simple');
     this.loadNpmTasks('grunt-exec');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
-    this.loadNpmTasks('grunt-lint-inline');
     this.loadNpmTasks('grunt-contrib-connect');
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['test', 'connect:server', 'watch']);
     this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
-    this.registerTask('test', ['jshint:all', 'inlinelint:all', 'build']);
+    this.registerTask('test', ['jshint:all', 'build']);
     this.registerTask('default', ['test']);
   };
 

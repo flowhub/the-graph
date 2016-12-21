@@ -47,6 +47,7 @@
         var pasteAction = function (graph, itemKey, item) {
           var pasted = TheGraph.Clipboard.paste(graph);
           this.selectedNodes = pasted.nodes;
+          this.selectedEdges = [];
         }.bind(this);
         var pasteMenu = {
           icon: "paste",
@@ -54,35 +55,62 @@
           action: pasteAction
         };
         // Default context menu defs
+
+        var nodeActions = {
+          delete: function (graph, itemKey, item) {
+            graph.removeNode(itemKey);
+            // Remove selection
+            var newSelection = [];
+            for (var i=0, len=this.selectedNodes.length; i<len; i++){
+              var selected = this.selectedNodes[i];
+              if (selected !== item) {
+                newSelection.push(selected);
+              }
+            }
+            this.selectedNodes = newSelection;
+          }.bind(this),
+          copy: function (graph, itemKey, item) {
+            TheGraph.Clipboard.copy(graph, [itemKey]);
+          }
+        }, edgeActions = {
+          delete: function (graph, itemKey, item) {
+            graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
+            // Remove selection
+            var newSelection = [];
+            for (var i=0, len=this.selectedEdges.length; i<len; i++){
+              var selected = this.selectedEdges[i];
+              if (selected !== item) {
+                newSelection.push(selected);
+              }
+            }
+            this.selectedEdges = newSelection;
+          }.bind(this)
+        };
         this.menus = {
           main: {
             icon: "sitemap",
             e4: pasteMenu
           },
           edge: {
+            actions: edgeActions,
             icon: "long-arrow-right",
             s4: {
               icon: "trash-o",
               iconLabel: "delete",
-              action: function (graph, itemKey, item) {
-                graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
-              }
+              action: edgeActions.delete
             }
           },
           node: {
+            actions: nodeActions,
             s4: {
               icon: "trash-o",
               iconLabel: "delete",
-              action: function (graph, itemKey, item) {
-                graph.removeNode(itemKey);
-              }
+              action: nodeActions.delete
             },
             w4: {
               icon: "copy",
               iconLabel: "copy",
-              action: function (graph, itemKey, item) {
-                TheGraph.Clipboard.copy(graph, [itemKey]);
-              }
+              action:  nodeActions.copy
             }
           },
           nodeInport: {
@@ -120,7 +148,7 @@
                 while (graph.outports[pub]) {
                   count++;
                   pub = item.port + count;
-                } 
+                }
                 var priNode = graph.getNode(item.process);
                 var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
                 graph.addOutport(pub, item.process, item.port, metadata);
@@ -249,6 +277,7 @@
         noflo.graph.loadJSON(this.graph, function(nofloGraph){
           this.buildInitialLibrary(nofloGraph);
           this.nofloGraph = nofloGraph;
+          this.fire('graphInitialised', this);
         }.bind(this));
       },
       buildInitialLibrary: function (nofloGraph) {
