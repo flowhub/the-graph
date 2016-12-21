@@ -11,7 +11,14 @@ The graph widgets have the following dependencies:
 
 The project is the graph editing tool in [NoFlo UI](https://github.com/noflo/noflo-ui), replacing the older [dataflow](https://github.com/meemoo/dataflow) graph editor.
 
-## Installation
+## Examples
+
+* Simple demo. [code](./examples/demo-simple.html) |
+[Run](https://flowhub.github.io/the-graph/examples/demo-simple.html)
+* Stresstest. [code](./examples/demo-full.html) |
+[Run](https://flowhub.github.io/the-graph/examples/demo-full.html)
+
+## Building
 
 Get dependencies and build:
 
