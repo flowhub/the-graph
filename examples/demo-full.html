@@ -135,8 +135,8 @@
           // Simulate node icon updates
           var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
-            var nodes = editor.nofloGraph.nodes;
+            if (!editor.fbpGraph) { return; }
+            var nodes = editor.fbpGraph.nodes;
             if (nodes.length>0) {
               var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
@@ -148,14 +148,14 @@
           var animatingEdge1 = null;
           var animatingEdge2 = null;
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             if (animatingEdge2) {
               editor.unanimateEdge(animatingEdge2);
             }
             if (animatingEdge1) {
               animatingEdge2 = animatingEdge1;
             }
-            var edges = editor.nofloGraph.edges;
+            var edges = editor.fbpGraph.edges;
             if (edges.length>0) {
               animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
               editor.animateEdge(animatingEdge1);
@@ -165,11 +165,11 @@
           // Simulate un/triggering errors
           var errorNodeId = null;
           var makeRandomError = function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             if (errorNodeId) {
               editor.removeErrorNode(errorNodeId);
             }
-            var nodes = editor.nofloGraph.nodes;
+            var nodes = editor.fbpGraph.nodes;
             if (nodes.length>0) {
               errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               editor.addErrorNode(errorNodeId);
@@ -193,14 +193,14 @@
 
           // Focus a node
           document.getElementById("focus").addEventListener("click", function () {
-            var nodes = editor.nofloGraph.nodes;
+            var nodes = editor.fbpGraph.nodes;
             var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
             editor.focusNode(randomNode);
           });
 
           // Refresh graph
           document.getElementById("refresh").addEventListener("click", function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             editor.graph = JSON.parse(graphString);
           });
 

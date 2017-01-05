@@ -155,7 +155,7 @@
       var deltaX = Math.round( event.ddx / scale );
       var deltaY = Math.round( event.ddy / scale );
 
-      // Fires a change event on noflo graph, which triggers redraw
+      // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
         var newPos = {
           x: this.props.export.metadata.x + deltaX,

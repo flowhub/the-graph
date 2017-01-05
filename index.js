@@ -1,2 +1,2 @@
 // Build required libs
-noflo = require('noflo');
+fbpGraph = require('fbp-graph');

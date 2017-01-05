@@ -4,7 +4,7 @@
   <template>
     <the-graph id="graph"
       name="{{ graph.properties.name }}"
-      graph="{{nofloGraph}}"
+      graph="{{fbpGraph}}"
       menus="{{menus}}"
       width="{{width}}" height="{{height}}"
       pan="{{pan}}" scale="{{scale}}"
@@ -31,7 +31,7 @@
       height: 600,
       scale: 1,
       plugins: {},
-      nofloGraph: null,
+      fbpGraph: null,
       menus: null,
       autolayout: false,
       theme: "dark",
@@ -258,36 +258,36 @@
       graphChanged: function () {
         if (typeof this.graph.addNode === 'function') {
           this.buildInitialLibrary(this.graph);
-          this.nofloGraph = this.graph;
+          this.fbpGraph = this.graph;
           return;
         }
 
-        var noflo;
-        if ('noflo' in window) {
-          noflo = window.noflo;
+        var fbpGraph;
+        if ('fbpGraph' in window) {
+          fbpGraph = window.fbpGraph;
         }
-        if (!noflo && 'require' in window) {
-          noflo = require('noflo');
+        if (!fbpGraph && 'require' in window) {
+          fbpGraph = require('fbp-graph');
         }
-        if (!noflo) {
-          console.warn('Missing noflo dependency! Should be built with Component.io or Browserify to require it.');
+        if (!fbpGraph) {
+          console.warn('Missing fbp-graph dependency! Should be built with Webpack/Browserify to require it, or accessible on window');
           return;
         }
 
-        noflo.graph.loadJSON(this.graph, function(nofloGraph){
-          this.buildInitialLibrary(nofloGraph);
-          this.nofloGraph = nofloGraph;
+        fbpGraph.graph.loadJSON(this.graph, function(err, graph){
+          this.buildInitialLibrary(graph);
+          this.fbpGraph = graph;
           this.fire('graphInitialised', this);
         }.bind(this));
       },
-      buildInitialLibrary: function (nofloGraph) {
+      buildInitialLibrary: function (fbpGraph) {
         /*if (Object.keys(this.$.graph.library).length !== 0) {
           // We already have a library, skip
           // TODO what about loading a new graph? Are we making a new editor?
           return;
         }*/
 
-        nofloGraph.nodes.forEach(function (node) {
+        fbpGraph.nodes.forEach(function (node) {
           var component = {
             name: node.component,
             icon: 'cog',
@@ -296,8 +296,8 @@
             outports: []
           };
 
-          Object.keys(nofloGraph.inports).forEach(function (pub) {
-            var exported = nofloGraph.inports[pub];
+          Object.keys(fbpGraph.inports).forEach(function (pub) {
+            var exported = fbpGraph.inports[pub];
             if (exported.process === node.id) {
               for (var i = 0; i < component.inports.length; i++) {
                 if (component.inports[i].name === exported.port) {
@@ -310,8 +310,8 @@
               });
             }
           });
-          Object.keys(nofloGraph.outports).forEach(function (pub) {
-            var exported = nofloGraph.outports[pub];
+          Object.keys(fbpGraph.outports).forEach(function (pub) {
+            var exported = fbpGraph.outports[pub];
             if (exported.process === node.id) {
               for (var i = 0; i < component.outports.length; i++) {
                 if (component.outports[i].name === exported.port) {
@@ -324,7 +324,7 @@
               });
             }
           });
-          nofloGraph.initializers.forEach(function (iip) {
+          fbpGraph.initializers.forEach(function (iip) {
             if (iip.to.node === node.id) {
               for (var i = 0; i < component.inports.length; i++) {
                 if (component.inports[i].name === iip.to.port) {
@@ -338,7 +338,7 @@
             }
           });
 
-          nofloGraph.edges.forEach(function (edge) {
+          fbpGraph.edges.forEach(function (edge) {
             var i;
             if (edge.from.node === node.id) {
               for (i = 0; i < component.outports.length; i++) {
@@ -422,7 +422,7 @@
         return this.$.graph.library;
       },
       toJSON: function () {
-        return this.nofloGraph.toJSON();
+        return this.fbpGraph.toJSON();
       }
     });
 
