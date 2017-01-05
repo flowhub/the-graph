@@ -4,6 +4,7 @@ node_js:
 - '4.2'
 before_script:
 - npm install -g grunt-cli
+script: grunt crossbrowser
 deploy:
   provider: npm
   email: jononor@gmail.com
