@@ -82,7 +82,7 @@
 
   TheGraph.Graph = React.createFactory( React.createClass({
     displayName: "TheGraphGraph",
-    mixins: [TheGraph.mixins.FakeMouse],
+    mixins: [],
     getInitialState: function() {
       return {
         graph: this.props.graph,
