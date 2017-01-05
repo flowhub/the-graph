@@ -7,7 +7,10 @@
   "main": "the-graph-editor/index.html",
   "dependencies": {
     "fbp-graph": "^0.1.0",
-    "tv4": "^1.2.7"
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "tv4": "^1.2.7",
+    "webcomponents.js": "^0.6.0"
   },
   "devDependencies": {
     "bower": "^1.7.9",
