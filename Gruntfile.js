@@ -7,7 +7,7 @@
       "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>; Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n";
 
     var sources = {
-      scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html'],
+      scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html', 'index.js'],
       // elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
       css: ['themes/*.css'],
@@ -88,7 +88,7 @@
       watch: {
         scripts: {
           files: sources.scripts,
-          tasks: ['jshint:force'],
+          tasks: ['jshint:force', 'browserify:libs'],
           options: {
             livereload: true
           }
