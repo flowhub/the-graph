@@ -23,7 +23,6 @@
     "grunt-contrib-jshint": "~1.0.0",
     "grunt-contrib-watch": "~1.0.0",
     "grunt-exec": "~1.0.1",
-    "grunt-mocha-phantomjs": "^4.0.0",
     "mocha": "^3.2.0",
     "stylus": "~0.54.5"
   },

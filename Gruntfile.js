@@ -108,23 +108,12 @@
         },
         tests: {
           files: sources.tests,
-          tasks: ['mocha_phantomjs'],
+          tasks: ['coffee'],
           options: {
             livereload: false
           }
         },
       },
-      mocha_phantomjs: {
-        options: {
-          reporter: 'spec',
-          failWithOutput: true
-        },
-        all: {
-          options: {
-            urls: ['http://localhost:3000/spec/runner.html']
-          }
-        }
-      }
     });
 
     this.loadNpmTasks('grunt-bower-install-simple');
@@ -134,11 +123,10 @@
     this.loadNpmTasks('grunt-contrib-connect');
     this.loadNpmTasks('grunt-contrib-coffee');
     this.loadNpmTasks('grunt-browserify');
-    this.loadNpmTasks('grunt-mocha-phantomjs');
 
     this.registerTask('dev', ['test', 'watch']);
     this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
-    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server', 'mocha_phantomjs']);
+    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
     this.registerTask('default', ['test']);
   };
 
