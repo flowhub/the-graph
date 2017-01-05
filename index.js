@@ -19,4 +19,6 @@ require("./the-graph/the-graph-menu.js").register(g);
 require("./the-graph/the-graph-clipboard.js").register(g);
 require("./the-graph/font-awesome-unicode-map.js").register(g);
 
+g.TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
+
 module.exports = g.TheGraph;
