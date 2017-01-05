@@ -39,4 +39,4 @@ var generateFile = function (err, data) {
   });
 };
 
-fs.readFile( __dirname+'/../bower_components/font-awesome/less/variables.less', 'utf8', generateFile );
+fs.readFile( __dirname+'/../node_modules/font-awesome/less/variables.less', 'utf8', generateFile );
