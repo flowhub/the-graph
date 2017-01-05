@@ -46,43 +46,10 @@
         this.themeChanged();
       },
       themeChanged: function () {
-        // TODO: move to JS
-        if (this.theme === "dark") {
-          this.fillStyle = "hsl(184, 8%, 10%)";
-          this.strokeStyle = "hsl(180, 11%, 70%)";
-          this.edgeColors = [
-            "white",
-            "hsl(  0, 100%, 46%)",
-            "hsl( 35, 100%, 46%)",
-            "hsl( 60, 100%, 46%)",
-            "hsl(135, 100%, 46%)",
-            "hsl(160, 100%, 46%)",
-            "hsl(185, 100%, 46%)",
-            "hsl(210, 100%, 46%)",
-            "hsl(285, 100%, 46%)",
-            "hsl(310, 100%, 46%)",
-            "hsl(335, 100%, 46%)"
-          ];
-
-        } else {
-          // Light
-          this.fillStyle = "hsl(184, 8%, 75%)";
-          this.strokeStyle = "hsl(180, 11%, 20%)";
-          // Tweaked to make thin lines more visible
-          this.edgeColors = [
-            "hsl(  0,   0%, 50%)",
-            "hsl(  0, 100%, 40%)",
-            "hsl( 29, 100%, 40%)",
-            "hsl( 47, 100%, 40%)",
-            "hsl(138, 100%, 40%)",
-            "hsl(160,  73%, 50%)",
-            "hsl(181, 100%, 40%)",
-            "hsl(216, 100%, 40%)",
-            "hsl(260, 100%, 40%)",
-            "hsl(348, 100%, 50%)",
-            "hsl(328, 100%, 40%)"
-          ];
-        }
+        var style = TheGraph.thumb.styleFromTheme(this.theme);
+        this.edgeColors = style.edgeColors;
+        this.fillStyle = style.fill;
+        this.strokeStyle = style.stroke;
         // Redraw
         this.redrawGraph();
       },

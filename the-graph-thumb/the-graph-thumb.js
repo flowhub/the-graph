@@ -20,6 +20,46 @@ function drawEdge(context, scale, source, target, route, properties) {
   }
 }
 
+function styleFromTheme(theme) {
+  var style = {};
+  if (theme === "dark") {
+    style.fill = "hsl(184, 8%, 10%)";
+    style.stroke = "hsl(180, 11%, 70%)";
+    style.edgeColors = [
+      "white",
+      "hsl(  0, 100%, 46%)",
+      "hsl( 35, 100%, 46%)",
+      "hsl( 60, 100%, 46%)",
+      "hsl(135, 100%, 46%)",
+      "hsl(160, 100%, 46%)",
+      "hsl(185, 100%, 46%)",
+      "hsl(210, 100%, 46%)",
+      "hsl(285, 100%, 46%)",
+      "hsl(310, 100%, 46%)",
+      "hsl(335, 100%, 46%)"
+    ];
+
+  } else {
+    // Light
+    style.fill = "hsl(184, 8%, 75%)";
+    style.stroke = "hsl(180, 11%, 20%)";
+    // Tweaked to make thin lines more visible
+    style.edgeColors = [
+      "hsl(  0,   0%, 50%)",
+      "hsl(  0, 100%, 40%)",
+      "hsl( 29, 100%, 40%)",
+      "hsl( 47, 100%, 40%)",
+      "hsl(138, 100%, 40%)",
+      "hsl(160,  73%, 50%)",
+      "hsl(181, 100%, 40%)",
+      "hsl(216, 100%, 40%)",
+      "hsl(260, 100%, 40%)",
+      "hsl(348, 100%, 50%)",
+      "hsl(328, 100%, 40%)"
+    ];
+  }
+  return style;
+}
 
 function renderThumbnail(context, graph, properties) {
 
@@ -176,4 +216,5 @@ function renderThumbnail(context, graph, properties) {
 
 module.exports = {
   render: renderThumbnail,
+  styleFromTheme: styleFromTheme,
 };
