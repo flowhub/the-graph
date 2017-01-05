@@ -63,9 +63,14 @@
     return TheGraph.ModalBG(options);
   }
 
+  var mixins = [];
+  if (window.React.Animate) {
+    mixins.push(React.Animate);
+  }
+
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
-    mixins: [React.Animate],
+    mixins: mixins,
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -278,6 +283,12 @@
       var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
       var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
       var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
+
+      // Animation not available, jump right there
+      if (!this.animate) {
+        this.setState({ x: fit.x, y: fit.y, scale: fit.scale });
+        return;
+      }
 
       // Animate zoom-out then zoom-in
       this.animate({
