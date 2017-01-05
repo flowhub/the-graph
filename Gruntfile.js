@@ -36,6 +36,18 @@
           command: 'node ./scripts/build-font-awesome-javascript.js'
         }
       },
+      coffee: {
+        specs: {
+          options: {
+            bare: true
+          },
+          expand: true,
+          cwd: 'spec',
+          src: ['**.coffee'],
+          dest: 'spec',
+          ext: '.js'
+        }
+      },
       browserify: {
         libs: {
           files: {
@@ -120,12 +132,13 @@
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-contrib-connect');
+    this.loadNpmTasks('grunt-contrib-coffee');
     this.loadNpmTasks('grunt-browserify');
     this.loadNpmTasks('grunt-mocha-phantomjs');
 
     this.registerTask('dev', ['test', 'watch']);
     this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
-    this.registerTask('test', ['jshint:all', 'build', 'connect:server', 'mocha_phantomjs']);
+    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server', 'mocha_phantomjs']);
     this.registerTask('default', ['test']);
   };
 
