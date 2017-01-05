@@ -1,5 +1,16 @@
 ## dev
 
+## 0.6.0 (2017 January 5)
+
+* Add all dependencies besides Polymer to NPM.
+In the fututure NPM will be the recommended way to install, and Bower is considered deprecated.
+
+## 0.5.0 (2017 January 5)
+
+* Depend on [fbp-graph](https://github.com/flowbased/fbp-graph) instead of NoFlo.
+Build size significantly reduced.
+* Examples were cleaned up and can now be found under examples/
+
 ## 0.4.4 (2016 July 27)
 
 * Arrows on edges (#277) thanks @ifitzpatrick
