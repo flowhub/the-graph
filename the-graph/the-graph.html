@@ -247,7 +247,7 @@
         var i, len;
         for (i=0, len = children.length; i<len; i++) {
           var klayNode = children[i];
-          var nofloNode = this.graph.getNode(klayNode.id);
+          var fbpNode = this.graph.getNode(klayNode.id);
 
           // Encode nodes inside groups
           if (klayNode.children) {
@@ -265,7 +265,7 @@
           }
 
           // Encode nodes outside groups
-          if (nofloNode) {
+          if (fbpNode) {
             this.graph.setNodeMetadata(klayNode.id, {
               x: Math.round(klayNode.x/this.snap)*this.snap,
               y: Math.round(klayNode.y/this.snap)*this.snap

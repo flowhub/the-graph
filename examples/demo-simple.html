@@ -156,14 +156,14 @@
             x: Math.round(Math.random()*800),
             y: Math.round(Math.random()*600)
           };
-          var newNode = editor.nofloGraph.addNode(id, component, metadata);
+          var newNode = editor.fbpGraph.addNode(id, component, metadata);
           return newNode;
         };
         document.getElementById("addnode").addEventListener("click", addnode);
 
         // Add edge button
         var addedge = function (outNodeID) {
-          var nodes = editor.nofloGraph.nodes;
+          var nodes = editor.fbpGraph.nodes;
           var len = nodes.length;
           if ( len<1 ) { return; }
           var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
@@ -171,7 +171,7 @@
           var port1 = 'out' + Math.floor(Math.random()*3);
           var port2 = 'in' + Math.floor(Math.random()*12);
           var meta = { route: Math.floor(Math.random()*10) };
-          var newEdge = editor.nofloGraph.addEdge(node1, port1, node2, port2, meta);
+          var newEdge = editor.fbpGraph.addEdge(node1, port1, node2, port2, meta);
           return newEdge;
         };
         document.getElementById("addedge").addEventListener("click", addedge);
@@ -197,7 +197,7 @@
 
         // Get graph button
         document.getElementById("get").addEventListener("click", function () {
-          var graphJSON = JSON.stringify(editor.nofloGraph);
+          var graphJSON = JSON.stringify(editor.fbpGraph);
           alert(graphJSON);
           //you can use the var graphJSON to save the graph definition in a file/database
         });
