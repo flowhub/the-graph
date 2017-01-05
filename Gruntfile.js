@@ -51,7 +51,7 @@
       browserify: {
         libs: {
           files: {
-            'build/the-graph.js': ['index.js'],
+            'dist/the-graph.js': ['index.js'],
           },
           options: {
             transform: ['coffeeify'],
