@@ -10,7 +10,8 @@
       scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html'],
       // elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
-      css: ['themes/*.css']
+      css: ['themes/*.css'],
+      tests: ['spec/*.coffee', 'spec/runner.html']
     };
 
     var glob = require('glob');
@@ -33,6 +34,18 @@
         },
         build_fa: {
           command: 'node ./scripts/build-font-awesome-javascript.js'
+        }
+      },
+      coffee: {
+        specs: {
+          options: {
+            bare: true
+          },
+          expand: true,
+          cwd: 'spec',
+          src: ['**.coffee'],
+          dest: 'spec',
+          ext: '.js'
         }
       },
       browserify: {
@@ -92,6 +105,31 @@
           options: {
             livereload: true
           }
+        },
+        tests: {
+          files: sources.tests,
+          tasks: ['coffee'],
+          options: {
+            livereload: false
+          }
+        },
+      },
+      'saucelabs-mocha': {
+        all: {
+          options: {
+            urls: ['http://127.0.0.1:3000/spec/runner.html'],
+            browsers: [
+              {
+                browserName: 'googlechrome',
+                version: '39'
+              }
+            ],
+            build: process.env.TRAVIS_JOB_ID,
+            testname: 'the-graph browser tests',
+            tunnelTimeout: 5,
+            concurrency: 1,
+            detailedError: true
+          }
         }
       }
     });
@@ -101,11 +139,14 @@
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-contrib-connect');
+    this.loadNpmTasks('grunt-contrib-coffee');
     this.loadNpmTasks('grunt-browserify');
+    this.loadNpmTasks('grunt-saucelabs');
 
-    this.registerTask('dev', ['test', 'connect:server', 'watch']);
+    this.registerTask('dev', ['test', 'watch']);
     this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
-    this.registerTask('test', ['jshint:all', 'build']);
+    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
+    this.registerTask('crossbrowser', ['test', 'saucelabs-mocha']);
     this.registerTask('default', ['test']);
   };
 
