@@ -106,7 +106,7 @@
       this.props.graph.on("removeEdge", this.resetPortRoute);
       this.props.graph.on("removeInitial", this.resetPortRoute);
 
-      // Listen to noflo graph object's events
+      // Listen to fbp-graph graph object's events
       this.props.graph.on("changeNode", this.markDirty);
       this.props.graph.on("changeInport", this.markDirty);
       this.props.graph.on("changeOutport", this.markDirty);
