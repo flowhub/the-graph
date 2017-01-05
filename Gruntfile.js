@@ -122,12 +122,6 @@
               {
                 browserName: 'googlechrome',
                 version: '39'
-              }, {
-                browserName: 'safari',
-                version: '9'
-              }, {
-                browserName: 'internet explorer',
-                version: '11'
               }
             ],
             build: process.env.TRAVIS_JOB_ID,
