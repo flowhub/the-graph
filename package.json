@@ -6,7 +6,8 @@
   "license": "MIT",
   "main": "the-graph-editor/index.html",
   "dependencies": {
-    "fbp-graph": "^0.1.0"
+    "fbp-graph": "^0.1.0",
+    "tv4": "^1.2.7"
   },
   "devDependencies": {
     "bower": "^1.7.9",
