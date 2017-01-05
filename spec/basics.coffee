@@ -2,9 +2,9 @@
 chai = window.chai or require 'chai'
 
 parseFBP = (fbpString, callback) ->
-  noflo = window.noflo or require 'noflo'
-  noflo.graph.loadFBP fbpString, (err, n) ->
-    if err instanceof noflo.Graph
+  fbpGraph = window.fbpGraph or require 'fbp-graph'
+  fbpGraph.graph.loadFBP fbpString, (err, n) ->
+    if err instanceof fbpGraph.Graph
       # legacy NoFlo, no error argument
       [err, n] = [null, err]
     return callback err if err
