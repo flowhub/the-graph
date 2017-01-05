@@ -17,6 +17,8 @@ The project is the graph editing tool in [NoFlo UI](https://github.com/noflo/nof
 [Run](https://flowhub.github.io/the-graph/examples/demo-simple.html)
 * Stresstest. [code](./examples/demo-full.html) |
 [Run](https://flowhub.github.io/the-graph/examples/demo-full.html)
+* Thumbnail. [code](./examples/demo-thumbnail.html) |
+[Run](https://flowhub.github.io/the-graph/examples/demo-thumbnail.html)
 
 ## Building
 
