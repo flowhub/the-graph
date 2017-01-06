@@ -1,4 +1,20 @@
 
+function calculateStyleFromTheme(theme) {
+  var style = {};
+  if (theme === "dark") {
+    style.viewBoxBorder =  "hsla(190, 100%, 80%, 0.4)";
+    style.viewBoxBorder2 = "hsla( 10,  60%, 32%, 0.3)";
+    style.outsideFill = "hsla(0, 0%, 0%, 0.4)";
+    style.backgroundColor = "hsla(0, 0%, 0%, 0.9)";
+  } else {
+    style.viewBoxBorder =  "hsla(190, 100%, 20%, 0.8)";
+    style.viewBoxBorder2 = "hsla( 10,  60%, 80%, 0.8)";
+    style.outsideFill = "hsla(0, 0%, 100%, 0.4)";
+    style.backgroundColor = "hsla(0, 0%, 100%, 0.9)";
+  }
+  return style;
+}
+
 function renderViewRectangle(context, viewrect, props) {
 
   context.clearRect(0, 0, props.width, props.height);
@@ -71,5 +87,6 @@ function renderViewRectangle(context, viewrect, props) {
 }
 
 module.exports = {
-  render: renderViewRectangle
+  render: renderViewRectangle,
+  calculateStyleFromTheme: calculateStyleFromTheme,
 };

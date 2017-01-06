@@ -119,17 +119,11 @@
         this.scale = this.editor.scale;
       },
       editorThemeChanged: function () {
-        if (this.editor.theme === "dark") {
-          this.viewBoxBorder =  "hsla(190, 100%, 80%, 0.4)";
-          this.viewBoxBorder2 = "hsla( 10,  60%, 32%, 0.3)";
-          this.outsideFill = "hsla(0, 0%, 0%, 0.4)";
-          this.backgroundColor = "hsla(0, 0%, 0%, 0.9)";
-        } else {
-          this.viewBoxBorder =  "hsla(190, 100%, 20%, 0.8)";
-          this.viewBoxBorder2 = "hsla( 10,  60%, 80%, 0.8)";
-          this.outsideFill = "hsla(0, 0%, 100%, 0.4)";
-          this.backgroundColor = "hsla(0, 0%, 100%, 0.9)";
-        }
+        var style = TheGraph.nav.calculateStyleFromTheme(this.theme);
+        this.backgroundColor = style.backgroundColor;
+        this.viewBoxBorder = style.viewBoxBorder;
+        this.viewBoxBorder2 = style.viewBoxBorder2;
+        this.outsideFill = style.outsideFill;
         this.style.backgroundColor = this.backgroundColor;
         // Redraw rectangle
         this.viewrectangleChanged();
