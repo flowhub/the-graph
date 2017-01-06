@@ -222,57 +222,9 @@
           }
         });
       },
-      applyAutolayout: function (layoutedKGraph) {
+      applyAutolayout: function (keilerGraph) {
         this.graph.startTransaction("autolayout");
-
-        // Update original graph nodes with the new coordinates from KIELER graph
-        var children = layoutedKGraph.children.slice();
-
-        var i, len;
-        for (i=0, len = children.length; i<len; i++) {
-          var klayNode = children[i];
-          var fbpNode = this.graph.getNode(klayNode.id);
-
-          // Encode nodes inside groups
-          if (klayNode.children) {
-            var klayChildren = klayNode.children;
-            var idx;
-            for (idx in klayChildren) {
-              var klayChild = klayChildren[idx];
-              if (klayChild.id) {
-                this.graph.setNodeMetadata(klayChild.id, {
-                  x: Math.round((klayNode.x + klayChild.x)/this.snap)*this.snap,
-                  y: Math.round((klayNode.y + klayChild.y)/this.snap)*this.snap
-                });
-              }
-            }
-          }
-
-          // Encode nodes outside groups
-          if (fbpNode) {
-            this.graph.setNodeMetadata(klayNode.id, {
-              x: Math.round(klayNode.x/this.snap)*this.snap,
-              y: Math.round(klayNode.y/this.snap)*this.snap
-            });
-          } else {
-            // Find inport or outport
-            var idSplit = klayNode.id.split(":::");
-            var expDirection = idSplit[0];
-            var expKey = idSplit[1];
-            if (expDirection==="inport" && this.graph.inports[expKey]) {
-              this.graph.setInportMetadata(expKey, {
-                x: Math.round(klayNode.x/this.snap)*this.snap,
-                y: Math.round(klayNode.y/this.snap)*this.snap
-              });
-            } else if (expDirection==="outport" && this.graph.outports[expKey]) {
-              this.graph.setOutportMetadata(expKey, {
-                x: Math.round(klayNode.x/this.snap)*this.snap,
-                y: Math.round(klayNode.y/this.snap)*this.snap
-              });
-            }
-          }
-        }
-
+        TheGraph.autolayout.applyToGraph(this.graph, keilerGraph, { snap: this.snap });
         this.graph.endTransaction("autolayout");
 
         // Fit to window
