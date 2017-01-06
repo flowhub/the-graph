@@ -22,5 +22,6 @@ require("./the-graph/font-awesome-unicode-map.js").register(g);
 g.TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
 g.TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
 g.TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
+g.TheGraph.library = require('./the-graph/the-graph-library.js');
 
 module.exports = g.TheGraph;
