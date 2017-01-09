@@ -7,7 +7,7 @@
       "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>; Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n";
 
     var sources = {
-      scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html'],
+      scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html', 'index.js'],
       // elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
       css: ['themes/*.css'],
@@ -51,20 +51,20 @@
       browserify: {
         libs: {
           files: {
-            'build/the-graph.js': ['index.js'],
+            'dist/the-graph.js': ['index.js'],
           },
           options: {
-            transform: ['coffeeify']
-          },
-          browserifyOptions: {
-            require: 'noflo'
+            transform: ['coffeeify'],
+            browserifyOptions: {
+              standalone: 'TheGraph'
+            }
           }
         }
       },
       jshint: {
         options: { 
           extract: 'auto',
-          strict: true,
+          strict: false,
           newcap: false,
           "globals": { "Polymer": true }
         },
@@ -88,7 +88,7 @@
       watch: {
         scripts: {
           files: sources.scripts,
-          tasks: ['jshint:force'],
+          tasks: ['jshint:force', 'browserify:libs'],
           options: {
             livereload: true
           }

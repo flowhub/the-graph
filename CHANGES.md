@@ -1,5 +1,14 @@
 ## dev
 
+## 0.7.0 (unreleased)
+
+Breaking changes
+
+* Polymer elements no longer automatically include the neccesary JS files.
+Instead users must include `dist/the-graph.js`, which bundles the needed JavaScript and provides API under `window.TheGraph`.
+The file is included in `the-graph` NPM packages.
+This is preparation for removing the Polymer dependency, instead providing JS APIs and React components.
+
 ## 0.6.0 (2017 January 5)
 
 * Add all dependencies besides Polymer to NPM.

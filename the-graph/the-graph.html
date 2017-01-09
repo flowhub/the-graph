@@ -7,22 +7,6 @@
     <div id="svgcontainer"></div>
   </template>
 
-  <script type="text/javascript" src="./the-graph.js"></script>
-  <script type="text/javascript" src="./font-awesome-unicode-map.js"></script>
-  <script type="text/javascript" src="./the-graph-app.js"></script>
-  <script type="text/javascript" src="./the-graph-graph.js"></script>
-  <script type="text/javascript" src="./the-graph-node.js"></script>
-  <script type="text/javascript" src="./the-graph-node-menu.js"></script>
-  <script type="text/javascript" src="./the-graph-node-menu-port.js"></script>
-  <script type="text/javascript" src="./the-graph-node-menu-ports.js"></script>
-  <script type="text/javascript" src="./the-graph-port.js"></script>
-  <script type="text/javascript" src="./the-graph-edge.js"></script>
-  <script type="text/javascript" src="./the-graph-iip.js"></script>
-  <script type="text/javascript" src="./the-graph-group.js"></script>
-  <script type="text/javascript" src="./the-graph-tooltip.js"></script>
-  <script type="text/javascript" src="./the-graph-menu.js"></script>
-  <script type="text/javascript" src="./the-graph-clipboard.js"></script>
-
   <script>
   (function(){
     "use strict";
@@ -238,57 +222,9 @@
           }
         });
       },
-      applyAutolayout: function (layoutedKGraph) {
+      applyAutolayout: function (keilerGraph) {
         this.graph.startTransaction("autolayout");
-
-        // Update original graph nodes with the new coordinates from KIELER graph
-        var children = layoutedKGraph.children.slice();
-
-        var i, len;
-        for (i=0, len = children.length; i<len; i++) {
-          var klayNode = children[i];
-          var fbpNode = this.graph.getNode(klayNode.id);
-
-          // Encode nodes inside groups
-          if (klayNode.children) {
-            var klayChildren = klayNode.children;
-            var idx;
-            for (idx in klayChildren) {
-              var klayChild = klayChildren[idx];
-              if (klayChild.id) {
-                this.graph.setNodeMetadata(klayChild.id, {
-                  x: Math.round((klayNode.x + klayChild.x)/this.snap)*this.snap,
-                  y: Math.round((klayNode.y + klayChild.y)/this.snap)*this.snap
-                });
-              }
-            }
-          }
-
-          // Encode nodes outside groups
-          if (fbpNode) {
-            this.graph.setNodeMetadata(klayNode.id, {
-              x: Math.round(klayNode.x/this.snap)*this.snap,
-              y: Math.round(klayNode.y/this.snap)*this.snap
-            });
-          } else {
-            // Find inport or outport
-            var idSplit = klayNode.id.split(":::");
-            var expDirection = idSplit[0];
-            var expKey = idSplit[1];
-            if (expDirection==="inport" && this.graph.inports[expKey]) {
-              this.graph.setInportMetadata(expKey, {
-                x: Math.round(klayNode.x/this.snap)*this.snap,
-                y: Math.round(klayNode.y/this.snap)*this.snap
-              });
-            } else if (expDirection==="outport" && this.graph.outports[expKey]) {
-              this.graph.setOutportMetadata(expKey, {
-                x: Math.round(klayNode.x/this.snap)*this.snap,
-                y: Math.round(klayNode.y/this.snap)*this.snap
-              });
-            }
-          }
-        }
-
+        TheGraph.autolayout.applyToGraph(this.graph, keilerGraph, { snap: this.snap });
         this.graph.endTransaction("autolayout");
 
         // Fit to window
@@ -376,64 +312,6 @@
           this.rerender({libraryDirty:true});
         }.bind(this), 200);
       },
-      mergeComponentDefinition: function (component, definition) {
-        // In cases where a component / subgraph ports change,
-        // we don't want the connections hanging in middle of node
-        // TODO visually indicate that port is a ghost
-        if (component === definition) {
-          return definition;
-        }
-        var _i, _j, _len, _len1, exists;
-        var cInports = component.inports;
-        var dInports = definition.inports;
-
-        if (cInports !== dInports) {
-          for (_i = 0, _len = cInports.length; _i < _len; _i++) {
-            var cInport = cInports[_i];
-            exists = false;
-            for (_j = 0, _len1 = dInports.length; _j < _len1; _j++) {
-              var dInport = dInports[_j];
-              if (cInport.name === dInport.name) {
-                exists = true;
-              }
-            }
-            if (!exists) {
-              dInports.push(cInport);
-            }
-          }
-        }
-
-        var cOutports = component.outports;
-        var dOutports = definition.outports;
-
-        if (cOutports !== dOutports) {
-          for (_i = 0, _len = cOutports.length; _i < _len; _i++) {
-            var cOutport = cOutports[_i];
-            exists = false;
-            for (_j = 0, _len1 = dOutports.length; _j < _len1; _j++) {
-              var dOutport = dOutports[_j];
-              if (cOutport.name === dOutport.name) {
-                exists = true;
-              }
-            }
-            if (!exists) {
-              dOutports.push(cOutport);
-            }
-          }
-        }
-
-        if (definition.icon !== 'cog') {
-          // Use the latest icon given
-          component.icon = definition.icon;
-        } else {
-          // we should use the icon from the library
-          definition.icon = component.icon;
-        }
-        // a component could also define a svg icon
-        definition.iconsvg = component.iconsvg;
-
-        return definition;
-      },
       registerComponent: function (definition, generated) {
         var component = this.library[definition.name];
         var def = definition;
@@ -442,7 +320,7 @@
             // Don't override real one with generated dummy
             return;
           }
-          def = this.mergeComponentDefinition(component, definition);
+          def = TheGraph.library.mergeComponentDefinition(component, definition);
         }
         this.library[definition.name] = def;
         // So changes are rendered

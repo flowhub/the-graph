@@ -1,5 +1,4 @@
-(function (context) {
-  "use strict";
+module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
 
@@ -625,4 +624,4 @@
   }));
 
 
-})(this);
+};
