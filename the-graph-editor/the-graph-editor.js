@@ -43,7 +43,7 @@ function getDefaultMenus(editor) {
         }
       }
       this.selectedEdges = newSelection;
-    }.bind(this)
+    }.bind(editor)
   };
 
   var menus = {
