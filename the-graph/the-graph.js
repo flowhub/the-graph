@@ -1,5 +1,4 @@
-(function (context) {
-  "use strict";
+module.exports.register = function (context) {
 
   var defaultNodeSize = 72;
   var defaultNodeRadius = 8;
@@ -29,11 +28,13 @@
     factories: {}
   };
 
-  // rAF shim
-  window.requestAnimationFrame = window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.msRequestAnimationFrame;
+  if (typeof window !== 'undefined') {
+    // rAF shim
+    window.requestAnimationFrame = window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.msRequestAnimationFrame;
+  }
 
   // Mixins to use throughout project
   TheGraph.mixins = {};
@@ -430,4 +431,4 @@
     }
   };
 
-})(this);
+};

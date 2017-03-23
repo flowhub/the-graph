@@ -26,10 +26,10 @@ var generateFile = function (err, data) {
   });
 
   var output = "/*\n  this file is generated via `grunt build` \n*/\n\n"+
-    "(function (context) {\n"+
-    "\"use strict\";\n\n"+
+    "module.exports.register = function (context) {\n"+
+    "\n"+
     "context.TheGraph.FONT_AWESOME = "+JSON.stringify(icons, null, 2)+";\n\n"+
-    "})(this);";
+    "};";
 
   fs.writeFile(__dirname+'/../the-graph/font-awesome-unicode-map.js', output, function (err) {
     if (err) {
@@ -39,4 +39,4 @@ var generateFile = function (err, data) {
   });
 };
 
-fs.readFile( __dirname+'/../bower_components/font-awesome/less/variables.less', 'utf8', generateFile );
+fs.readFile( __dirname+'/../node_modules/font-awesome/less/variables.less', 'utf8', generateFile);

@@ -2,8 +2,8 @@
  * Created by mpricope on 05.09.14.
  */
 
-(function (context) {
-  "use strict";
+module.exports.register = function (context) {
+
   var TheGraph = context.TheGraph;
 
   TheGraph.Clipboard = {};
@@ -78,4 +78,4 @@
     return pasted;
   };
 
-})(this);
+};

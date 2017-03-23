@@ -4,17 +4,17 @@
     <title>Graph Editor</title>
     <meta charset="utf-8">
 
-    <!-- Bower Libraries -->
-    <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
-    <script src="../bower_components/react/react-with-addons.js"></script>
-    <script src="../bower_components/react/react-dom.js"></script>
-    <script src="../bower_components/klayjs-noflo/klay-noflo.js"></script>
-    <script src="../bower_components/hammerjs/hammer.min.js"></script>
+    <!-- Libraries -->
+    <script src="../node_modules/webcomponents.js/webcomponents.js"></script>
+    <script src="../node_modules/react/dist/react.js"></script>
+    <script src="../node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../node_modules/klayjs-noflo/klay-noflo.js"></script>
+    <script src="../node_modules/hammerjs/hammer.min.js"></script>
     <script src="../bower_components/ease-djdeath/index.js"></script>
     <script src="../bower_components/react.animate-djdeath/react.animate.js"></script>
 
     <!-- Browserify Libraries -->
-    <script src="../build/the-graph.js"></script>
+    <script src="../dist/the-graph.js"></script>
 
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
@@ -22,16 +22,16 @@
     <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
     <!-- Fonts -->
-    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
     <style>
       @font-face {
         /* we want the svg version */
         font-family: 'FontAwesomeSVG';
-        src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), 
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
+        src: url('../node_modules/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), 
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), 
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
         font-weight: normal;
         font-style: normal;
       }
@@ -135,8 +135,8 @@
           // Simulate node icon updates
           var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
-            var nodes = editor.nofloGraph.nodes;
+            if (!editor.fbpGraph) { return; }
+            var nodes = editor.fbpGraph.nodes;
             if (nodes.length>0) {
               var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
@@ -148,14 +148,14 @@
           var animatingEdge1 = null;
           var animatingEdge2 = null;
           window.setInterval(function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             if (animatingEdge2) {
               editor.unanimateEdge(animatingEdge2);
             }
             if (animatingEdge1) {
               animatingEdge2 = animatingEdge1;
             }
-            var edges = editor.nofloGraph.edges;
+            var edges = editor.fbpGraph.edges;
             if (edges.length>0) {
               animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
               editor.animateEdge(animatingEdge1);
@@ -165,11 +165,11 @@
           // Simulate un/triggering errors
           var errorNodeId = null;
           var makeRandomError = function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             if (errorNodeId) {
               editor.removeErrorNode(errorNodeId);
             }
-            var nodes = editor.nofloGraph.nodes;
+            var nodes = editor.fbpGraph.nodes;
             if (nodes.length>0) {
               errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               editor.addErrorNode(errorNodeId);
@@ -193,14 +193,14 @@
 
           // Focus a node
           document.getElementById("focus").addEventListener("click", function () {
-            var nodes = editor.nofloGraph.nodes;
+            var nodes = editor.fbpGraph.nodes;
             var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
             editor.focusNode(randomNode);
           });
 
           // Refresh graph
           document.getElementById("refresh").addEventListener("click", function () {
-            if (!editor.nofloGraph) { return; }
+            if (!editor.fbpGraph) { return; }
             editor.graph = JSON.parse(graphString);
           });
 

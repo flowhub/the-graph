@@ -4,17 +4,17 @@
     <title>Graph Editor Demo</title>
     <meta charset="utf-8">
 
-    <!-- Bower Libraries -->
-    <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
-    <script src="../bower_components/react/react-with-addons.js"></script>
-    <script src="../bower_components/react/react-dom.js"></script>
-    <script src="../bower_components/klayjs-noflo/klay-noflo.js"></script>
-    <script src="../bower_components/hammerjs/hammer.min.js"></script>
+    <!-- Libraries -->
+    <script src="../node_modules/webcomponents.js/webcomponents.js"></script>
+    <script src="../node_modules/react/dist/react.js"></script>
+    <script src="../node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../node_modules/klayjs-noflo/klay-noflo.js"></script>
+    <script src="../node_modules/hammerjs/hammer.min.js"></script>
     <script src="../bower_components/ease-djdeath/index.js"></script>
     <script src="../bower_components/react.animate-djdeath/react.animate.js"></script>
 
     <!-- Browserify Libraries -->
-    <script src="../build/the-graph.js"></script>
+    <script src="../dist/the-graph.js"></script>
 
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
@@ -22,16 +22,16 @@
     <link rel="import" href="../the-graph-nav/the-graph-nav.html">
 
     <!-- Fonts -->
-    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
     <style>
       @font-face {
         /* we want the svg version */
         font-family: 'FontAwesomeSVG';
-        src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'),
-          url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
+        src: url('../node_modules/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg'),
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'),
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'),
+          url('../node_modules/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype');
         font-weight: normal;
         font-style: normal;
       }
@@ -156,14 +156,14 @@
             x: Math.round(Math.random()*800),
             y: Math.round(Math.random()*600)
           };
-          var newNode = editor.nofloGraph.addNode(id, component, metadata);
+          var newNode = editor.fbpGraph.addNode(id, component, metadata);
           return newNode;
         };
         document.getElementById("addnode").addEventListener("click", addnode);
 
         // Add edge button
         var addedge = function (outNodeID) {
-          var nodes = editor.nofloGraph.nodes;
+          var nodes = editor.fbpGraph.nodes;
           var len = nodes.length;
           if ( len<1 ) { return; }
           var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
@@ -171,7 +171,7 @@
           var port1 = 'out' + Math.floor(Math.random()*3);
           var port2 = 'in' + Math.floor(Math.random()*12);
           var meta = { route: Math.floor(Math.random()*10) };
-          var newEdge = editor.nofloGraph.addEdge(node1, port1, node2, port2, meta);
+          var newEdge = editor.fbpGraph.addEdge(node1, port1, node2, port2, meta);
           return newEdge;
         };
         document.getElementById("addedge").addEventListener("click", addedge);
@@ -197,7 +197,7 @@
 
         // Get graph button
         document.getElementById("get").addEventListener("click", function () {
-          var graphJSON = JSON.stringify(editor.nofloGraph);
+          var graphJSON = JSON.stringify(editor.fbpGraph);
           alert(graphJSON);
           //you can use the var graphJSON to save the graph definition in a file/database
         });

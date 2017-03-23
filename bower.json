@@ -1,6 +1,7 @@
 {
   "name": "the-graph",
-  "version": "0.4.4",
+  "version": "0.6.1",
+  "license": "MIT",
   "keywords": [
     "graph",
     "flow",
