@@ -1,3 +1,44 @@
+function generatePortInfo(library, componentName) {
+
+  // Copy ports from library object
+  var component = this.props.library[componentName];
+  if (!component) {
+    return {
+      inports: inports,
+      outports: outports
+    };
+  }
+
+  var outports = {};
+  for (var i=0, i<component.outports.length; i++) {
+    var port = component.outports[i];
+    if (!port.name) { continue; }
+    outports[port.name] = {
+      label: port.name,
+      type: port.type,
+      x: node.metadata.width,
+      y: node.metadata.height / (len+1) * (i+1)
+    };
+  }
+
+  var inports = {};
+  for (var i=0; i<component.inports.length; i++) {
+    var port = component.inports[i];
+    if (!port.name) { continue; }
+    inports[port.name] = {
+      label: port.name,
+      type: port.type,
+      x: 0,
+      y: node.metadata.height / (len+1) * (i+1)
+    };
+  }
+  var ports = {
+    inports: inports,
+    outports: outports
+  };
+  return ports;
+}
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -201,56 +242,14 @@ module.exports.register = function (context) {
         }
       }
     },
-    getComponentInfo: function (componentName) {
-      return this.props.library[componentName];
-    },
     portInfo: {},
     getPorts: function (graph, processName, componentName) {
       var node = graph.getNode(processName);
-
       var ports = this.portInfo[processName];
       if (!ports) {
-        var inports = {};
-        var outports = {};
         if (componentName && this.props.library) {
-          // Copy ports from library object
-          var component = this.getComponentInfo(componentName);
-          if (!component) {
-            return {
-              inports: inports,
-              outports: outports
-            };
-          }
-          
-          var i, port, len;
-          for (i=0, len=component.outports.length; i<len; i++) {
-            port = component.outports[i];
-            if (!port.name) { continue; }
-            outports[port.name] = {
-              label: port.name,
-              type: port.type,
-              x: node.metadata.width,
-              y: node.metadata.height / (len+1) * (i+1)
-            };
-          }
-          for (i=0, len=component.inports.length; i<len; i++) {
-            port = component.inports[i];
-            if (!port.name) { continue; }
-            inports[port.name] = {
-              label: port.name,
-              type: port.type,
-              x: 0,
-              y: node.metadata.height / (len+1) * (i+1)
-            };
-          }
+          this.portInfo[processName] = generatePortInfo(this.props.library, componentName);
         }
-        ports = {
-          inports: inports,
-          outports: outports
-        };
-        this.portInfo[processName] = ports;
-      }
-      return ports;
     },
     getNodeOutport: function (graph, processName, portName, route, componentName) {
       var ports = this.getPorts(graph, processName, componentName);
