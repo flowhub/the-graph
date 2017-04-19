@@ -1,6 +1,8 @@
 ## dev
 
-## 0.7.0 (unreleased)
+
+
+## 0.7.0 (2017 March 2)
 
 Breaking changes
 

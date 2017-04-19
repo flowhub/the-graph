@@ -1,10 +1,12 @@
 
+var Clipboard = require('./clipboard');
+
 // Returns a new datastructure to prevent accidental sharing between diffent editor instances
 function getDefaultMenus(editor) {
 
   // FIXME: provide a proper interface for actions to manipulate section, remove @editor
   var pasteAction = function (graph, itemKey, item) {
-    var pasted = TheGraph.Clipboard.paste(graph);
+    var pasted = Clipboard.paste(graph);
     this.selectedNodes = pasted.nodes;
     this.selectedEdges = [];
   }.bind(editor);
@@ -29,7 +31,7 @@ function getDefaultMenus(editor) {
       this.selectedNodes = newSelection;
     }.bind(editor),
     copy: function (graph, itemKey, item) {
-      TheGraph.Clipboard.copy(graph, [itemKey]);
+      Clipboard.copy(graph, [itemKey]);
     }
   }, edgeActions = {
     delete: function (graph, itemKey, item) {
@@ -161,7 +163,7 @@ function getDefaultMenus(editor) {
         icon: "copy",
         iconLabel: "copy",
         action: function (graph, itemKey, item) {
-          TheGraph.Clipboard.copy(graph, item.nodes);
+          Clipboard.copy(graph, item.nodes);
         }
       },
       e4: pasteMenu
