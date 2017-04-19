@@ -7,7 +7,7 @@
 
 <link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
 
-<polymer-element name="the-graph-nav" attributes="width height editor hide" touch-action="none">
+<polymer-element name="the-graph-nav" attributes="width height graph theme hide" touch-action="none">
   <template>
     <style>
       #thumb, 
@@ -28,12 +28,12 @@
       }
     </style>
     <the-graph-thumb id="thumb"
-      graph="{{ editor.fbpGraph }}"
+      graph="{{ graph }}"
       thumbrectangle="{{thumbrectangle}}"
       width="{{width}}" height="{{height}}"
       thumbscale="{{thumbscale}}"
       hide="{{hide}}"
-      theme="{{ editor.theme }}">
+      theme="{{ theme }}">
     </the-graph-thumb>
     <canvas id="outcanvas" width="{{width}}" height="{{height}}" style="position:absolute;top:0;left:0;"></canvas>
     <div id="viewrect"></div>
@@ -68,16 +68,16 @@
 
         // Pan graph by dragging map
         this.addEventListener("track", function (event) {
-          if (!this.editor) { return; }
-          // Don't pan graph
+          // Don't pan underlying elements
           event.stopPropagation();
 
-          var x = this.editor.pan[0];
-          var y = this.editor.pan[1];
-          var panscale = this.thumbscale / this.editor.scale;
+          var x = -this.viewrectangle[0];
+          var y = -this.viewrectangle[1];
+          var panscale = this.thumbscale / this.scale;
           x -= event.ddx / panscale;
           y -= event.ddy / panscale;
-          this.editor.pan = [Math.round(x), Math.round(y)];
+          var panTo = { x: Math.round(x), y: Math.round(y) };
+          this.fire('panto', panTo);
 
           event.preventTap();
         }.bind(this));
@@ -88,37 +88,24 @@
 
         // Tap to fit
         this.addEventListener("tap", function () {
-          if (!this.editor) { return; }
-          this.editor.triggerFit();
+          this.fire('triggerfit');
         });
       },
-      observe: {
-        'editor.scale': 'editorScaleChanged',
-        'editor.width': 'editorWidthChanged',
-        'editor.height': 'editorHeightChanged',
-        'editor.pan': 'editorPanChanged',
-        'editor.theme': 'editorThemeChanged'
-      },
-      editorChanged: function (oldEditor, newEditor) {
-      },
-      editorPanChanged: function () {
-        if (!this.editor.pan) { return; }
-        var x = this.editor.pan[0];
-        var y = this.editor.pan[1];
+      viewChanged: function (view) {
+        if (!view) {
+            return;
+        }
+        var x = view.pan[0];
+        var y = view.pan[1];
 
         this.viewrectangle[0] = -x;
         this.viewrectangle[1] = -y;
+        this.viewrectangle[2] = view.width;
+        this.viewrectangle[3] = view.height;
+
+        this.scale = view.scale;
       },
-      editorWidthChanged: function () {
-        this.viewrectangle[2] = parseInt(this.editor.width, 10);
-      },
-      editorHeightChanged: function () {
-        this.viewrectangle[3] = parseInt(this.editor.height, 10);
-      },
-      editorScaleChanged: function () {
-        this.scale = this.editor.scale;
-      },
-      editorThemeChanged: function () {
+      themeChanged: function () {
         var style = TheGraph.nav.calculateStyleFromTheme(this.theme);
         this.backgroundColor = style.backgroundColor;
         this.viewBoxBorder = style.viewBoxBorder;

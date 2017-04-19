@@ -87,11 +87,28 @@
         }
         return null;
       },
+      notifyViewChanged: function () {
+        var view = {
+          scale: this.scale,
+          pan: this.pan,
+          width: this.width,
+          height: this.height,
+        };
+        this.fire('viewchanged', view);
+      },
+      panChanged: function () {
+        this.notifyViewChanged();
+      },
+      scaleChanged: function () {
+        this.notifyViewChanged();
+      },
       widthChanged: function () {
         this.style.width = this.width + "px";
+        this.notifyViewChanged();
       },
       heightChanged: function () {
         this.style.height = this.height + "px";
+        this.notifyViewChanged();
       },
       graphChanged: function () {
         if (typeof this.graph.addNode === 'function') {
