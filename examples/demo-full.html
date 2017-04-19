@@ -108,9 +108,23 @@
           var graphString = JSON.stringify(graph);
           editor.graph = graph;
 
-          // Attach editor to nav
+          // Attach nav
           var nav = document.getElementById('nav');
-          nav.editor = editor;
+          editor.addEventListener('viewchanged', function(e) {
+            nav.view = e.detail;
+          });
+          nav.addEventListener('panto', function(e) {
+            var pan = e.detail;
+            editor.pan[0] = pan.x;
+            editor.pan[1] = pan.y;
+          });
+          nav.addEventListener('tap', function() {
+            editor.triggerFit();
+          });
+          editor.addEventListener('graphInitialised', function() {
+            // FIXME: editor should not init fbpGraph, but be passed in a ready instance
+            nav.graph = editor.fbpGraph;
+          });
 
           // Simulate a library update
           setTimeout(function () {
@@ -189,6 +203,7 @@
           document.getElementById("theme").addEventListener("click", function () {
             theme = (theme==="dark" ? "light" : "dark");
             editor.theme = theme;
+            nav.theme = theme;
           });
 
           // Focus a node
