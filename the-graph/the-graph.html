@@ -123,7 +123,6 @@
         } else {
           this.selectedEdges = [item];
         }
-        this.fire('edges', this.selectedEdges);
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
@@ -141,7 +140,6 @@
         } else {
           this.selectedNodes = [item];
         }
-        this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
         var selectedNodesHash = {};
