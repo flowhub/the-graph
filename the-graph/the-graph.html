@@ -112,10 +112,7 @@
           if (this.selectedEdges.length>0) {
             this.selectedEdges = [];
           }
-          this.fire('edges', this.selectedEdges);
-          return;
-        }
-        if (toggle) {
+        } else if (toggle) {
           var index = this.selectedEdges.indexOf(item);
           var isSelected = (index !== -1);
           var shallowClone = this.selectedEdges.slice();
@@ -133,7 +130,9 @@
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          this.selectedNodes = [];
+          if (this.selectedEdges.length>0) {
+            this.selectedNodes = [];
+          }
         } else if (toggle) {
           var index = this.selectedNodes.indexOf(item);
           var isSelected = (index !== -1);
