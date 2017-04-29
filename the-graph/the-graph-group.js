@@ -60,8 +60,9 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      var offset = TheGraph.getOffsetUpToElement(event.currentTarget, event.target);
+      var x = (event.layerX || event.clientX || 0) - offset.left;
+      var y = (event.layerY || event.clientY || 0) - offset.top;
 
       // App.showContext
       this.props.showContext({
