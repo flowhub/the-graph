@@ -115,13 +115,10 @@
         } else if (toggle) {
           var index = this.selectedEdges.indexOf(item);
           var isSelected = (index !== -1);
-          var shallowClone = this.selectedEdges.slice();
           if (isSelected) {
-            shallowClone.splice(index, 1);
-            this.selectedEdges = shallowClone;
+            this.selectedEdges.splice(index, 1);
           } else {
-            shallowClone.push(item);
-            this.selectedEdges = shallowClone;
+            this.selectedEdges.push(item);
           }
         } else {
           this.selectedEdges = [item];
