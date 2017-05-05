@@ -90,23 +90,31 @@
       <div id="loading-message">loading custom elements...</div>
     </div>
     <script type="text/javascript">
+      var fbpGraph = window.TheGraph.fbpGraph;
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('polymer-ready', function() {
         "use strict";
 
-        // Remove loading message
         var loadingMessage = document.getElementById("loading-message");
-        loadingMessage.innerHTML = "loading graph data...";
 
         window.loadGraph = function (json) {
-          // Remove loading message
-          var loading = document.getElementById("loading");
-          loading.parentNode.removeChild(loading);
           // Load graph
+          loadingMessage.innerHTML = "loading graph data...";
+
           var editor = document.getElementById('editor');
-          var graph = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
-          var graphString = JSON.stringify(graph);
-          editor.graph = graph;
+          editor.graph = null;
+          var graphData = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
+    
+          fbpGraph.graph.loadJSON(JSON.stringify(graphData), function(err, graph){
+            if (err) {
+              loadingMessage.innerHTML = "error loading graph: " + err.toString();
+              return;
+            }
+            editor.graph = graph;
+            // Remove loading message
+            var loading = document.getElementById("loading");
+            loading.parentNode.removeChild(loading);
+          });
 
           // Attach nav
           var nav = document.getElementById('nav');
@@ -121,11 +129,7 @@
           nav.addEventListener('tap', function() {
             editor.triggerFit();
           });
-          editor.addEventListener('graphInitialised', function() {
-            // FIXME: editor should not init fbpGraph, but be passed in a ready instance
-            nav.graph = editor.fbpGraph;
-          });
-
+ 
           // Simulate a library update
           setTimeout(function () {
             var originalComponent = editor.getComponent('core/Split');
@@ -149,8 +153,8 @@
           // Simulate node icon updates
           var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
           window.setInterval(function () {
-            if (!editor.fbpGraph) { return; }
-            var nodes = editor.fbpGraph.nodes;
+            if (!editor.graph) { return; }
+            var nodes = editor.graph.nodes;
             if (nodes.length>0) {
               var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
@@ -162,14 +166,14 @@
           var animatingEdge1 = null;
           var animatingEdge2 = null;
           window.setInterval(function () {
-            if (!editor.fbpGraph) { return; }
+            if (!editor.graph) { return; }
             if (animatingEdge2) {
               editor.unanimateEdge(animatingEdge2);
             }
             if (animatingEdge1) {
               animatingEdge2 = animatingEdge1;
             }
-            var edges = editor.fbpGraph.edges;
+            var edges = editor.graph.edges;
             if (edges.length>0) {
               animatingEdge1 = edges[Math.floor(Math.random()*edges.length)];
               editor.animateEdge(animatingEdge1);
@@ -179,11 +183,11 @@
           // Simulate un/triggering errors
           var errorNodeId = null;
           var makeRandomError = function () {
-            if (!editor.fbpGraph) { return; }
+            if (!editor.graph) { return; }
             if (errorNodeId) {
               editor.removeErrorNode(errorNodeId);
             }
-            var nodes = editor.fbpGraph.nodes;
+            var nodes = editor.graph.nodes;
             if (nodes.length>0) {
               errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
               editor.addErrorNode(errorNodeId);
@@ -208,14 +212,14 @@
 
           // Focus a node
           document.getElementById("focus").addEventListener("click", function () {
-            var nodes = editor.fbpGraph.nodes;
+            var nodes = editor.graph.nodes;
             var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
             editor.focusNode(randomNode);
           });
 
           // Refresh graph
           document.getElementById("refresh").addEventListener("click", function () {
-            if (!editor.fbpGraph) { return; }
+            if (!editor.graph) { return; }
             editor.graph = JSON.parse(graphString);
           });
 

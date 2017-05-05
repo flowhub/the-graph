@@ -3,8 +3,9 @@ module.exports.register = function (context) {
   var defaultNodeSize = 72;
   var defaultNodeRadius = 8;
 
-  // Dumb module setup
-  var TheGraph = context.TheGraph = {
+  var TheGraph = context.TheGraph;
+
+  var moduleVars = {
     // nodeSize and nodeRadius are deprecated, use TheGraph.config.(nodeSize/nodeRadius)
     nodeSize: defaultNodeSize,
     nodeRadius: defaultNodeRadius,
@@ -27,6 +28,9 @@ module.exports.register = function (context) {
     },
     factories: {}
   };
+  for (var key in moduleVars) {
+    TheGraph[key] = moduleVars[key];
+  }
 
   if (typeof window !== 'undefined') {
     // rAF shim
