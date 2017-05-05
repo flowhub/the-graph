@@ -6,6 +6,7 @@ Breaking changes
 
 * Polymer element `the-graph-nav` no longer takes and directly manipulates `editor`.
 Instead it fires events like `panto`. And it expects `graph` and `view` attributes to be set.
+Tapping the element does not manipulate anything, only fires the `tap` event.
 See `examples/demo-full.html` for usage.
 
 ## 0.7.0 (2017 March 2)
