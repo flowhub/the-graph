@@ -1,7 +1,12 @@
-// Build required libs
-fbpGraph = require('fbp-graph');
 
-var g = { TheGraph: {} };
+// Module object
+var TheGraph = {};
+
+// Bundle and expose fbp-graph as public API
+TheGraph.fbpGraph = require('fbp-graph');
+
+// HACK, goes away when everything is CommonJS compatible
+var g = { TheGraph: TheGraph };
 
 require("./the-graph/the-graph.js").register(g);
 require("./the-graph/the-graph-app.js").register(g);
@@ -18,14 +23,14 @@ require("./the-graph/the-graph-tooltip.js").register(g);
 require("./the-graph/the-graph-menu.js").register(g);
 require("./the-graph/font-awesome-unicode-map.js").register(g);
 
-g.TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
+TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
 
-g.TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
+TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
 
-g.TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
-g.TheGraph.library = require('./the-graph/the-graph-library.js');
+TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
+TheGraph.library = require('./the-graph/the-graph-library.js');
 
-g.TheGraph.clipboard = require("./the-graph-editor/clipboard.js");
-g.TheGraph.editor = require('./the-graph-editor/menus.js');
+TheGraph.clipboard = require("./the-graph-editor/clipboard.js");
+TheGraph.editor = require('./the-graph-editor/menus.js');
 
-module.exports = g.TheGraph;
+module.exports = TheGraph;
