@@ -87,6 +87,7 @@
       Polymer.veiledElements = ["the-graph-editor"];
       window.addEventListener('polymer-ready', function() {
         "use strict";
+        var fbpGraph = window.TheGraph.fbpGraph;
 
         // Remove loading message
         document.body.removeChild( document.getElementById("loading") );
@@ -136,8 +137,7 @@
         editor.$.graph.library = library;
 
         // Load empty graph
-        var graph = {};
-        editor.graph = graph;
+        editor.graph = new fbpGraph.Graph();
 
         // Add node button
         var addnode = function () {
@@ -148,14 +148,14 @@
             x: Math.round(Math.random()*800),
             y: Math.round(Math.random()*600)
           };
-          var newNode = editor.fbpGraph.addNode(id, component, metadata);
+          var newNode = editor.graph.addNode(id, component, metadata);
           return newNode;
         };
         document.getElementById("addnode").addEventListener("click", addnode);
 
         // Add edge button
         var addedge = function (outNodeID) {
-          var nodes = editor.fbpGraph.nodes;
+          var nodes = editor.graph.nodes;
           var len = nodes.length;
           if ( len<1 ) { return; }
           var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
@@ -163,7 +163,7 @@
           var port1 = 'out' + Math.floor(Math.random()*3);
           var port2 = 'in' + Math.floor(Math.random()*12);
           var meta = { route: Math.floor(Math.random()*10) };
-          var newEdge = editor.fbpGraph.addEdge(node1, port1, node2, port2, meta);
+          var newEdge = editor.graph.addEdge(node1, port1, node2, port2, meta);
           return newEdge;
         };
         document.getElementById("addedge").addEventListener("click", addedge);
@@ -189,15 +189,14 @@
 
         // Get graph button
         document.getElementById("get").addEventListener("click", function () {
-          var graphJSON = JSON.stringify(editor.fbpGraph);
+          var graphJSON = JSON.stringify(editor.graph.toJSON(), null, 2);
           alert(graphJSON);
           //you can use the var graphJSON to save the graph definition in a file/database
         });
 
         // Clear button
         document.getElementById("clear").addEventListener("click", function () {
-          graph = {};
-          editor.graph = graph;
+          editor.graph.reset();
         });
 
         // Resize to fill window and also have explicit w/h attributes

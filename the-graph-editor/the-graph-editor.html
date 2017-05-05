@@ -4,7 +4,7 @@
   <template>
     <the-graph id="graph"
       name="{{ graph.properties.name }}"
-      graph="{{fbpGraph}}"
+      graph="{{graph}}"
       menus="{{menus}}"
       width="{{width}}" height="{{height}}"
       pan="{{pan}}" scale="{{scale}}"
@@ -31,7 +31,6 @@
       height: 600,
       scale: 1,
       plugins: {},
-      fbpGraph: null,
       menus: null,
       autolayout: false,
       theme: "dark",
@@ -111,37 +110,18 @@
         this.notifyViewChanged();
       },
       graphChanged: function () {
-        if (typeof this.graph.addNode === 'function') {
-          this.buildInitialLibrary(this.graph);
-          this.fbpGraph = this.graph;
-          return;
+        if (typeof this.graph.addNode !== 'function') {
+          throw new Error(".graph property of the-graph-editor must be a fbp-graph instance (since the-graph 0.8)");
         }
-
-        var fbpGraph;
-        if ('fbpGraph' in window) {
-          fbpGraph = window.fbpGraph;
-        }
-        if (!fbpGraph && 'require' in window) {
-          fbpGraph = require('fbp-graph');
-        }
-        if (!fbpGraph) {
-          console.warn('Missing fbp-graph dependency! Should be built with Webpack/Browserify to require it, or accessible on window');
-          return;
-        }
-
-        fbpGraph.graph.loadJSON(this.graph, function(err, graph){
-          this.buildInitialLibrary(graph);
-          this.fbpGraph = graph;
-          this.fire('graphInitialised', this);
-        }.bind(this));
+        this.buildInitialLibrary(this.graph);
       },
-      buildInitialLibrary: function (fbpGraph) {
+      buildInitialLibrary: function (graph) {
         /*if (Object.keys(this.$.graph.library).length !== 0) {
           // We already have a library, skip
           // TODO what about loading a new graph? Are we making a new editor?
           return;
         }*/
-        var components = TheGraph.library.componentsFromGraph(fbpGraph);
+        var components = TheGraph.library.componentsFromGraph(graph);
         components.forEach(function(component) {
             this.registerComponent(component, true);
         }.bind(this));
@@ -202,7 +182,7 @@
         return this.$.graph.library;
       },
       toJSON: function () {
-        return this.fbpGraph.toJSON();
+        return this.graph.toJSON();
       }
     });
 
