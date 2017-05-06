@@ -1,6 +1,6 @@
 <link rel="import" href="../the-graph/the-graph.html">
 
-<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu displaySelectionGroup forceSelection" touch-action="none">
+<polymer-element name="the-graph-editor" attributes="grid snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges onContextMenu displaySelectionGroup forceSelection readonly" touch-action="none">
   <template>
     <the-graph id="graph"
       name="{{ graph.properties.name }}"
@@ -9,6 +9,7 @@
       width="{{width}}" height="{{height}}"
       pan="{{pan}}" scale="{{scale}}"
       autolayout="{{autolayout}}"
+      readonly="{{readonly}}"
       theme="{{theme}}"
       selectedNodes="{{selectedNodes}}"
       errorNodes="{{errorNodes}}"
