@@ -77,6 +77,9 @@
           x -= event.ddx / panscale;
           y -= event.ddy / panscale;
           var panTo = { x: Math.round(x), y: Math.round(y) };
+          // Update our estimates locally, since update from outside might be delayed
+          this.viewrectangle[0] = -panTo.x;
+          this.viewrectangle[1] = -panTo.y;
           this.fire('panto', panTo);
 
           event.preventTap();

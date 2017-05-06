@@ -115,9 +115,14 @@ function renderThumbnail(context, graph, properties) {
       }.bind(this));
     }
 
+    // Nothing to draw
+    if (toDraw.length === 0) {
+      return { scale: 1.0, rectangle: [0, 0, 0, 0] };
+    }
+
     // Sanity check graph size
     if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY) ) {
-      return;
+      throw new Error("the-graph-thumb: Invalid space spanned");
     }
 
     minX -= properties.nodeSize;
