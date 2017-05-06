@@ -41,6 +41,8 @@ var hotKeys = {
     }
   },
 };
+// these don't change state, so also allowed when readonly
+var readOnlyActions = [70, 83, 27];
 
 module.exports.register = function (context) {
 
@@ -114,6 +116,9 @@ module.exports.register = function (context) {
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
+    defaultProps: {
+      readonly: false,
+    },
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -449,9 +454,13 @@ module.exports.register = function (context) {
         TheGraph.metaKeyPressed = true;
       }
 
-      var handler = hotKeys[event.keyCode];
+      var code = event.keyCode;
+      var handler = hotKeys[code];
       if (handler) {
-        handler(this);
+        var readonly = this.props.readonly;
+        if (!readonly || (readonly && readOnlyActions[code])) {
+          handler(this);
+        }
       }
     },
     keyUp: function (event) {
