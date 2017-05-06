@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale maxZoom minZoom displaySelectionGroup forceSelection offsetY offsetX" touch-action="none">
+<polymer-element name="the-graph" attributes="graph menus library snap width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale maxZoom minZoom displaySelectionGroup forceSelection offsetY offsetX" touch-action="none">
 
 
   <template>
@@ -82,6 +82,8 @@
         this.appView = ReactDOM.render(
           window.TheGraph.App({
             graph: this.graph,
+            grid: this.grid,
+            snap: this.snap,
             width: this.width,
             minZoom: this.minZoom,
             maxZoom: this.maxZoom,

@@ -193,7 +193,7 @@ module.exports.register = function (context) {
           });
         } else {
           // Snap to grid
-          var snap = TheGraph.config.nodeHeight / 2;
+          var snap = this.props.snap;
           graph.setNodeMetadata(node.id, {
             x: Math.round(node.metadata.x/snap) * snap,
             y: Math.round(node.metadata.y/snap) * snap
@@ -464,6 +464,7 @@ module.exports.register = function (context) {
           y: node.metadata.y,
           label: node.metadata.label,
           sublabel: node.metadata.sublabel || node.component,
+          snap: self.props.snap,
           width: node.metadata.width,
           height: node.metadata.height,
           app: self.props.app,
