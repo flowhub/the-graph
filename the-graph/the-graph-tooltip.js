@@ -1,8 +1,11 @@
+var defaultFactories = require('./factories.js');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
+  var merge = TheGraph.merge;
 
-  TheGraph.config.tooltip = {
+  var config = {
     container: {},
     rect: {
       className: "tooltip-bg",
@@ -18,23 +21,23 @@ module.exports.register = function (context) {
     }
   };
 
-  TheGraph.factories.tooltip = {
-    createTooltipGroup: TheGraph.factories.createGroup,
-    createTooltipRect: TheGraph.factories.createRect,
-    createTooltipText: TheGraph.factories.createText
+
+  var factories = {
+    createTooltipGroup: defaultFactories.createGroup,
+    createTooltipRect: defaultFactories.createRect,
+    createTooltipText: defaultFactories.createText
   };
 
   // Port view
-
-  TheGraph.Tooltip = React.createFactory( React.createClass({
+  Tooltip = React.createFactory( React.createClass({
     displayName: "TheGraphTooltip",
     render: function() {
 
-      var rectOptions = TheGraph.merge(TheGraph.config.tooltip.rect, {width: this.props.label.length * 6});
-      var rect = TheGraph.factories.tooltip.createTooltipRect.call(this, rectOptions);
+      var rectOptions = merge(config.rect, {width: this.props.label.length * 6});
+      var rect = factories.createTooltipRect.call(this, rectOptions);
 
-      var textOptions = TheGraph.merge(TheGraph.config.tooltip.text, { children: this.props.label });
-      var text = TheGraph.factories.tooltip.createTooltipText.call(this, textOptions);
+      var textOptions = merge(config.text, { children: this.props.label });
+      var text = factories.createTooltipText.call(this, textOptions);
 
       var containerContents = [rect, text];
 
@@ -42,11 +45,15 @@ module.exports.register = function (context) {
         className: "tooltip" + (this.props.visible ? "" : " hidden"),
         transform: "translate("+this.props.x+","+this.props.y+")",
       };
-      containerOptions = TheGraph.merge(TheGraph.config.tooltip.container, containerOptions);
-      return TheGraph.factories.tooltip.createTooltipGroup.call(this, containerOptions, containerContents);
+      containerOptions = merge(config.container, containerOptions);
+      return factories.createTooltipGroup.call(this, containerOptions, containerContents);
 
     }
   }));
 
 
+  // TODO: should primarily be exposed as 'TheGraph.tooltip.config'
+  TheGraph.config.tooltip = config;
+  TheGraph.factories.tooltip = factories;
+  TheGraph.Tooltip = Tooltip;
 };
