@@ -28,9 +28,16 @@ require("./the-graph/the-graph-port.js").register(g);
 require("./the-graph/the-graph-edge.js").register(g);
 require("./the-graph/the-graph-iip.js").register(g);
 require("./the-graph/the-graph-group.js").register(g);
-require("./the-graph/the-graph-tooltip.js").register(g);
+
 require("./the-graph/the-graph-menu.js").register(g);
 require("./the-graph/font-awesome-unicode-map.js").register(g);
+
+
+TheGraph.tooltip = require("./the-graph/the-graph-tooltip.js");
+// compat
+TheGraph.Tooltip = TheGraph.tooltip.Tooltip;
+TheGraph.config.tooltip = TheGraph.tooltip.config;
+TheGraph.factories.tooltip = TheGraph.tooltip.factories; 
 
 TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
 
