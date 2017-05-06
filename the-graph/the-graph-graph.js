@@ -477,7 +477,8 @@ module.exports.register = function (context) {
           selected: selected,
           error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
-          highlightPort: highlightPort
+          highlightPort: highlightPort,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
 
         nodeOptions = TheGraph.merge(TheGraph.config.graph.node, nodeOptions);
@@ -629,7 +630,8 @@ module.exports.register = function (context) {
           sY: expNode.y + TheGraph.config.nodeHeight / 2,
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.inportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
@@ -704,7 +706,8 @@ module.exports.register = function (context) {
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
           tY: expNode.y + TheGraph.config.nodeHeight / 2,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.outportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
