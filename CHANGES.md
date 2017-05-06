@@ -1,6 +1,6 @@
 ## dev
 
-## 0.8.0 (unreleased)
+## 0.8.0 (2017 May 6)
 
 Additions
 
