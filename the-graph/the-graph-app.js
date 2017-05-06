@@ -550,14 +550,15 @@ module.exports.register = function (context) {
 
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
-      var contextMenu, contextModal;
+      var contextMenu = null;
       if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
         var menu = this.props.getMenuDef(options);
-        if (menu) {
+        if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
       }
+      var contextModal = null;
       if (contextMenu) {
 
         var modalBGOptions ={
