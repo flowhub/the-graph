@@ -1,5 +1,16 @@
 ## dev
 
+## 0.9.0 (2017 May 6)
+
+New features
+
+* `the-graph-editor` Polymer element and `Graph` React component now support a `readonly` property.
+When set to true, destructive actions
+
+Internal changes
+
+* `menuCallback`: An empty object is considered falsy and will not show a menu.
+
 ## 0.8.0 (2017 May 6)
 
 Additions
