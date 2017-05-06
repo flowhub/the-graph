@@ -393,10 +393,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Outports
       var outports = this.props.ports.outports;
@@ -422,10 +423,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Node Icon
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];

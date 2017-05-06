@@ -37,6 +37,9 @@ module.exports.register = function (context) {
     mixins: [
       TheGraph.mixins.Tooltip
     ],
+    defaultProps: {
+      allowEdgeStart: true,
+    },
     componentDidMount: function () {
       // Preview edge start
       ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
@@ -104,6 +107,10 @@ module.exports.register = function (context) {
       if (this.props.isExport) {
         return;
       }
+      if (!this.props.allowEdgeStart) {
+        return;
+      }
+
       // Click on label, pass context menu to node
       if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;

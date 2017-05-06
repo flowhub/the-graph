@@ -1,4 +1,4 @@
-<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale maxZoom minZoom displaySelectionGroup forceSelection offsetY offsetX" touch-action="none">
+<polymer-element name="the-graph" attributes="graph menus library width height autolayout theme selectedNodes errorNodes selectedEdges animatedEdges getMenuDef pan scale maxZoom minZoom displaySelectionGroup forceSelection offsetY offsetX readonly" touch-action="none">
 
 
   <template>
@@ -15,6 +15,7 @@
       graph: null,
       library: null,
       menus: null,
+      readonly: false,
       width: 800,
       height: 600,
       scale: 1,
@@ -96,7 +97,8 @@
             displaySelectionGroup: this.displaySelectionGroup,
             forceSelection: this.forceSelection,
             offsetY: this.offsetY,
-            offsetX: this.offsetX
+            offsetX: this.offsetX,
+            readonly: this.readonly,
           }),
           this.$.svgcontainer
         );
@@ -301,6 +303,9 @@
         // otherwise builds menu from reference every time menu shown
         if (!this.appView) { return; }
         this.appView.setProps({menus: this.menus});
+      },
+      readonlyChanged: function () {
+        this.appView.setProps({ readonly: this.readonly});
       },
       debounceLibraryRefeshTimer: null,
       debounceLibraryRefesh: function () {

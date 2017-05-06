@@ -1,3 +1,49 @@
+var hotKeys = {
+  // Escape
+  27: function(app) {
+    if (!app.refs.graph) {
+      return;
+    }
+    app.refs.graph.cancelPreviewEdge();
+  },
+  // Delete
+  46: function (app) {
+    var graph = app.refs.graph.state.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+    var selectedEdges = app.refs.graph.state.selectedEdges;
+    var menus = app.props.menus;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        menus.node.actions.delete(graph, nodeKey, node);
+      }
+    }
+    selectedEdges.map(function (edge) {
+      menus.edge.actions.delete(graph, null, edge);
+    });
+  },
+  // f for fit
+  70: function (app) {
+    app.triggerFit();
+  },
+  // s for selected
+  83: function (app) {
+    var graph = app.refs.graph.state.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        app.focusNode(node);
+        break;
+      }
+    }
+  },
+};
+// these don't change state, so also allowed when readonly
+var readOnlyActions = [70, 83, 27];
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -70,6 +116,9 @@ module.exports.register = function (context) {
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
+    defaultProps: {
+      readonly: false,
+    },
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -405,63 +454,16 @@ module.exports.register = function (context) {
         TheGraph.metaKeyPressed = true;
       }
 
-      var key = event.keyCode,
-          hotKeys = {
-            // Delete
-            46: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  selectedEdges = this.refs.graph.state.selectedEdges,
-                  menus = this.props.menus,
-                  menuOption = null,
-                  menuAction = null,
-                  nodeKey = null,
-                  node = null,
-                  edge = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  menus.node.actions.delete(graph, nodeKey, node);
-                }
-              }
-              selectedEdges.map(function (edge) {
-                menus.edge.actions.delete(graph, null, edge);
-              });
-            }.bind(this),
-            // f for fit
-            70: function () {
-              this.triggerFit();
-            }.bind(this),
-            // s for selected
-            83: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  nodeKey = null,
-                  node = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  this.focusNode(node);
-                  break;
-                }
-              }
-            }.bind(this)
-          };
-
-      if (hotKeys[key]) {
-        hotKeys[key]();
+      var code = event.keyCode;
+      var handler = hotKeys[code];
+      if (handler) {
+        var readonly = this.props.readonly;
+        if (!readonly || (readonly && readOnlyActions[code])) {
+          handler(this);
+        }
       }
     },
     keyUp: function (event) {
-      // Escape
-      if (event.keyCode===27) {
-        if (!this.refs.graph) {
-          return;
-        }
-        this.refs.graph.cancelPreviewEdge();
-      }
       // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
@@ -548,14 +550,15 @@ module.exports.register = function (context) {
 
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
-      var contextMenu, contextModal;
+      var contextMenu = null;
       if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
         var menu = this.props.getMenuDef(options);
-        if (menu) {
+        if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
       }
+      var contextModal = null;
       if (contextMenu) {
 
         var modalBGOptions ={
@@ -580,7 +583,8 @@ module.exports.register = function (context) {
         library: this.props.library,
         onNodeSelection: this.props.onNodeSelection,
         onEdgeSelection: this.props.onEdgeSelection,
-        showContext: this.showContext
+        showContext: this.showContext,
+        allowEdgeStart: !this.props.readonly,
       };
       graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
       var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
