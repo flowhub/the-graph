@@ -14,6 +14,8 @@ if (typeof window !== 'undefined' && typeof window.Ease === 'undefined') {
 // HACK, goes away when everything is CommonJS compatible
 var g = { TheGraph: TheGraph };
 
+TheGraph.factories = require('./the-graph/factories.js');
+
 require("./the-graph/the-graph.js").register(g);
 require("./the-graph/the-graph-app.js").register(g);
 require("./the-graph/the-graph-graph.js").register(g);
