@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "bower": "^1.7.9",
-    "chai": "^3.5.0",
+    "chai": "^4.0.0",
     "coffee-script": "^1.12.2",
     "coffeeify": "^2.0.1",
     "glob": "^7.0.6",
