@@ -111,31 +111,26 @@
       },
       onEdgeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          if (this.selectedEdges.length>0) {
+          if (this.selectedEdges.length > 0) {
             this.selectedEdges = [];
           }
-          this.fire('edges', this.selectedEdges);
-          return;
-        }
-        if (toggle) {
+        } else if (toggle) {
           var index = this.selectedEdges.indexOf(item);
           var isSelected = (index !== -1);
-          var shallowClone = this.selectedEdges.slice();
           if (isSelected) {
-            shallowClone.splice(index, 1);
-            this.selectedEdges = shallowClone;
+            this.selectedEdges.splice(index, 1);
           } else {
-            shallowClone.push(item);
-            this.selectedEdges = shallowClone;
+            this.selectedEdges.push(item);
           }
         } else {
           this.selectedEdges = [item];
         }
-        this.fire('edges', this.selectedEdges);
       },
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          this.selectedNodes = [];
+          if (this.selectedNodes.length > 0) {
+            this.selectedNodes = [];
+          }
         } else if (toggle) {
           var index = this.selectedNodes.indexOf(item);
           var isSelected = (index !== -1);
@@ -147,7 +142,6 @@
         } else {
           this.selectedNodes = [item];
         }
-        this.fire('nodes', this.selectedNodes);
       },
       selectedNodesChanged: function () {
         var selectedNodesHash = {};
