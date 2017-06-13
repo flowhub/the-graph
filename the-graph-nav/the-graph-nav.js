@@ -86,7 +86,85 @@ function renderViewRectangle(context, viewrect, props) {
 
 }
 
+function renderThumbnailFromProps(context, props) {
+    console.log('nav.renderThumb() start', typeof canvas, this.props);
+    var style = TheGraph.thumb.styleFromTheme(props.theme);
+    style.width = props.width;
+    style.height = props.height;
+    style.nodeSize = props.nodeSize;
+    style.lineWidth = props.nodeLineWidth;
+    var info = TheGraph.thumb.render(context, props.graph, style);
+    console.log('nav.renderThumb() done', info);
+    return info;
+}
+
+// https://toddmotto.com/react-create-class-versus-component/
+var Component = React.createClass({
+  propTypes: {
+  },
+  getDefaultProps: function() {
+    return {
+      width: 200,
+      height: 150,
+      hidden: false, // FIXME: drop??
+      theme: 'dark',
+      backgroundColor: "hsla(184, 8%, 75%, 0.9)",
+      outsideFill: "hsla(0, 0%, 0%, 0.4)",
+      nodeSize: 60,
+      nodeLineWidth: 1,
+      border: '1px solid hsla(190, 100%, 80%, 0.4)',
+      borderStyle: 'dotted',
+      graph: null, // NOTE: should not attach to events, that is responsibility of outer code
+    };
+  },
+  getInitialState: function() {
+    return {
+    };
+  },
+  render: function() {
+    console.log('nav.render() start');
+    var p = this.props;
+    var thumbStyle = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    };
+    var wrapperStyle = {
+      height: p.height,
+      width: p.width,
+      border: p.border,
+      borderStyle: p.borderStyle,
+    };
+    var thumbProps = {
+      key: 'thumb',
+      ref: this._refThumbCanvas,
+      width: p.width,
+      height: p.height,
+      style: thumbStyle,
+    };
+    // Elements
+    var d = React.DOM;
+    return d.div( { style: wrapperStyle }, [
+      d.canvas( thumbProps ),
+    ]);
+  },
+  _refThumbCanvas: function(canvas) {
+      // Store the DOM node, since we need that for actually rendering
+      this._thumbContext = canvas.getContext('2d');
+  },
+  componentDidUpdate: function() {
+    console.log('nav componentDidUpdate');
+    renderThumbnailFromProps(this._thumbContext, this.props);
+  },
+  componentDidMount: function() {
+    console.log('nav componentMount');
+    renderThumbnailFromProps(this._thumbContext, this.props);
+  }
+});
+
+
 module.exports = {
   render: renderViewRectangle,
   calculateStyleFromTheme: calculateStyleFromTheme,
+  Component: Component,
 };
