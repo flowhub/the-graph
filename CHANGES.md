@@ -1,5 +1,21 @@
 ## dev
 
+## 0.10.0 (unreleased)
+
+Breaking changes
+
+* Polymer element `the-graph-thumb` has been removed.
+Should instead use the JavaScript API `TheGraph.thumb.render()`,
+as shown in `examples/demo-thumbnail.html`.
+* Polymer element `the-graph-nav` has been removed.
+Should instead use the new React component `TheGraph.nav.Component`,
+as shown in `examples/demo-full.html`
+
+Internal changes
+
+* All dependencies except Polymer (deprecated) are installed via NPM
+* Some more modules have been converted to proper CommonJS
+
 ## 0.9.0 (2017 May 6)
 
 New features
