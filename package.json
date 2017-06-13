@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "@pleasetrythisathome/react.animate": "0.0.4",
     "fbp-graph": "^0.1.0",
     "font-awesome": "^4.6.3",
     "hammerjs": "^2.0.8",
