@@ -5,8 +5,7 @@
   "description": "DEPRECATED. Use NPM instead",
   "dependencies": {
     "polymer": "0.5.2",
-    "webcomponentsjs": "Polymer/webcomponentsjs#0.5.2",
-    "react.animate-djdeath": "0.0.3"
+    "webcomponentsjs": "Polymer/webcomponentsjs#0.5.2"
   },
   "main": "the-graph/the-graph.html",
   "ignore": [

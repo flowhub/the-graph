@@ -5,6 +5,12 @@ var TheGraph = {};
 // Bundle and expose fbp-graph as public API
 TheGraph.fbpGraph = require('fbp-graph');
 
+// Pull in Ease from NPM, react.animate needs it as a global
+TheGraph.Ease = require('ease-component');
+if (typeof window !== 'undefined' && typeof window.Ease === 'undefined') {
+    window.Ease = TheGraph.Ease;
+}
+
 // HACK, goes away when everything is CommonJS compatible
 var g = { TheGraph: TheGraph };
 
