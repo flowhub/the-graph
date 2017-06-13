@@ -89,7 +89,6 @@ function renderViewRectangle(context, viewrect, props) {
 }
 
 function renderThumbnailFromProps(context, props) {
-    console.log('nav.renderThumb() start', props);
     var style = {};
     for (var name in props) {
       style[name] = props[name];
@@ -97,11 +96,9 @@ function renderThumbnailFromProps(context, props) {
     style.graph = null;
     style.lineWidth = props.nodeLineWidth;
     var info = thumb.render(context, props.graph, style);
-    console.log('nav.renderThumb() done', info);
     return info;
 }
 function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
-    console.log('nav.renderViewbox() start', props);
     var style = {};
     for (var name in props) {
       style[name] = props[name];
@@ -113,7 +110,6 @@ function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
     style.thumbscale = (thumbW>thumbH) ? props.width/thumbW : props.height/thumbH;
     style.thumbrectangle = thumbInfo.rectangle;
     var info = renderViewRectangle(context, viewbox, style);
-    console.log('nav.renderViewbox() done', info);
     return info;
 }
 
@@ -140,6 +136,8 @@ var Component = React.createClass({
   },
   getInitialState: function() {
     return {
+      thumbscale: 1.0,
+      currentPan: [0.0, 0.0],
     };
   },
   render: function() {
@@ -186,11 +184,20 @@ var Component = React.createClass({
     };
     // Elements
     var d = React.DOM;
-    return d.div( { style: wrapperStyle }, [
+    return d.div( { key: 'nav', style: wrapperStyle, ref: this._refTopElement }, [
       d.div( viewboxDiv ),
       d.canvas( viewboxCanvas ),
       d.canvas( thumbProps ),
     ]);
+  },
+  componentDidUpdate: function() {
+    this._updatePan();
+    this._renderElements();
+  },
+  componentDidMount: function() {
+    this._updatePan();
+    this._renderElements();
+    this._setupEvents();
   },
   _refThumbCanvas: function(canvas) {
       this._thumbContext = canvas.getContext('2d');
@@ -201,15 +208,49 @@ var Component = React.createClass({
   _refViewboxElement: function(el) {
       this._viewboxElement = el;
   },
-  componentDidUpdate: function() {
-    console.log('nav componentDidUpdate');
+  _refTopElement: function(el) {
+      this._topElement = el;
+  },
+  _renderElements: function() {
     var t = renderThumbnailFromProps(this._thumbContext, this.props);
+    //this.state.thumbscale = t.scale;
     renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
   },
-  componentDidMount: function() {
-    console.log('nav componentMount');
-    var t = renderThumbnailFromProps(this._thumbContext, this.props);
-    renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
+  _updatePan: function() {
+    this.state.currentPan = [
+      -(this.props.viewrectangle[0]),
+      -(this.props.viewrectangle[1]),
+    ];
+  },
+  _setupEvents: function() {
+    this.hammer = new Hammer.Manager(this._topElement, {
+      recognizers: [
+        [ Hammer.Tap ],
+        [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+      ],
+    });
+    this.hammer.on('tap', (function(event) {
+      if (this.props.onTap) {
+        this.props.onTap(null, event);
+      }
+    }).bind(this));
+    this.hammer.on('panmove', (function(event) {
+      if (this.props.onPanTo) {
+        // Calculate where event pans to, in editor coordinates
+        var x = this.state.currentPan[0];
+        var y = this.state.currentPan[1];
+        var panscale = this.state.thumbscale / this.props.viewscale;
+        console.log('panmove', event.deltaX, event.deltaY, panscale, this.state.thumbscale, this.props.viewscale);
+        x -= event.deltaX / panscale;
+        y -= event.deltaY / panscale;
+        var panTo = { x: Math.round(x), y: Math.round(y) };
+        // keep track of the current pan, because prop/component update
+        // may be delayed, or never arrive.
+        this.state.currentPan[0] = panTo.x;
+        this.state.currentPan[1] = panTo.y;
+        this.props.onPanTo(panTo, event);
+      }
+    }).bind(this));
   }
 });
 
