@@ -26,7 +26,6 @@ module.exports.register = function (context) {
       nodeHeightIncrement: 12,
       focusAnimationDuration: 1500
     },
-    factories: {}
   };
   for (var key in moduleVars) {
     TheGraph[key] = moduleVars[key];
@@ -346,73 +345,6 @@ module.exports.register = function (context) {
       );
     }
   }));
-
-  // The `merge` function provides simple property merging.
-  TheGraph.merge = function(src, dest, overwrite) {
-    // Do nothing if neither are true objects.
-    if (Array.isArray(src) || Array.isArray(dest) || typeof src !== 'object' || typeof dest !== 'object')
-      return dest;
-
-    // Default overwriting of existing properties to false.
-    overwrite = overwrite || false;
-
-    for (var key in src) {
-      // Only copy properties, not functions.
-      if (typeof src[key] !== 'function' && (!dest[key] || overwrite))
-        dest[key] = src[key];
-    }
-
-    return dest;
-  };
-
-  TheGraph.factories.createGroup = function(options, content) {
-    var args = [options];
-
-    if (Array.isArray(content)) {
-      args = args.concat(content);
-    }
-
-    return React.DOM.g.apply(React.DOM.g, args);
-  };
-
-  TheGraph.factories.createRect = function(options) {
-    return React.DOM.rect(options);
-  };
-
-  TheGraph.factories.createText = function(options) {
-    return React.DOM.text(options);
-  };
-
-  TheGraph.factories.createCircle = function(options) {
-    return React.DOM.circle(options);
-  };
-
-  TheGraph.factories.createPath = function(options) {
-    return React.DOM.path(options);
-  };
-
-  TheGraph.factories.createPolygon = function(options) {
-    return React.DOM.polygon(options);
-  };
-
-  TheGraph.factories.createImg = function(options) {
-    return TheGraph.SVGImage(options);
-  };
-
-  TheGraph.factories.createCanvas = function(options) {
-    return React.DOM.canvas(options);
-  };
-
-  TheGraph.factories.createSvg = function(options, content) {
-
-    var args = [options];
-
-    if (Array.isArray(content)) {
-      args = args.concat(content);
-    }
-
-    return React.DOM.svg.apply(React.DOM.svg, args);
-  };
   
   TheGraph.getOffset = function(domNode){
     var getElementOffset = function(element){
