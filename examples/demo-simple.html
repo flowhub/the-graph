@@ -194,7 +194,7 @@
 
         // Clear button
         document.getElementById("clear").addEventListener("click", function () {
-          editor.graph.reset();
+          editor.graph = new fbpGraph.Graph();
         });
 
         // Resize to fill window and also have explicit w/h attributes
