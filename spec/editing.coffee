@@ -55,11 +55,19 @@ describe 'Editor', ->
   describe 'selected nodes', ->
     it 'are visualized with a bounding box'
 
+    describe 'when dragging the box', ->
+      it 'moves all nodes in selection'
+
   # node groups
   describe 'node groups', ->
     it 'are visualized with a bounding box'
     it 'shows group name'
     it 'shows group description'
+
+    describe 'when dragging on label', ->
+      it 'moves all nodes in group'
+    describe 'when dragging on bounding box', ->
+      it 'does nothing'
 
   # opening menus
   describe 'right-click node', ->
