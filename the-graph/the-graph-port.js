@@ -45,24 +45,18 @@ module.exports.register = function (context) {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
-      this.hammer = new Hammer.Manager(domNode, {
-        recognizers: [
-          [ Hammer.Tap, {} ],
-          [ Hammer.Press, { time: 500 } ],
-          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
-        ],
-      });
+
       // Preview edge start
-      this.hammer.on("tap", this.edgeStart);
-      this.hammer.on("panstart", this.edgeStart);
+      domNode.addEventListener("tap", this.edgeStart);
+      domNode.addEventListener("panstart", this.edgeStart);
       // Make edge
-      this.hammer.on("panend", this.triggerDropOnTarget);
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
+      domNode.addEventListener("panend", this.triggerDropOnTarget);
+      domNode.addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        this.hammer.on("press", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
     },
     getTooltipTrigger: function () {
@@ -91,8 +85,11 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.srcEvent.x || 0;
-      var y = event.y || event.srcEvent.y || 0;
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

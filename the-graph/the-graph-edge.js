@@ -80,22 +80,16 @@ module.exports.register = function (context) {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
-      this.hammer = new Hammer.Manager(domNode, {
-        recognizers: [
-          [ Hammer.Tap ],
-          [ Hammer.Press ],
-        ],
-      });
 
       // Select
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        this.hammer.on("tap", this.onEdgeSelection);
+        domNode.addEventListener("tap", this.onEdgeSelection);
       }
       // Open menu
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        this.hammer.on('press', this.showContext);
+        domNode.addEventListener('press', this.showContext);
       }
     },
     onEdgeSelection: function (event) {
@@ -114,8 +108,11 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.srcEvent.x || event.clientX || 0;
-      var y = event.y || event.srcEvent.y || event.clientY || 0;
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({

@@ -37,24 +37,15 @@ module.exports.register = function (context) {
       // either by label or by box
       var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
       var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
-      this.dragHammer = new Hammer.Manager(dragNode, {
-        recognizers: [
-          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
-        ],
-      });
-      this.dragHammer.on('panstart', this.onTrackStart);
+      dragNode.addEventListener('panstart', this.onTrackStart);
 
       // Context menu
       var domNode = ReactDOM.findDOMNode(this);
-      this.hammer = new Hammer.Manager(domNode, {
-        recognizers: [
-          [ Hammer.Press, { time: 500 } ],
-        ],
-      });
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        this.hammer.on("press", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
+
     },
     showContext: function (event) {
       // Don't show native context menu
@@ -65,8 +56,11 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.srcEvent.x || event.clientX || 0;
-      var y = event.y || event.srcEvent.y || event.clientY || 0;
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
+      var x = event.x || event.clientX || 0;
+      var y = event.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
@@ -91,8 +85,10 @@ module.exports.register = function (context) {
       // Don't pan graph
       event.srcEvent.stopPropagation();
 
-      this.dragHammer.on("panmove", this.onTrack);
-      this.dragHammer.on("panend", this.onTrackEnd);
+      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
+      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
       this.props.graph.startTransaction('movegroup');
     },
@@ -112,8 +108,10 @@ module.exports.register = function (context) {
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      this.dragHammer.off("panmove", this.onTrack);
-      this.dragHammer.off("panend", this.onTrackEnd);
+      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
+      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
       this.props.graph.endTransaction('movegroup');
     },

@@ -91,7 +91,7 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       // Tap to select
       if (this.props.onNodeSelection) {
@@ -100,12 +100,13 @@ module.exports.register = function (context) {
 
       // Context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
 
     },
     onNodeSelection: function (event) {
+      console.log('node tap');
       // Don't tap app (unselect)
       event.stopPropagation();
 
@@ -113,11 +114,9 @@ module.exports.register = function (context) {
       this.props.onNodeSelection(this.props.nodeID, this.props.node, toggle);
     },
     onTrackStart: function (event) {
+      console.log('node pan start');
       // Don't drag graph
       event.stopPropagation();
-
-      // Don't change selection
-      event.preventTap();
 
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
@@ -126,8 +125,8 @@ module.exports.register = function (context) {
       if (this.props.app.pinching) { return; }
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -141,8 +140,8 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var scale = this.props.app.state.scale;
-      var deltaX = Math.round( event.ddx / scale );
-      var deltaY = Math.round( event.ddy / scale );
+      var deltaX = Math.round( event.gesture.deltaX / scale );
+      var deltaY = Math.round( event.gesture.deltaY / scale );
 
       // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
@@ -167,8 +166,8 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;
@@ -209,6 +208,9 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
 
