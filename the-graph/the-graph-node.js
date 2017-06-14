@@ -81,21 +81,6 @@ module.exports.register = function (context) {
     return TheGraph.Port(options);
   }
 
-  // PolymerGestures monkeypatch
-  function patchGestures() {
-    PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
-      // hold
-      if (gesture.HOLD_DELAY) {
-        gesture.HOLD_DELAY = 500;
-      }
-      // track
-      if (gesture.WIGGLE_THRESHOLD) {
-        gesture.WIGGLE_THRESHOLD = 8;
-      }
-    });
-  }
-
-
   // Node view
   TheGraph.Node = React.createFactory( React.createClass({
     displayName: "TheGraphNode",
@@ -103,7 +88,6 @@ module.exports.register = function (context) {
       TooltipMixin
     ],
     componentDidMount: function () {
-      patchGestures();
       var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
