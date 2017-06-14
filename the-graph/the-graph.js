@@ -39,47 +39,6 @@ module.exports.register = function (context) {
       window.msRequestAnimationFrame;
   }
 
-  // Mixins to use throughout project
-  TheGraph.mixins = {};
-
-  // Show fake tooltip
-  // Class must have getTooltipTrigger (dom node) and shouldShowTooltip (boolean)
-  TheGraph.mixins.Tooltip = {
-    showTooltip: function (event) {
-      if ( !this.shouldShowTooltip() ) { return; }
-
-      var tooltipEvent = new CustomEvent('the-graph-tooltip', { 
-        detail: {
-          tooltip: this.props.label,
-          x: event.clientX,
-          y: event.clientY
-        }, 
-        bubbles: true
-      });
-      ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
-    },
-    hideTooltip: function (event) {
-      if ( !this.shouldShowTooltip() ) { return; }
-
-      var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
-        bubbles: true
-      });
-      if (this.isMounted()) {
-        ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
-      }
-    },
-    componentDidMount: function () {
-      if (navigator && navigator.userAgent.indexOf("Firefox") !== -1) {
-        // HACK Ff does native tooltips on svg elements
-        return;
-      }
-      var tooltipper = this.getTooltipTrigger();
-      tooltipper.addEventListener("tap", this.showTooltip);
-      tooltipper.addEventListener("mouseenter", this.showTooltip);
-      tooltipper.addEventListener("mouseleave", this.hideTooltip);
-    }
-  };
-
   TheGraph.findMinMax = function (graph, nodes) {
     var inports, outports;
     if (nodes === undefined) {
@@ -253,31 +212,6 @@ module.exports.register = function (context) {
       scale: scale
     };
   };
-
-  // SVG arc math
-  var angleToX = function (percent, radius) {
-    return radius * Math.cos(2*Math.PI * percent);
-  };
-  var angleToY = function (percent, radius) {
-    return radius * Math.sin(2*Math.PI * percent);
-  };
-  var makeArcPath = function (startPercent, endPercent, radius) {
-    return [ 
-      "M", angleToX(startPercent, radius), angleToY(startPercent, radius),
-      "A", radius, radius, 0, 0, 0, angleToX(endPercent, radius), angleToY(endPercent, radius)
-    ].join(" ");
-  };
-  TheGraph.arcs = {
-    n4: makeArcPath(7/8, 5/8, 36),
-    s4: makeArcPath(3/8, 1/8, 36),
-    e4: makeArcPath(1/8, -1/8, 36),
-    w4: makeArcPath(5/8, 3/8, 36),
-    inport: makeArcPath(-1/4, 1/4, 4),
-    outport: makeArcPath(1/4, -1/4, 4),
-    inportBig: makeArcPath(-1/4, 1/4, 6),
-    outportBig: makeArcPath(1/4, -1/4, 6),
-  };
-
 
   // Reusable React classes
   TheGraph.SVGImage = React.createFactory( React.createClass({

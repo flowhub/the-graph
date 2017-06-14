@@ -1,3 +1,6 @@
+var TooltipMixin = require('./mixins').Tooltip;
+var arcs = require('./arcs.js');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -35,7 +38,7 @@ module.exports.register = function (context) {
   TheGraph.Port = React.createFactory( React.createClass({
     displayName: "TheGraphPort",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
     defaultProps: {
       allowEdgeStart: true,
@@ -147,12 +150,12 @@ module.exports.register = function (context) {
       var r = 4;
       // Highlight matching ports
       var highlightPort = this.props.highlightPort;
-      var inArc = TheGraph.arcs.inport;
-      var outArc = TheGraph.arcs.outport;
+      var inArc = arcs.inport;
+      var outArc = arcs.outport;
       if (highlightPort && highlightPort.isIn === this.props.isIn && (highlightPort.type === this.props.port.type || this.props.port.type === 'any')) {
         r = 6;
-        inArc = TheGraph.arcs.inportBig;
-        outArc = TheGraph.arcs.outportBig;
+        inArc = arcs.inportBig;
+        outArc = arcs.outportBig;
       }
 
       var backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
