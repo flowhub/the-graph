@@ -127,6 +127,7 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("panmove", this.onTrack);
       domNode.addEventListener("panend", this.onTrackEnd);
+      domNode.addEventListener("pancancel", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -168,6 +169,7 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("panmove", this.onTrack);
       domNode.removeEventListener("panend", this.onTrackEnd);
+      domNode.removeEventListener("pancanel", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;
