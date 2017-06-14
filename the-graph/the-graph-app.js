@@ -414,7 +414,7 @@ module.exports.register = function (context) {
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
 
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // FIXME: instead access the shiftKey of event instead of keeping metaKey
       document.addEventListener('keydown', this.keyDown);
       document.addEventListener('keyup', this.keyUp);
 
@@ -450,7 +450,7 @@ module.exports.register = function (context) {
       });
     },
     keyDown: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
       }
@@ -465,7 +465,7 @@ module.exports.register = function (context) {
       }
     },
     keyUp: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
       }
