@@ -1,3 +1,5 @@
+var hammerhacks = require('./hammer.js');
+
 var hotKeys = {
   // Escape
   27: function(app) {
@@ -58,7 +60,8 @@ module.exports.register = function (context) {
       className: "app-canvas"
     },
     svg: {
-      className: "app-svg"
+      className: "app-svg",
+      ref: 'svg',
     },
     svgGroup: {
       className: "view"
@@ -253,7 +256,6 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("panmove", this.onTrack);
       domNode.addEventListener("panend", this.onTrackEnd);
-      return true;
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
@@ -358,7 +360,7 @@ module.exports.register = function (context) {
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
+      var domNode = ReactDOM.findDOMNode(this.refs.svg);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
@@ -369,6 +371,7 @@ module.exports.register = function (context) {
       // The events are injected into the DOM to follow regular propagation rules
       var hammertime = new Hammer.Manager(domNode, {
         domEvents: true,
+        inputClass: hammerhacks.Input,
         recognizers: [
           [ Hammer.Tap, { } ],
           [ Hammer.Press, { time: 500 } ],
@@ -416,8 +419,8 @@ module.exports.register = function (context) {
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
-      this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
+      bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
+      this.bgContext = unwrap(bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
 
