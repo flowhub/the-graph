@@ -1,3 +1,5 @@
+var arcs = require('./arcs');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -76,7 +78,7 @@ module.exports.register = function (context) {
   function createMenuSlice(options) {
     /*jshint validthis:true */
     var direction = options.direction;
-    var arcPathOptions = TheGraph.merge(TheGraph.config.menu.arcPath, { d: TheGraph.arcs[direction] });
+    var arcPathOptions = TheGraph.merge(TheGraph.config.menu.arcPath, { d: arcs[direction] });
     var children = [
       TheGraph.factories.menu.createMenuSliceArcPath(arcPathOptions)
     ];
