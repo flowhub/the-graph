@@ -32,23 +32,28 @@ module.exports.register = function (context) {
   TheGraph.Group = React.createFactory( React.createClass({
     displayName: "TheGraphGroup",
     componentDidMount: function () {
+
       // Move group
-      if (this.props.isSelectionGroup) {
-        // Drag selection by bg
-        ReactDOM.findDOMNode(this.refs.box).addEventListener("trackstart", this.onTrackStart);
-      } else {
-        ReactDOM.findDOMNode(this.refs.label).addEventListener("trackstart", this.onTrackStart);
-      }
-
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Don't pan under menu
-      domNode.addEventListener("trackstart", this.dontPan);
+      // either by label or by box
+      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
+      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      this.dragHammer = new Hammer.Manager(dragNode, {
+        recognizers: [
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+        ],
+      });
+      this.dragHammer.on('panstart', this.onTrackStart);
 
       // Context menu
+      var domNode = ReactDOM.findDOMNode(this);
+      this.hammer = new Hammer.Manager(domNode, {
+        recognizers: [
+          [ Hammer.Press, { time: 500 } ],
+        ],
+      });
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
+        this.hammer.on("press", this.showContext);
       }
     },
     showContext: function (event) {
@@ -56,12 +61,12 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      var x = event.x || event.srcEvent.x || event.clientX || 0;
+      var y = event.y || event.srcEvent.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
@@ -82,56 +87,33 @@ module.exports.register = function (context) {
         triggerHideContext: hide
       });
     },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) {
-        event.stopPropagation();
-      }
-    },
     onTrackStart: function (event) {
-      // Don't drag graph
-      event.stopPropagation();
+      // Don't pan graph
+      event.srcEvent.stopPropagation();
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.addEventListener("track", this.onTrack);
-        box.addEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.addEventListener("track", this.onTrack);
-        label.addEventListener("trackend", this.onTrackEnd);
-      }
+      this.dragHammer.on("panmove", this.onTrack);
+      this.dragHammer.on("panend", this.onTrackEnd);
 
       this.props.graph.startTransaction('movegroup');
     },
     onTrack: function (event) {
-      // Don't fire on graph
-      event.stopPropagation();
+      // Don't pan graph
+      event.srcEvent.stopPropagation();
 
-      var deltaX = Math.round( event.ddx / this.props.scale );
-      var deltaY = Math.round( event.ddy / this.props.scale );
+      var deltaX = Math.round( event.deltaX / this.props.scale );
+      var deltaY = Math.round( event.deltaY / this.props.scale );
 
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
-      // Don't fire on graph
-      event.stopPropagation();
-
-      // Don't tap graph (deselect)
-      event.preventTap();
+      // Don't pan graph
+      event.srcEvent.stopPropagation();
 
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.removeEventListener("track", this.onTrack);
-        box.removeEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.removeEventListener("track", this.onTrack);
-        label.removeEventListener("trackend", this.onTrackEnd);
-      }
+      this.dragHammer.off("panmove", this.onTrack);
+      this.dragHammer.off("panend", this.onTrackEnd);
 
       this.props.graph.endTransaction('movegroup');
     },
