@@ -1,3 +1,5 @@
+var TooltipMixin = require('./mixins').Tooltip;
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -98,7 +100,7 @@ module.exports.register = function (context) {
   TheGraph.Node = React.createFactory( React.createClass({
     displayName: "TheGraphNode",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
     componentDidMount: function () {
       patchGestures();

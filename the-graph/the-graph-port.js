@@ -1,3 +1,5 @@
+var TooltipMixin = require('./mixins').Tooltip;
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -35,7 +37,7 @@ module.exports.register = function (context) {
   TheGraph.Port = React.createFactory( React.createClass({
     displayName: "TheGraphPort",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
     defaultProps: {
       allowEdgeStart: true,

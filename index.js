@@ -39,6 +39,8 @@ TheGraph.Tooltip = TheGraph.tooltip.Tooltip;
 TheGraph.config.tooltip = TheGraph.tooltip.config;
 TheGraph.factories.tooltip = TheGraph.tooltip.factories; 
 
+TheGraph.mixins = require("./the-graph/mixins.js");
+
 TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
 
 TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
