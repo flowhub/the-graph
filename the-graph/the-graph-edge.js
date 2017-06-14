@@ -80,25 +80,22 @@ module.exports.register = function (context) {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
+      this.hammer = new Hammer.Manager(domNode, {
+        recognizers: [
+          [ Hammer.Tap ],
+          [ Hammer.Press ],
+        ],
+      });
 
-      // Dragging
-      domNode.addEventListener("trackstart", this.dontPan);
-
+      // Select
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
-        domNode.addEventListener("tap", this.onEdgeSelection);
+        this.hammer.on("tap", this.onEdgeSelection);
       }
-
-      // Context menu
+      // Open menu
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
-      }
-    },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) { 
-        event.stopPropagation();
+        this.hammer.on('press', this.showContext);
       }
     },
     onEdgeSelection: function (event) {
@@ -113,12 +110,12 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      var x = event.x || event.srcEvent.x || event.clientX || 0;
+      var y = event.y || event.srcEvent.y || event.clientY || 0;
 
       // App.showContext
       this.props.showContext({
