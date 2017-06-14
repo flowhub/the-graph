@@ -44,17 +44,25 @@ module.exports.register = function (context) {
       allowEdgeStart: true,
     },
     componentDidMount: function () {
+      var domNode = ReactDOM.findDOMNode(this);
+      this.hammer = new Hammer.Manager(domNode, {
+        recognizers: [
+          [ Hammer.Tap, {} ],
+          [ Hammer.Press, { time: 500 } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+        ],
+      });
       // Preview edge start
-      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
-      ReactDOM.findDOMNode(this).addEventListener("trackstart", this.edgeStart);
+      this.hammer.on("tap", this.edgeStart);
+      this.hammer.on("panstart", this.edgeStart);
       // Make edge
-      ReactDOM.findDOMNode(this).addEventListener("trackend", this.triggerDropOnTarget);
+      this.hammer.on("panend", this.triggerDropOnTarget);
       ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        this.hammer.on("press", this.showContext);
       }
     },
     getTooltipTrigger: function () {
@@ -79,12 +87,12 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      var x = event.x || event.srcEvent.x || 0;
+      var y = event.y || event.srcEvent.y || 0;
 
       // App.showContext
       this.props.showContext({
@@ -119,7 +127,7 @@ module.exports.register = function (context) {
         return;
       }
       // Don't tap graph
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
 
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
