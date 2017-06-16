@@ -38,7 +38,6 @@
     "start": "grunt dev",
     "test": "grunt test",
     "build": "grunt build",
-    "postinstall": "bower install",
     "preversion": "grunt test",
     "postversion": "git push && git push --tags"
   },
