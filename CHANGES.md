@@ -10,6 +10,7 @@ as shown in `examples/demo-thumbnail.html`.
 * Polymer element `the-graph-nav` has been removed.
 Should instead use the new React component `TheGraph.nav.Component`,
 as shown in `examples/demo-full.html`
+* `the-graph` no longer calls `bower install` when installed via NPM. Users have to do this manually
 
 Internal changes
 
