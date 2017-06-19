@@ -7,13 +7,11 @@ module.exports.register = function (context) {
       className: "group"
     },
     boxRect: {
-      ref: "box",
       rx: TheGraph.config.nodeRadius,
       ry: TheGraph.config.nodeRadius
     },
     labelText: {
-      ref: "label",
-      className: "group-label drag"
+      className: "group-label"
     },
     descriptionText: {
       className: "group-description"
@@ -31,12 +29,15 @@ module.exports.register = function (context) {
 
   TheGraph.Group = React.createFactory( React.createClass({
     displayName: "TheGraphGroup",
+    getInitialState: function () {
+        return {
+            moving: false,
+        };
+    },
     componentDidMount: function () {
 
       // Move group
-      // either by label or by box
-      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
-      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
       dragNode.addEventListener('panstart', this.onTrackStart);
 
       // Context menu
@@ -84,9 +85,9 @@ module.exports.register = function (context) {
     onTrackStart: function (event) {
       // Don't pan graph
       event.stopPropagation();
+      this.setState({ moving: true });
 
-      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
-      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
       dragNode.addEventListener("panmove", this.onTrack);
       dragNode.addEventListener("panend", this.onTrackEnd);
 
@@ -102,14 +103,14 @@ module.exports.register = function (context) {
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
+      this.setState({ moving: false });
       // Don't pan graph
       event.stopPropagation();
 
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
-      var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
       dragNode.addEventListener("panmove", this.onTrack);
       dragNode.addEventListener("panend", this.onTrackEnd);
 
@@ -120,12 +121,13 @@ module.exports.register = function (context) {
       var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
       var selection = (this.props.isSelectionGroup ? ' selection drag' : '');
+
       var boxRectOptions = {
         x: x,
         y: y,
         width: this.props.maxX - x + TheGraph.config.nodeWidth*0.5,
         height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
-        className: "group-box color"+color + selection
+        className: "group-box color"+color + selection,
       };
       boxRectOptions = TheGraph.merge(TheGraph.config.group.boxRect, boxRectOptions);
       var boxRect =  TheGraph.factories.group.createGroupBoxRect.call(this, boxRectOptions);
@@ -133,7 +135,7 @@ module.exports.register = function (context) {
       var labelTextOptions = {
         x: x + TheGraph.config.nodeRadius,
         y: y + 9,
-        children: this.props.label
+        children: this.props.label,
       };
       labelTextOptions = TheGraph.merge(TheGraph.config.group.labelText, labelTextOptions);
       var labelText = TheGraph.factories.group.createGroupLabelText.call(this, labelTextOptions);
@@ -146,10 +148,37 @@ module.exports.register = function (context) {
       descriptionTextOptions = TheGraph.merge(TheGraph.config.group.descriptionText, descriptionTextOptions);
       var descriptionText = TheGraph.factories.group.createGroupDescriptionText.call(this, descriptionTextOptions);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var eventOptions = {
+        className: 'eventcatcher drag',
+        ref: 'events',
+      };
+      if (this.props.isSelectionGroup) {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = boxRectOptions.width;
+        eventOptions.height = boxRectOptions.height;
+      } else {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = 24 * this.props.label.length * 0.75;
+        eventOptions.height = 24 * 2;
+      }
+      if (this.state.moving) {
+        var extend = 1000;
+        eventOptions.width += extend*2;
+        eventOptions.height += extend*2;
+        eventOptions.x -= extend;
+        eventOptions.y -= extend;
+      }
+      var eventCatcher = TheGraph.factories.createRect(eventOptions);
+
       var groupContents = [
         boxRect,
         labelText,
-        descriptionText
+        descriptionText,
+        eventCatcher,
       ];
 
       var containerOptions = TheGraph.merge(TheGraph.config.group.container, {});
