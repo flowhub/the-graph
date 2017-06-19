@@ -490,8 +490,6 @@ module.exports.register = function (context) {
       var eventOptions = {
         r: eventSize,
         className: 'eventcatcher',
-        fill: 'white',
-        fillOpacity: 0.1,
       };
       var eventRect = TheGraph.factories.createCircle(eventOptions);
 
