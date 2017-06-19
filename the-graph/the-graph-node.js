@@ -87,6 +87,11 @@ module.exports.register = function (context) {
     mixins: [
       TooltipMixin
     ],
+    getInitialState: function () {
+        return {
+          moving: false,
+        };
+    },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
       
@@ -133,6 +138,7 @@ module.exports.register = function (context) {
       } else {
         this.props.graph.startTransaction('movenode');
       }
+      this.setState({ moving: true });
     },
     onTrack: function (event) {
       // Don't fire on graph
@@ -163,6 +169,7 @@ module.exports.register = function (context) {
     onTrackEnd: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+      this.setState({ moving: false });
 
       var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("panmove", this.onTrack);
@@ -476,6 +483,18 @@ module.exports.register = function (context) {
       var sublabelRect = TheGraph.factories.node.createNodeSublabelRect.call(this, sublabelRectOptions);
       var sublabelGroup = TheGraph.factories.node.createNodeSublabelGroup.call(this, TheGraph.config.node.sublabelBackground, [sublabelRect, sublabelText]);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var scale = this.props.app.state.scale;
+      var eventSize = this.props.width * 12 / scale;
+      var eventOptions = {
+        r: eventSize,
+        className: 'eventcatcher',
+        fill: 'white',
+        fillOpacity: 0.1,
+      };
+      var eventRect = TheGraph.factories.createCircle(eventOptions);
+
       var nodeContents = [
         backgroundRect,
         borderRect,
@@ -486,6 +505,9 @@ module.exports.register = function (context) {
         labelGroup,
         sublabelGroup
       ];
+      if (this.state.moving) {
+        nodeContents.push(eventRect);
+      }
 
       var nodeOptions = {
         className: "node drag"+
