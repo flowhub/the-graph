@@ -252,7 +252,6 @@ module.exports.register = function (context) {
       this.pinching = false;
     },
     onTrackStart: function (event) {
-      console.log('app pan start', event);
       var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("panmove", this.onTrack);
       domNode.addEventListener("panend", this.onTrackEnd);
@@ -260,8 +259,8 @@ module.exports.register = function (context) {
     onTrack: function (event) {
       if ( this.pinching ) { return; }
       this.setState({
-        x: this.state.x + event.gesture.deltaX,
-        y: this.state.y + event.gesture.deltaY
+        x: this.state.x + event.gesture.srcEvent.movementX,
+        y: this.state.y + event.gesture.srcEvent.movementY
       });
     },
     onTrackEnd: function (event) {
@@ -382,8 +381,6 @@ module.exports.register = function (context) {
 
       // Gesture event for pan
       domNode.addEventListener("panstart", this.onTrackStart);
-      domNode.addEventListener('press', function(e) {  console.log('app press', e);  });
-
 
       var isTouchDevice = 'ontouchstart' in document.documentElement;
       if( isTouchDevice && hammertime ){
@@ -471,8 +468,6 @@ module.exports.register = function (context) {
       }
     },
     unselectAll: function (event) {
-      console.log('app tap');
-
       // No arguments = clear selection
       this.props.onNodeSelection();
       this.props.onEdgeSelection();

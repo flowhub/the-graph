@@ -83,7 +83,7 @@ module.exports.register = function (context) {
     },
     onTrackStart: function (event) {
       // Don't pan graph
-      event.srcEvent.stopPropagation();
+      event.stopPropagation();
 
       var dragRefName = (this.props.isSelectionGroup) ? 'box' : 'label';
       var dragNode = ReactDOM.findDOMNode(this.refs[dragRefName]);
@@ -94,16 +94,16 @@ module.exports.register = function (context) {
     },
     onTrack: function (event) {
       // Don't pan graph
-      event.srcEvent.stopPropagation();
+      event.stopPropagation();
 
-      var deltaX = Math.round( event.deltaX / this.props.scale );
-      var deltaY = Math.round( event.deltaY / this.props.scale );
+      var deltaX = Math.round( event.gesture.srcEvent.movementX / this.props.scale );
+      var deltaY = Math.round( event.gesture.srcEvent.movementY / this.props.scale );
 
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
       // Don't pan graph
-      event.srcEvent.stopPropagation();
+      event.stopPropagation();
 
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);

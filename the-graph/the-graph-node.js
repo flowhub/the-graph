@@ -106,7 +106,6 @@ module.exports.register = function (context) {
 
     },
     onNodeSelection: function (event) {
-      console.log('node tap');
       // Don't tap app (unselect)
       event.stopPropagation();
 
@@ -114,7 +113,6 @@ module.exports.register = function (context) {
       this.props.onNodeSelection(this.props.nodeID, this.props.node, toggle);
     },
     onTrackStart: function (event) {
-      console.log('node pan start');
       // Don't drag graph
       event.stopPropagation();
 
@@ -141,8 +139,8 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var scale = this.props.app.state.scale;
-      var deltaX = Math.round( event.gesture.deltaX / scale );
-      var deltaY = Math.round( event.gesture.deltaY / scale );
+      var deltaX = Math.round( event.gesture.srcEvent.movementX / scale );
+      var deltaY = Math.round( event.gesture.srcEvent.movementY / scale );
 
       // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
