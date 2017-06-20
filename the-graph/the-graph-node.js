@@ -100,7 +100,7 @@ module.exports.register = function (context) {
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        domNode.addEventListener("tap", this.onNodeSelection, true);
+        domNode.addEventListener("tap", this.onNodeSelection);
       }
 
       // Context menu
