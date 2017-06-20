@@ -119,7 +119,7 @@ module.exports.register = function (context) {
         return;
       }
 
-      // Click on label, pass context menu to node
+      // Click on label, allow node context menu
       if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
@@ -139,6 +139,7 @@ module.exports.register = function (context) {
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
+      // FIXME: broken, is never set, neither on event.srcEvent
       if (!event.relatedTarget) { return; }
       var dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,
