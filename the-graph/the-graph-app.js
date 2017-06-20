@@ -258,6 +258,7 @@ module.exports.register = function (context) {
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
+      if ( this.menuShown ) { return; }
       this.setState({
         x: this.state.x + event.gesture.srcEvent.movementX,
         y: this.state.y + event.gesture.srcEvent.movementY
