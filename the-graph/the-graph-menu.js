@@ -157,16 +157,16 @@ module.exports.register = function (context) {
     },
     componentDidMount: function () {
       if (this.state.n4tappable) {
-        this.refs.n4.addEventListener("up", this.onTapN4);
+        this.refs.n4.addEventListener("tap", this.onTapN4);
       }
       if (this.state.s4tappable) {
-        this.refs.s4.addEventListener("up", this.onTapS4);
+        this.refs.s4.addEventListener("tap", this.onTapS4);
       }
       if (this.state.e4tappable) {
-        this.refs.e4.addEventListener("up", this.onTapE4);
+        this.refs.e4.addEventListener("tap", this.onTapE4);
       }
       if (this.state.w4tappable) {
-        this.refs.w4.addEventListener("up", this.onTapW4);
+        this.refs.w4.addEventListener("tap", this.onTapW4);
       }
 
       // Prevent context menu
@@ -265,8 +265,9 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       var rectNode = this.refs.rect; 
 
+
       // Right-click on another item will show its menu
-      domNode.addEventListener("down", function (event) {
+      domNode.addEventListener("mousedown", function (event) {
         // Only if outside of menu
         if (event && event.target===rectNode) {
           this.hideModal();

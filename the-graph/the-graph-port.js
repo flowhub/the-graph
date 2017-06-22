@@ -44,17 +44,19 @@ module.exports.register = function (context) {
       allowEdgeStart: true,
     },
     componentDidMount: function () {
+      var domNode = ReactDOM.findDOMNode(this);
+
       // Preview edge start
-      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
-      ReactDOM.findDOMNode(this).addEventListener("trackstart", this.edgeStart);
+      domNode.addEventListener("tap", this.edgeStart);
+      domNode.addEventListener("panstart", this.edgeStart);
       // Make edge
-      ReactDOM.findDOMNode(this).addEventListener("trackend", this.triggerDropOnTarget);
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
+      domNode.addEventListener("panend", this.triggerDropOnTarget);
+      domNode.addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
     },
     getTooltipTrigger: function () {
@@ -79,10 +81,13 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
 
@@ -114,12 +119,12 @@ module.exports.register = function (context) {
         return;
       }
 
-      // Click on label, pass context menu to node
+      // Click on label, allow node context menu
       if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't tap graph
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
 
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
@@ -134,6 +139,7 @@ module.exports.register = function (context) {
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
+      // FIXME: broken, is never set, neither on event.srcEvent
       if (!event.relatedTarget) { return; }
       var dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,

@@ -1,3 +1,5 @@
+var hammerhacks = require('./hammer.js');
+
 var hotKeys = {
   // Escape
   27: function(app) {
@@ -58,7 +60,8 @@ module.exports.register = function (context) {
       className: "app-canvas"
     },
     svg: {
-      className: "app-svg"
+      className: "app-svg",
+      ref: 'svg',
     },
     svgGroup: {
       className: "view"
@@ -249,16 +252,16 @@ module.exports.register = function (context) {
       this.pinching = false;
     },
     onTrackStart: function (event) {
-      event.preventTap();
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
+      if ( this.menuShown ) { return; }
       this.setState({
-        x: this.state.x + event.ddx,
-        y: this.state.y + event.ddy
+        x: this.state.x + event.gesture.srcEvent.movementX,
+        y: this.state.y + event.gesture.srcEvent.movementY
       });
     },
     onTrackEnd: function (event) {
@@ -266,8 +269,8 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
@@ -357,32 +360,28 @@ module.exports.register = function (context) {
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Set up PolymerGestures for app and all children
-      var noop = function(){};
-      PolymerGestures.addEventListener(domNode, "up", noop);
-      PolymerGestures.addEventListener(domNode, "down", noop);
-      PolymerGestures.addEventListener(domNode, "tap", noop);
-      PolymerGestures.addEventListener(domNode, "trackstart", noop);
-      PolymerGestures.addEventListener(domNode, "track", noop);
-      PolymerGestures.addEventListener(domNode, "trackend", noop);
-      PolymerGestures.addEventListener(domNode, "hold", noop);
+      var domNode = ReactDOM.findDOMNode(this.refs.svg);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
       }
 
-      // Don't let Hammer.js collide with polymer-gestures
-      var hammertime;
-      if (Hammer) {
-        hammertime = new Hammer(domNode, {});
-        hammertime.get('pinch').set({ enable: true });
-      }
+      // Setup Hammer.js events for this and all children
+      // The events are injected into the DOM to follow regular propagation rules
+      var hammertime = new Hammer.Manager(domNode, {
+        domEvents: true,
+        inputClass: hammerhacks.Input,
+        recognizers: [
+          [ Hammer.Tap, { } ],
+          [ Hammer.Press, { time: 500 } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+          [ Hammer.Pinch, { } ],
+        ],
+      });
 
-      // Pointer gesture event for pan
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      // Gesture event for pan
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       var isTouchDevice = 'ontouchstart' in document.documentElement;
       if( isTouchDevice && hammertime ){
@@ -413,13 +412,13 @@ module.exports.register = function (context) {
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
 
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // FIXME: instead access the shiftKey of event instead of keeping metaKey
       document.addEventListener('keydown', this.keyDown);
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
-      this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
+      bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
+      this.bgContext = unwrap(bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
 
@@ -449,7 +448,7 @@ module.exports.register = function (context) {
       });
     },
     keyDown: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
       }
@@ -464,7 +463,7 @@ module.exports.register = function (context) {
       }
     },
     keyUp: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
       }

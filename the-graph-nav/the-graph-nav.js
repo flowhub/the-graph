@@ -240,7 +240,6 @@ var Component = React.createClass({
         var x = this.state.currentPan[0];
         var y = this.state.currentPan[1];
         var panscale = this.state.thumbscale / this.props.viewscale;
-        console.log('panmove', event.deltaX, event.deltaY, panscale, this.state.thumbscale, this.props.viewscale);
         x -= event.deltaX / panscale;
         y -= event.deltaY / panscale;
         var panTo = { x: Math.round(x), y: Math.round(y) };

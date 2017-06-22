@@ -68,6 +68,10 @@
   animation: error 1s linear infinite alternate;
   stroke: none;
 }
+.the-graph-dark .eventcatcher {
+  fill: #fff;
+  fill-opacity: 0.1;
+}
 .the-graph-dark .node:hover .node-rect {
   fill: rgba(230,238,240,0.97);
 }

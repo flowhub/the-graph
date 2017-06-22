@@ -146,7 +146,7 @@ module.exports.register = function (context) {
 
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.addEventListener("track", this.renderPreviewEdge);
+      appDomNode.addEventListener("panmove", this.renderPreviewEdge);
       // TODO tap to add new node here
       appDomNode.addEventListener("tap", this.cancelPreviewEdge);
 
@@ -155,7 +155,7 @@ module.exports.register = function (context) {
     cancelPreviewEdge: function (event) {
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.removeEventListener("track", this.renderPreviewEdge);
+      appDomNode.removeEventListener("panmove", this.renderPreviewEdge);
       appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
@@ -163,6 +163,9 @@ module.exports.register = function (context) {
       }
     },
     renderPreviewEdge: function (event) {
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
       x -= this.props.app.state.offsetX || 0;

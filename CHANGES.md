@@ -2,6 +2,11 @@
 
 ## 0.10.0 (unreleased)
 
+UI changes
+
+* Edges cannot be dropped on target port. Have to tap to complete edge connection.
+* Menu item cannot be opened by swiping and releasing. Have to tap to perform menu action.
+
 Breaking changes
 
 * Polymer element `the-graph-thumb` has been removed.
@@ -14,6 +19,7 @@ as shown in `examples/demo-full.html`
 
 Internal changes
 
+* Usage of PolymerGestures has been replaced by hammer.js
 * All dependencies except Polymer (deprecated) are installed via NPM
 * Some more modules have been converted to proper CommonJS
 
