@@ -1,5 +1,8 @@
 var hammerhacks = require('./hammer.js');
 
+// Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
+var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
+
 var hotKeys = {
   // Escape
   27: function(app) {
@@ -116,11 +119,34 @@ module.exports.register = function (context) {
     mixins.push(React.Animate);
   }
 
+  function defaultGetMenu(options) {
+    // Options: type, graph, itemKey, item
+    if (options.type && this.menus[options.type]) {
+      var defaultMenu = this.menus[options.type];
+      if (defaultMenu.callback) {
+        return defaultMenu.callback(defaultMenu, options);
+      }
+      return defaultMenu;
+    }
+    return null;
+  }
+
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
     defaultProps: {
+      width: null,
+      height: null,
       readonly: false,
+      minZoom: 0.15,
+      maxZoom: 15.0,
+      offsetX: 0.0,
+      offsetY: 0.0,
+      menus: null,
+      getMenuDef: null,
+      onPanScale: null,
+      onNodeSelection: null,
+      onEdgeSelection: null,
     },
     getInitialState: function() {
       // Autofit
@@ -550,7 +576,7 @@ module.exports.register = function (context) {
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
       var contextMenu = null;
-      if ( this.state.contextMenu ) {
+      if ( this.state.contextMenu && this.props.getMenuDef ) {
         var options = this.state.contextMenu;
         var menu = this.props.getMenuDef(options);
         if (menu && Object.keys(menu).length) {
