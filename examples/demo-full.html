@@ -71,9 +71,9 @@
     <div id="nav"></div>
 
     <div id="testing">
-      <button id="autolayout">autolayout</button>
-      <button id="theme">theme</button>
-      <button id="focus">focus</button>
+      <button id="theme" style="">theme</button>
+      <button id="autolayout" style="display: none">autolayout</button>
+      <button id="focus" style="display: none">focus</button>
     </div>
 
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
@@ -84,6 +84,48 @@
     <script type="text/javascript">
       "use strict";
       var fbpGraph = window.TheGraph.fbpGraph;
+
+
+      // Context menu specification
+      function deleteNode(graph, itemKey, item) {
+          graph.removeNode(itemKey);
+      }
+      function deleteEdge(graph, itemKey, item) {
+        graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
+      }
+      var contextMenus = {
+        main: null,
+        selection: null,
+        nodeInport: null,
+        nodeOutport: null,
+        graphInport: null,
+        graphOutport: null,
+        edge: {
+          icon: "long-arrow-right",
+          s4: {
+            icon: "trash-o",
+            iconLabel: "delete",
+            action: deleteEdge
+          }
+        },
+        node: {
+          s4: {
+            icon: "trash-o",
+            iconLabel: "delete",
+            action: deleteNode
+          },
+        },
+        group: {
+          icon: "th",
+          s4: {
+            icon: "trash-o",
+            iconLabel: "ungroup",
+            action: function (graph, itemKey, item) {
+              graph.removeGroup(itemKey);
+            },
+          },
+        },
+      };
 
       var appState = {
         graph: new fbpGraph.Graph(),
@@ -126,6 +168,7 @@
           height: window.innerWidth,
           graph: appState.graph,
           library: appState.library,
+          menus: contextMenus,
           nodeIcons: appState.iconOverrides,
           onPanScale: renderNav,
         }
@@ -145,11 +188,6 @@
       // Follow changes in window size
       window.addEventListener("resize", renderApp);
 
-      // Autolayout button
-      document.getElementById("autolayout").addEventListener("click", function () {
-        editor.triggerAutolayout();
-      });
-
       // Toggle theme
       var theme = "dark";
       document.getElementById("theme").addEventListener("click", function () {
@@ -158,8 +196,15 @@
         renderApp();
       });
 
+      // Autolayout button
+      document.getElementById("autolayout").addEventListener("click", function () {
+        // TODO: support via React props
+        editor.triggerAutolayout();
+      });
+
       // Focus a node
       document.getElementById("focus").addEventListener("click", function () {
+        // TODO: support via React props
         var nodes = appState.graph.nodes;
         var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
         editor.focusNode(randomNode);
@@ -180,7 +225,6 @@
       // Simulate un/triggering errors
       var errorNodeId = null;
       var makeRandomError = function () {
-        if (!editor.graph) { return; }
         if (errorNodeId) {
           editor.removeErrorNode(errorNodeId);
         }
@@ -191,7 +235,7 @@
           editor.updateErrorNodes();
         }
       };
-      //window.setInterval(makeRandomError, 3551);
+      //window.setInterval(makeRandomError, 3551); // TODO: support error nodes via React props
       //makeRandomError();
 
       // Load initial graph

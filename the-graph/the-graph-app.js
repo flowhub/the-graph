@@ -305,6 +305,17 @@ module.exports.register = function (context) {
         this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
       }
     },
+    defaultGetMenuDef: function(options) {
+      // Options: type, graph, itemKey, item
+      if (options.type && this.props.menus[options.type]) {
+        var defaultMenu = this.props.menus[options.type];
+        if (defaultMenu.callback) {
+          return defaultMenu.callback(defaultMenu, options);
+        }
+        return defaultMenu;
+      }
+      return null;
+    },
     showContext: function (options) {
       this.setState({
         contextMenu: options,
@@ -577,9 +588,10 @@ module.exports.register = function (context) {
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
       var contextMenu = null;
-      if ( this.state.contextMenu && this.props.getMenuDef ) {
+      var getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
+      if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
-        var menu = this.props.getMenuDef(options);
+        var menu = getMenuDef(options);
         if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
