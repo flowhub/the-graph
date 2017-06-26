@@ -82,6 +82,15 @@ module.exports.register = function (context) {
   TheGraph.Graph = React.createFactory( React.createClass({
     displayName: "TheGraphGraph",
     mixins: [],
+    getDefaultProps: function () {
+        return {
+            library: {},
+            graph: null,
+            app: null,
+            offsetX: 0,
+            offsetY: 0,
+        };
+    },
     getInitialState: function() {
       return {
         graph: this.props.graph,
@@ -421,6 +430,9 @@ module.exports.register = function (context) {
       // Nodes
       var nodes = graph.nodes.map(function (node) {
         var componentInfo = self.getComponentInfo(node.component);
+        if (!componentInfo) {
+            throw new Error("Component " + node.component + " is not in library");
+        }
         var key = node.id;
         if (!node.metadata) {
           node.metadata = {};
