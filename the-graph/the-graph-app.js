@@ -13,7 +13,7 @@ var hotKeys = {
   },
   // Delete
   46: function (app) {
-    var graph = app.refs.graph.state.graph;
+    var graph = app.refs.graph.props.graph;
     var selectedNodes = app.refs.graph.state.selectedNodes;
     var selectedEdges = app.refs.graph.state.selectedEdges;
     var menus = app.props.menus;
@@ -34,7 +34,7 @@ var hotKeys = {
   },
   // s for selected
   83: function (app) {
-    var graph = app.refs.graph.state.graph;
+    var graph = app.refs.graph.props.graph;
     var selectedNodes = app.refs.graph.state.selectedNodes;
 
     for (var nodeKey in selectedNodes) {

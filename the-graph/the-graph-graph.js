@@ -93,7 +93,6 @@ module.exports.register = function (context) {
     },
     getInitialState: function() {
       return {
-        graph: this.props.graph,
         displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
@@ -108,19 +107,37 @@ module.exports.register = function (context) {
       };
     },
     componentDidMount: function () {
-      // To change port colors
-      this.props.graph.on("addEdge", this.resetPortRoute);
-      this.props.graph.on("changeEdge", this.resetPortRoute);
-      this.props.graph.on("removeEdge", this.resetPortRoute);
-      this.props.graph.on("removeInitial", this.resetPortRoute);
+        this.subscribeGraph(null, this.props.graph);
+        ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+    },
+    componentWillReceiveProps: function(nextProps) {
+      this.subscribeGraph(this.props.graph, nextProps.graph);
+    },
+    subscribeGraph: function(previous, next) {
+      if (previous) {
+        previous.removeListener("addEdge", this.resetPortRoute);
+        previous.removeListener("changeEdge", this.resetPortRoute);
+        previous.removeListener("removeEdge", this.resetPortRoute);
+        previous.removeListener("removeInitial", this.resetPortRoute);
 
-      // Listen to fbp-graph graph object's events
-      this.props.graph.on("changeNode", this.markDirty);
-      this.props.graph.on("changeInport", this.markDirty);
-      this.props.graph.on("changeOutport", this.markDirty);
-      this.props.graph.on("endTransaction", this.markDirty);
+        previous.removeListener("changeNode", this.markDirty);
+        previous.removeListener("changeInport", this.markDirty);
+        previous.removeListener("changeOutport", this.markDirty);
+        previous.removeListener("endTransaction", this.markDirty);
+      }
+      if (next) {
+        // To change port colors
+        next.on("addEdge", this.resetPortRoute);
+        next.on("changeEdge", this.resetPortRoute);
+        next.on("removeEdge", this.resetPortRoute);
+        next.on("removeInitial", this.resetPortRoute);
 
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+        // Listen to fbp-graph graph object's events
+        next.on("changeNode", this.markDirty);
+        next.on("changeInport", this.markDirty);
+        next.on("changeOutport", this.markDirty);
+        next.on("endTransaction", this.markDirty);
+      }
     },
     edgePreview: null,
     edgeStart: function (event) {
@@ -187,10 +204,10 @@ module.exports.register = function (context) {
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      this.props.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
     },
     moveGroup: function (nodes, dx, dy) {
-      var graph = this.state.graph;
+      var graph = this.props.graph;
 
       // Move each group member
       var len = nodes.length;
@@ -408,7 +425,7 @@ module.exports.register = function (context) {
       this.dirty = false;
 
       var self = this;
-      var graph = this.state.graph;
+      var graph = this.props.graph;
       var library = this.props.library;
       var selectedIds = [];
 
