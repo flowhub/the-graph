@@ -89,6 +89,7 @@ module.exports.register = function (context) {
             app: null,
             offsetX: 0,
             offsetY: 0,
+            nodeIcons: {}, // allows overriding icon of a node
         };
     },
     getInitialState: function() {
@@ -112,6 +113,7 @@ module.exports.register = function (context) {
     },
     componentWillReceiveProps: function(nextProps) {
       this.subscribeGraph(this.props.graph, nextProps.graph);
+      this.markDirty();
     },
     subscribeGraph: function(previous, next) {
       if (previous) {
@@ -394,9 +396,9 @@ module.exports.register = function (context) {
       });
       this.markDirty();
     },
-    updatedIcons: {},
     updateIcon: function (nodeId, icon) {
-      this.updatedIcons[nodeId] = icon;
+      // FIXME: deprecated function, to be removed
+      this.props.nodeIcons[nodeId] = icon;
       this.markDirty();
     },
     dirty: false,
@@ -477,8 +479,8 @@ module.exports.register = function (context) {
         }
         var icon = "cog";
         var iconsvg = "";
-        if (self.updatedIcons[key]) {
-          icon = self.updatedIcons[key];
+        if (self.props.nodeIcons[key]) {
+          icon = self.props.nodeIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         } else if (componentInfo && componentInfo.iconsvg) {
