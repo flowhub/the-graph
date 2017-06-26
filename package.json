@@ -14,8 +14,7 @@
     "klayjs-noflo": "^0.3.1",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
-    "tv4": "^1.2.7",
-    "webcomponents.js": "^0.6.0"
+    "tv4": "^1.2.7"
   },
   "devDependencies": {
     "chai": "^4.0.0",
