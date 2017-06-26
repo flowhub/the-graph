@@ -131,7 +131,7 @@
         graph: new fbpGraph.Graph(),
         library: {},
         iconOverrides: {},
-        theme: 'dark'
+        theme: 'dark',
       };
 
       // Attach nav
@@ -142,9 +142,18 @@
       function panEditorTo() {
 
       }
+      function editorPanChanged(x, y, scale) {
+        appState.editorViewX = -x;
+        appState.editorViewY = -y;
+        appState.editorScale = scale;
+        renderNav();
+      }
       function renderNav() {
 
-        var view = [0, 0, 100, 100];
+        var view = [
+            appState.editorViewX, appState.editorViewY,
+            window.innerWidth, window.innerHeight,
+        ];
         var props = {
             height: 162,
             width: 216,
@@ -152,7 +161,7 @@
             onTap: fitGraphInView,
             onPanTo: panEditorTo,
             viewrectangle: view,
-            viewscale: 1.0,
+            viewscale: appState.editorScale,
         };
 
         var element = React.createElement(TheGraph.nav.Component, props);
@@ -170,7 +179,7 @@
           library: appState.library,
           menus: contextMenus,
           nodeIcons: appState.iconOverrides,
-          onPanScale: renderNav,
+          onPanScale: editorPanChanged,
         }
 
         console.log('render', props);
