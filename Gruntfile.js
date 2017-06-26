@@ -19,15 +19,6 @@
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
-      'bower-install-simple': {
-        deps: {
-          options: {
-            interactive: false,
-            forceLatest: false,
-            directory: 'bower_components'
-          }
-        }
-      },
       exec: {
         build_stylus: {
           command: 'node ./node_modules/stylus/bin/stylus ' + stylExpand
@@ -134,7 +125,6 @@
       }
     });
 
-    this.loadNpmTasks('grunt-bower-install-simple');
     this.loadNpmTasks('grunt-exec');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
@@ -144,7 +134,7 @@
     this.loadNpmTasks('grunt-saucelabs');
 
     this.registerTask('dev', ['test', 'watch']);
-    this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
     this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
     this.registerTask('crossbrowser', ['test', 'saucelabs-mocha']);
     this.registerTask('default', ['test']);

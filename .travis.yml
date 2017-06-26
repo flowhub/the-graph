@@ -3,7 +3,6 @@ node_js:
 - node
 before_script:
 - npm install -g grunt-cli
-- bower install
 script: grunt crossbrowser
 deploy:
   provider: npm
