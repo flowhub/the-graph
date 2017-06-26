@@ -233,6 +233,7 @@ module.exports.register = function (context) {
       }
     },
     getComponentInfo: function (componentName) {
+      console.error("DEPRECATED: getComponentInfo() will be removed in next version of the-graph. Use 'library' in props instead");
       return this.props.library[componentName];
     },
     portInfo: {},
@@ -245,7 +246,7 @@ module.exports.register = function (context) {
         var outports = {};
         if (componentName && this.props.library) {
           // Copy ports from library object
-          var component = this.getComponentInfo(componentName);
+          var component = this.props.library[componentName];
           if (!component) {
             return {
               inports: inports,
@@ -397,6 +398,7 @@ module.exports.register = function (context) {
       this.markDirty();
     },
     updateIcon: function (nodeId, icon) {
+      console.error("DEPRECATED: updateIcon() will be removed in next version of the-graph. Pass nodeIcons through props instead");
       // FIXME: deprecated function, to be removed
       this.props.nodeIcons[nodeId] = icon;
       this.markDirty();
@@ -448,7 +450,7 @@ module.exports.register = function (context) {
 
       // Nodes
       var nodes = graph.nodes.map(function (node) {
-        var componentInfo = self.getComponentInfo(node.component);
+        var componentInfo = self.props.library[node.component];
         if (!componentInfo) {
             throw new Error("Component " + node.component + " is not in library");
         }
