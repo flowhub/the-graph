@@ -1,6 +1,7 @@
 
 // NOTE: caller should wrap in a graph transaction, to group all changes made to @graph
 function applyAutolayout(graph, keilerGraph, props) {
+  console.error('DEPRECATED: TheGraph.autolayout.applyAutolayout() will be removed in next version');
 
   // Update original graph nodes with the new coordinates from KIELER graph
   var children = keilerGraph.children.slice();
