@@ -1,5 +1,8 @@
 var hammerhacks = require('./hammer.js');
 
+// Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
+var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
+
 var hotKeys = {
   // Escape
   27: function(app) {
@@ -10,7 +13,7 @@ var hotKeys = {
   },
   // Delete
   46: function (app) {
-    var graph = app.refs.graph.state.graph;
+    var graph = app.refs.graph.props.graph;
     var selectedNodes = app.refs.graph.state.selectedNodes;
     var selectedEdges = app.refs.graph.state.selectedEdges;
     var menus = app.props.menus;
@@ -31,7 +34,7 @@ var hotKeys = {
   },
   // s for selected
   83: function (app) {
-    var graph = app.refs.graph.state.graph;
+    var graph = app.refs.graph.props.graph;
     var selectedNodes = app.refs.graph.state.selectedNodes;
 
     for (var nodeKey in selectedNodes) {
@@ -116,11 +119,35 @@ module.exports.register = function (context) {
     mixins.push(React.Animate);
   }
 
+  function defaultGetMenu(options) {
+    // Options: type, graph, itemKey, item
+    if (options.type && this.menus[options.type]) {
+      var defaultMenu = this.menus[options.type];
+      if (defaultMenu.callback) {
+        return defaultMenu.callback(defaultMenu, options);
+      }
+      return defaultMenu;
+    }
+    return null;
+  }
+
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
     defaultProps: {
+      width: null,
+      height: null,
       readonly: false,
+      nodeIcons: {},
+      minZoom: 0.15,
+      maxZoom: 15.0,
+      offsetX: 0.0,
+      offsetY: 0.0,
+      menus: null,
+      getMenuDef: null,
+      onPanScale: null,
+      onNodeSelection: null,
+      onEdgeSelection: null,
     },
     getInitialState: function() {
       // Autofit
@@ -277,6 +304,17 @@ module.exports.register = function (context) {
       if (this.props.onPanScale) {
         this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
       }
+    },
+    defaultGetMenuDef: function(options) {
+      // Options: type, graph, itemKey, item
+      if (options.type && this.props.menus[options.type]) {
+        var defaultMenu = this.props.menus[options.type];
+        if (defaultMenu.callback) {
+          return defaultMenu.callback(defaultMenu, options);
+        }
+        return defaultMenu;
+      }
+      return null;
     },
     showContext: function (options) {
       this.setState({
@@ -550,9 +588,10 @@ module.exports.register = function (context) {
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
       var contextMenu = null;
+      var getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
       if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
-        var menu = this.props.getMenuDef(options);
+        var menu = getMenuDef(options);
         if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
@@ -580,6 +619,7 @@ module.exports.register = function (context) {
         scale: this.state.scale,
         app: this,
         library: this.props.library,
+        nodeIcons: this.props.nodeIcons,
         onNodeSelection: this.props.onNodeSelection,
         onEdgeSelection: this.props.onEdgeSelection,
         showContext: this.showContext,

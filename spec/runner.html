@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>the-graph browser tests</title>
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <link rel="stylesheet" href="../themes/the-graph-dark.css">
 
-    <!-- External depdendencies -->
-    <script src="../node_modules/webcomponents.js/webcomponents.js"></script>
+    <!-- External dependencies -->
     <script src="../node_modules/react/dist/react.js"></script>
     <script src="../node_modules/react-dom/dist/react-dom.js"></script>
     <script src="../node_modules/klayjs-noflo/klay-noflo.js"></script>
@@ -15,10 +15,6 @@
     <!-- Browserify Libraries -->
     <script src="../dist/the-graph.js"></script>
     <script src="../node_modules/@pleasetrythisathome/react.animate/react.animate.js"></script>
-
-    <!-- Custom elements -->
-    <link rel="import" href="../bower_components/polymer/polymer.html">
-    <link rel="import" href="../the-graph-editor/the-graph-editor.html">
 
     <style type="text/css">
       #editor {
@@ -43,12 +39,9 @@
     <div id="mocha"></div>
 
     <!-- Stuff under test -->
-   <the-graph-editor id="editor"
-      width="400" height="300"
-      grid="72"
-      snap="36"
-      theme="dark">
-    </the-graph-editor>
+    <div class="the-graph-dark" id="editor"
+         width="400" height="400">
+    </div>
 
     <script src="basics.js"></script>
     <script src="editing.js"></script>

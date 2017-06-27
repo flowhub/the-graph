@@ -3,6 +3,7 @@ var Clipboard = require('./clipboard');
 
 // Returns a new datastructure to prevent accidental sharing between diffent editor instances
 function getDefaultMenus(editor) {
+  console.error('DEPRECATED: TheGraph.menus.getDefaultMenus() will be removed in next version. Specify menus prop manually');
 
   // FIXME: provide a proper interface for actions to manipulate section, remove @editor
   var pasteAction = function (graph, itemKey, item) {
