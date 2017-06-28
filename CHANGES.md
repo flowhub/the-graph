@@ -1,6 +1,6 @@
 ## dev
 
-## 0.10.0 (unreleased)
+## 0.10.0 (2017 June 28)
 
 UI changes
 
@@ -15,12 +15,34 @@ as shown in `examples/demo-thumbnail.html`.
 * Polymer element `the-graph-nav` has been removed.
 Should instead use the new React component `TheGraph.nav.Component`,
 as shown in `examples/demo-full.html`
-* `the-graph` no longer calls `bower install` when installed via NPM. Users have to do this manually
+* Polymer element `the-graph` has been removed.
+Use React component `TheGraph.Graph` instead.
+* Polymer element `the-graph-editor` has been removed.
+Use React component `TheGraph.App` instead, as shown in `examples/demo-simple.html`
+
+Deprecated APIs, to be removed
+
+* `TheGraph.editor.getDefaultMenus()`, should be explicitly set by app.
+* `TheGraph.autolayout.applyAutolayout()`, should be included in app if wanted.
+* `TheGraph.App::updateIcon()`, should instead pass `nodeIcons` prop.
+* `TheGraph.App::getComponent()`, should instead use info from the passed in `library` prop.
+* Property `getMenuDef` of `TheGraph.App` is deprecated, should pass the data in `menus` prop instead.
+* All methods on React elements are planned to be deprecated in favor of passing props.
+
+Added APIs
+
+* `TheGraph.library.libraryFromGraph()`, returns component library from a `fbp-graph.Graph` instance
+in format compatible with the `library` prop.
+
+Bugfixes
+
+* Changing `graph` prop of React element should now correctly reset and follow new graph instance.
 
 Internal changes
 
 * Usage of PolymerGestures has been replaced by hammer.js
-* All dependencies except Polymer (deprecated) are installed via NPM
+* No longer depends on Polymer or webcomponents
+* All dependencies are installed via NPM, bower is no longer used
 * Some more modules have been converted to proper CommonJS
 
 ## 0.9.0 (2017 May 6)
