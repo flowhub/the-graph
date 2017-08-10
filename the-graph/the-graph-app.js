@@ -159,8 +159,8 @@ module.exports.register = function (context) {
         scale: fit.scale,
         width: this.props.width,
         height: this.props.height,
-        minZoom: this.props.minZoom,
-        maxZoom: this.props.maxZoom,
+        minZoom: this.props.minZoom || 0.15,
+        maxZoom: this.props.maxZoom || 15.0,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
@@ -250,7 +250,7 @@ module.exports.register = function (context) {
       var scaleDelta = 1 + (scaleEvent - this.lastScale);
       this.lastScale = scaleEvent;
       var scale = scaleDelta * currentScale;
-      scale = Math.max(scale, this.props.minZoom);
+      scale = Math.max(scale, this.state.minZoom);
 
       // Zoom and pan transform-origin equivalent
       var oX = event.center.x;
