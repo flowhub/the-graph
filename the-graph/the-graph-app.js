@@ -413,7 +413,7 @@ module.exports.register = function (context) {
         recognizers: [
           [ Hammer.Tap, { } ],
           [ Hammer.Press, { time: 500 } ],
-          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 } ],
           [ Hammer.Pinch, { } ],
         ],
       });
