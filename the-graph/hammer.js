@@ -82,7 +82,7 @@ var Input = null;
 if (SUPPORT_POINTER_EVENTS) {
     Input = PointerInput;
 } else if (SUPPORT_ONLY_TOUCH) {
-    Input = TouchInput;
+    Input = Hammer.TouchInput;
 } else if (!SUPPORT_TOUCH) {
     Input = MouseInput;
 } else {
