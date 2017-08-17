@@ -134,20 +134,22 @@ module.exports.register = function (context) {
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
-    defaultProps: {
-      width: null,
-      height: null,
-      readonly: false,
-      nodeIcons: {},
-      minZoom: 0.15,
-      maxZoom: 15.0,
-      offsetX: 0.0,
-      offsetY: 0.0,
-      menus: null,
-      getMenuDef: null,
-      onPanScale: null,
-      onNodeSelection: null,
-      onEdgeSelection: null,
+    getDefaultProps: function() {
+      return {
+        width: null,
+        height: null,
+        readonly: false,
+        nodeIcons: {},
+        minZoom: 0.15,
+        maxZoom: 15.0,
+        offsetX: 0.0,
+        offsetY: 0.0,
+        menus: null,
+        getMenuDef: null,
+        onPanScale: null,
+        onNodeSelection: null,
+        onEdgeSelection: null,
+      };
     },
     getInitialState: function() {
       // Autofit
