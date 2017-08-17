@@ -315,7 +315,7 @@ module.exports.register = function (context) {
     },
     defaultGetMenuDef: function(options) {
       // Options: type, graph, itemKey, item
-      if (options.type && this.props.menus[options.type]) {
+      if (options.type && this.props.menus && this.props.menus[options.type]) {
         var defaultMenu = this.props.menus[options.type];
         if (defaultMenu.callback) {
           return defaultMenu.callback(defaultMenu, options);
@@ -421,7 +421,7 @@ module.exports.register = function (context) {
         recognizers: [
           [ Hammer.Tap, { } ],
           [ Hammer.Press, { time: 500 } ],
-          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 } ],
           [ Hammer.Pinch, { } ],
         ],
       });
