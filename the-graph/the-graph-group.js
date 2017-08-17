@@ -32,6 +32,8 @@ module.exports.register = function (context) {
     getInitialState: function () {
         return {
             moving: false,
+            lastTrackX: null,
+            lastTrackY: null,
         };
     },
     componentDidMount: function () {
@@ -62,6 +64,10 @@ module.exports.register = function (context) {
       }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -86,6 +92,7 @@ module.exports.register = function (context) {
       // Don't pan graph
       event.stopPropagation();
       this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
 
       var dragNode = ReactDOM.findDOMNode(this.refs.events);
       dragNode.addEventListener("panmove", this.onTrack);
@@ -97,9 +104,16 @@ module.exports.register = function (context) {
       // Don't pan graph
       event.stopPropagation();
 
-      var deltaX = Math.round( event.gesture.srcEvent.movementX / this.props.scale );
-      var deltaY = Math.round( event.gesture.srcEvent.movementY / this.props.scale );
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
 
+      var deltaX = Math.round( movementX / this.props.scale );
+      var deltaY = Math.round( movementY / this.props.scale );
+
+      this.setState({ lastTrackX: x , lastTrackY: y });
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
@@ -114,6 +128,7 @@ module.exports.register = function (context) {
       dragNode.addEventListener("panmove", this.onTrack);
       dragNode.addEventListener("panend", this.onTrackEnd);
 
+      this.setState({ lastTrackX: null, lastTrackY: null});
       this.props.graph.endTransaction('movegroup');
     },
     render: function() {

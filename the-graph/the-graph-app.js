@@ -134,20 +134,22 @@ module.exports.register = function (context) {
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
-    defaultProps: {
-      width: null,
-      height: null,
-      readonly: false,
-      nodeIcons: {},
-      minZoom: 0.15,
-      maxZoom: 15.0,
-      offsetX: 0.0,
-      offsetY: 0.0,
-      menus: null,
-      getMenuDef: null,
-      onPanScale: null,
-      onNodeSelection: null,
-      onEdgeSelection: null,
+    getDefaultProps: function() {
+      return {
+        width: null,
+        height: null,
+        readonly: false,
+        nodeIcons: {},
+        minZoom: 0.15,
+        maxZoom: 15.0,
+        offsetX: 0.0,
+        offsetY: 0.0,
+        menus: null,
+        getMenuDef: null,
+        onPanScale: null,
+        onNodeSelection: null,
+        onEdgeSelection: null,
+      };
     },
     getInitialState: function() {
       // Autofit
@@ -161,6 +163,8 @@ module.exports.register = function (context) {
         height: this.props.height,
         minZoom: this.props.minZoom,
         maxZoom: this.props.maxZoom,
+        trackStartX: null,
+        trackStartY: null,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
@@ -168,7 +172,7 @@ module.exports.register = function (context) {
         contextElement: null,
         contextType: null,
         offsetY: this.props.offsetY,
-        offsetX: this.props.offsetX
+        offsetX: this.props.offsetX,
       };
     },
     zoomFactor: 0,
@@ -282,13 +286,15 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener("panmove", this.onTrack);
       domNode.addEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: this.state.x, trackStartY: this.state.y });
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
       if ( this.menuShown ) { return; }
       this.setState({
-        x: this.state.x + event.gesture.srcEvent.movementX,
-        y: this.state.y + event.gesture.srcEvent.movementY
+        x: this.state.trackStartX + event.gesture.deltaX,
+        y: this.state.trackStartY + event.gesture.deltaY,
       });
     },
     onTrackEnd: function (event) {
@@ -298,6 +304,8 @@ module.exports.register = function (context) {
       var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("panmove", this.onTrack);
       domNode.removeEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: null, trackStartY: null });
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
@@ -473,6 +481,10 @@ module.exports.register = function (context) {
       // Get mouse position
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.showContext({
