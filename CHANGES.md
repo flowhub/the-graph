@@ -1,5 +1,16 @@
 ## dev
 
+## 0.10.1 (2017 August 17)
+
+Bugfixes
+
+* Fixed compatibility with browsers only supporting `TouchEvent`, including Safari on iOS.
+* Fixed exception on long-press if no menu was defined
+
+UI changes
+
+* Movement threshold for starting panning reduced, making it a bit easier
+
 ## 0.10.0 (2017 June 28)
 
 UI changes
