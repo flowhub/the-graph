@@ -90,6 +90,8 @@ module.exports.register = function (context) {
     getInitialState: function () {
         return {
           moving: false,
+          lastTrackX: null,
+          lastTrackY: null,
         };
     },
     componentDidMount: function () {
@@ -139,14 +141,22 @@ module.exports.register = function (context) {
         this.props.graph.startTransaction('movenode');
       }
       this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
     },
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
+      this.setState({ lastTrackX: x , lastTrackY: y });
+
       var scale = this.props.app.state.scale;
-      var deltaX = Math.round( event.gesture.srcEvent.movementX / scale );
-      var deltaY = Math.round( event.gesture.srcEvent.movementY / scale );
+      var deltaX = Math.round( movementX / scale );
+      var deltaY = Math.round( movementY / scale );
 
       // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
@@ -170,6 +180,7 @@ module.exports.register = function (context) {
       // Don't fire on graph
       event.stopPropagation();
       this.setState({ moving: false });
+      this.setState({ lastTrackX: null, lastTrackY: null});
 
       var domNode = ReactDOM.findDOMNode(this);
       domNode.removeEventListener("panmove", this.onTrack);
