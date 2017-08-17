@@ -473,6 +473,10 @@ module.exports.register = function (context) {
       // Get mouse position
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.showContext({
