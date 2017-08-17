@@ -2,17 +2,16 @@
 chai = window.chai or require 'chai'
 
 parseFBP = (fbpString, callback) ->
-  fbpGraph = window.fbpGraph or require 'fbp-graph'
-  fbpGraph.graph.loadFBP fbpString, (err, n) ->
+  fbpGraph = window.TheGraph.fbpGraph or require 'fbp-graph'
+  fbpGraph.graph.loadFBP fbpString, (err, graph) ->
     if err instanceof fbpGraph.Graph
       # legacy NoFlo, no error argument
-      [err, n] = [null, err]
+      [err, graph] = [null, err]
     return callback err if err
-    return callback null, n.toJSON()
+    return callback null, graph
 
 findSvgRoot = (editor) ->
-  graph = editor.$.graph
-  container = graph.$.svgcontainer
+  container = editor
   apps = container.getElementsByClassName('app-svg')
   console.log 'g', apps
   return apps[0]
@@ -26,6 +25,22 @@ describeRender = (editor) ->
     nodes: svgRoot.getElementsByClassName 'node'
     edges: svgRoot.getElementsByClassName 'edge'
     initials: svgRoot.getElementsByClassName 'iip'
+
+renderEditor = (editor, props) ->
+  # defaults
+  props.width = editor.width if not props.width
+  props.height = editor.height if not props.height
+
+  element = React.createElement TheGraph.App, props
+  ReactDOM.render element, editor
+
+dummyComponent =
+  inports: [
+    { name: 'in', type: 'all' }
+  ],
+  outports: [
+    { name: 'out', type: 'all' }
+  ]
 
 describe 'Basics', ->
 
@@ -42,9 +57,12 @@ describe 'Basics', ->
     render = null
     before (done) ->
       example = "'42' -> CONFIG foo(Foo) OUT -> IN bar(Bar)"
+      exampleLibrary =
+        'Foo': dummyComponent
+        'Bar': dummyComponent
       parseFBP example, (err, graph) ->
         chai.expect(err).to.not.exist
-        editor.graph = graph
+        renderEditor editor, { graph: graph, library: exampleLibrary }
         waitReady editor, (err) ->
           return err if err
           render = describeRender editor

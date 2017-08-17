@@ -7,13 +7,11 @@ module.exports.register = function (context) {
       className: "group"
     },
     boxRect: {
-      ref: "box",
       rx: TheGraph.config.nodeRadius,
       ry: TheGraph.config.nodeRadius
     },
     labelText: {
-      ref: "label",
-      className: "group-label drag"
+      className: "group-label"
     },
     descriptionText: {
       className: "group-description"
@@ -31,37 +29,45 @@ module.exports.register = function (context) {
 
   TheGraph.Group = React.createFactory( React.createClass({
     displayName: "TheGraphGroup",
+    getInitialState: function () {
+        return {
+            moving: false,
+            lastTrackX: null,
+            lastTrackY: null,
+        };
+    },
     componentDidMount: function () {
+
       // Move group
-      if (this.props.isSelectionGroup) {
-        // Drag selection by bg
-        ReactDOM.findDOMNode(this.refs.box).addEventListener("trackstart", this.onTrackStart);
-      } else {
-        ReactDOM.findDOMNode(this.refs.label).addEventListener("trackstart", this.onTrackStart);
-      }
-
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Don't pan under menu
-      domNode.addEventListener("trackstart", this.dontPan);
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener('panstart', this.onTrackStart);
 
       // Context menu
+      var domNode = ReactDOM.findDOMNode(this);
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
+
     },
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -82,57 +88,47 @@ module.exports.register = function (context) {
         triggerHideContext: hide
       });
     },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) {
-        event.stopPropagation();
-      }
-    },
     onTrackStart: function (event) {
-      // Don't drag graph
+      // Don't pan graph
       event.stopPropagation();
+      this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.addEventListener("track", this.onTrack);
-        box.addEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.addEventListener("track", this.onTrack);
-        label.addEventListener("trackend", this.onTrackEnd);
-      }
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
       this.props.graph.startTransaction('movegroup');
     },
     onTrack: function (event) {
-      // Don't fire on graph
+      // Don't pan graph
       event.stopPropagation();
 
-      var deltaX = Math.round( event.ddx / this.props.scale );
-      var deltaY = Math.round( event.ddy / this.props.scale );
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
 
+      var deltaX = Math.round( movementX / this.props.scale );
+      var deltaY = Math.round( movementY / this.props.scale );
+
+      this.setState({ lastTrackX: x , lastTrackY: y });
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
-      // Don't fire on graph
+      this.setState({ moving: false });
+      // Don't pan graph
       event.stopPropagation();
-
-      // Don't tap graph (deselect)
-      event.preventTap();
 
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.removeEventListener("track", this.onTrack);
-        box.removeEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.removeEventListener("track", this.onTrack);
-        label.removeEventListener("trackend", this.onTrackEnd);
-      }
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
+      this.setState({ lastTrackX: null, lastTrackY: null});
       this.props.graph.endTransaction('movegroup');
     },
     render: function() {
@@ -140,12 +136,13 @@ module.exports.register = function (context) {
       var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
       var selection = (this.props.isSelectionGroup ? ' selection drag' : '');
+
       var boxRectOptions = {
         x: x,
         y: y,
         width: this.props.maxX - x + TheGraph.config.nodeWidth*0.5,
         height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
-        className: "group-box color"+color + selection
+        className: "group-box color"+color + selection,
       };
       boxRectOptions = TheGraph.merge(TheGraph.config.group.boxRect, boxRectOptions);
       var boxRect =  TheGraph.factories.group.createGroupBoxRect.call(this, boxRectOptions);
@@ -153,7 +150,7 @@ module.exports.register = function (context) {
       var labelTextOptions = {
         x: x + TheGraph.config.nodeRadius,
         y: y + 9,
-        children: this.props.label
+        children: this.props.label,
       };
       labelTextOptions = TheGraph.merge(TheGraph.config.group.labelText, labelTextOptions);
       var labelText = TheGraph.factories.group.createGroupLabelText.call(this, labelTextOptions);
@@ -166,10 +163,37 @@ module.exports.register = function (context) {
       descriptionTextOptions = TheGraph.merge(TheGraph.config.group.descriptionText, descriptionTextOptions);
       var descriptionText = TheGraph.factories.group.createGroupDescriptionText.call(this, descriptionTextOptions);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var eventOptions = {
+        className: 'eventcatcher drag',
+        ref: 'events',
+      };
+      if (this.props.isSelectionGroup) {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = boxRectOptions.width;
+        eventOptions.height = boxRectOptions.height;
+      } else {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = 24 * this.props.label.length * 0.75;
+        eventOptions.height = 24 * 2;
+      }
+      if (this.state.moving) {
+        var extend = 1000;
+        eventOptions.width += extend*2;
+        eventOptions.height += extend*2;
+        eventOptions.x -= extend;
+        eventOptions.y -= extend;
+      }
+      var eventCatcher = TheGraph.factories.createRect(eventOptions);
+
       var groupContents = [
         boxRect,
         labelText,
-        descriptionText
+        descriptionText,
+        eventCatcher,
       ];
 
       var containerOptions = TheGraph.merge(TheGraph.config.group.container, {});

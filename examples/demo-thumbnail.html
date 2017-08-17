@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>the-graph-thumb documentation</title>
+    <title>the-graph-thumb example</title>
     <meta charset="utf-8">
 
     <!-- Deps -->
-    <script src="../node_modules/webcomponents.js/webcomponents.js"></script>
     <script src="../node_modules/react/dist/react.js"></script>
     <script src="../node_modules/react-dom/dist/react-dom.js"></script>
     <script src="../dist/the-graph.js"></script>
 
-    <link rel="import" href="../bower_components/polymer/polymer.html">
-    <link rel="import" href="../the-graph-thumb/the-graph-thumb.html">
-
   </head>
   <body style="background-color:gray; color:white;">
 
-    <the-graph-thumb id="thumb" width="400" height="300"></the-graph-thumb>
+    <canvas id="thumb" width="400" height="300" style='background-color:black; border:1px solid; border-color: white' ></canvas>
 
     <script type="text/javascript">
     (function(){
       "use strict";
+        var TheGraph = window.TheGraph;
+        var fbpGraph = window.TheGraph.fbpGraph;
 
-      Polymer.veiledElements = ["the-graph-thumb"];
-      window.addEventListener('polymer-ready', function() {
-    
         window.loadGraph = function (json) {
           // Load graph
           var graphData = json.data.files['noflo.json'].content;
-          var thumb = document.getElementById('thumb');
-          window.fbpGraph.graph.loadJSON(graphData, function(err, graph) {
-            thumb.graph = graph;
+          fbpGraph.graph.loadJSON(graphData, function(err, graph) {
+            if (err) {
+              throw err;
+            }
+
+            // Render the numbnail
+            var thumb = document.getElementById('thumb');
+            var properties = TheGraph.thumb.styleFromTheme('dark');
+            properties.width = thumb.width;
+            properties.height = thumb.height;
+            properties.nodeSize = 60;
+            properties.lineWidth = 1;
+            var context = thumb.getContext("2d");
+            var info = TheGraph.thumb.render(context, graph, properties);
           });
 
         };
@@ -46,9 +52,7 @@
         // Edge algo test
         // script.src = 'https://api.github.com/gists/6890344?callback=loadGraph';
         body.appendChild(script);
-      });
-
-    })();
+      })();
     </script>
   </body>
 </html>

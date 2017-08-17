@@ -142,7 +142,17 @@ function componentsFromGraph(fbpGraph) {
   return components;
 }
 
+function libraryFromGraph(fbpGraph) {
+    var library = {};
+    var components = componentsFromGraph(fbpGraph);
+    components.forEach(function(c) {
+        library[c.name] = c;
+    });
+    return library;
+}
+
 module.exports = {
   mergeComponentDefinition: mergeComponentDefinition,
   componentsFromGraph: componentsFromGraph,
+  libraryFromGraph: libraryFromGraph,
 };

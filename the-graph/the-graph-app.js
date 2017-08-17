@@ -1,3 +1,54 @@
+var hammerhacks = require('./hammer.js');
+
+// Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
+var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
+
+var hotKeys = {
+  // Escape
+  27: function(app) {
+    if (!app.refs.graph) {
+      return;
+    }
+    app.refs.graph.cancelPreviewEdge();
+  },
+  // Delete
+  46: function (app) {
+    var graph = app.refs.graph.props.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+    var selectedEdges = app.refs.graph.state.selectedEdges;
+    var menus = app.props.menus;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        menus.node.actions.delete(graph, nodeKey, node);
+      }
+    }
+    selectedEdges.map(function (edge) {
+      menus.edge.actions.delete(graph, null, edge);
+    });
+  },
+  // f for fit
+  70: function (app) {
+    app.triggerFit();
+  },
+  // s for selected
+  83: function (app) {
+    var graph = app.refs.graph.props.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        app.focusNode(node);
+        break;
+      }
+    }
+  },
+};
+// these don't change state, so also allowed when readonly
+var readOnlyActions = [70, 83, 27];
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -12,7 +63,8 @@ module.exports.register = function (context) {
       className: "app-canvas"
     },
     svg: {
-      className: "app-svg"
+      className: "app-svg",
+      ref: 'svg',
     },
     svgGroup: {
       className: "view"
@@ -67,9 +119,38 @@ module.exports.register = function (context) {
     mixins.push(React.Animate);
   }
 
+  function defaultGetMenu(options) {
+    // Options: type, graph, itemKey, item
+    if (options.type && this.menus[options.type]) {
+      var defaultMenu = this.menus[options.type];
+      if (defaultMenu.callback) {
+        return defaultMenu.callback(defaultMenu, options);
+      }
+      return defaultMenu;
+    }
+    return null;
+  }
+
   TheGraph.App = React.createFactory( React.createClass({
     displayName: "TheGraphApp",
     mixins: mixins,
+    getDefaultProps: function() {
+      return {
+        width: null,
+        height: null,
+        readonly: false,
+        nodeIcons: {},
+        minZoom: 0.15,
+        maxZoom: 15.0,
+        offsetX: 0.0,
+        offsetY: 0.0,
+        menus: null,
+        getMenuDef: null,
+        onPanScale: null,
+        onNodeSelection: null,
+        onEdgeSelection: null,
+      };
+    },
     getInitialState: function() {
       // Autofit
       var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
@@ -82,6 +163,8 @@ module.exports.register = function (context) {
         height: this.props.height,
         minZoom: this.props.minZoom,
         maxZoom: this.props.maxZoom,
+        trackStartX: null,
+        trackStartY: null,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
@@ -89,7 +172,7 @@ module.exports.register = function (context) {
         contextElement: null,
         contextType: null,
         offsetY: this.props.offsetY,
-        offsetX: this.props.offsetX
+        offsetX: this.props.offsetX,
       };
     },
     zoomFactor: 0,
@@ -200,16 +283,18 @@ module.exports.register = function (context) {
       this.pinching = false;
     },
     onTrackStart: function (event) {
-      event.preventTap();
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: this.state.x, trackStartY: this.state.y });
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
+      if ( this.menuShown ) { return; }
       this.setState({
-        x: this.state.x + event.ddx,
-        y: this.state.y + event.ddy
+        x: this.state.trackStartX + event.gesture.deltaX,
+        y: this.state.trackStartY + event.gesture.deltaY,
       });
     },
     onTrackEnd: function (event) {
@@ -217,14 +302,27 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: null, trackStartY: null });
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
       if (this.props.onPanScale) {
         this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
       }
+    },
+    defaultGetMenuDef: function(options) {
+      // Options: type, graph, itemKey, item
+      if (options.type && this.props.menus && this.props.menus[options.type]) {
+        var defaultMenu = this.props.menus[options.type];
+        if (defaultMenu.callback) {
+          return defaultMenu.callback(defaultMenu, options);
+        }
+        return defaultMenu;
+      }
+      return null;
     },
     showContext: function (options) {
       this.setState({
@@ -308,32 +406,28 @@ module.exports.register = function (context) {
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Set up PolymerGestures for app and all children
-      var noop = function(){};
-      PolymerGestures.addEventListener(domNode, "up", noop);
-      PolymerGestures.addEventListener(domNode, "down", noop);
-      PolymerGestures.addEventListener(domNode, "tap", noop);
-      PolymerGestures.addEventListener(domNode, "trackstart", noop);
-      PolymerGestures.addEventListener(domNode, "track", noop);
-      PolymerGestures.addEventListener(domNode, "trackend", noop);
-      PolymerGestures.addEventListener(domNode, "hold", noop);
+      var domNode = ReactDOM.findDOMNode(this.refs.svg);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
       }
 
-      // Don't let Hammer.js collide with polymer-gestures
-      var hammertime;
-      if (Hammer) {
-        hammertime = new Hammer(domNode, {});
-        hammertime.get('pinch').set({ enable: true });
-      }
+      // Setup Hammer.js events for this and all children
+      // The events are injected into the DOM to follow regular propagation rules
+      var hammertime = new Hammer.Manager(domNode, {
+        domEvents: true,
+        inputClass: hammerhacks.Input,
+        recognizers: [
+          [ Hammer.Tap, { } ],
+          [ Hammer.Press, { time: 500 } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 } ],
+          [ Hammer.Pinch, { } ],
+        ],
+      });
 
-      // Pointer gesture event for pan
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      // Gesture event for pan
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       var isTouchDevice = 'ontouchstart' in document.documentElement;
       if( isTouchDevice && hammertime ){
@@ -364,13 +458,13 @@ module.exports.register = function (context) {
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
 
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // FIXME: instead access the shiftKey of event instead of keeping metaKey
       document.addEventListener('keydown', this.keyDown);
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
-      this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
+      bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
+      this.bgContext = unwrap(bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
 
@@ -387,6 +481,10 @@ module.exports.register = function (context) {
       // Get mouse position
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.showContext({
@@ -400,69 +498,22 @@ module.exports.register = function (context) {
       });
     },
     keyDown: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
       }
 
-      var key = event.keyCode,
-          hotKeys = {
-            // Delete
-            46: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  selectedEdges = this.refs.graph.state.selectedEdges,
-                  menus = this.props.menus,
-                  menuOption = null,
-                  menuAction = null,
-                  nodeKey = null,
-                  node = null,
-                  edge = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  menus.node.actions.delete(graph, nodeKey, node);
-                }
-              }
-              selectedEdges.map(function (edge) {
-                menus.edge.actions.delete(graph, null, edge);
-              });
-            }.bind(this),
-            // f for fit
-            70: function () {
-              this.triggerFit();
-            }.bind(this),
-            // s for selected
-            83: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  nodeKey = null,
-                  node = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  this.focusNode(node);
-                  break;
-                }
-              }
-            }.bind(this)
-          };
-
-      if (hotKeys[key]) {
-        hotKeys[key]();
+      var code = event.keyCode;
+      var handler = hotKeys[code];
+      if (handler) {
+        var readonly = this.props.readonly;
+        if (!readonly || (readonly && readOnlyActions[code])) {
+          handler(this);
+        }
       }
     },
     keyUp: function (event) {
-      // Escape
-      if (event.keyCode===27) {
-        if (!this.refs.graph) {
-          return;
-        }
-        this.refs.graph.cancelPreviewEdge();
-      }
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
       }
@@ -548,14 +599,16 @@ module.exports.register = function (context) {
 
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
-      var contextMenu, contextModal;
+      var contextMenu = null;
+      var getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
       if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
-        var menu = this.props.getMenuDef(options);
-        if (menu) {
+        var menu = getMenuDef(options);
+        if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
       }
+      var contextModal = null;
       if (contextMenu) {
 
         var modalBGOptions ={
@@ -578,9 +631,11 @@ module.exports.register = function (context) {
         scale: this.state.scale,
         app: this,
         library: this.props.library,
+        nodeIcons: this.props.nodeIcons,
         onNodeSelection: this.props.onNodeSelection,
         onEdgeSelection: this.props.onEdgeSelection,
-        showContext: this.showContext
+        showContext: this.showContext,
+        allowEdgeStart: !this.props.readonly,
       };
       graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
       var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);

@@ -1,3 +1,5 @@
+var TooltipMixin = require('./mixins').Tooltip;
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -72,31 +74,22 @@ module.exports.register = function (context) {
   TheGraph.Edge = React.createFactory( React.createClass({
     displayName: "TheGraphEdge",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
     componentWillMount: function() {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
 
-      // Dragging
-      domNode.addEventListener("trackstart", this.dontPan);
-
+      // Select
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
         domNode.addEventListener("tap", this.onEdgeSelection);
       }
-
-      // Context menu
+      // Open menu
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
-      }
-    },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) { 
-        event.stopPropagation();
+        domNode.addEventListener('press', this.showContext);
       }
     },
     onEdgeSelection: function (event) {
@@ -111,12 +104,19 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
