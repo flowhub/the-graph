@@ -26,7 +26,7 @@ module.exports.register = function (context) {
   TheGraph.NodeMenuPort = React.createFactory( React.createClass({
     displayName: "TheGraphNodeMenuPort",
     componentDidMount: function () {
-      ReactDOM.findDOMNode(this).addEventListener("up", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
     },
     edgeStart: function (event) {
       // Don't tap graph
