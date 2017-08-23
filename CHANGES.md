@@ -1,5 +1,11 @@
 ## dev
 
+## 0.10.2 (2017 August 23)
+
+Bugfixes
+
+* Fixed unable to create edge from node context menu
+
 ## 0.10.1 (2017 August 17)
 
 Bugfixes
