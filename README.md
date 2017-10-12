@@ -31,6 +31,12 @@ See the examples for how to include the `.js` and `.css` files, and API usage.
 
 [The MIT License](./LICENSE-MIT.txt)
 
+## Support
+[![Flowhub logo](https://flowhub.io/assets/banner-github.png)](https://flowhub.io)
+
+the-graph is a part of [Flowhub](https://flowhub.io), a platform for building robust [IoT systems](https://flowhub.io/iot) and web sevices.<br>
+We offer an [Integrated Development Environment](https://app.flowhub.io) and [consulting services](https://flowhub.io/consulting).
+
 ## Developing
 
 Clone the repo
