@@ -25,7 +25,7 @@ var factories = {
 };
 
 // Port view
-Tooltip = React.createFactory( React.createClass({
+var Tooltip = React.createFactory( React.createClass({
   displayName: "TheGraphTooltip",
   render: function() {
 
