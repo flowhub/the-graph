@@ -1,3 +1,5 @@
+var React = require('react');
+
 module.exports.register = function (context) {
 
   var defaultNodeSize = 72;

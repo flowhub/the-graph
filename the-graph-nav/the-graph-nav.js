@@ -1,4 +1,5 @@
 
+var React = require('react');
 var thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
 function calculateStyleFromTheme(theme) {

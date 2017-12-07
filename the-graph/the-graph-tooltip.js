@@ -1,3 +1,4 @@
+var React = require('react');
 var defaultFactories = require('./factories.js');
 var merge = require('./merge.js');
 

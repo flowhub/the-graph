@@ -1,3 +1,4 @@
+var React = require('react');
 var ReactDOM = require('react-dom');
 var TooltipMixin = require('./mixins').Tooltip;
 var arcs = require('./arcs.js');

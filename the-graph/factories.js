@@ -1,3 +1,4 @@
+var React = require('react');
 // Standard functions for creating SVG/HTML elements
 exports.createGroup = function(options, content) {
   var args = ['g', options];
