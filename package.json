@@ -55,5 +55,16 @@
   "peerDependencies": {
     "react": "<16.0.0",
     "react-dom": "<16.0.0"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/dist/",
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupTestFrameworkScriptFile": "jest-enzyme"
   }
 }
