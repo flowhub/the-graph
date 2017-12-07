@@ -1,3 +1,4 @@
+var ReactDOM = require('react-dom');
 // React mixins
 
 // Show fake tooltip

@@ -1,3 +1,5 @@
+var ReactDOM = require('react-dom');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;

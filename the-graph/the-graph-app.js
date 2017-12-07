@@ -1,3 +1,4 @@
+var ReactDOM = require('react-dom');
 var hammerhacks = require('./hammer.js');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
