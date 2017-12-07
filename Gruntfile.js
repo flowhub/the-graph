@@ -17,6 +17,7 @@
     var externals = [
       'react',
       'react-dom',
+      'create-react-class',
       '@pleasetrythisathome/react.animate'
     ];
 
