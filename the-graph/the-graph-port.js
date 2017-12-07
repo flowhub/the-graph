@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 var TooltipMixin = require('./mixins').Tooltip;
 var arcs = require('./arcs.js');
 
@@ -37,7 +38,7 @@ module.exports.register = function (context) {
 
   // Port view
 
-  TheGraph.Port = React.createFactory( React.createClass({
+  TheGraph.Port = React.createFactory( createReactClass({
     displayName: "TheGraphPort",
     mixins: [
       TooltipMixin

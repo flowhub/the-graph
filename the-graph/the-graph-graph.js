@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 
 module.exports.register = function (context) {
 
@@ -82,7 +83,7 @@ module.exports.register = function (context) {
 
   // Graph view
 
-  TheGraph.Graph = React.createFactory( React.createClass({
+  TheGraph.Graph = React.createFactory( createReactClass({
     displayName: "TheGraphGraph",
     mixins: [],
     getDefaultProps: function () {

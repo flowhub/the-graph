@@ -1,5 +1,6 @@
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 var thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
 function calculateStyleFromTheme(theme) {
@@ -115,7 +116,7 @@ function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
 }
 
 // https://toddmotto.com/react-create-class-versus-component/
-var Component = React.createClass({
+var Component = createReactClass({
   propTypes: {
   },
   getDefaultProps: function() {

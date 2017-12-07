@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 var hammerhacks = require('./hammer.js');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
@@ -133,7 +134,7 @@ module.exports.register = function (context) {
     return null;
   }
 
-  TheGraph.App = React.createFactory( React.createClass({
+  TheGraph.App = React.createFactory( createReactClass({
     displayName: "TheGraphApp",
     mixins: mixins,
     getDefaultProps: function() {

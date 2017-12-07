@@ -1,4 +1,5 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 module.exports.register = function (context) {
 
@@ -30,7 +31,7 @@ module.exports.register = function (context) {
     return TheGraph.NodeMenuPort(options);
   }
 
-  TheGraph.NodeMenuPorts = React.createFactory( React.createClass({
+  TheGraph.NodeMenuPorts = React.createFactory( createReactClass({
     displayName: "TheGraphNodeMenuPorts",
     render: function() {
       var portViews = [];

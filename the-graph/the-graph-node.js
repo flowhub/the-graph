@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 var TooltipMixin = require('./mixins').Tooltip;
 
 module.exports.register = function (context) {
@@ -84,7 +85,7 @@ module.exports.register = function (context) {
   }
 
   // Node view
-  TheGraph.Node = React.createFactory( React.createClass({
+  TheGraph.Node = React.createFactory( createReactClass({
     displayName: "TheGraphNode",
     mixins: [
       TooltipMixin
