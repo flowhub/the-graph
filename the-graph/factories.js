@@ -1,32 +1,32 @@
 // Standard functions for creating SVG/HTML elements
 exports.createGroup = function(options, content) {
-  var args = [options];
+  var args = ['g', options];
 
   if (Array.isArray(content)) {
     args = args.concat(content);
   }
 
-  return React.DOM.g.apply(React.DOM.g, args);
+  return React.createElement.apply(React, args);
 };
 
 exports.createRect = function(options) {
-  return React.DOM.rect(options);
+  return React.createElement('rect', options);
 };
 
 exports.createText = function(options) {
-  return React.DOM.text(options);
+  return React.createElement('text', options);
 };
 
 exports.createCircle = function(options) {
-  return React.DOM.circle(options);
+  return React.createElement('circle', options);
 };
 
 exports.createPath = function(options) {
-  return React.DOM.path(options);
+  return React.createElement('path', options);
 };
 
 exports.createPolygon = function(options) {
-  return React.DOM.polygon(options);
+  return React.createElement('polygon', options);
 };
 
 exports.createImg = function(options) {
@@ -34,16 +34,16 @@ exports.createImg = function(options) {
 };
 
 exports.createCanvas = function(options) {
-  return React.DOM.canvas(options);
+  return React.createElement('canvas', options);
 };
 
 exports.createSvg = function(options, content) {
 
-  var args = [options];
+  var args = ['svg', options];
 
   if (Array.isArray(content)) {
     args = args.concat(content);
   }
 
-  return React.DOM.svg.apply(React.DOM.svg, args);
+  return React.createElement.apply(React, args);
 };

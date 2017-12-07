@@ -93,13 +93,13 @@ module.exports.register = function (context) {
 
   // No need to promote DIV creation to TheGraph.js.
   function createAppContainer(options, content) {
-    var args = [options];
+    var args = ['div', options];
 
     if (Array.isArray(content)) {
       args = args.concat(content);
     }
 
-    return React.DOM.div.apply(React.DOM.div, args);
+    return React.createElement.apply(React, args);
   }
 
   function createAppGraph(options) {

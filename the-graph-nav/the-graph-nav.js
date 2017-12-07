@@ -183,11 +183,10 @@ var Component = React.createClass({
       },
     };
     // Elements
-    var d = React.DOM;
-    return d.div( { key: 'nav', style: wrapperStyle, ref: this._refTopElement }, [
-      d.div( viewboxDiv ),
-      d.canvas( viewboxCanvas ),
-      d.canvas( thumbProps ),
+    return React.createElement('div', { key: 'nav', style: wrapperStyle, ref: this._refTopElement }, [
+      React.createElement('div', viewboxDiv ),
+      React.createElement('canvas', viewboxCanvas ),
+      React.createElement('canvas', thumbProps ),
     ]);
   },
   componentDidUpdate: function() {
