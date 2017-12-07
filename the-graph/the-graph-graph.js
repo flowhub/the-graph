@@ -111,8 +111,12 @@ module.exports.register = function (context) {
       };
     },
     componentDidMount: function () {
+        this.mounted = true;
         this.subscribeGraph(null, this.props.graph);
         ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+    },
+    componentWillUnmount: function () {
+        this.mounted = false;
     },
     componentWillReceiveProps: function(nextProps) {
       this.subscribeGraph(this.props.graph, nextProps.graph);
@@ -421,7 +425,7 @@ module.exports.register = function (context) {
       window.requestAnimationFrame(this.triggerRender);
     },
     triggerRender: function (time) {
-      if (!this.isMounted()) {
+      if (!this.mounted) {
         return;
       }
       if (this.dirty) {
