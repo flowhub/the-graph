@@ -14,6 +14,12 @@
       tests: ['spec/*.coffee', 'spec/runner.html']
     };
 
+    var externals = [
+      'react',
+      'react-dom',
+      '@pleasetrythisathome/react.animate'
+    ];
+
     var glob = require('glob');
     var stylExpand = glob.sync('./themes/*.styl').join(' ');
 
@@ -40,11 +46,20 @@
         }
       },
       browserify: {
+        vendor: {
+          files: {
+            'dist/vendor.js': ['spec/vendor.js'],
+          },
+          options: {
+            require: externals
+          }
+        },
         libs: {
           files: {
             'dist/the-graph.js': ['index.js'],
           },
           options: {
+            external: externals,
             transform: ['coffeeify'],
             browserifyOptions: {
               standalone: 'TheGraph'
@@ -134,7 +149,7 @@
     this.loadNpmTasks('grunt-saucelabs');
 
     this.registerTask('dev', ['test', 'watch']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor']);
     this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
     this.registerTask('crossbrowser', ['test', 'saucelabs-mocha']);
     this.registerTask('default', ['test']);
