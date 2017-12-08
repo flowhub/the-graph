@@ -1,6 +1,7 @@
 
 var React = require('react');
 var createReactClass = require('create-react-class');
+var Hammer = require('hammerjs');
 var thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
 function calculateStyleFromTheme(theme) {

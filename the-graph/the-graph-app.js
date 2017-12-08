@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
+var Hammer = require('hammerjs');
 var hammerhacks = require('./hammer.js');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
