@@ -18,6 +18,7 @@
       'react',
       'react-dom',
       'create-react-class',
+      'hammerjs',
       '@pleasetrythisathome/react.animate'
     ];
 
