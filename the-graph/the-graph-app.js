@@ -441,10 +441,10 @@ module.exports.register = function (context) {
       }
 
       // Wheel to zoom
-      if (domNode.onwheel!==undefined) {
+      if ('onwheel' in domNode) {
         // Chrome and Firefox
         domNode.addEventListener("wheel", this.onWheel);
-      } else if (domNode.onmousewheel!==undefined) {
+      } else if ('onmousewheel' in domNode) {
         // Safari
         domNode.addEventListener("mousewheel", this.onWheel);
       }
