@@ -28,6 +28,9 @@
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
       exec: {
+        jest: {
+          command: 'jest',
+        },
         build_stylus: {
           command: 'node ./node_modules/stylus/bin/stylus ' + stylExpand
         },
@@ -152,8 +155,7 @@
 
     this.registerTask('dev', ['test', 'watch']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor']);
-    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
-    this.registerTask('crossbrowser', ['test', 'saucelabs-mocha']);
+    this.registerTask('test', ['jshint:all', 'build', 'coffee:specs', 'exec:jest']);
     this.registerTask('default', ['test']);
   };
 
