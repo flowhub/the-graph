@@ -30,7 +30,7 @@ require("./the-graph/the-graph-iip.js").register(g);
 require("./the-graph/the-graph-group.js").register(g);
 
 require("./the-graph/the-graph-menu.js").register(g);
-require("./the-graph/font-awesome-unicode-map.js").register(g);
+TheGraph.FONT_AWESOME = require("./the-graph/font-awesome-unicode-map.js");
 
 
 TheGraph.tooltip = require("./the-graph/the-graph-tooltip.js");

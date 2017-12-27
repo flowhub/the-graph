@@ -26,10 +26,9 @@ var generateFile = function (err, data) {
   });
 
   var output = "/*\n  this file is generated via `grunt build` \n*/\n\n"+
-    "module.exports.register = function (context) {\n"+
     "\n"+
-    "context.TheGraph.FONT_AWESOME = "+JSON.stringify(icons, null, 2)+";\n\n"+
-    "};";
+    "FONT_AWESOME = "+JSON.stringify(icons, null, 2)+";\n\n"+
+    "module.exports = FONT_AWESOME;\n";
 
   fs.writeFile(__dirname+'/../the-graph/font-awesome-unicode-map.js', output, function (err) {
     if (err) {
