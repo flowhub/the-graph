@@ -4,7 +4,8 @@
 
 Breaking changes
 
-* Upgraded from React 14 to React 15.6
+* Upgraded from React 14 to React 15.
+It is no longer a dependency, so applications using the-graph can (and must) pull in an appropriate version.
 
 Internal changes
 
