@@ -1,5 +1,11 @@
 ## dev
 
+## 0.11.1 (2017 December 27)
+
+Bugfixes
+
+* Fix node menu not showing due missing require(). Regression in 0.11.0
+
 ## 0.11.0 (2017 December 27)
 
 Breaking changes
