@@ -15,10 +15,6 @@ var defaultNodeSize = 72;
 var defaultNodeRadius = 8;
 
 var moduleVars = {
-  // nodeSize and nodeRadius are deprecated, use TheGraph.config.(nodeSize/nodeRadius)
-  nodeSize: defaultNodeSize,
-  nodeRadius: defaultNodeRadius,
-  nodeSide: 56,
   // Context menus
   contextPortSize: 36,
   // Zoom breakpoints
