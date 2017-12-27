@@ -1,10 +1,56 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.TheGraph = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Build required libs
-fbpGraph = require('fbp-graph');
 
-var g = { TheGraph: {} };
+// Module object
+var TheGraph = {};
 
-require("./the-graph/the-graph.js").register(g);
+// Bundle and expose fbp-graph as public API
+TheGraph.fbpGraph = require('fbp-graph');
+
+// Pull in Ease from NPM, react.animate needs it as a global
+TheGraph.Ease = require('ease-component');
+if (typeof window !== 'undefined' && typeof window.Ease === 'undefined') {
+    window.Ease = TheGraph.Ease;
+}
+
+var defaultNodeSize = 72;
+var defaultNodeRadius = 8;
+
+var moduleVars = {
+  // Context menus
+  contextPortSize: 36,
+  // Zoom breakpoints
+  zbpBig: 1.2,
+  zbpNormal: 0.4,
+  zbpSmall: 0.01,
+  config: {
+    nodeSize: defaultNodeSize,
+    nodeWidth: defaultNodeSize,
+    nodeRadius: defaultNodeRadius,
+    nodeHeight: defaultNodeSize,
+    autoSizeNode: true,
+    maxPortCount: 9,
+    nodeHeightIncrement: 12,
+    focusAnimationDuration: 1500
+  },
+};
+for (var key in moduleVars) {
+  TheGraph[key] = moduleVars[key];
+}
+
+if (typeof window !== 'undefined') {
+  // rAF shim
+  window.requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
+}
+
+// HACK, goes away when everything is CommonJS compatible
+var g = { TheGraph: TheGraph };
+
+TheGraph.factories = require('./the-graph/factories.js');
+TheGraph.merge = require('./the-graph/merge.js');
+
 require("./the-graph/the-graph-app.js").register(g);
 require("./the-graph/the-graph-graph.js").register(g);
 require("./the-graph/the-graph-node.js").register(g);
@@ -15,20 +61,54 @@ require("./the-graph/the-graph-port.js").register(g);
 require("./the-graph/the-graph-edge.js").register(g);
 require("./the-graph/the-graph-iip.js").register(g);
 require("./the-graph/the-graph-group.js").register(g);
-require("./the-graph/the-graph-tooltip.js").register(g);
-require("./the-graph/the-graph-menu.js").register(g);
-require("./the-graph/the-graph-clipboard.js").register(g);
-require("./the-graph/font-awesome-unicode-map.js").register(g);
 
-g.TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
-g.TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
-g.TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
-g.TheGraph.library = require('./the-graph/the-graph-library.js');
-g.TheGraph.editor = require('./the-graph-editor/the-graph-editor.js');
+TheGraph.menu = require("./the-graph/the-graph-menu.js");
+// compat
+TheGraph.Menu = TheGraph.menu.Menu;
+TheGraph.factories.menu = TheGraph.menu.factories;
+TheGraph.config.menu = TheGraph.menu.config;
+TheGraph.config.menu.iconRect.rx = TheGraph.config.nodeRadius;
+TheGraph.config.menu.iconRect.ry = TheGraph.config.nodeRadius;
 
-module.exports = g.TheGraph;
+TheGraph.modalbg = require("./the-graph/the-graph-modalbg.js");
+// compat
+TheGraph.ModalBG = TheGraph.modalbg.ModalBG;
+TheGraph.config.ModalBG = TheGraph.config.factories;
+TheGraph.factories.ModalBG = TheGraph.modalbg.factories;
 
-},{"./the-graph-editor/the-graph-editor.js":17,"./the-graph-nav/the-graph-nav.js":18,"./the-graph-thumb/the-graph-thumb.js":19,"./the-graph/font-awesome-unicode-map.js":20,"./the-graph/the-graph-app.js":21,"./the-graph/the-graph-autolayout.js":22,"./the-graph/the-graph-clipboard.js":23,"./the-graph/the-graph-edge.js":24,"./the-graph/the-graph-graph.js":25,"./the-graph/the-graph-group.js":26,"./the-graph/the-graph-iip.js":27,"./the-graph/the-graph-library.js":28,"./the-graph/the-graph-menu.js":29,"./the-graph/the-graph-node-menu-port.js":30,"./the-graph/the-graph-node-menu-ports.js":31,"./the-graph/the-graph-node-menu.js":32,"./the-graph/the-graph-node.js":33,"./the-graph/the-graph-port.js":34,"./the-graph/the-graph-tooltip.js":35,"./the-graph/the-graph.js":36,"fbp-graph":7}],2:[function(require,module,exports){
+TheGraph.FONT_AWESOME = require("./the-graph/font-awesome-unicode-map.js");
+
+var geometryutils = require('./the-graph/geometryutils');
+// compat
+TheGraph.findMinMax = geometryutils.findMinMax;
+TheGraph.findNodeFit = geometryutils.findNodeFit;
+TheGraph.findFit = geometryutils.findFit;
+
+TheGraph.tooltip = require("./the-graph/the-graph-tooltip.js");
+// compat
+TheGraph.Tooltip = TheGraph.tooltip.Tooltip;
+TheGraph.config.tooltip = TheGraph.tooltip.config;
+TheGraph.factories.tooltip = TheGraph.tooltip.factories; 
+
+TheGraph.mixins = require("./the-graph/mixins.js");
+TheGraph.arcs = require('./the-graph/arcs.js');
+
+TheGraph.TextBG = require('./the-graph/TextBG.js');
+TheGraph.SVGImage = require('./the-graph/SVGImage.js');
+
+TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
+
+TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
+
+TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
+TheGraph.library = require('./the-graph/the-graph-library.js');
+
+TheGraph.clipboard = require("./the-graph-editor/clipboard.js");
+TheGraph.editor = require('./the-graph-editor/menus.js');
+
+module.exports = TheGraph;
+
+},{"./the-graph-editor/clipboard.js":18,"./the-graph-editor/menus.js":19,"./the-graph-nav/the-graph-nav.js":20,"./the-graph-thumb/the-graph-thumb.js":21,"./the-graph/SVGImage.js":22,"./the-graph/TextBG.js":23,"./the-graph/arcs.js":24,"./the-graph/factories.js":25,"./the-graph/font-awesome-unicode-map.js":26,"./the-graph/geometryutils":27,"./the-graph/merge.js":29,"./the-graph/mixins.js":30,"./the-graph/the-graph-app.js":31,"./the-graph/the-graph-autolayout.js":32,"./the-graph/the-graph-edge.js":33,"./the-graph/the-graph-graph.js":34,"./the-graph/the-graph-group.js":35,"./the-graph/the-graph-iip.js":36,"./the-graph/the-graph-library.js":37,"./the-graph/the-graph-menu.js":38,"./the-graph/the-graph-modalbg.js":39,"./the-graph/the-graph-node-menu-port.js":40,"./the-graph/the-graph-node-menu-ports.js":41,"./the-graph/the-graph-node-menu.js":42,"./the-graph/the-graph-node.js":43,"./the-graph/the-graph-port.js":44,"./the-graph/the-graph-tooltip.js":45,"ease-component":6,"fbp-graph":8}],2:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -64,22 +144,22 @@ function placeHoldersCount (b64) {
 
 function byteLength (b64) {
   // base64 is 4/3 + up to two characters of the original data
-  return b64.length * 3 / 4 - placeHoldersCount(b64)
+  return (b64.length * 3 / 4) - placeHoldersCount(b64)
 }
 
 function toByteArray (b64) {
-  var i, j, l, tmp, placeHolders, arr
+  var i, l, tmp, placeHolders, arr
   var len = b64.length
   placeHolders = placeHoldersCount(b64)
 
-  arr = new Arr(len * 3 / 4 - placeHolders)
+  arr = new Arr((len * 3 / 4) - placeHolders)
 
   // if there are placeholders, only get up to the last complete 4 chars
   l = placeHolders > 0 ? len - 4 : len
 
   var L = 0
 
-  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+  for (i = 0; i < l; i += 4) {
     tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
     arr[L++] = (tmp >> 16) & 0xFF
     arr[L++] = (tmp >> 8) & 0xFF
@@ -1939,7 +2019,7 @@ function isnan (val) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":2,"ieee754":13,"isarray":14}],5:[function(require,module,exports){
+},{"base64-js":2,"ieee754":14,"isarray":15}],5:[function(require,module,exports){
 (function (Buffer){
 var clone = (function() {
 'use strict';
@@ -2195,6 +2275,178 @@ if (typeof module === 'object' && module.exports) {
 
 }).call(this,require("buffer").Buffer)
 },{"buffer":4}],6:[function(require,module,exports){
+
+// easing functions from "Tween.js"
+
+exports.linear = function(n){
+  return n;
+};
+
+exports.inQuad = function(n){
+  return n * n;
+};
+
+exports.outQuad = function(n){
+  return n * (2 - n);
+};
+
+exports.inOutQuad = function(n){
+  n *= 2;
+  if (n < 1) return 0.5 * n * n;
+  return - 0.5 * (--n * (n - 2) - 1);
+};
+
+exports.inCube = function(n){
+  return n * n * n;
+};
+
+exports.outCube = function(n){
+  return --n * n * n + 1;
+};
+
+exports.inOutCube = function(n){
+  n *= 2;
+  if (n < 1) return 0.5 * n * n * n;
+  return 0.5 * ((n -= 2 ) * n * n + 2);
+};
+
+exports.inQuart = function(n){
+  return n * n * n * n;
+};
+
+exports.outQuart = function(n){
+  return 1 - (--n * n * n * n);
+};
+
+exports.inOutQuart = function(n){
+  n *= 2;
+  if (n < 1) return 0.5 * n * n * n * n;
+  return -0.5 * ((n -= 2) * n * n * n - 2);
+};
+
+exports.inQuint = function(n){
+  return n * n * n * n * n;
+}
+
+exports.outQuint = function(n){
+  return --n * n * n * n * n + 1;
+}
+
+exports.inOutQuint = function(n){
+  n *= 2;
+  if (n < 1) return 0.5 * n * n * n * n * n;
+  return 0.5 * ((n -= 2) * n * n * n * n + 2);
+};
+
+exports.inSine = function(n){
+  return 1 - Math.cos(n * Math.PI / 2 );
+};
+
+exports.outSine = function(n){
+  return Math.sin(n * Math.PI / 2);
+};
+
+exports.inOutSine = function(n){
+  return .5 * (1 - Math.cos(Math.PI * n));
+};
+
+exports.inExpo = function(n){
+  return 0 == n ? 0 : Math.pow(1024, n - 1);
+};
+
+exports.outExpo = function(n){
+  return 1 == n ? n : 1 - Math.pow(2, -10 * n);
+};
+
+exports.inOutExpo = function(n){
+  if (0 == n) return 0;
+  if (1 == n) return 1;
+  if ((n *= 2) < 1) return .5 * Math.pow(1024, n - 1);
+  return .5 * (-Math.pow(2, -10 * (n - 1)) + 2);
+};
+
+exports.inCirc = function(n){
+  return 1 - Math.sqrt(1 - n * n);
+};
+
+exports.outCirc = function(n){
+  return Math.sqrt(1 - (--n * n));
+};
+
+exports.inOutCirc = function(n){
+  n *= 2
+  if (n < 1) return -0.5 * (Math.sqrt(1 - n * n) - 1);
+  return 0.5 * (Math.sqrt(1 - (n -= 2) * n) + 1);
+};
+
+exports.inBack = function(n){
+  var s = 1.70158;
+  return n * n * (( s + 1 ) * n - s);
+};
+
+exports.outBack = function(n){
+  var s = 1.70158;
+  return --n * n * ((s + 1) * n + s) + 1;
+};
+
+exports.inOutBack = function(n){
+  var s = 1.70158 * 1.525;
+  if ( ( n *= 2 ) < 1 ) return 0.5 * ( n * n * ( ( s + 1 ) * n - s ) );
+  return 0.5 * ( ( n -= 2 ) * n * ( ( s + 1 ) * n + s ) + 2 );
+};
+
+exports.inBounce = function(n){
+  return 1 - exports.outBounce(1 - n);
+};
+
+exports.outBounce = function(n){
+  if ( n < ( 1 / 2.75 ) ) {
+    return 7.5625 * n * n;
+  } else if ( n < ( 2 / 2.75 ) ) {
+    return 7.5625 * ( n -= ( 1.5 / 2.75 ) ) * n + 0.75;
+  } else if ( n < ( 2.5 / 2.75 ) ) {
+    return 7.5625 * ( n -= ( 2.25 / 2.75 ) ) * n + 0.9375;
+  } else {
+    return 7.5625 * ( n -= ( 2.625 / 2.75 ) ) * n + 0.984375;
+  }
+};
+
+exports.inOutBounce = function(n){
+  if (n < .5) return exports.inBounce(n * 2) * .5;
+  return exports.outBounce(n * 2 - 1) * .5 + .5;
+};
+
+// aliases
+
+exports['in-quad'] = exports.inQuad;
+exports['out-quad'] = exports.outQuad;
+exports['in-out-quad'] = exports.inOutQuad;
+exports['in-cube'] = exports.inCube;
+exports['out-cube'] = exports.outCube;
+exports['in-out-cube'] = exports.inOutCube;
+exports['in-quart'] = exports.inQuart;
+exports['out-quart'] = exports.outQuart;
+exports['in-out-quart'] = exports.inOutQuart;
+exports['in-quint'] = exports.inQuint;
+exports['out-quint'] = exports.outQuint;
+exports['in-out-quint'] = exports.inOutQuint;
+exports['in-sine'] = exports.inSine;
+exports['out-sine'] = exports.outSine;
+exports['in-out-sine'] = exports.inOutSine;
+exports['in-expo'] = exports.inExpo;
+exports['out-expo'] = exports.outExpo;
+exports['in-out-expo'] = exports.inOutExpo;
+exports['in-circ'] = exports.inCirc;
+exports['out-circ'] = exports.outCirc;
+exports['in-out-circ'] = exports.inOutCirc;
+exports['in-back'] = exports.inBack;
+exports['out-back'] = exports.outBack;
+exports['in-out-back'] = exports.inOutBack;
+exports['in-bounce'] = exports.inBounce;
+exports['out-bounce'] = exports.outBounce;
+exports['in-out-bounce'] = exports.inOutBounce;
+
+},{}],7:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2498,14 +2750,14 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 exports.graph = require('./lib/Graph');
 exports.Graph = exports.graph.Graph;
 
 exports.journal = require('./lib/Journal');
 exports.Journal = exports.journal.Journal;
 
-},{"./lib/Graph":8,"./lib/Journal":9}],8:[function(require,module,exports){
+},{"./lib/Graph":9,"./lib/Journal":10}],9:[function(require,module,exports){
 (function() {
   var EventEmitter, Graph, clone, mergeResolveTheirsNaive, platform, resetGraph,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -3780,7 +4032,7 @@ exports.Journal = exports.journal.Journal;
 
 }).call(this);
 
-},{"./Platform":10,"clone":5,"events":6,"fbp":11,"fs":3}],9:[function(require,module,exports){
+},{"./Platform":11,"clone":5,"events":7,"fbp":12,"fs":3}],10:[function(require,module,exports){
 (function() {
   var EventEmitter, Journal, JournalStore, MemoryJournalStore, calculateMeta, clone, entryToPrettyString,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -4407,7 +4659,7 @@ exports.Journal = exports.journal.Journal;
 
 }).call(this);
 
-},{"clone":5,"events":6,"fs":3}],10:[function(require,module,exports){
+},{"clone":5,"events":7,"fs":3}],11:[function(require,module,exports){
 (function (process){
 (function() {
   exports.isBrowser = function() {
@@ -4434,7 +4686,7 @@ exports.Journal = exports.journal.Journal;
 }).call(this);
 
 }).call(this,require('_process'))
-},{"_process":15}],11:[function(require,module,exports){
+},{"_process":16}],12:[function(require,module,exports){
 module.exports = (function() {
   "use strict";
 
@@ -4474,102 +4726,107 @@ module.exports = (function() {
         peg$startRuleFunction  = peg$parsestart,
 
         peg$c0 = function() { return parser.getResult();  },
-        peg$c1 = "EXPORT=",
-        peg$c2 = { type: "literal", value: "EXPORT=", description: "\"EXPORT=\"" },
-        peg$c3 = ":",
-        peg$c4 = { type: "literal", value: ":", description: "\":\"" },
-        peg$c5 = function(priv, pub) {return parser.registerExports(priv,pub)},
-        peg$c6 = "INPORT=",
-        peg$c7 = { type: "literal", value: "INPORT=", description: "\"INPORT=\"" },
-        peg$c8 = ".",
-        peg$c9 = { type: "literal", value: ".", description: "\".\"" },
-        peg$c10 = function(node, port, pub) {return parser.registerInports(node,port,pub)},
-        peg$c11 = "OUTPORT=",
-        peg$c12 = { type: "literal", value: "OUTPORT=", description: "\"OUTPORT=\"" },
-        peg$c13 = function(node, port, pub) {return parser.registerOutports(node,port,pub)},
-        peg$c14 = "DEFAULT_INPORT=",
-        peg$c15 = { type: "literal", value: "DEFAULT_INPORT=", description: "\"DEFAULT_INPORT=\"" },
-        peg$c16 = function(name) { defaultInPort = name},
-        peg$c17 = "DEFAULT_OUTPORT=",
-        peg$c18 = { type: "literal", value: "DEFAULT_OUTPORT=", description: "\"DEFAULT_OUTPORT=\"" },
-        peg$c19 = function(name) { defaultOutPort = name},
-        peg$c20 = /^[\n\r\u2028\u2029]/,
-        peg$c21 = { type: "class", value: "[\\n\\r\\u2028\\u2029]", description: "[\\n\\r\\u2028\\u2029]" },
-        peg$c22 = function(edges) {return parser.registerEdges(edges);},
-        peg$c23 = ",",
-        peg$c24 = { type: "literal", value: ",", description: "\",\"" },
-        peg$c25 = "#",
-        peg$c26 = { type: "literal", value: "#", description: "\"#\"" },
-        peg$c27 = "->",
-        peg$c28 = { type: "literal", value: "->", description: "\"->\"" },
-        peg$c29 = function(x, y) { return [x,y]; },
-        peg$c30 = function(x, proc, y) { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; },
-        peg$c31 = function(proc, port) { return {"src":makeOutPort(proc, port)} },
-        peg$c32 = function(port, proc) { return {"tgt":makeInPort(proc, port)} },
-        peg$c33 = "'",
-        peg$c34 = { type: "literal", value: "'", description: "\"'\"" },
-        peg$c35 = function(iip) { return {"data":iip.join("")} },
-        peg$c36 = function(iip) { return {"data":iip} },
-        peg$c37 = function(name) { return name},
-        peg$c38 = /^[a-zA-Z_]/,
-        peg$c39 = { type: "class", value: "[a-zA-Z_]", description: "[a-zA-Z_]" },
-        peg$c40 = /^[a-zA-Z0-9_\-]/,
-        peg$c41 = { type: "class", value: "[a-zA-Z0-9_\\-]", description: "[a-zA-Z0-9_\\-]" },
-        peg$c42 = function(name) { return makeName(name)},
-        peg$c43 = function(name, comp) { parser.addNode(name,comp); return name},
-        peg$c44 = function(comp) { return parser.addAnonymousNode(comp, location().start.offset) },
-        peg$c45 = "(",
-        peg$c46 = { type: "literal", value: "(", description: "\"(\"" },
-        peg$c47 = /^[a-zA-Z\/\-0-9_]/,
-        peg$c48 = { type: "class", value: "[a-zA-Z/\\-0-9_]", description: "[a-zA-Z/\\-0-9_]" },
-        peg$c49 = ")",
-        peg$c50 = { type: "literal", value: ")", description: "\")\"" },
-        peg$c51 = function(comp, meta) { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; },
-        peg$c52 = /^[a-zA-Z\/=_,0-9]/,
-        peg$c53 = { type: "class", value: "[a-zA-Z/=_,0-9]", description: "[a-zA-Z/=_,0-9]" },
-        peg$c54 = function(meta) {return meta},
-        peg$c55 = function(portname, portindex) {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }},
-        peg$c56 = function(port) { return port; },
-        peg$c57 = /^[a-zA-Z.0-9_]/,
-        peg$c58 = { type: "class", value: "[a-zA-Z.0-9_]", description: "[a-zA-Z.0-9_]" },
-        peg$c59 = function(portname) {return makeName(portname)},
-        peg$c60 = "[",
-        peg$c61 = { type: "literal", value: "[", description: "\"[\"" },
-        peg$c62 = /^[0-9]/,
-        peg$c63 = { type: "class", value: "[0-9]", description: "[0-9]" },
-        peg$c64 = "]",
-        peg$c65 = { type: "literal", value: "]", description: "\"]\"" },
-        peg$c66 = function(portindex) {return parseInt(portindex.join(''))},
-        peg$c67 = /^[^\n\r\u2028\u2029]/,
-        peg$c68 = { type: "class", value: "[^\\n\\r\\u2028\\u2029]", description: "[^\\n\\r\\u2028\\u2029]" },
-        peg$c69 = /^[\\]/,
-        peg$c70 = { type: "class", value: "[\\\\]", description: "[\\\\]" },
-        peg$c71 = /^[']/,
-        peg$c72 = { type: "class", value: "[']", description: "[']" },
-        peg$c73 = function() { return "'"; },
-        peg$c74 = /^[^']/,
-        peg$c75 = { type: "class", value: "[^']", description: "[^']" },
-        peg$c76 = " ",
-        peg$c77 = { type: "literal", value: " ", description: "\" \"" },
-        peg$c78 = function(value) { return value; },
-        peg$c79 = "{",
-        peg$c80 = { type: "literal", value: "{", description: "\"{\"" },
-        peg$c81 = "}",
-        peg$c82 = { type: "literal", value: "}", description: "\"}\"" },
-        peg$c83 = { type: "other", description: "whitespace" },
-        peg$c84 = /^[ \t\n\r]/,
-        peg$c85 = { type: "class", value: "[ \\t\\n\\r]", description: "[ \\t\\n\\r]" },
-        peg$c86 = "false",
-        peg$c87 = { type: "literal", value: "false", description: "\"false\"" },
-        peg$c88 = function() { return false; },
-        peg$c89 = "null",
-        peg$c90 = { type: "literal", value: "null", description: "\"null\"" },
-        peg$c91 = function() { return null;  },
-        peg$c92 = "true",
-        peg$c93 = { type: "literal", value: "true", description: "\"true\"" },
-        peg$c94 = function() { return true;  },
-        peg$c95 = function(head, m) { return m; },
-        peg$c96 = function(head, tail) {
+        peg$c1 = "INPORT=",
+        peg$c2 = { type: "literal", value: "INPORT=", description: "\"INPORT=\"" },
+        peg$c3 = ".",
+        peg$c4 = { type: "literal", value: ".", description: "\".\"" },
+        peg$c5 = ":",
+        peg$c6 = { type: "literal", value: ":", description: "\":\"" },
+        peg$c7 = function(node, port, pub) {return parser.registerInports(node,port,pub)},
+        peg$c8 = "OUTPORT=",
+        peg$c9 = { type: "literal", value: "OUTPORT=", description: "\"OUTPORT=\"" },
+        peg$c10 = function(node, port, pub) {return parser.registerOutports(node,port,pub)},
+        peg$c11 = "DEFAULT_INPORT=",
+        peg$c12 = { type: "literal", value: "DEFAULT_INPORT=", description: "\"DEFAULT_INPORT=\"" },
+        peg$c13 = function(name) { defaultInPort = name},
+        peg$c14 = "DEFAULT_OUTPORT=",
+        peg$c15 = { type: "literal", value: "DEFAULT_OUTPORT=", description: "\"DEFAULT_OUTPORT=\"" },
+        peg$c16 = function(name) { defaultOutPort = name},
+        peg$c17 = function(annotation) { return parser.registerAnnotation(annotation[0], annotation[1]); },
+        peg$c18 = function(edges) {return parser.registerEdges(edges);},
+        peg$c19 = ",",
+        peg$c20 = { type: "literal", value: ",", description: "\",\"" },
+        peg$c21 = /^[\n\r\u2028\u2029]/,
+        peg$c22 = { type: "class", value: "[\\n\\r\\u2028\\u2029]", description: "[\\n\\r\\u2028\\u2029]" },
+        peg$c23 = "#",
+        peg$c24 = { type: "literal", value: "#", description: "\"#\"" },
+        peg$c25 = "->",
+        peg$c26 = { type: "literal", value: "->", description: "\"->\"" },
+        peg$c27 = function(x, y) { return [x,y]; },
+        peg$c28 = function(x, proc, y) { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; },
+        peg$c29 = function(proc, port) { return {"src":makeOutPort(proc, port)} },
+        peg$c30 = function(port, proc) { return {"tgt":makeInPort(proc, port)} },
+        peg$c31 = "'",
+        peg$c32 = { type: "literal", value: "'", description: "\"'\"" },
+        peg$c33 = function(iip) { return {"data":iip.join("")} },
+        peg$c34 = function(iip) { return {"data":iip} },
+        peg$c35 = function(name) { return name},
+        peg$c36 = /^[a-zA-Z_]/,
+        peg$c37 = { type: "class", value: "[a-zA-Z_]", description: "[a-zA-Z_]" },
+        peg$c38 = /^[a-zA-Z0-9_\-]/,
+        peg$c39 = { type: "class", value: "[a-zA-Z0-9_\\-]", description: "[a-zA-Z0-9_\\-]" },
+        peg$c40 = function(name) { return makeName(name)},
+        peg$c41 = function(name, comp) { parser.addNode(name,comp); return name},
+        peg$c42 = function(comp) { return parser.addAnonymousNode(comp, location().start.offset) },
+        peg$c43 = "(",
+        peg$c44 = { type: "literal", value: "(", description: "\"(\"" },
+        peg$c45 = /^[a-zA-Z\/\-0-9_]/,
+        peg$c46 = { type: "class", value: "[a-zA-Z/\\-0-9_]", description: "[a-zA-Z/\\-0-9_]" },
+        peg$c47 = ")",
+        peg$c48 = { type: "literal", value: ")", description: "\")\"" },
+        peg$c49 = function(comp, meta) { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; },
+        peg$c50 = /^[a-zA-Z\/=_,0-9]/,
+        peg$c51 = { type: "class", value: "[a-zA-Z/=_,0-9]", description: "[a-zA-Z/=_,0-9]" },
+        peg$c52 = function(meta) {return meta},
+        peg$c53 = "@",
+        peg$c54 = { type: "literal", value: "@", description: "\"@\"" },
+        peg$c55 = /^[a-zA-Z0-9\-_]/,
+        peg$c56 = { type: "class", value: "[a-zA-Z0-9\\-_]", description: "[a-zA-Z0-9\\-_]" },
+        peg$c57 = /^[a-zA-Z0-9\-_ .]/,
+        peg$c58 = { type: "class", value: "[a-zA-Z0-9\\-_ \\.]", description: "[a-zA-Z0-9\\-_ \\.]" },
+        peg$c59 = function(key, value) { return [key.join(''), value.join('')]; },
+        peg$c60 = function(portname, portindex) {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }},
+        peg$c61 = function(port) { return port; },
+        peg$c62 = /^[a-zA-Z.0-9_]/,
+        peg$c63 = { type: "class", value: "[a-zA-Z.0-9_]", description: "[a-zA-Z.0-9_]" },
+        peg$c64 = function(portname) {return makeName(portname)},
+        peg$c65 = "[",
+        peg$c66 = { type: "literal", value: "[", description: "\"[\"" },
+        peg$c67 = /^[0-9]/,
+        peg$c68 = { type: "class", value: "[0-9]", description: "[0-9]" },
+        peg$c69 = "]",
+        peg$c70 = { type: "literal", value: "]", description: "\"]\"" },
+        peg$c71 = function(portindex) {return parseInt(portindex.join(''))},
+        peg$c72 = /^[^\n\r\u2028\u2029]/,
+        peg$c73 = { type: "class", value: "[^\\n\\r\\u2028\\u2029]", description: "[^\\n\\r\\u2028\\u2029]" },
+        peg$c74 = /^[\\]/,
+        peg$c75 = { type: "class", value: "[\\\\]", description: "[\\\\]" },
+        peg$c76 = /^[']/,
+        peg$c77 = { type: "class", value: "[']", description: "[']" },
+        peg$c78 = function() { return "'"; },
+        peg$c79 = /^[^']/,
+        peg$c80 = { type: "class", value: "[^']", description: "[^']" },
+        peg$c81 = " ",
+        peg$c82 = { type: "literal", value: " ", description: "\" \"" },
+        peg$c83 = function(value) { return value; },
+        peg$c84 = "{",
+        peg$c85 = { type: "literal", value: "{", description: "\"{\"" },
+        peg$c86 = "}",
+        peg$c87 = { type: "literal", value: "}", description: "\"}\"" },
+        peg$c88 = { type: "other", description: "whitespace" },
+        peg$c89 = /^[ \t\n\r]/,
+        peg$c90 = { type: "class", value: "[ \\t\\n\\r]", description: "[ \\t\\n\\r]" },
+        peg$c91 = "false",
+        peg$c92 = { type: "literal", value: "false", description: "\"false\"" },
+        peg$c93 = function() { return false; },
+        peg$c94 = "null",
+        peg$c95 = { type: "literal", value: "null", description: "\"null\"" },
+        peg$c96 = function() { return null;  },
+        peg$c97 = "true",
+        peg$c98 = { type: "literal", value: "true", description: "\"true\"" },
+        peg$c99 = function() { return true;  },
+        peg$c100 = function(head, m) { return m; },
+        peg$c101 = function(head, tail) {
                   var result = {}, i;
 
                   result[head.name] = head.value;
@@ -4580,58 +4837,58 @@ module.exports = (function() {
 
                   return result;
                 },
-        peg$c97 = function(members) { return members !== null ? members: {}; },
-        peg$c98 = function(name, value) {
+        peg$c102 = function(members) { return members !== null ? members: {}; },
+        peg$c103 = function(name, value) {
                 return { name: name, value: value };
               },
-        peg$c99 = function(head, v) { return v; },
-        peg$c100 = function(head, tail) { return [head].concat(tail); },
-        peg$c101 = function(values) { return values !== null ? values : []; },
-        peg$c102 = { type: "other", description: "number" },
-        peg$c103 = function() { return parseFloat(text()); },
-        peg$c104 = /^[1-9]/,
-        peg$c105 = { type: "class", value: "[1-9]", description: "[1-9]" },
-        peg$c106 = /^[eE]/,
-        peg$c107 = { type: "class", value: "[eE]", description: "[eE]" },
-        peg$c108 = "-",
-        peg$c109 = { type: "literal", value: "-", description: "\"-\"" },
-        peg$c110 = "+",
-        peg$c111 = { type: "literal", value: "+", description: "\"+\"" },
-        peg$c112 = "0",
-        peg$c113 = { type: "literal", value: "0", description: "\"0\"" },
-        peg$c114 = { type: "other", description: "string" },
-        peg$c115 = function(chars) { return chars.join(""); },
-        peg$c116 = "\"",
-        peg$c117 = { type: "literal", value: "\"", description: "\"\\\"\"" },
-        peg$c118 = "\\",
-        peg$c119 = { type: "literal", value: "\\", description: "\"\\\\\"" },
-        peg$c120 = "/",
-        peg$c121 = { type: "literal", value: "/", description: "\"/\"" },
-        peg$c122 = "b",
-        peg$c123 = { type: "literal", value: "b", description: "\"b\"" },
-        peg$c124 = function() { return "\b"; },
-        peg$c125 = "f",
-        peg$c126 = { type: "literal", value: "f", description: "\"f\"" },
-        peg$c127 = function() { return "\f"; },
-        peg$c128 = "n",
-        peg$c129 = { type: "literal", value: "n", description: "\"n\"" },
-        peg$c130 = function() { return "\n"; },
-        peg$c131 = "r",
-        peg$c132 = { type: "literal", value: "r", description: "\"r\"" },
-        peg$c133 = function() { return "\r"; },
-        peg$c134 = "t",
-        peg$c135 = { type: "literal", value: "t", description: "\"t\"" },
-        peg$c136 = function() { return "\t"; },
-        peg$c137 = "u",
-        peg$c138 = { type: "literal", value: "u", description: "\"u\"" },
-        peg$c139 = function(digits) {
+        peg$c104 = function(head, v) { return v; },
+        peg$c105 = function(head, tail) { return [head].concat(tail); },
+        peg$c106 = function(values) { return values !== null ? values : []; },
+        peg$c107 = { type: "other", description: "number" },
+        peg$c108 = function() { return parseFloat(text()); },
+        peg$c109 = /^[1-9]/,
+        peg$c110 = { type: "class", value: "[1-9]", description: "[1-9]" },
+        peg$c111 = /^[eE]/,
+        peg$c112 = { type: "class", value: "[eE]", description: "[eE]" },
+        peg$c113 = "-",
+        peg$c114 = { type: "literal", value: "-", description: "\"-\"" },
+        peg$c115 = "+",
+        peg$c116 = { type: "literal", value: "+", description: "\"+\"" },
+        peg$c117 = "0",
+        peg$c118 = { type: "literal", value: "0", description: "\"0\"" },
+        peg$c119 = { type: "other", description: "string" },
+        peg$c120 = function(chars) { return chars.join(""); },
+        peg$c121 = "\"",
+        peg$c122 = { type: "literal", value: "\"", description: "\"\\\"\"" },
+        peg$c123 = "\\",
+        peg$c124 = { type: "literal", value: "\\", description: "\"\\\\\"" },
+        peg$c125 = "/",
+        peg$c126 = { type: "literal", value: "/", description: "\"/\"" },
+        peg$c127 = "b",
+        peg$c128 = { type: "literal", value: "b", description: "\"b\"" },
+        peg$c129 = function() { return "\b"; },
+        peg$c130 = "f",
+        peg$c131 = { type: "literal", value: "f", description: "\"f\"" },
+        peg$c132 = function() { return "\f"; },
+        peg$c133 = "n",
+        peg$c134 = { type: "literal", value: "n", description: "\"n\"" },
+        peg$c135 = function() { return "\n"; },
+        peg$c136 = "r",
+        peg$c137 = { type: "literal", value: "r", description: "\"r\"" },
+        peg$c138 = function() { return "\r"; },
+        peg$c139 = "t",
+        peg$c140 = { type: "literal", value: "t", description: "\"t\"" },
+        peg$c141 = function() { return "\t"; },
+        peg$c142 = "u",
+        peg$c143 = { type: "literal", value: "u", description: "\"u\"" },
+        peg$c144 = function(digits) {
                     return String.fromCharCode(parseInt(digits, 16));
                   },
-        peg$c140 = function(sequence) { return sequence; },
-        peg$c141 = /^[^\0-\x1F"\\]/,
-        peg$c142 = { type: "class", value: "[^\\0-\\x1F\\x22\\x5C]", description: "[^\\0-\\x1F\\x22\\x5C]" },
-        peg$c143 = /^[0-9a-f]/i,
-        peg$c144 = { type: "class", value: "[0-9a-f]i", description: "[0-9a-f]i" },
+        peg$c145 = function(sequence) { return sequence; },
+        peg$c146 = /^[^\0-\x1F"\\]/,
+        peg$c147 = { type: "class", value: "[^\\0-\\x1F\\x22\\x5C]", description: "[^\\0-\\x1F\\x22\\x5C]" },
+        peg$c148 = /^[0-9a-f]/i,
+        peg$c149 = { type: "class", value: "[0-9a-f]i", description: "[0-9a-f]i" },
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -4851,9 +5108,9 @@ module.exports = (function() {
           if (peg$silentFails === 0) { peg$fail(peg$c2); }
         }
         if (s2 !== peg$FAILED) {
-          s3 = peg$parseportName();
+          s3 = peg$parsenode();
           if (s3 !== peg$FAILED) {
-            if (input.charCodeAt(peg$currPos) === 58) {
+            if (input.charCodeAt(peg$currPos) === 46) {
               s4 = peg$c3;
               peg$currPos++;
             } else {
@@ -4863,16 +5120,34 @@ module.exports = (function() {
             if (s4 !== peg$FAILED) {
               s5 = peg$parseportName();
               if (s5 !== peg$FAILED) {
-                s6 = peg$parse_();
+                if (input.charCodeAt(peg$currPos) === 58) {
+                  s6 = peg$c5;
+                  peg$currPos++;
+                } else {
+                  s6 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c6); }
+                }
                 if (s6 !== peg$FAILED) {
-                  s7 = peg$parseLineTerminator();
-                  if (s7 === peg$FAILED) {
-                    s7 = null;
-                  }
+                  s7 = peg$parseportName();
                   if (s7 !== peg$FAILED) {
-                    peg$savedPos = s0;
-                    s1 = peg$c5(s3, s5);
-                    s0 = s1;
+                    s8 = peg$parse_();
+                    if (s8 !== peg$FAILED) {
+                      s9 = peg$parseLineTerminator();
+                      if (s9 === peg$FAILED) {
+                        s9 = null;
+                      }
+                      if (s9 !== peg$FAILED) {
+                        peg$savedPos = s0;
+                        s1 = peg$c7(s3, s5, s7);
+                        s0 = s1;
+                      } else {
+                        peg$currPos = s0;
+                        s0 = peg$FAILED;
+                      }
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
                   } else {
                     peg$currPos = s0;
                     s0 = peg$FAILED;
@@ -4905,32 +5180,32 @@ module.exports = (function() {
         s0 = peg$currPos;
         s1 = peg$parse_();
         if (s1 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 7) === peg$c6) {
-            s2 = peg$c6;
-            peg$currPos += 7;
+          if (input.substr(peg$currPos, 8) === peg$c8) {
+            s2 = peg$c8;
+            peg$currPos += 8;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c7); }
+            if (peg$silentFails === 0) { peg$fail(peg$c9); }
           }
           if (s2 !== peg$FAILED) {
             s3 = peg$parsenode();
             if (s3 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 46) {
-                s4 = peg$c8;
+                s4 = peg$c3;
                 peg$currPos++;
               } else {
                 s4 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c9); }
+                if (peg$silentFails === 0) { peg$fail(peg$c4); }
               }
               if (s4 !== peg$FAILED) {
                 s5 = peg$parseportName();
                 if (s5 !== peg$FAILED) {
                   if (input.charCodeAt(peg$currPos) === 58) {
-                    s6 = peg$c3;
+                    s6 = peg$c5;
                     peg$currPos++;
                   } else {
                     s6 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c4); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c6); }
                   }
                   if (s6 !== peg$FAILED) {
                     s7 = peg$parseportName();
@@ -4985,62 +5260,26 @@ module.exports = (function() {
           s0 = peg$currPos;
           s1 = peg$parse_();
           if (s1 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 8) === peg$c11) {
+            if (input.substr(peg$currPos, 15) === peg$c11) {
               s2 = peg$c11;
-              peg$currPos += 8;
+              peg$currPos += 15;
             } else {
               s2 = peg$FAILED;
               if (peg$silentFails === 0) { peg$fail(peg$c12); }
             }
             if (s2 !== peg$FAILED) {
-              s3 = peg$parsenode();
+              s3 = peg$parseportName();
               if (s3 !== peg$FAILED) {
-                if (input.charCodeAt(peg$currPos) === 46) {
-                  s4 = peg$c8;
-                  peg$currPos++;
-                } else {
-                  s4 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c9); }
-                }
+                s4 = peg$parse_();
                 if (s4 !== peg$FAILED) {
-                  s5 = peg$parseportName();
+                  s5 = peg$parseLineTerminator();
+                  if (s5 === peg$FAILED) {
+                    s5 = null;
+                  }
                   if (s5 !== peg$FAILED) {
-                    if (input.charCodeAt(peg$currPos) === 58) {
-                      s6 = peg$c3;
-                      peg$currPos++;
-                    } else {
-                      s6 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c4); }
-                    }
-                    if (s6 !== peg$FAILED) {
-                      s7 = peg$parseportName();
-                      if (s7 !== peg$FAILED) {
-                        s8 = peg$parse_();
-                        if (s8 !== peg$FAILED) {
-                          s9 = peg$parseLineTerminator();
-                          if (s9 === peg$FAILED) {
-                            s9 = null;
-                          }
-                          if (s9 !== peg$FAILED) {
-                            peg$savedPos = s0;
-                            s1 = peg$c13(s3, s5, s7);
-                            s0 = s1;
-                          } else {
-                            peg$currPos = s0;
-                            s0 = peg$FAILED;
-                          }
-                        } else {
-                          peg$currPos = s0;
-                          s0 = peg$FAILED;
-                        }
-                      } else {
-                        peg$currPos = s0;
-                        s0 = peg$FAILED;
-                      }
-                    } else {
-                      peg$currPos = s0;
-                      s0 = peg$FAILED;
-                    }
+                    peg$savedPos = s0;
+                    s1 = peg$c13(s3);
+                    s0 = s1;
                   } else {
                     peg$currPos = s0;
                     s0 = peg$FAILED;
@@ -5065,9 +5304,9 @@ module.exports = (function() {
             s0 = peg$currPos;
             s1 = peg$parse_();
             if (s1 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 15) === peg$c14) {
+              if (input.substr(peg$currPos, 16) === peg$c14) {
                 s2 = peg$c14;
-                peg$currPos += 15;
+                peg$currPos += 16;
               } else {
                 s2 = peg$FAILED;
                 if (peg$silentFails === 0) { peg$fail(peg$c15); }
@@ -5107,40 +5346,13 @@ module.exports = (function() {
             }
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
-              s1 = peg$parse_();
+              s1 = peg$parseannotation();
               if (s1 !== peg$FAILED) {
-                if (input.substr(peg$currPos, 16) === peg$c17) {
-                  s2 = peg$c17;
-                  peg$currPos += 16;
-                } else {
-                  s2 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c18); }
-                }
+                s2 = peg$parsenewline();
                 if (s2 !== peg$FAILED) {
-                  s3 = peg$parseportName();
-                  if (s3 !== peg$FAILED) {
-                    s4 = peg$parse_();
-                    if (s4 !== peg$FAILED) {
-                      s5 = peg$parseLineTerminator();
-                      if (s5 === peg$FAILED) {
-                        s5 = null;
-                      }
-                      if (s5 !== peg$FAILED) {
-                        peg$savedPos = s0;
-                        s1 = peg$c19(s3);
-                        s0 = s1;
-                      } else {
-                        peg$currPos = s0;
-                        s0 = peg$FAILED;
-                      }
-                    } else {
-                      peg$currPos = s0;
-                      s0 = peg$FAILED;
-                    }
-                  } else {
-                    peg$currPos = s0;
-                    s0 = peg$FAILED;
-                  }
+                  peg$savedPos = s0;
+                  s1 = peg$c17(s1);
+                  s0 = s1;
                 } else {
                   peg$currPos = s0;
                   s0 = peg$FAILED;
@@ -5153,13 +5365,7 @@ module.exports = (function() {
                 s0 = peg$currPos;
                 s1 = peg$parsecomment();
                 if (s1 !== peg$FAILED) {
-                  if (peg$c20.test(input.charAt(peg$currPos))) {
-                    s2 = input.charAt(peg$currPos);
-                    peg$currPos++;
-                  } else {
-                    s2 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c21); }
-                  }
+                  s2 = peg$parsenewline();
                   if (s2 === peg$FAILED) {
                     s2 = null;
                   }
@@ -5178,13 +5384,7 @@ module.exports = (function() {
                   s0 = peg$currPos;
                   s1 = peg$parse_();
                   if (s1 !== peg$FAILED) {
-                    if (peg$c20.test(input.charAt(peg$currPos))) {
-                      s2 = input.charAt(peg$currPos);
-                      peg$currPos++;
-                    } else {
-                      s2 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c21); }
-                    }
+                    s2 = peg$parsenewline();
                     if (s2 !== peg$FAILED) {
                       s1 = [s1, s2];
                       s0 = s1;
@@ -5210,7 +5410,7 @@ module.exports = (function() {
                           }
                           if (s4 !== peg$FAILED) {
                             peg$savedPos = s0;
-                            s1 = peg$c22(s2);
+                            s1 = peg$c18(s2);
                             s0 = s1;
                           } else {
                             peg$currPos = s0;
@@ -5246,11 +5446,11 @@ module.exports = (function() {
       s1 = peg$parse_();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 44) {
-          s2 = peg$c23;
+          s2 = peg$c19;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c24); }
+          if (peg$silentFails === 0) { peg$fail(peg$c20); }
         }
         if (s2 === peg$FAILED) {
           s2 = null;
@@ -5261,13 +5461,7 @@ module.exports = (function() {
             s3 = null;
           }
           if (s3 !== peg$FAILED) {
-            if (peg$c20.test(input.charAt(peg$currPos))) {
-              s4 = input.charAt(peg$currPos);
-              peg$currPos++;
-            } else {
-              s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c21); }
-            }
+            s4 = peg$parsenewline();
             if (s4 === peg$FAILED) {
               s4 = null;
             }
@@ -5294,6 +5488,20 @@ module.exports = (function() {
       return s0;
     }
 
+    function peg$parsenewline() {
+      var s0;
+
+      if (peg$c21.test(input.charAt(peg$currPos))) {
+        s0 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s0 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c22); }
+      }
+
+      return s0;
+    }
+
     function peg$parsecomment() {
       var s0, s1, s2, s3, s4;
 
@@ -5301,11 +5509,11 @@ module.exports = (function() {
       s1 = peg$parse_();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 35) {
-          s2 = peg$c25;
+          s2 = peg$c23;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c26); }
+          if (peg$silentFails === 0) { peg$fail(peg$c24); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
@@ -5341,12 +5549,12 @@ module.exports = (function() {
       if (s1 !== peg$FAILED) {
         s2 = peg$parse_();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c27) {
-            s3 = peg$c27;
+          if (input.substr(peg$currPos, 2) === peg$c25) {
+            s3 = peg$c25;
             peg$currPos += 2;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c28); }
+            if (peg$silentFails === 0) { peg$fail(peg$c26); }
           }
           if (s3 !== peg$FAILED) {
             s4 = peg$parse_();
@@ -5354,7 +5562,7 @@ module.exports = (function() {
               s5 = peg$parseconnection();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c29(s1, s5);
+                s1 = peg$c27(s1, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -5419,7 +5627,7 @@ module.exports = (function() {
           s3 = peg$parse__port();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c30(s1, s2, s3);
+            s1 = peg$c28(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -5448,7 +5656,7 @@ module.exports = (function() {
             }
             if (s3 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c30(s1, s2, s3);
+              s1 = peg$c28(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -5479,7 +5687,7 @@ module.exports = (function() {
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c31(s1, s2);
+          s1 = peg$c29(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5505,7 +5713,7 @@ module.exports = (function() {
         s2 = peg$parsenode();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c32(s1, s2);
+          s1 = peg$c30(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5524,11 +5732,11 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c33;
+        s1 = peg$c31;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c34); }
+        if (peg$silentFails === 0) { peg$fail(peg$c32); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
@@ -5539,15 +5747,15 @@ module.exports = (function() {
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c33;
+            s3 = peg$c31;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c34); }
+            if (peg$silentFails === 0) { peg$fail(peg$c32); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c35(s2);
+            s1 = peg$c33(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -5566,7 +5774,7 @@ module.exports = (function() {
         s1 = peg$parseJSON_text();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c36(s1);
+          s1 = peg$c34(s1);
         }
         s0 = s1;
       }
@@ -5581,7 +5789,7 @@ module.exports = (function() {
       s1 = peg$parsenodeNameAndComponent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c37(s1);
+        s1 = peg$c35(s1);
       }
       s0 = s1;
       if (s0 === peg$FAILED) {
@@ -5589,7 +5797,7 @@ module.exports = (function() {
         s1 = peg$parsenodeName();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c37(s1);
+          s1 = peg$c35(s1);
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
@@ -5597,7 +5805,7 @@ module.exports = (function() {
           s1 = peg$parsenodeComponent();
           if (s1 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c37(s1);
+            s1 = peg$c35(s1);
           }
           s0 = s1;
         }
@@ -5611,30 +5819,30 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c38.test(input.charAt(peg$currPos))) {
+      if (peg$c36.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c39); }
+        if (peg$silentFails === 0) { peg$fail(peg$c37); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c40.test(input.charAt(peg$currPos))) {
+        if (peg$c38.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c41); }
+          if (peg$silentFails === 0) { peg$fail(peg$c39); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c40.test(input.charAt(peg$currPos))) {
+          if (peg$c38.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c41); }
+            if (peg$silentFails === 0) { peg$fail(peg$c39); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -5650,7 +5858,7 @@ module.exports = (function() {
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c42(s1);
+        s1 = peg$c40(s1);
       }
       s0 = s1;
 
@@ -5666,7 +5874,7 @@ module.exports = (function() {
         s2 = peg$parsecomponent();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c43(s1, s2);
+          s1 = peg$c41(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5687,7 +5895,7 @@ module.exports = (function() {
       s1 = peg$parsecomponent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c44(s1);
+        s1 = peg$c42(s1);
       }
       s0 = s1;
 
@@ -5710,29 +5918,29 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c45;
+        s1 = peg$c43;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c46); }
+        if (peg$silentFails === 0) { peg$fail(peg$c44); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c47.test(input.charAt(peg$currPos))) {
+        if (peg$c45.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c48); }
+          if (peg$silentFails === 0) { peg$fail(peg$c46); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
-          if (peg$c47.test(input.charAt(peg$currPos))) {
+          if (peg$c45.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c48); }
+            if (peg$silentFails === 0) { peg$fail(peg$c46); }
           }
         }
         if (s2 === peg$FAILED) {
@@ -5745,15 +5953,15 @@ module.exports = (function() {
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 41) {
-              s4 = peg$c49;
+              s4 = peg$c47;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c50); }
+              if (peg$silentFails === 0) { peg$fail(peg$c48); }
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c51(s2, s3);
+              s1 = peg$c49(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -5780,30 +5988,30 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 58) {
-        s1 = peg$c3;
+        s1 = peg$c5;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c4); }
+        if (peg$silentFails === 0) { peg$fail(peg$c6); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c52.test(input.charAt(peg$currPos))) {
+        if (peg$c50.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c53); }
+          if (peg$silentFails === 0) { peg$fail(peg$c51); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c52.test(input.charAt(peg$currPos))) {
+            if (peg$c50.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c53); }
+              if (peg$silentFails === 0) { peg$fail(peg$c51); }
             }
           }
         } else {
@@ -5811,8 +6019,109 @@ module.exports = (function() {
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c54(s2);
+          s1 = peg$c52(s2);
           s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseannotation() {
+      var s0, s1, s2, s3, s4, s5, s6, s7;
+
+      s0 = peg$currPos;
+      if (input.charCodeAt(peg$currPos) === 35) {
+        s1 = peg$c23;
+        peg$currPos++;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c24); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parse__();
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 64) {
+            s3 = peg$c53;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c54); }
+          }
+          if (s3 !== peg$FAILED) {
+            s4 = [];
+            if (peg$c55.test(input.charAt(peg$currPos))) {
+              s5 = input.charAt(peg$currPos);
+              peg$currPos++;
+            } else {
+              s5 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c56); }
+            }
+            if (s5 !== peg$FAILED) {
+              while (s5 !== peg$FAILED) {
+                s4.push(s5);
+                if (peg$c55.test(input.charAt(peg$currPos))) {
+                  s5 = input.charAt(peg$currPos);
+                  peg$currPos++;
+                } else {
+                  s5 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c56); }
+                }
+              }
+            } else {
+              s4 = peg$FAILED;
+            }
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parse__();
+              if (s5 !== peg$FAILED) {
+                s6 = [];
+                if (peg$c57.test(input.charAt(peg$currPos))) {
+                  s7 = input.charAt(peg$currPos);
+                  peg$currPos++;
+                } else {
+                  s7 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c58); }
+                }
+                if (s7 !== peg$FAILED) {
+                  while (s7 !== peg$FAILED) {
+                    s6.push(s7);
+                    if (peg$c57.test(input.charAt(peg$currPos))) {
+                      s7 = input.charAt(peg$currPos);
+                      peg$currPos++;
+                    } else {
+                      s7 = peg$FAILED;
+                      if (peg$silentFails === 0) { peg$fail(peg$c58); }
+                    }
+                  }
+                } else {
+                  s6 = peg$FAILED;
+                }
+                if (s6 !== peg$FAILED) {
+                  peg$savedPos = s0;
+                  s1 = peg$c59(s4, s6);
+                  s0 = s1;
+                } else {
+                  peg$currPos = s0;
+                  s0 = peg$FAILED;
+                }
+              } else {
+                peg$currPos = s0;
+                s0 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -5837,7 +6146,7 @@ module.exports = (function() {
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c55(s1, s2);
+          s1 = peg$c60(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5860,7 +6169,7 @@ module.exports = (function() {
         s2 = peg$parse__();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c56(s1);
+          s1 = peg$c61(s1);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5883,7 +6192,7 @@ module.exports = (function() {
         s2 = peg$parseport();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c56(s2);
+          s1 = peg$c61(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -5902,30 +6211,30 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c38.test(input.charAt(peg$currPos))) {
+      if (peg$c36.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c39); }
+        if (peg$silentFails === 0) { peg$fail(peg$c37); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c57.test(input.charAt(peg$currPos))) {
+        if (peg$c62.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c58); }
+          if (peg$silentFails === 0) { peg$fail(peg$c63); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c57.test(input.charAt(peg$currPos))) {
+          if (peg$c62.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c58); }
+            if (peg$silentFails === 0) { peg$fail(peg$c63); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -5941,7 +6250,7 @@ module.exports = (function() {
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c59(s1);
+        s1 = peg$c64(s1);
       }
       s0 = s1;
 
@@ -5953,30 +6262,30 @@ module.exports = (function() {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 91) {
-        s1 = peg$c60;
+        s1 = peg$c65;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c61); }
+        if (peg$silentFails === 0) { peg$fail(peg$c66); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c62.test(input.charAt(peg$currPos))) {
+        if (peg$c67.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c63); }
+          if (peg$silentFails === 0) { peg$fail(peg$c68); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c62.test(input.charAt(peg$currPos))) {
+            if (peg$c67.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c63); }
+              if (peg$silentFails === 0) { peg$fail(peg$c68); }
             }
           }
         } else {
@@ -5984,15 +6293,15 @@ module.exports = (function() {
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 93) {
-            s3 = peg$c64;
+            s3 = peg$c69;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c65); }
+            if (peg$silentFails === 0) { peg$fail(peg$c70); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c66(s2);
+            s1 = peg$c71(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6013,12 +6322,12 @@ module.exports = (function() {
     function peg$parseanychar() {
       var s0;
 
-      if (peg$c67.test(input.charAt(peg$currPos))) {
+      if (peg$c72.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c68); }
+        if (peg$silentFails === 0) { peg$fail(peg$c73); }
       }
 
       return s0;
@@ -6028,24 +6337,24 @@ module.exports = (function() {
       var s0, s1, s2;
 
       s0 = peg$currPos;
-      if (peg$c69.test(input.charAt(peg$currPos))) {
+      if (peg$c74.test(input.charAt(peg$currPos))) {
         s1 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c70); }
+        if (peg$silentFails === 0) { peg$fail(peg$c75); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c71.test(input.charAt(peg$currPos))) {
+        if (peg$c76.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c72); }
+          if (peg$silentFails === 0) { peg$fail(peg$c77); }
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c73();
+          s1 = peg$c78();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -6056,12 +6365,12 @@ module.exports = (function() {
         s0 = peg$FAILED;
       }
       if (s0 === peg$FAILED) {
-        if (peg$c74.test(input.charAt(peg$currPos))) {
+        if (peg$c79.test(input.charAt(peg$currPos))) {
           s0 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c75); }
+          if (peg$silentFails === 0) { peg$fail(peg$c80); }
         }
       }
 
@@ -6073,20 +6382,20 @@ module.exports = (function() {
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c76;
+        s1 = peg$c81;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c77); }
+        if (peg$silentFails === 0) { peg$fail(peg$c82); }
       }
       while (s1 !== peg$FAILED) {
         s0.push(s1);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s1 = peg$c76;
+          s1 = peg$c81;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c77); }
+          if (peg$silentFails === 0) { peg$fail(peg$c82); }
         }
       }
       if (s0 === peg$FAILED) {
@@ -6101,21 +6410,21 @@ module.exports = (function() {
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c76;
+        s1 = peg$c81;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c77); }
+        if (peg$silentFails === 0) { peg$fail(peg$c82); }
       }
       if (s1 !== peg$FAILED) {
         while (s1 !== peg$FAILED) {
           s0.push(s1);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s1 = peg$c76;
+            s1 = peg$c81;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c77); }
+            if (peg$silentFails === 0) { peg$fail(peg$c82); }
           }
         }
       } else {
@@ -6136,7 +6445,7 @@ module.exports = (function() {
           s3 = peg$parsews();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c78(s2);
+            s1 = peg$c83(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6161,11 +6470,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 91) {
-          s2 = peg$c60;
+          s2 = peg$c65;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c61); }
+          if (peg$silentFails === 0) { peg$fail(peg$c66); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6195,11 +6504,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 123) {
-          s2 = peg$c79;
+          s2 = peg$c84;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c80); }
+          if (peg$silentFails === 0) { peg$fail(peg$c85); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6229,11 +6538,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 93) {
-          s2 = peg$c64;
+          s2 = peg$c69;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c65); }
+          if (peg$silentFails === 0) { peg$fail(peg$c70); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6263,11 +6572,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 125) {
-          s2 = peg$c81;
+          s2 = peg$c86;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c82); }
+          if (peg$silentFails === 0) { peg$fail(peg$c87); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6297,11 +6606,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 58) {
-          s2 = peg$c3;
+          s2 = peg$c5;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c4); }
+          if (peg$silentFails === 0) { peg$fail(peg$c6); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6331,11 +6640,11 @@ module.exports = (function() {
       s1 = peg$parsews();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 44) {
-          s2 = peg$c23;
+          s2 = peg$c19;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c24); }
+          if (peg$silentFails === 0) { peg$fail(peg$c20); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsews();
@@ -6363,27 +6672,27 @@ module.exports = (function() {
 
       peg$silentFails++;
       s0 = [];
-      if (peg$c84.test(input.charAt(peg$currPos))) {
+      if (peg$c89.test(input.charAt(peg$currPos))) {
         s1 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c85); }
+        if (peg$silentFails === 0) { peg$fail(peg$c90); }
       }
       while (s1 !== peg$FAILED) {
         s0.push(s1);
-        if (peg$c84.test(input.charAt(peg$currPos))) {
+        if (peg$c89.test(input.charAt(peg$currPos))) {
           s1 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c85); }
+          if (peg$silentFails === 0) { peg$fail(peg$c90); }
         }
       }
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c83); }
+        if (peg$silentFails === 0) { peg$fail(peg$c88); }
       }
 
       return s0;
@@ -6419,16 +6728,16 @@ module.exports = (function() {
       var s0, s1;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c86) {
-        s1 = peg$c86;
+      if (input.substr(peg$currPos, 5) === peg$c91) {
+        s1 = peg$c91;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c87); }
+        if (peg$silentFails === 0) { peg$fail(peg$c92); }
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c88();
+        s1 = peg$c93();
       }
       s0 = s1;
 
@@ -6439,16 +6748,16 @@ module.exports = (function() {
       var s0, s1;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c89) {
-        s1 = peg$c89;
+      if (input.substr(peg$currPos, 4) === peg$c94) {
+        s1 = peg$c94;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c90); }
+        if (peg$silentFails === 0) { peg$fail(peg$c95); }
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c91();
+        s1 = peg$c96();
       }
       s0 = s1;
 
@@ -6459,16 +6768,16 @@ module.exports = (function() {
       var s0, s1;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c92) {
-        s1 = peg$c92;
+      if (input.substr(peg$currPos, 4) === peg$c97) {
+        s1 = peg$c97;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c93); }
+        if (peg$silentFails === 0) { peg$fail(peg$c98); }
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c94();
+        s1 = peg$c99();
       }
       s0 = s1;
 
@@ -6491,7 +6800,7 @@ module.exports = (function() {
             s7 = peg$parsemember();
             if (s7 !== peg$FAILED) {
               peg$savedPos = s5;
-              s6 = peg$c95(s3, s7);
+              s6 = peg$c100(s3, s7);
               s5 = s6;
             } else {
               peg$currPos = s5;
@@ -6509,7 +6818,7 @@ module.exports = (function() {
               s7 = peg$parsemember();
               if (s7 !== peg$FAILED) {
                 peg$savedPos = s5;
-                s6 = peg$c95(s3, s7);
+                s6 = peg$c100(s3, s7);
                 s5 = s6;
               } else {
                 peg$currPos = s5;
@@ -6522,7 +6831,7 @@ module.exports = (function() {
           }
           if (s4 !== peg$FAILED) {
             peg$savedPos = s2;
-            s3 = peg$c96(s3, s4);
+            s3 = peg$c101(s3, s4);
             s2 = s3;
           } else {
             peg$currPos = s2;
@@ -6539,7 +6848,7 @@ module.exports = (function() {
           s3 = peg$parseend_object();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c97(s2);
+            s1 = peg$c102(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6568,7 +6877,7 @@ module.exports = (function() {
           s3 = peg$parsevalue();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c98(s1, s3);
+            s1 = peg$c103(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6602,7 +6911,7 @@ module.exports = (function() {
             s7 = peg$parsevalue();
             if (s7 !== peg$FAILED) {
               peg$savedPos = s5;
-              s6 = peg$c99(s3, s7);
+              s6 = peg$c104(s3, s7);
               s5 = s6;
             } else {
               peg$currPos = s5;
@@ -6620,7 +6929,7 @@ module.exports = (function() {
               s7 = peg$parsevalue();
               if (s7 !== peg$FAILED) {
                 peg$savedPos = s5;
-                s6 = peg$c99(s3, s7);
+                s6 = peg$c104(s3, s7);
                 s5 = s6;
               } else {
                 peg$currPos = s5;
@@ -6633,7 +6942,7 @@ module.exports = (function() {
           }
           if (s4 !== peg$FAILED) {
             peg$savedPos = s2;
-            s3 = peg$c100(s3, s4);
+            s3 = peg$c105(s3, s4);
             s2 = s3;
           } else {
             peg$currPos = s2;
@@ -6650,7 +6959,7 @@ module.exports = (function() {
           s3 = peg$parseend_array();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c101(s2);
+            s1 = peg$c106(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6691,7 +7000,7 @@ module.exports = (function() {
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c103();
+              s1 = peg$c108();
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -6712,7 +7021,7 @@ module.exports = (function() {
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c102); }
+        if (peg$silentFails === 0) { peg$fail(peg$c107); }
       }
 
       return s0;
@@ -6722,11 +7031,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 46) {
-        s0 = peg$c8;
+        s0 = peg$c3;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c9); }
+        if (peg$silentFails === 0) { peg$fail(peg$c4); }
       }
 
       return s0;
@@ -6735,12 +7044,12 @@ module.exports = (function() {
     function peg$parsedigit1_9() {
       var s0;
 
-      if (peg$c104.test(input.charAt(peg$currPos))) {
+      if (peg$c109.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c105); }
+        if (peg$silentFails === 0) { peg$fail(peg$c110); }
       }
 
       return s0;
@@ -6749,12 +7058,12 @@ module.exports = (function() {
     function peg$parsee() {
       var s0;
 
-      if (peg$c106.test(input.charAt(peg$currPos))) {
+      if (peg$c111.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c107); }
+        if (peg$silentFails === 0) { peg$fail(peg$c112); }
       }
 
       return s0;
@@ -6868,11 +7177,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 45) {
-        s0 = peg$c108;
+        s0 = peg$c113;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c109); }
+        if (peg$silentFails === 0) { peg$fail(peg$c114); }
       }
 
       return s0;
@@ -6882,11 +7191,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 43) {
-        s0 = peg$c110;
+        s0 = peg$c115;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c111); }
+        if (peg$silentFails === 0) { peg$fail(peg$c116); }
       }
 
       return s0;
@@ -6896,11 +7205,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 48) {
-        s0 = peg$c112;
+        s0 = peg$c117;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c113); }
+        if (peg$silentFails === 0) { peg$fail(peg$c118); }
       }
 
       return s0;
@@ -6923,7 +7232,7 @@ module.exports = (function() {
           s3 = peg$parsequotation_mark();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c115(s2);
+            s1 = peg$c120(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -6940,7 +7249,7 @@ module.exports = (function() {
       peg$silentFails--;
       if (s0 === peg$FAILED) {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c114); }
+        if (peg$silentFails === 0) { peg$fail(peg$c119); }
       }
 
       return s0;
@@ -6955,106 +7264,106 @@ module.exports = (function() {
         s1 = peg$parseescape();
         if (s1 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 34) {
-            s2 = peg$c116;
+            s2 = peg$c121;
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c117); }
+            if (peg$silentFails === 0) { peg$fail(peg$c122); }
           }
           if (s2 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 92) {
-              s2 = peg$c118;
+              s2 = peg$c123;
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c119); }
+              if (peg$silentFails === 0) { peg$fail(peg$c124); }
             }
             if (s2 === peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 47) {
-                s2 = peg$c120;
+                s2 = peg$c125;
                 peg$currPos++;
               } else {
                 s2 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c121); }
+                if (peg$silentFails === 0) { peg$fail(peg$c126); }
               }
               if (s2 === peg$FAILED) {
                 s2 = peg$currPos;
                 if (input.charCodeAt(peg$currPos) === 98) {
-                  s3 = peg$c122;
+                  s3 = peg$c127;
                   peg$currPos++;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c123); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c128); }
                 }
                 if (s3 !== peg$FAILED) {
                   peg$savedPos = s2;
-                  s3 = peg$c124();
+                  s3 = peg$c129();
                 }
                 s2 = s3;
                 if (s2 === peg$FAILED) {
                   s2 = peg$currPos;
                   if (input.charCodeAt(peg$currPos) === 102) {
-                    s3 = peg$c125;
+                    s3 = peg$c130;
                     peg$currPos++;
                   } else {
                     s3 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c126); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c131); }
                   }
                   if (s3 !== peg$FAILED) {
                     peg$savedPos = s2;
-                    s3 = peg$c127();
+                    s3 = peg$c132();
                   }
                   s2 = s3;
                   if (s2 === peg$FAILED) {
                     s2 = peg$currPos;
                     if (input.charCodeAt(peg$currPos) === 110) {
-                      s3 = peg$c128;
+                      s3 = peg$c133;
                       peg$currPos++;
                     } else {
                       s3 = peg$FAILED;
-                      if (peg$silentFails === 0) { peg$fail(peg$c129); }
+                      if (peg$silentFails === 0) { peg$fail(peg$c134); }
                     }
                     if (s3 !== peg$FAILED) {
                       peg$savedPos = s2;
-                      s3 = peg$c130();
+                      s3 = peg$c135();
                     }
                     s2 = s3;
                     if (s2 === peg$FAILED) {
                       s2 = peg$currPos;
                       if (input.charCodeAt(peg$currPos) === 114) {
-                        s3 = peg$c131;
+                        s3 = peg$c136;
                         peg$currPos++;
                       } else {
                         s3 = peg$FAILED;
-                        if (peg$silentFails === 0) { peg$fail(peg$c132); }
+                        if (peg$silentFails === 0) { peg$fail(peg$c137); }
                       }
                       if (s3 !== peg$FAILED) {
                         peg$savedPos = s2;
-                        s3 = peg$c133();
+                        s3 = peg$c138();
                       }
                       s2 = s3;
                       if (s2 === peg$FAILED) {
                         s2 = peg$currPos;
                         if (input.charCodeAt(peg$currPos) === 116) {
-                          s3 = peg$c134;
+                          s3 = peg$c139;
                           peg$currPos++;
                         } else {
                           s3 = peg$FAILED;
-                          if (peg$silentFails === 0) { peg$fail(peg$c135); }
+                          if (peg$silentFails === 0) { peg$fail(peg$c140); }
                         }
                         if (s3 !== peg$FAILED) {
                           peg$savedPos = s2;
-                          s3 = peg$c136();
+                          s3 = peg$c141();
                         }
                         s2 = s3;
                         if (s2 === peg$FAILED) {
                           s2 = peg$currPos;
                           if (input.charCodeAt(peg$currPos) === 117) {
-                            s3 = peg$c137;
+                            s3 = peg$c142;
                             peg$currPos++;
                           } else {
                             s3 = peg$FAILED;
-                            if (peg$silentFails === 0) { peg$fail(peg$c138); }
+                            if (peg$silentFails === 0) { peg$fail(peg$c143); }
                           }
                           if (s3 !== peg$FAILED) {
                             s4 = peg$currPos;
@@ -7092,7 +7401,7 @@ module.exports = (function() {
                             }
                             if (s4 !== peg$FAILED) {
                               peg$savedPos = s2;
-                              s3 = peg$c139(s4);
+                              s3 = peg$c144(s4);
                               s2 = s3;
                             } else {
                               peg$currPos = s2;
@@ -7112,7 +7421,7 @@ module.exports = (function() {
           }
           if (s2 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c140(s2);
+            s1 = peg$c145(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -7131,11 +7440,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 92) {
-        s0 = peg$c118;
+        s0 = peg$c123;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c119); }
+        if (peg$silentFails === 0) { peg$fail(peg$c124); }
       }
 
       return s0;
@@ -7145,11 +7454,11 @@ module.exports = (function() {
       var s0;
 
       if (input.charCodeAt(peg$currPos) === 34) {
-        s0 = peg$c116;
+        s0 = peg$c121;
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c117); }
+        if (peg$silentFails === 0) { peg$fail(peg$c122); }
       }
 
       return s0;
@@ -7158,12 +7467,12 @@ module.exports = (function() {
     function peg$parseunescaped() {
       var s0;
 
-      if (peg$c141.test(input.charAt(peg$currPos))) {
+      if (peg$c146.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c142); }
+        if (peg$silentFails === 0) { peg$fail(peg$c147); }
       }
 
       return s0;
@@ -7172,12 +7481,12 @@ module.exports = (function() {
     function peg$parseDIGIT() {
       var s0;
 
-      if (peg$c62.test(input.charAt(peg$currPos))) {
+      if (peg$c67.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c63); }
+        if (peg$silentFails === 0) { peg$fail(peg$c68); }
       }
 
       return s0;
@@ -7186,12 +7495,12 @@ module.exports = (function() {
     function peg$parseHEXDIG() {
       var s0;
 
-      if (peg$c143.test(input.charAt(peg$currPos))) {
+      if (peg$c148.test(input.charAt(peg$currPos))) {
         s0 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c144); }
+        if (peg$silentFails === 0) { peg$fail(peg$c149); }
       }
 
       return s0;
@@ -7203,15 +7512,59 @@ module.exports = (function() {
       var defaultInPort = "IN", defaultOutPort = "OUT";
 
       parser = this;
-      delete parser.exports;
+      delete parser.properties;
       delete parser.inports;
       delete parser.outports;
+      delete parser.groups;
 
       edges = parser.edges = [];
 
       nodes = {};
 
       var serialize, indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+      parser.validateContents = function(graph, options) {
+        // Ensure all nodes have a component
+        if (graph.processes) {
+          Object.keys(graph.processes).forEach(function (node) {
+            if (!graph.processes[node].component) {
+              throw new Error('Node "' + node + '" does not have a component defined');
+            }
+          });
+        }
+        // Ensure all inports point to existing nodes
+        if (graph.inports) {
+          Object.keys(graph.inports).forEach(function (port) {
+            var portDef = graph.inports[port];
+            if (!graph.processes[portDef.process]) {
+              throw new Error('Inport "' + port + '" is connected to an undefined target node "' + portDef.process + '"');
+            }
+          });
+        }
+        // Ensure all outports point to existing nodes
+        if (graph.outports) {
+          Object.keys(graph.outports).forEach(function (port) {
+            var portDef = graph.outports[port];
+            if (!graph.processes[portDef.process]) {
+              throw new Error('Outport "' + port + '" is connected to an undefined source node "' + portDef.process + '"');
+            }
+          });
+        }
+        // Ensure all edges have nodes defined
+        if (graph.connections) {
+          graph.connections.forEach(function (edge) {
+            if (edge.tgt && !graph.processes[edge.tgt.process]) {
+              if (edge.data) {
+                throw new Error('IIP containing "' + edge.data + '" is connected to an undefined target node "' + edge.tgt.process + '"');
+              }
+              throw new Error('Edge from "' + edge.src.process + '" port "' + edge.src.port + '" is connected to an undefined target node "' + edge.tgt.process + '"');
+            }
+            if (edge.src && !graph.processes[edge.src.process]) {
+              throw new Error('Edge to "' + edge.tgt.process + '" port "' + edge.tgt.port + '" is connected to an undefined source node "' + edge.src.process + '"');
+            }
+          });
+        }
+      };
 
       parser.serialize = function(graph) {
         var conn, getInOutName, getName, i, inPort, input, len, name, namedComponents, outPort, output, process, ref, ref1, ref2, src, srcName, srcPort, srcProcess, tgt, tgtName, tgtPort, tgtProcess;
@@ -7245,20 +7598,38 @@ module.exports = (function() {
           }
           return name;
         };
+        if (input.properties) {
+          if (input.properties.environment && input.properties.environment.type) {
+            output += "# @runtime " + input.properties.environment.type + "\n";
+          }
+          Object.keys(input.properties).forEach(function (prop) {
+            if (!prop.match(/^[a-zA-Z0-9\-_]+$/)) {
+              return;
+            }
+            var propval = input.properties[prop];
+            if (typeof propval !== 'string') {
+              return;
+            }
+            if (!propval.match(/^[a-zA-Z0-9\-_\s\.]+$/)) {
+              return;
+            }
+            output += "# @" + prop + " " + propval + '\n';
+          });
+        }
         ref = input.inports;
         for (name in ref) {
           inPort = ref[name];
           process = getInOutName(name, inPort);
-          name = name.toUpperCase();
-          inPort.port = inPort.port.toUpperCase();
+          name = input.caseSensitive ? name : name.toUpperCase();
+          inPort.port = input.caseSensitive ? inPort.port : inPort.port.toUpperCase();
           output += "INPORT=" + process + "." + inPort.port + ":" + name + "\n";
         }
         ref1 = input.outports;
         for (name in ref1) {
           outPort = ref1[name];
           process = getInOutName(name, inPort);
-          name = name.toUpperCase();
-          outPort.port = outPort.port.toUpperCase();
+          name = input.caseSensitive ? name : name.toUpperCase();
+          outPort.port = input.caseSensitive ? outPort.port : outPort.port.toUpperCase();
           output += "OUTPORT=" + process + "." + outPort.port + ":" + name + "\n";
         }
         output += "\n";
@@ -7266,7 +7637,7 @@ module.exports = (function() {
         for (i = 0, len = ref2.length; i < len; i++) {
           conn = ref2[i];
           if (conn.data != null) {
-            tgtPort = conn.tgt.port.toUpperCase();
+            tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
             tgtName = conn.tgt.process;
             tgtProcess = input.processes[tgtName].component;
             tgt = getName(tgtName);
@@ -7276,7 +7647,7 @@ module.exports = (function() {
             }
             output += '"' + conn.data + '"' + (" -> " + tgtPort + " " + tgt + "\n");
           } else {
-            srcPort = conn.src.port.toUpperCase();
+            srcPort = input.caseSensitive ? conn.src.port : conn.src.port.toUpperCase();
             srcName = conn.src.process;
             srcProcess = input.processes[srcName].component;
             src = getName(srcName);
@@ -7284,7 +7655,7 @@ module.exports = (function() {
               src += "(" + srcProcess + ")";
               namedComponents.push(srcProcess);
             }
-            tgtPort = conn.tgt.port.toUpperCase();
+            tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
             tgtName = conn.tgt.process;
             tgtProcess = input.processes[tgtName].component;
             tgt = getName(tgtName);
@@ -7338,12 +7709,17 @@ module.exports = (function() {
 
       parser.getResult = function () {
         var result = {
-          processes: nodes,
-          connections: parser.processEdges(),
-          exports: parser.exports,
-          inports: parser.inports,
-          outports: parser.outports
+          inports: parser.inports || {},
+          outports: parser.outports || {},
+          groups: parser.groups || [],
+          processes: nodes || {},
+          connections: parser.processEdges()
         };
+
+        if (parser.properties) {
+          result.properties = parser.properties;
+        }
+        result.caseSensitive = options.caseSensitive || false;
 
         var validateSchema = parser.validateSchema; // default
         if (typeof(options.validateSchema) !== 'undefined') { validateSchema = options.validateSchema; } // explicit option
@@ -7357,7 +7733,11 @@ module.exports = (function() {
             throw new Error("fbp: Did not validate againt graph schema:\n" + JSON.stringify(validation.errors, null, 2));
           }
         }
-        result.caseSensitive = options.caseSensitive;
+
+        if (typeof options.validateContents === 'undefined' || options.validateContents) {
+          parser.validateContents(result);
+        }
+
         return result;
       }
 
@@ -7379,18 +7759,20 @@ module.exports = (function() {
         return result;
       }
 
-      parser.registerExports = function (priv, pub) {
-        if (!parser.exports) {
-          parser.exports = [];
+      parser.registerAnnotation = function (key, value) {
+        if (!parser.properties) {
+          parser.properties = {};
         }
 
-        if (!options.caseSensitive) {
-          priv = priv.toLowerCase();
-          pub = pub.toLowerCase();
+        if (key === 'runtime') {
+          parser.properties.environment = {};
+          parser.properties.environment.type = value;
+          return;
         }
 
-        parser.exports.push({private:priv, public:pub});
-      }
+        parser.properties[key] = value;
+      };
+
       parser.registerInports = function (node, port, pub) {
         if (!parser.inports) {
           parser.inports = {};
@@ -7491,7 +7873,7 @@ module.exports = (function() {
     parse:       peg$parse
   };
 })();
-},{"../schema/graph.json":12,"tv4":16}],12:[function(require,module,exports){
+},{"../schema/graph.json":13,"tv4":17}],13:[function(require,module,exports){
 module.exports={
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "graph.json",
@@ -7501,13 +7883,45 @@ module.exports={
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "caseSensitive": {
+      "type": "boolean",
+      "description": "Whether the graph port identifiers should be treated as case-sensitive"
+    },
     "properties": {
       "type": "object",
       "description": "User-defined properties attached to the graph.",
       "additionalProperties": true,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the graph"
+        },
+        "environment": {
+          "type": "object",
+          "description": "Information about the execution environment for the graph",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Runtime type the graph is for",
+              "example": "noflo-nodejs"
+            },
+            "content": {
+              "type": "string",
+              "description": "HTML fixture for browser-based graphs"
+            }
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Graph description"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Name of the icon that can be used for depicting the graph"
         }
       }
     },
@@ -7530,7 +7944,18 @@ module.exports={
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "additionalProperties": true,
+              "required": [],
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph inport"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph inport"
+                }
+              }
             }
           }
         }
@@ -7555,18 +7980,22 @@ module.exports={
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "required": [],
+              "additionalProperties": true,
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph outport"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph outport"
+                }
+              }
             }
           }
         }
       }
-    },
-    "exports": {
-      "type": [
-        "array",
-        "undefined"
-      ],
-      "description": "Deprecated, use inports and outports instead"
     },
     "groups": {
       "type": "array",
@@ -7585,7 +8014,14 @@ module.exports={
             }
           },
           "metadata": {
-            "additionalProperties": true
+            "type": "object",
+            "additionalProperties": true,
+            "required": [],
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -7603,7 +8039,18 @@ module.exports={
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "additionalProperties": true,
+              "required": [],
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph node"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph node"
+                }
+              }
             }
           }
         }
@@ -7649,14 +8096,30 @@ module.exports={
           "data": {},
           "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "required": [],
+            "properties": {
+              "route": {
+                "type": "integer",
+                "description": "Route identifier of a graph edge"
+              },
+              "schema": {
+                "type": "string",
+                "format": "uri",
+                "description": "JSON schema associated with a graph edge"
+              },
+              "secure": {
+                "type": "boolean",
+                "description": "Whether edge data should be treated as secure"
+              }
+            }
           }
         }
       }
     }
   }
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -7742,14 +8205,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -7920,6 +8383,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -7931,7 +8398,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*
 Author: Geraint Luff and others
 Year: 2013
@@ -9613,14 +10080,95 @@ tv4.tv4 = tv4;
 return tv4; // used by _header.js to globalise.
 
 }));
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
+
+var clipboardContent = {}; // XXX: hidden state
+
+function cloneObject(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function makeNewId(label) {
+  var num = 60466176; // 36^5
+  num = Math.floor(Math.random() * num);
+  var id = label + '_' + num.toString(36);
+  return id;
+}
+
+function copy(graph, keys) {
+  //Duplicate all the nodes before putting them in clipboard
+  //this will make this work also with cut/Paste and once we
+  //decide if/how we will implement cross-document copy&paste will work there too
+  clipboardContent = {nodes:[], edges:[]};
+  var map = {};
+  var i, len;
+  for (i = 0, len = keys.length; i < len; i++) {
+    var node = graph.getNode(keys[i]);
+    var newNode = cloneObject(node);
+    newNode.id = makeNewId(node.component);
+    clipboardContent.nodes.push(newNode);
+    map[node.id] = newNode.id;
+  }
+  for (i = 0, len = graph.edges.length; i < len; i++) {
+    var edge = graph.edges[i];
+    var fromNode = edge.from.node;
+    var toNode = edge.to.node;
+    if (map.hasOwnProperty(fromNode) && map.hasOwnProperty(toNode)) {
+      var newEdge = cloneObject(edge);
+      newEdge.from.node = map[fromNode];
+      newEdge.to.node = map[toNode];
+      clipboardContent.edges.push(newEdge);
+    }
+  }
+
+}
+
+function paste(graph) {
+  var map = {};
+  var pasted = {nodes:[], edges:[]};
+  var i, len;
+  for (i = 0, len = clipboardContent.nodes.length; i < len; i++) {
+    var node = clipboardContent.nodes[i];
+    var meta = cloneObject(node.metadata);
+    meta.x += 36;
+    meta.y += 36;
+    var newNode = graph.addNode(makeNewId(node.component), node.component, meta);
+    map[node.id] = newNode.id;
+    pasted.nodes.push(newNode);
+  }
+  for (i = 0, len = clipboardContent.edges.length; i < len; i++) {
+    var edge = clipboardContent.edges[i];
+    var newEdgeMeta = cloneObject(edge.metadata);
+    var newEdge;
+    if (edge.from.hasOwnProperty('index') || edge.to.hasOwnProperty('index')) {
+      // One or both ports are addressable
+      var fromIndex = edge.from.index || null;
+      var toIndex = edge.to.index || null;
+      newEdge = graph.addEdgeIndex(map[edge.from.node], edge.from.port, fromIndex, map[edge.to.node], edge.to.port, toIndex, newEdgeMeta);
+    } else {
+      newEdge = graph.addEdge(map[edge.from.node], edge.from.port, map[edge.to.node], edge.to.port, newEdgeMeta);
+    }
+    pasted.edges.push(newEdge);
+  }
+  return pasted;
+}
+
+module.exports = {
+  copy: copy,
+  paste: paste,
+};
+
+},{}],19:[function(require,module,exports){
+
+var Clipboard = require('./clipboard');
 
 // Returns a new datastructure to prevent accidental sharing between diffent editor instances
 function getDefaultMenus(editor) {
+  console.error('DEPRECATED: TheGraph.menus.getDefaultMenus() will be removed in next version. Specify menus prop manually');
 
   // FIXME: provide a proper interface for actions to manipulate section, remove @editor
   var pasteAction = function (graph, itemKey, item) {
-    var pasted = TheGraph.Clipboard.paste(graph);
+    var pasted = Clipboard.paste(graph);
     this.selectedNodes = pasted.nodes;
     this.selectedEdges = [];
   }.bind(editor);
@@ -9645,7 +10193,7 @@ function getDefaultMenus(editor) {
       this.selectedNodes = newSelection;
     }.bind(editor),
     copy: function (graph, itemKey, item) {
-      TheGraph.Clipboard.copy(graph, [itemKey]);
+      Clipboard.copy(graph, [itemKey]);
     }
   }, edgeActions = {
     delete: function (graph, itemKey, item) {
@@ -9777,7 +10325,7 @@ function getDefaultMenus(editor) {
         icon: "copy",
         iconLabel: "copy",
         action: function (graph, itemKey, item) {
-          TheGraph.Clipboard.copy(graph, item.nodes);
+          Clipboard.copy(graph, item.nodes);
         }
       },
       e4: pasteMenu
@@ -9790,7 +10338,12 @@ module.exports = {
   getDefaultMenus: getDefaultMenus, 
 };
 
-},{}],18:[function(require,module,exports){
+},{"./clipboard":18}],20:[function(require,module,exports){
+
+var React = require('react');
+var createReactClass = require('create-react-class');
+var Hammer = require('hammerjs');
+var thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
 function calculateStyleFromTheme(theme) {
   var style = {};
@@ -9879,12 +10432,178 @@ function renderViewRectangle(context, viewrect, props) {
 
 }
 
+function renderThumbnailFromProps(context, props) {
+    var style = {};
+    for (var name in props) {
+      style[name] = props[name];
+    }
+    style.graph = null;
+    style.lineWidth = props.nodeLineWidth;
+    var info = thumb.render(context, props.graph, style);
+    return info;
+}
+function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
+    var style = {};
+    for (var name in props) {
+      style[name] = props[name];
+    }
+    style.graph = null;
+    style.scale = props.viewscale;
+    var thumbW = thumbInfo.rectangle[2];
+    var thumbH = thumbInfo.rectangle[3];
+    style.thumbscale = (thumbW>thumbH) ? props.width/thumbW : props.height/thumbH;
+    style.thumbrectangle = thumbInfo.rectangle;
+    var info = renderViewRectangle(context, viewbox, style);
+    return info;
+}
+
+// https://toddmotto.com/react-create-class-versus-component/
+var Component = createReactClass({
+  propTypes: {
+  },
+  getDefaultProps: function() {
+    return {
+      width: 200,
+      height: 150,
+      hidden: false, // FIXME: drop??
+      backgroundColor: "hsla(184, 8%, 75%, 0.9)",
+      outsideFill: "hsla(0, 0%, 0%, 0.4)",
+      nodeSize: 60,
+      nodeLineWidth: 1,
+      viewrectangle: [0, 0, 0, 0],
+      viewscale: 1.0,
+      viewBoxBorder: "hsla(190, 100%, 80%, 0.4)",
+      viewBoxBorder2: "hsla( 10,  60%, 32%, 0.3)",
+      viewBoxBorderStyle: 'dotted',
+      graph: null, // NOTE: should not attach to events, that is responsibility of outer code
+    };
+  },
+  getInitialState: function() {
+    return {
+      thumbscale: 1.0,
+      currentPan: [0.0, 0.0],
+    };
+  },
+  render: function() {
+    var p = this.props;
+    var thumbStyle = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    };
+    var wrapperStyle = {
+      height: p.height,
+      width: p.width,
+      overflow: "hidden",
+      cursor: "move",
+      backgroundColor: p.backgroundColor,
+    };
+    var thumbProps = {
+      key: 'thumb',
+      ref: this._refThumbCanvas,
+      width: p.width,
+      height: p.height,
+      style: thumbStyle,
+    };
+    var viewboxCanvas = {
+      key: 'viewbox',
+      ref: this._refViewboxCanvas,
+      width: p.width,
+      height: p.height,
+      style: thumbStyle,
+    };
+    // FIXME: find better way to populate the props from render function
+    var viewboxDiv = {
+      key: 'viewboxdiv',
+      ref: this._refViewboxElement,
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: p.width,
+        height: p.height,
+        borderStyle: 'dotted',
+        borderWidth: 1,
+      },
+    };
+    // Elements
+    return React.createElement('div', { key: 'nav', style: wrapperStyle, ref: this._refTopElement }, [
+      React.createElement('div', viewboxDiv ),
+      React.createElement('canvas', viewboxCanvas ),
+      React.createElement('canvas', thumbProps ),
+    ]);
+  },
+  componentDidUpdate: function() {
+    this._updatePan();
+    this._renderElements();
+  },
+  componentDidMount: function() {
+    this._updatePan();
+    this._renderElements();
+    this._setupEvents();
+  },
+  _refThumbCanvas: function(canvas) {
+      this._thumbContext = canvas.getContext('2d');
+  },
+  _refViewboxCanvas: function(canvas) {
+      this._viewboxContext = canvas.getContext('2d');
+  },
+  _refViewboxElement: function(el) {
+      this._viewboxElement = el;
+  },
+  _refTopElement: function(el) {
+      this._topElement = el;
+  },
+  _renderElements: function() {
+    var t = renderThumbnailFromProps(this._thumbContext, this.props);
+    //this.state.thumbscale = t.scale;
+    renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
+  },
+  _updatePan: function() {
+    this.state.currentPan = [
+      -(this.props.viewrectangle[0]),
+      -(this.props.viewrectangle[1]),
+    ];
+  },
+  _setupEvents: function() {
+    this.hammer = new Hammer.Manager(this._topElement, {
+      recognizers: [
+        [ Hammer.Tap ],
+        [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL } ],
+      ],
+    });
+    this.hammer.on('tap', (function(event) {
+      if (this.props.onTap) {
+        this.props.onTap(null, event);
+      }
+    }).bind(this));
+    this.hammer.on('panmove', (function(event) {
+      if (this.props.onPanTo) {
+        // Calculate where event pans to, in editor coordinates
+        var x = this.state.currentPan[0];
+        var y = this.state.currentPan[1];
+        var panscale = this.state.thumbscale / this.props.viewscale;
+        x -= event.deltaX / panscale;
+        y -= event.deltaY / panscale;
+        var panTo = { x: Math.round(x), y: Math.round(y) };
+        // keep track of the current pan, because prop/component update
+        // may be delayed, or never arrive.
+        this.state.currentPan[0] = panTo.x;
+        this.state.currentPan[1] = panTo.y;
+        this.props.onPanTo(panTo, event);
+      }
+    }).bind(this));
+  }
+});
+
+
 module.exports = {
   render: renderViewRectangle,
   calculateStyleFromTheme: calculateStyleFromTheme,
+  Component: Component,
 };
 
-},{}],19:[function(require,module,exports){
+},{"../the-graph-thumb/the-graph-thumb.js":21,"create-react-class":"create-react-class","hammerjs":"hammerjs","react":"react"}],21:[function(require,module,exports){
 
 function drawEdge(context, scale, source, target, route, properties) {
   // Draw path
@@ -10002,9 +10721,14 @@ function renderThumbnail(context, graph, properties) {
       }.bind(this));
     }
 
+    // Nothing to draw
+    if (toDraw.length === 0) {
+      return { scale: 1.0, rectangle: [0, 0, 0, 0] };
+    }
+
     // Sanity check graph size
     if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY) ) {
-      return;
+      throw new Error("the-graph-thumb: Invalid space spanned");
     }
 
     minX -= properties.nodeSize;
@@ -10106,14 +10830,173 @@ module.exports = {
   styleFromTheme: styleFromTheme,
 };
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+var React = require('react');
+var createReactClass = require('create-react-class');
+
+var SVGImage = React.createFactory( createReactClass({
+  displayName: "TheGraphSVGImage",
+  render: function() {
+      var html = '<image ';
+      html = html +'xlink:href="'+ this.props.src + '"';
+      html = html +'x="' + this.props.x + '"';
+      html = html +'y="' + this.props.y + '"';
+      html = html +'width="' + this.props.width + '"';
+      html = html +'height="' + this.props.height + '"';
+      html = html +'/>';
+
+      return React.createElement('g', {
+          className: this.props.className,
+          dangerouslySetInnerHTML:{__html: html}
+      });
+  }
+}));
+
+module.exports = SVGImage;
+
+},{"create-react-class":"create-react-class","react":"react"}],23:[function(require,module,exports){
+var React = require('react');
+var createReactClass = require('create-react-class');
+
+var TextBG = React.createFactory( createReactClass({
+  displayName: "TheGraphTextBG",
+  render: function() {
+    var text = this.props.text;
+    if (!text) {
+      text = "";
+    }
+    var height = this.props.height;
+    var width = text.length * this.props.height * 2/3;
+    var radius = this.props.height/2;
+
+    var textAnchor = "start";
+    var dominantBaseline = "central";
+    var x = this.props.x;
+    var y = this.props.y - height/2;
+
+    if (this.props.halign === "center") {
+      x -= width/2;
+      textAnchor = "middle";
+    }
+    if (this.props.halign === "right") {
+      x -= width;
+      textAnchor = "end";
+    }
+
+    return React.createElement(
+      'g',
+      {
+        className: (this.props.className ? this.props.className : "text-bg"),
+      },
+      React.createElement('rect', {
+        className: "text-bg-rect",
+        x: x,
+        y: y,
+        rx: radius,
+        ry: radius,
+        height: height * 1.1,
+        width: width
+      }),
+      React.createElement('text', {
+        className: (this.props.textClassName ? this.props.textClassName : "text-bg-text"),
+        x: this.props.x,
+        y: this.props.y,
+        children: text
+      })
+    );
+  }
+}));
+
+module.exports = TextBG;
+
+},{"create-react-class":"create-react-class","react":"react"}],24:[function(require,module,exports){
+// SVG arc math
+var angleToX = function (percent, radius) {
+  return radius * Math.cos(2*Math.PI * percent);
+};
+var angleToY = function (percent, radius) {
+  return radius * Math.sin(2*Math.PI * percent);
+};
+var makeArcPath = function (startPercent, endPercent, radius) {
+  return [ 
+    "M", angleToX(startPercent, radius), angleToY(startPercent, radius),
+    "A", radius, radius, 0, 0, 0, angleToX(endPercent, radius), angleToY(endPercent, radius)
+  ].join(" ");
+};
+var arcs = {
+  n4: makeArcPath(7/8, 5/8, 36),
+  s4: makeArcPath(3/8, 1/8, 36),
+  e4: makeArcPath(1/8, -1/8, 36),
+  w4: makeArcPath(5/8, 3/8, 36),
+  inport: makeArcPath(-1/4, 1/4, 4),
+  outport: makeArcPath(1/4, -1/4, 4),
+  inportBig: makeArcPath(-1/4, 1/4, 6),
+  outportBig: makeArcPath(1/4, -1/4, 6),
+};
+module.exports = arcs;
+
+},{}],25:[function(require,module,exports){
+var React = require('react');
+
+var SVGImage = require('./SVGImage'); 
+
+// Standard functions for creating SVG/HTML elements
+exports.createGroup = function(options, content) {
+  var args = ['g', options];
+
+  if (Array.isArray(content)) {
+    args = args.concat(content);
+  }
+
+  return React.createElement.apply(React, args);
+};
+
+exports.createRect = function(options) {
+  return React.createElement('rect', options);
+};
+
+exports.createText = function(options) {
+  return React.createElement('text', options);
+};
+
+exports.createCircle = function(options) {
+  return React.createElement('circle', options);
+};
+
+exports.createPath = function(options) {
+  return React.createElement('path', options);
+};
+
+exports.createPolygon = function(options) {
+  return React.createElement('polygon', options);
+};
+
+exports.createImg = function(options) {
+  return TheGraph.SVGImage(options);
+};
+
+exports.createCanvas = function(options) {
+  return React.createElement('canvas', options);
+};
+
+exports.createSvg = function(options, content) {
+
+  var args = ['svg', options];
+
+  if (Array.isArray(content)) {
+    args = args.concat(content);
+  }
+
+  return React.createElement.apply(React, args);
+};
+
+},{"./SVGImage":22,"react":"react"}],26:[function(require,module,exports){
 /*
   this file is generated via `grunt build` 
 */
 
-module.exports.register = function (context) {
 
-context.TheGraph.FONT_AWESOME = {
+FONT_AWESOME = {
   "500px": "",
   "address-book": "",
   "address-book-o": "",
@@ -10902,8 +11785,415 @@ context.TheGraph.FONT_AWESOME = {
   "youtube-square": ""
 };
 
+module.exports = FONT_AWESOME;
+
+},{}],27:[function(require,module,exports){
+var findMinMax = function (graph, nodes) {
+  var inports, outports;
+  if (nodes === undefined) {
+    nodes = graph.nodes.map( function (node) {
+      return node.id;
+    });
+    // Only look at exports when calculating the whole graph
+    inports = graph.inports;
+    outports = graph.outports;
+  }
+  if (nodes.length < 1) {
+    return undefined;
+  }
+  var minX = Infinity;
+  var minY = Infinity;
+  var maxX = -Infinity;
+  var maxY = -Infinity;
+
+  // Loop through nodes
+  var len = nodes.length;
+  for (var i=0; i<len; i++) {
+    var key = nodes[i];
+    var node = graph.getNode(key);
+    if (!node || !node.metadata) {
+      continue;
+    }
+    if (node.metadata.x < minX) { minX = node.metadata.x; }
+    if (node.metadata.y < minY) { minY = node.metadata.y; }
+    var x = node.metadata.x + node.metadata.width;
+    var y = node.metadata.y + node.metadata.height;
+    if (x > maxX) { maxX = x; }
+    if (y > maxY) { maxY = y; }
+  }
+  // Loop through exports
+  var keys, exp;
+  if (inports) {
+    keys = Object.keys(inports);
+    len = keys.length;
+    for (i=0; i<len; i++) {
+      exp = inports[keys[i]];
+      if (!exp.metadata) { continue; }
+      if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+      if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+      if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+      if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+    }
+  }
+  if (outports) {
+    keys = Object.keys(outports);
+    len = keys.length;
+    for (i=0; i<len; i++) {
+      exp = outports[keys[i]];
+      if (!exp.metadata) { continue; }
+      if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+      if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+      if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+      if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+    }
+  }
+
+  if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+    return null;
+  }
+  return {
+    minX: minX,
+    minY: minY,
+    maxX: maxX,
+    maxY: maxY
+  };
 };
-},{}],21:[function(require,module,exports){
+
+var findFit = function (graph, width, height, sizeLimit) {
+  var limits = findMinMax(graph);
+  if (!limits) {
+    return {x:0, y:0, scale:1};
+  }
+  limits.minX -= sizeLimit;
+  limits.minY -= sizeLimit;
+  limits.maxX += sizeLimit * 2;
+  limits.maxY += sizeLimit * 2;
+
+  var gWidth = limits.maxX - limits.minX;
+  var gHeight = limits.maxY - limits.minY;
+
+  var scaleX = width / gWidth;
+  var scaleY = height / gHeight;
+
+  var scale, x, y;
+  if (scaleX < scaleY) {
+    scale = scaleX;
+    x = 0 - limits.minX * scale;
+    y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
+  } else {
+    scale = scaleY;
+    x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
+    y = 0 - limits.minY * scale;
+  }
+
+  return {
+    x: x,
+    y: y,
+    scale: scale
+  };
+};
+
+var findAreaFit = function (point1, point2, width, height, sizeLimit) {
+  var limits = {
+    minX: point1.x < point2.x ? point1.x : point2.x,
+    minY: point1.y < point2.y ? point1.y : point2.y,
+    maxX: point1.x > point2.x ? point1.x : point2.x,
+    maxY: point1.y > point2.y ? point1.y : point2.y
+  };
+
+  limits.minX -= sizeLimit;
+  limits.minY -= sizeLimit;
+  limits.maxX += sizeLimit * 2;
+  limits.maxY += sizeLimit * 2;
+
+  var gWidth = limits.maxX - limits.minX;
+  var gHeight = limits.maxY - limits.minY;
+
+  var scaleX = width / gWidth;
+  var scaleY = height / gHeight;
+
+  var scale, x, y;
+  if (scaleX < scaleY) {
+    scale = scaleX;
+    x = 0 - limits.minX * scale;
+    y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
+  } else {
+    scale = scaleY;
+    x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
+    y = 0 - limits.minY * scale;
+  }
+
+  return {
+    x: x,
+    y: y,
+    scale: scale
+  };
+};
+
+var findNodeFit = function (node, width, height, sizeLimit) {
+  var limits = {
+    minX: node.metadata.x - sizeLimit,
+    minY: node.metadata.y - sizeLimit,
+    maxX: node.metadata.x + sizeLimit * 2,
+    maxY: node.metadata.y + sizeLimit * 2
+  };
+
+  var gWidth = limits.maxX - limits.minX;
+  var gHeight = limits.maxY - limits.minY;
+
+  var scaleX = width / gWidth;
+  var scaleY = height / gHeight;
+
+  var scale, x, y;
+  if (scaleX < scaleY) {
+    scale = scaleX;
+    x = 0 - limits.minX * scale;
+    y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
+  } else {
+    scale = scaleY;
+    x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
+    y = 0 - limits.minY * scale;
+  }
+
+  return {
+    x: x,
+    y: y,
+    scale: scale
+  };
+};
+
+module.exports = {
+  findMinMax: findMinMax,
+  findNodeFit: findNodeFit,
+  findFit: findFit,
+};
+
+},{}],28:[function(require,module,exports){
+var Hammer = require('hammerjs');
+// Contains code from hammmer.js
+// https://github.com/hammerjs/hammer.js
+// The MIT License (MIT)
+// Copyright (C) 2011-2014 by Jorik Tangelder (Eight Media)
+//
+// With customizations to get it to work as we like/need,
+// particularly we track all events on the target element itself
+
+var VENDOR_PREFIXES = ['', 'webkit', 'Moz', 'MS', 'ms', 'o'];
+
+function prefixed(obj, property) {
+    var prefix, prop;
+    var camelProp = property[0].toUpperCase() + property.slice(1);
+
+    var i = 0;
+    while (i < VENDOR_PREFIXES.length) {
+        prefix = VENDOR_PREFIXES[i];
+        prop = (prefix) ? prefix + camelProp : property;
+
+        if (prop in obj) {
+            return prop;
+        }
+        i++;
+    }
+    return undefined;
+}
+
+var MOBILE_REGEX = /mobile|tablet|ip(ad|hone|od)|android/i;
+
+var SUPPORT_TOUCH = ('ontouchstart' in window);
+var SUPPORT_POINTER_EVENTS = prefixed(window, 'PointerEvent') !== undefined;
+var SUPPORT_ONLY_TOUCH = SUPPORT_TOUCH && MOBILE_REGEX.test(navigator.userAgent);
+
+var POINTER_ELEMENT_EVENTS = 'pointerdown';
+var POINTER_WINDOW_EVENTS = 'pointermove pointerup pointercancel';
+// IE10 has prefixed support, and case-sensitive
+if (window.MSPointerEvent && !window.PointerEvent) {
+    POINTER_ELEMENT_EVENTS = 'MSPointerDown';
+    POINTER_WINDOW_EVENTS = 'MSPointerMove MSPointerUp MSPointerCancel';
+}
+
+function PointerInput() {
+  // OVERRIDE: listen for all event on the element, not on window
+  // This is needed for event propagation to get the right targets
+  this.evEl = POINTER_ELEMENT_EVENTS + ' ' + POINTER_WINDOW_EVENTS;
+  this.evWin = '';
+  Hammer.Input.apply(this, arguments);
+  this.store = (this.manager.session.pointerEvents = []);
+}
+Hammer.inherit(PointerInput, Hammer.PointerEventInput, {});
+PointerInput.prototype.constructor = function() { }; // STUB, avoids init() being called too early
+
+var MOUSE_ELEMENT_EVENTS = 'mousedown';
+var MOUSE_WINDOW_EVENTS = 'mousemove mouseup';
+
+function MouseInput() {
+  // OVERRIDE: listen for all event on the element, not on window
+  // This is needed for event propagation to get the right targets
+  this.evEl = MOUSE_ELEMENT_EVENTS + ' ' + MOUSE_WINDOW_EVENTS;
+  this.evWin = '';
+
+  this.pressed = false; // mousedown state
+  Hammer.Input.apply(this, arguments);
+}
+Hammer.inherit(MouseInput, Hammer.MouseInput, {});
+MouseInput.prototype.constructor = function() { }; // STUB, avoids overridden constructor being called
+
+function TouchMouseInput() {
+    Hammer.Input.apply(this, arguments);
+
+    var handler = this.handler.bind(this);
+    this.touch = new Hammer.TouchInput(this.manager, handler);
+    this.mouse = new MouseInput(this.manager, handler);
+
+    this.primaryTouch = null;
+    this.lastTouches = [];
+}
+Hammer.inherit(TouchMouseInput, Hammer.TouchMouseInput, {});
+TouchMouseInput.prototype.constructor = function() { }; // STUB, avoids overridden constructor being called
+
+var Input = null;
+if (SUPPORT_POINTER_EVENTS) {
+    Input = PointerInput;
+} else if (SUPPORT_ONLY_TOUCH) {
+    Input = Hammer.TouchInput;
+} else if (!SUPPORT_TOUCH) {
+    Input = MouseInput;
+} else {
+    Input = TouchMouseInput;
+}
+
+
+module.exports = {
+  Input: Input,
+};
+
+},{"hammerjs":"hammerjs"}],29:[function(require,module,exports){
+// The `merge` function provides simple property merging.
+module.exports = function(src, dest, overwrite) {
+  // Do nothing if neither are true objects.
+  if (Array.isArray(src) || Array.isArray(dest) || typeof src !== 'object' || typeof dest !== 'object')
+    return dest;
+
+  // Default overwriting of existing properties to false.
+  overwrite = overwrite || false;
+
+  for (var key in src) {
+    // Only copy properties, not functions.
+    if (typeof src[key] !== 'function' && (!dest[key] || overwrite))
+      dest[key] = src[key];
+  }
+
+  return dest;
+};
+
+},{}],30:[function(require,module,exports){
+var ReactDOM = require('react-dom');
+// React mixins
+
+// Show fake tooltip
+// Class must have getTooltipTrigger (dom node) and shouldShowTooltip (boolean)
+var Tooltip = {
+  showTooltip: function (event) {
+    if ( !this.shouldShowTooltip() ) { return; }
+
+    var tooltipEvent = new CustomEvent('the-graph-tooltip', { 
+      detail: {
+        tooltip: this.props.label,
+        x: event.clientX,
+        y: event.clientY
+      }, 
+      bubbles: true
+    });
+    ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
+  },
+  hideTooltip: function (event) {
+    if ( !this.shouldShowTooltip() ) { return; }
+
+    var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
+      bubbles: true
+    });
+    if (this.mounted) {
+      ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
+    }
+  },
+  componentDidMount: function () {
+    this.mounted = true;
+    if (navigator && navigator.userAgent.indexOf("Firefox") !== -1) {
+      // HACK Ff does native tooltips on svg elements
+      return;
+    }
+    var tooltipper = this.getTooltipTrigger();
+    tooltipper.addEventListener("tap", this.showTooltip);
+    tooltipper.addEventListener("mouseenter", this.showTooltip);
+    tooltipper.addEventListener("mouseleave", this.hideTooltip);
+  },
+  componentWillUnmount: function () {
+    this.mounted = false;
+  }
+};
+
+module.exports = {
+  Tooltip: Tooltip,
+};
+
+},{"react-dom":"react-dom"}],31:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var Hammer = require('hammerjs');
+
+var hammerhacks = require('./hammer.js');
+var ModalBG = require('./the-graph-modalbg').ModalBG;
+var geometryutils = require('./geometryutils');
+
+// Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
+var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
+
+var hotKeys = {
+  // Escape
+  27: function(app) {
+    if (!app.refs.graph) {
+      return;
+    }
+    app.refs.graph.cancelPreviewEdge();
+  },
+  // Delete
+  46: function (app) {
+    var graph = app.refs.graph.props.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+    var selectedEdges = app.refs.graph.state.selectedEdges;
+    var menus = app.props.menus;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        menus.node.actions.delete(graph, nodeKey, node);
+      }
+    }
+    selectedEdges.map(function (edge) {
+      menus.edge.actions.delete(graph, null, edge);
+    });
+  },
+  // f for fit
+  70: function (app) {
+    app.triggerFit();
+  },
+  // s for selected
+  83: function (app) {
+    var graph = app.refs.graph.props.graph;
+    var selectedNodes = app.refs.graph.state.selectedNodes;
+
+    for (var nodeKey in selectedNodes) {
+      if (selectedNodes.hasOwnProperty(nodeKey)) {
+        var node = graph.getNode(nodeKey);
+        app.focusNode(node);
+        break;
+      }
+    }
+  },
+};
+// these don't change state, so also allowed when readonly
+var readOnlyActions = [70, 83, 27];
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -10918,7 +12208,8 @@ module.exports.register = function (context) {
       className: "app-canvas"
     },
     svg: {
-      className: "app-svg"
+      className: "app-svg",
+      ref: 'svg',
     },
     svgGroup: {
       className: "view"
@@ -10947,13 +12238,13 @@ module.exports.register = function (context) {
 
   // No need to promote DIV creation to TheGraph.js.
   function createAppContainer(options, content) {
-    var args = [options];
+    var args = ['div', options];
 
     if (Array.isArray(content)) {
       args = args.concat(content);
     }
 
-    return React.DOM.div.apply(React.DOM.div, args);
+    return React.createElement.apply(React, args);
   }
 
   function createAppGraph(options) {
@@ -10965,20 +12256,49 @@ module.exports.register = function (context) {
   }
 
   function createAppModalBackground(options) {
-    return TheGraph.ModalBG(options);
+    return ModalBG(options);
   }
 
   var mixins = [];
-  if (window.React.Animate) {
+  if (React.Animate) {
     mixins.push(React.Animate);
   }
 
-  TheGraph.App = React.createFactory( React.createClass({
+  function defaultGetMenu(options) {
+    // Options: type, graph, itemKey, item
+    if (options.type && this.menus[options.type]) {
+      var defaultMenu = this.menus[options.type];
+      if (defaultMenu.callback) {
+        return defaultMenu.callback(defaultMenu, options);
+      }
+      return defaultMenu;
+    }
+    return null;
+  }
+
+  TheGraph.App = React.createFactory( createReactClass({
     displayName: "TheGraphApp",
     mixins: mixins,
+    getDefaultProps: function() {
+      return {
+        width: null,
+        height: null,
+        readonly: false,
+        nodeIcons: {},
+        minZoom: 0.15,
+        maxZoom: 15.0,
+        offsetX: 0.0,
+        offsetY: 0.0,
+        menus: null,
+        getMenuDef: null,
+        onPanScale: null,
+        onNodeSelection: null,
+        onEdgeSelection: null,
+      };
+    },
     getInitialState: function() {
       // Autofit
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
 
       return {
         x: fit.x,
@@ -10988,6 +12308,8 @@ module.exports.register = function (context) {
         height: this.props.height,
         minZoom: this.props.minZoom,
         maxZoom: this.props.maxZoom,
+        trackStartX: null,
+        trackStartY: null,
         tooltip: "",
         tooltipX: 0,
         tooltipY: 0,
@@ -10995,7 +12317,7 @@ module.exports.register = function (context) {
         contextElement: null,
         contextType: null,
         offsetY: this.props.offsetY,
-        offsetX: this.props.offsetX
+        offsetX: this.props.offsetX,
       };
     },
     zoomFactor: 0,
@@ -11106,16 +12428,18 @@ module.exports.register = function (context) {
       this.pinching = false;
     },
     onTrackStart: function (event) {
-      event.preventTap();
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: this.state.x, trackStartY: this.state.y });
     },
     onTrack: function (event) {
       if ( this.pinching ) { return; }
+      if ( this.menuShown ) { return; }
       this.setState({
-        x: this.state.x + event.ddx,
-        y: this.state.y + event.ddy
+        x: this.state.trackStartX + event.gesture.deltaX,
+        y: this.state.trackStartY + event.gesture.deltaY,
       });
     },
     onTrackEnd: function (event) {
@@ -11123,14 +12447,27 @@ module.exports.register = function (context) {
       event.stopPropagation();
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
+
+      this.setState({ trackStartX: null, trackStartY: null });
     },
     onPanScale: function () {
       // Pass pan/scale out to the-graph
       if (this.props.onPanScale) {
         this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
       }
+    },
+    defaultGetMenuDef: function(options) {
+      // Options: type, graph, itemKey, item
+      if (options.type && this.props.menus && this.props.menus[options.type]) {
+        var defaultMenu = this.props.menus[options.type];
+        if (defaultMenu.callback) {
+          return defaultMenu.callback(defaultMenu, options);
+        }
+        return defaultMenu;
+      }
+      return null;
     },
     showContext: function (options) {
       this.setState({
@@ -11167,7 +12504,7 @@ module.exports.register = function (context) {
       });
     },
     triggerFit: function (event) {
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
       this.setState({
         x: fit.x,
         y: fit.y,
@@ -11176,7 +12513,7 @@ module.exports.register = function (context) {
     },
     focusNode: function (node) {
       var duration = TheGraph.config.focusAnimationDuration;
-      var fit = TheGraph.findNodeFit(node, this.state.width, this.state.height);
+      var fit = geometryutils.findNodeFit(node, this.state.width, this.state.height, TheGraph.config.nodeSize);
       var start_point = {
         x: -(this.state.x - this.state.width / 2) / this.state.scale,
         y: -(this.state.y - this.state.height / 2) / this.state.scale,
@@ -11184,7 +12521,7 @@ module.exports.register = function (context) {
         x: node.metadata.x,
         y: node.metadata.y,
       };
-      var graphfit = TheGraph.findAreaFit(start_point, end_point, this.state.width, this.state.height);
+      var graphfit = geometryutils.findAreaFit(start_point, end_point, this.state.width, this.state.height, TheGraph.config.nodeSize);
       var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
       var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
       var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
@@ -11214,32 +12551,28 @@ module.exports.register = function (context) {
       this.hideContext();
     },
     componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Set up PolymerGestures for app and all children
-      var noop = function(){};
-      PolymerGestures.addEventListener(domNode, "up", noop);
-      PolymerGestures.addEventListener(domNode, "down", noop);
-      PolymerGestures.addEventListener(domNode, "tap", noop);
-      PolymerGestures.addEventListener(domNode, "trackstart", noop);
-      PolymerGestures.addEventListener(domNode, "track", noop);
-      PolymerGestures.addEventListener(domNode, "trackend", noop);
-      PolymerGestures.addEventListener(domNode, "hold", noop);
+      var domNode = ReactDOM.findDOMNode(this.refs.svg);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
         domNode.addEventListener("tap", this.unselectAll);
       }
 
-      // Don't let Hammer.js collide with polymer-gestures
-      var hammertime;
-      if (Hammer) {
-        hammertime = new Hammer(domNode, {});
-        hammertime.get('pinch').set({ enable: true });
-      }
+      // Setup Hammer.js events for this and all children
+      // The events are injected into the DOM to follow regular propagation rules
+      var hammertime = new Hammer.Manager(domNode, {
+        domEvents: true,
+        inputClass: hammerhacks.Input,
+        recognizers: [
+          [ Hammer.Tap, { } ],
+          [ Hammer.Press, { time: 500 } ],
+          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 } ],
+          [ Hammer.Pinch, { } ],
+        ],
+      });
 
-      // Pointer gesture event for pan
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      // Gesture event for pan
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       var isTouchDevice = 'ontouchstart' in document.documentElement;
       if( isTouchDevice && hammertime ){
@@ -11249,10 +12582,10 @@ module.exports.register = function (context) {
       }
 
       // Wheel to zoom
-      if (domNode.onwheel!==undefined) {
+      if ('onwheel' in domNode) {
         // Chrome and Firefox
         domNode.addEventListener("wheel", this.onWheel);
-      } else if (domNode.onmousewheel!==undefined) {
+      } else if ('onmousewheel' in domNode) {
         // Safari
         domNode.addEventListener("mousewheel", this.onWheel);
       }
@@ -11270,13 +12603,13 @@ module.exports.register = function (context) {
       this.mouseX = Math.floor( this.props.width/2 );
       this.mouseY = Math.floor( this.props.height/2 );
 
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // FIXME: instead access the shiftKey of event instead of keeping metaKey
       document.addEventListener('keydown', this.keyDown);
       document.addEventListener('keyup', this.keyUp);
 
       // Canvas background
-      this.bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
-      this.bgContext = unwrap(this.bgCanvas.getContext('2d'));
+      bgCanvas = unwrap(ReactDOM.findDOMNode(this.refs.canvas));
+      this.bgContext = unwrap(bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
 
@@ -11293,6 +12626,10 @@ module.exports.register = function (context) {
       // Get mouse position
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.showContext({
@@ -11306,69 +12643,22 @@ module.exports.register = function (context) {
       });
     },
     keyDown: function (event) {
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
       }
 
-      var key = event.keyCode,
-          hotKeys = {
-            // Delete
-            46: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  selectedEdges = this.refs.graph.state.selectedEdges,
-                  menus = this.props.menus,
-                  menuOption = null,
-                  menuAction = null,
-                  nodeKey = null,
-                  node = null,
-                  edge = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  menus.node.actions.delete(graph, nodeKey, node);
-                }
-              }
-              selectedEdges.map(function (edge) {
-                menus.edge.actions.delete(graph, null, edge);
-              });
-            }.bind(this),
-            // f for fit
-            70: function () {
-              this.triggerFit();
-            }.bind(this),
-            // s for selected
-            83: function () {
-              var graph = this.refs.graph.state.graph,
-                  selectedNodes = this.refs.graph.state.selectedNodes,
-                  nodeKey = null,
-                  node = null;
-
-              for (nodeKey in selectedNodes) {
-                if (selectedNodes.hasOwnProperty(nodeKey)) {
-                  node = graph.getNode(nodeKey);
-                  this.focusNode(node);
-                  break;
-                }
-              }
-            }.bind(this)
-          };
-
-      if (hotKeys[key]) {
-        hotKeys[key]();
+      var code = event.keyCode;
+      var handler = hotKeys[code];
+      if (handler) {
+        var readonly = this.props.readonly;
+        if (!readonly || (readonly && readOnlyActions[code])) {
+          handler(this);
+        }
       }
     },
     keyUp: function (event) {
-      // Escape
-      if (event.keyCode===27) {
-        if (!this.refs.graph) {
-          return;
-        }
-        this.refs.graph.cancelPreviewEdge();
-      }
-      // HACK metaKey global for taps https://github.com/Polymer/PointerGestures/issues/29
+      // HACK metaKey global for taps
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
       }
@@ -11454,14 +12744,16 @@ module.exports.register = function (context) {
 
       var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
 
-      var contextMenu, contextModal;
+      var contextMenu = null;
+      var getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
       if ( this.state.contextMenu ) {
         var options = this.state.contextMenu;
-        var menu = this.props.getMenuDef(options);
-        if (menu) {
+        var menu = getMenuDef(options);
+        if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
       }
+      var contextModal = null;
       if (contextMenu) {
 
         var modalBGOptions ={
@@ -11484,9 +12776,11 @@ module.exports.register = function (context) {
         scale: this.state.scale,
         app: this,
         library: this.props.library,
+        nodeIcons: this.props.nodeIcons,
         onNodeSelection: this.props.onNodeSelection,
         onEdgeSelection: this.props.onEdgeSelection,
-        showContext: this.showContext
+        showContext: this.showContext,
+        allowEdgeStart: !this.props.readonly,
       };
       graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
       var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
@@ -11532,10 +12826,11 @@ module.exports.register = function (context) {
 
 };
 
-},{}],22:[function(require,module,exports){
+},{"./geometryutils":27,"./hammer.js":28,"./the-graph-modalbg":39,"create-react-class":"create-react-class","hammerjs":"hammerjs","react":"react","react-dom":"react-dom"}],32:[function(require,module,exports){
 
 // NOTE: caller should wrap in a graph transaction, to group all changes made to @graph
 function applyAutolayout(graph, keilerGraph, props) {
+  console.error('DEPRECATED: TheGraph.autolayout.applyAutolayout() will be removed in next version');
 
   // Update original graph nodes with the new coordinates from KIELER graph
   var children = keilerGraph.children.slice();
@@ -11590,90 +12885,12 @@ module.exports = {
   applyToGraph: applyAutolayout,
 };
 
-},{}],23:[function(require,module,exports){
-/**
- * Created by mpricope on 05.09.14.
- */
+},{}],33:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var TooltipMixin = require('./mixins').Tooltip;
 
-module.exports.register = function (context) {
-
-  var TheGraph = context.TheGraph;
-
-  TheGraph.Clipboard = {};
-  var clipboardContent = {};
-
-  var cloneObject = function (obj) {
-    return JSON.parse(JSON.stringify(obj));
-  };
-
-  var makeNewId = function (label) {
-    var num = 60466176; // 36^5
-    num = Math.floor(Math.random() * num);
-    var id = label + '_' + num.toString(36);
-    return id;
-  };
-
-  TheGraph.Clipboard.copy = function (graph, keys) {
-    //Duplicate all the nodes before putting them in clipboard
-    //this will make this work also with cut/Paste and once we
-    //decide if/how we will implement cross-document copy&paste will work there too
-    clipboardContent = {nodes:[], edges:[]};
-    var map = {};
-    var i, len;
-    for (i = 0, len = keys.length; i < len; i++) {
-      var node = graph.getNode(keys[i]);
-      var newNode = cloneObject(node);
-      newNode.id = makeNewId(node.component);
-      clipboardContent.nodes.push(newNode);
-      map[node.id] = newNode.id;
-    }
-    for (i = 0, len = graph.edges.length; i < len; i++) {
-      var edge = graph.edges[i];
-      var fromNode = edge.from.node;
-      var toNode = edge.to.node;
-      if (map.hasOwnProperty(fromNode) && map.hasOwnProperty(toNode)) {
-        var newEdge = cloneObject(edge);
-        newEdge.from.node = map[fromNode];
-        newEdge.to.node = map[toNode];
-        clipboardContent.edges.push(newEdge);
-      }
-    }
-
-  };
-
-  TheGraph.Clipboard.paste = function (graph) {
-    var map = {};
-    var pasted = {nodes:[], edges:[]};
-    var i, len;
-    for (i = 0, len = clipboardContent.nodes.length; i < len; i++) {
-      var node = clipboardContent.nodes[i];
-      var meta = cloneObject(node.metadata);
-      meta.x += 36;
-      meta.y += 36;
-      var newNode = graph.addNode(makeNewId(node.component), node.component, meta);
-      map[node.id] = newNode.id;
-      pasted.nodes.push(newNode);
-    }
-    for (i = 0, len = clipboardContent.edges.length; i < len; i++) {
-      var edge = clipboardContent.edges[i];
-      var newEdgeMeta = cloneObject(edge.metadata);
-      var newEdge;
-      if (edge.from.hasOwnProperty('index') || edge.to.hasOwnProperty('index')) {
-        // One or both ports are addressable
-        var fromIndex = edge.from.index || null;
-        var toIndex = edge.to.index || null;
-        newEdge = graph.addEdgeIndex(map[edge.from.node], edge.from.port, fromIndex, map[edge.to.node], edge.to.port, toIndex, newEdgeMeta);
-      } else {
-        newEdge = graph.addEdge(map[edge.from.node], edge.from.port, map[edge.to.node], edge.to.port, newEdgeMeta);
-      }
-      pasted.edges.push(newEdge);
-    }
-    return pasted;
-  };
-
-};
-
-},{}],24:[function(require,module,exports){
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -11745,34 +12962,25 @@ module.exports.register = function (context) {
 
   // Edge view
 
-  TheGraph.Edge = React.createFactory( React.createClass({
+  TheGraph.Edge = React.createFactory( createReactClass({
     displayName: "TheGraphEdge",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
     componentWillMount: function() {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
 
-      // Dragging
-      domNode.addEventListener("trackstart", this.dontPan);
-
+      // Select
       if (this.props.onEdgeSelection) {
         // Needs to be click (not tap) to get event.shiftKey
         domNode.addEventListener("tap", this.onEdgeSelection);
       }
-
-      // Context menu
+      // Open menu
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
-      }
-    },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) { 
-        event.stopPropagation();
+        domNode.addEventListener('press', this.showContext);
       }
     },
     onEdgeSelection: function (event) {
@@ -11787,12 +12995,19 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -11954,7 +13169,13 @@ module.exports.register = function (context) {
 
 };
 
-},{}],25:[function(require,module,exports){
+},{"./mixins":30,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],34:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
+var geometryutils = require('./geometryutils');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -12036,12 +13257,21 @@ module.exports.register = function (context) {
 
   // Graph view
 
-  TheGraph.Graph = React.createFactory( React.createClass({
+  TheGraph.Graph = React.createFactory( createReactClass({
     displayName: "TheGraphGraph",
     mixins: [],
+    getDefaultProps: function () {
+        return {
+            library: {},
+            graph: null,
+            app: null,
+            offsetX: 0,
+            offsetY: 0,
+            nodeIcons: {}, // allows overriding icon of a node
+        };
+    },
     getInitialState: function() {
       return {
-        graph: this.props.graph,
         displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
@@ -12056,19 +13286,42 @@ module.exports.register = function (context) {
       };
     },
     componentDidMount: function () {
-      // To change port colors
-      this.props.graph.on("addEdge", this.resetPortRoute);
-      this.props.graph.on("changeEdge", this.resetPortRoute);
-      this.props.graph.on("removeEdge", this.resetPortRoute);
-      this.props.graph.on("removeInitial", this.resetPortRoute);
+        this.mounted = true;
+        this.subscribeGraph(null, this.props.graph);
+        ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+    },
+    componentWillUnmount: function () {
+        this.mounted = false;
+    },
+    componentWillReceiveProps: function(nextProps) {
+      this.subscribeGraph(this.props.graph, nextProps.graph);
+      this.markDirty();
+    },
+    subscribeGraph: function(previous, next) {
+      if (previous) {
+        previous.removeListener("addEdge", this.resetPortRoute);
+        previous.removeListener("changeEdge", this.resetPortRoute);
+        previous.removeListener("removeEdge", this.resetPortRoute);
+        previous.removeListener("removeInitial", this.resetPortRoute);
 
-      // Listen to fbp-graph graph object's events
-      this.props.graph.on("changeNode", this.markDirty);
-      this.props.graph.on("changeInport", this.markDirty);
-      this.props.graph.on("changeOutport", this.markDirty);
-      this.props.graph.on("endTransaction", this.markDirty);
+        previous.removeListener("changeNode", this.markDirty);
+        previous.removeListener("changeInport", this.markDirty);
+        previous.removeListener("changeOutport", this.markDirty);
+        previous.removeListener("endTransaction", this.markDirty);
+      }
+      if (next) {
+        // To change port colors
+        next.on("addEdge", this.resetPortRoute);
+        next.on("changeEdge", this.resetPortRoute);
+        next.on("removeEdge", this.resetPortRoute);
+        next.on("removeInitial", this.resetPortRoute);
 
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+        // Listen to fbp-graph graph object's events
+        next.on("changeNode", this.markDirty);
+        next.on("changeInport", this.markDirty);
+        next.on("changeOutport", this.markDirty);
+        next.on("endTransaction", this.markDirty);
+      }
     },
     edgePreview: null,
     edgeStart: function (event) {
@@ -12103,7 +13356,7 @@ module.exports.register = function (context) {
 
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.addEventListener("track", this.renderPreviewEdge);
+      appDomNode.addEventListener("panmove", this.renderPreviewEdge);
       // TODO tap to add new node here
       appDomNode.addEventListener("tap", this.cancelPreviewEdge);
 
@@ -12112,7 +13365,7 @@ module.exports.register = function (context) {
     cancelPreviewEdge: function (event) {
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.removeEventListener("track", this.renderPreviewEdge);
+      appDomNode.removeEventListener("panmove", this.renderPreviewEdge);
       appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
@@ -12120,8 +13373,17 @@ module.exports.register = function (context) {
       }
     },
     renderPreviewEdge: function (event) {
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
+
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
+
       x -= this.props.app.state.offsetX || 0;
       y -= this.props.app.state.offsetY || 0;
       var scale = this.props.app.state.scale;
@@ -12132,10 +13394,10 @@ module.exports.register = function (context) {
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      this.props.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
     },
     moveGroup: function (nodes, dx, dy) {
-      var graph = this.state.graph;
+      var graph = this.props.graph;
 
       // Move each group member
       var len = nodes.length;
@@ -12159,6 +13421,7 @@ module.exports.register = function (context) {
       }
     },
     getComponentInfo: function (componentName) {
+      console.error("DEPRECATED: getComponentInfo() will be removed in next version of the-graph. Use 'library' in props instead");
       return this.props.library[componentName];
     },
     portInfo: {},
@@ -12171,7 +13434,7 @@ module.exports.register = function (context) {
         var outports = {};
         if (componentName && this.props.library) {
           // Copy ports from library object
-          var component = this.getComponentInfo(componentName);
+          var component = this.props.library[componentName];
           if (!component) {
             return {
               inports: inports,
@@ -12322,9 +13585,10 @@ module.exports.register = function (context) {
       });
       this.markDirty();
     },
-    updatedIcons: {},
     updateIcon: function (nodeId, icon) {
-      this.updatedIcons[nodeId] = icon;
+      console.error("DEPRECATED: updateIcon() will be removed in next version of the-graph. Pass nodeIcons through props instead");
+      // FIXME: deprecated function, to be removed
+      this.props.nodeIcons[nodeId] = icon;
       this.markDirty();
     },
     dirty: false,
@@ -12336,7 +13600,7 @@ module.exports.register = function (context) {
       window.requestAnimationFrame(this.triggerRender);
     },
     triggerRender: function (time) {
-      if (!this.isMounted()) {
+      if (!this.mounted) {
         return;
       }
       if (this.dirty) {
@@ -12353,7 +13617,7 @@ module.exports.register = function (context) {
       this.dirty = false;
 
       var self = this;
-      var graph = this.state.graph;
+      var graph = this.props.graph;
       var library = this.props.library;
       var selectedIds = [];
 
@@ -12374,7 +13638,10 @@ module.exports.register = function (context) {
 
       // Nodes
       var nodes = graph.nodes.map(function (node) {
-        var componentInfo = self.getComponentInfo(node.component);
+        var componentInfo = self.props.library[node.component];
+        if (!componentInfo) {
+            throw new Error("Component " + node.component + " is not in library");
+        }
         var key = node.id;
         if (!node.metadata) {
           node.metadata = {};
@@ -12402,8 +13669,8 @@ module.exports.register = function (context) {
         }
         var icon = "cog";
         var iconsvg = "";
-        if (self.updatedIcons[key]) {
-          icon = self.updatedIcons[key];
+        if (self.props.nodeIcons[key]) {
+          icon = self.props.nodeIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         } else if (componentInfo && componentInfo.iconsvg) {
@@ -12434,7 +13701,8 @@ module.exports.register = function (context) {
           selected: selected,
           error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
-          highlightPort: highlightPort
+          highlightPort: highlightPort,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
 
         nodeOptions = TheGraph.merge(TheGraph.config.graph.node, nodeOptions);
@@ -12586,7 +13854,8 @@ module.exports.register = function (context) {
           sY: expNode.y + TheGraph.config.nodeHeight / 2,
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.inportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
@@ -12661,7 +13930,8 @@ module.exports.register = function (context) {
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
           tY: expNode.y + TheGraph.config.nodeHeight / 2,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.outportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
@@ -12674,7 +13944,7 @@ module.exports.register = function (context) {
         if (group.nodes.length < 1) {
           return;
         }
-        var limits = TheGraph.findMinMax(graph, group.nodes);
+        var limits = geometryutils.findMinMax(graph, group.nodes);
         if (!limits) {
           return;
         }
@@ -12702,7 +13972,7 @@ module.exports.register = function (context) {
       // Selection pseudo-group
       if (this.state.displaySelectionGroup &&
           selectedIds.length >= 2) {
-        var limits = TheGraph.findMinMax(graph, selectedIds);
+        var limits = geometryutils.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
             name: "selection",
@@ -12797,7 +14067,11 @@ module.exports.register = function (context) {
 
 };
 
-},{}],26:[function(require,module,exports){
+},{"./geometryutils":27,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],35:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -12807,13 +14081,11 @@ module.exports.register = function (context) {
       className: "group"
     },
     boxRect: {
-      ref: "box",
       rx: TheGraph.config.nodeRadius,
       ry: TheGraph.config.nodeRadius
     },
     labelText: {
-      ref: "label",
-      className: "group-label drag"
+      className: "group-label"
     },
     descriptionText: {
       className: "group-description"
@@ -12829,39 +14101,47 @@ module.exports.register = function (context) {
 
   // Group view
 
-  TheGraph.Group = React.createFactory( React.createClass({
+  TheGraph.Group = React.createFactory( createReactClass({
     displayName: "TheGraphGroup",
+    getInitialState: function () {
+        return {
+            moving: false,
+            lastTrackX: null,
+            lastTrackY: null,
+        };
+    },
     componentDidMount: function () {
+
       // Move group
-      if (this.props.isSelectionGroup) {
-        // Drag selection by bg
-        ReactDOM.findDOMNode(this.refs.box).addEventListener("trackstart", this.onTrackStart);
-      } else {
-        ReactDOM.findDOMNode(this.refs.label).addEventListener("trackstart", this.onTrackStart);
-      }
-
-      var domNode = ReactDOM.findDOMNode(this);
-
-      // Don't pan under menu
-      domNode.addEventListener("trackstart", this.dontPan);
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener('panstart', this.onTrackStart);
 
       // Context menu
+      var domNode = ReactDOM.findDOMNode(this);
       if (this.props.showContext) {
         domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("hold", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
+
     },
     showContext: function (event) {
       // Don't show native context menu
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -12882,57 +14162,47 @@ module.exports.register = function (context) {
         triggerHideContext: hide
       });
     },
-    dontPan: function (event) {
-      // Don't drag under menu
-      if (this.props.app.menuShown) {
-        event.stopPropagation();
-      }
-    },
     onTrackStart: function (event) {
-      // Don't drag graph
+      // Don't pan graph
       event.stopPropagation();
+      this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.addEventListener("track", this.onTrack);
-        box.addEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.addEventListener("track", this.onTrack);
-        label.addEventListener("trackend", this.onTrackEnd);
-      }
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
       this.props.graph.startTransaction('movegroup');
     },
     onTrack: function (event) {
-      // Don't fire on graph
+      // Don't pan graph
       event.stopPropagation();
 
-      var deltaX = Math.round( event.ddx / this.props.scale );
-      var deltaY = Math.round( event.ddy / this.props.scale );
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
 
+      var deltaX = Math.round( movementX / this.props.scale );
+      var deltaY = Math.round( movementY / this.props.scale );
+
+      this.setState({ lastTrackX: x , lastTrackY: y });
       this.props.triggerMoveGroup(this.props.item.nodes, deltaX, deltaY);
     },
     onTrackEnd: function (event) {
-      // Don't fire on graph
+      this.setState({ moving: false });
+      // Don't pan graph
       event.stopPropagation();
-
-      // Don't tap graph (deselect)
-      event.preventTap();
 
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      if (this.props.isSelectionGroup) {
-        var box = ReactDOM.findDOMNode(this.refs.box);
-        box.removeEventListener("track", this.onTrack);
-        box.removeEventListener("trackend", this.onTrackEnd);
-      } else {
-        var label = ReactDOM.findDOMNode(this.refs.label);
-        label.removeEventListener("track", this.onTrack);
-        label.removeEventListener("trackend", this.onTrackEnd);
-      }
+      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      dragNode.addEventListener("panmove", this.onTrack);
+      dragNode.addEventListener("panend", this.onTrackEnd);
 
+      this.setState({ lastTrackX: null, lastTrackY: null});
       this.props.graph.endTransaction('movegroup');
     },
     render: function() {
@@ -12940,12 +14210,13 @@ module.exports.register = function (context) {
       var y = this.props.minY - TheGraph.config.nodeHeight / 2;
       var color = (this.props.color ? this.props.color : 0);
       var selection = (this.props.isSelectionGroup ? ' selection drag' : '');
+
       var boxRectOptions = {
         x: x,
         y: y,
         width: this.props.maxX - x + TheGraph.config.nodeWidth*0.5,
         height: this.props.maxY - y + TheGraph.config.nodeHeight*0.75,
-        className: "group-box color"+color + selection
+        className: "group-box color"+color + selection,
       };
       boxRectOptions = TheGraph.merge(TheGraph.config.group.boxRect, boxRectOptions);
       var boxRect =  TheGraph.factories.group.createGroupBoxRect.call(this, boxRectOptions);
@@ -12953,7 +14224,7 @@ module.exports.register = function (context) {
       var labelTextOptions = {
         x: x + TheGraph.config.nodeRadius,
         y: y + 9,
-        children: this.props.label
+        children: this.props.label,
       };
       labelTextOptions = TheGraph.merge(TheGraph.config.group.labelText, labelTextOptions);
       var labelText = TheGraph.factories.group.createGroupLabelText.call(this, labelTextOptions);
@@ -12966,10 +14237,37 @@ module.exports.register = function (context) {
       descriptionTextOptions = TheGraph.merge(TheGraph.config.group.descriptionText, descriptionTextOptions);
       var descriptionText = TheGraph.factories.group.createGroupDescriptionText.call(this, descriptionTextOptions);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var eventOptions = {
+        className: 'eventcatcher drag',
+        ref: 'events',
+      };
+      if (this.props.isSelectionGroup) {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = boxRectOptions.width;
+        eventOptions.height = boxRectOptions.height;
+      } else {
+        eventOptions.x = boxRectOptions.x;
+        eventOptions.y = boxRectOptions.y;
+        eventOptions.width = 24 * this.props.label.length * 0.75;
+        eventOptions.height = 24 * 2;
+      }
+      if (this.state.moving) {
+        var extend = 1000;
+        eventOptions.width += extend*2;
+        eventOptions.height += extend*2;
+        eventOptions.x -= extend;
+        eventOptions.y -= extend;
+      }
+      var eventCatcher = TheGraph.factories.createRect(eventOptions);
+
       var groupContents = [
         boxRect,
         labelText,
-        descriptionText
+        descriptionText,
+        eventCatcher,
       ];
 
       var containerOptions = TheGraph.merge(TheGraph.config.group.container, {});
@@ -12981,7 +14279,12 @@ module.exports.register = function (context) {
 
 };
 
-},{}],27:[function(require,module,exports){
+},{"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],36:[function(require,module,exports){
+var React = require('react');
+var createReactClass = require('create-react-class');
+
+var TextBG = require('./TextBG');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -13007,7 +14310,7 @@ module.exports.register = function (context) {
   };
 
   function createIIPText(options) {
-    return TheGraph.TextBG(options);
+    return TextBG(options);
   }
 
   // Const
@@ -13016,7 +14319,7 @@ module.exports.register = function (context) {
 
   // Edge view
 
-  TheGraph.IIP = React.createFactory( React.createClass({
+  TheGraph.IIP = React.createFactory( createReactClass({
     displayName: "TheGraphIIP",
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
@@ -13058,7 +14361,7 @@ module.exports.register = function (context) {
 
 };
 
-},{}],28:[function(require,module,exports){
+},{"./TextBG":23,"create-react-class":"create-react-class","react":"react"}],37:[function(require,module,exports){
 // Component library functionality
 function mergeComponentDefinition(component, definition) {
   // In cases where a component / subgraph ports change,
@@ -13203,309 +14506,343 @@ function componentsFromGraph(fbpGraph) {
   return components;
 }
 
+function libraryFromGraph(fbpGraph) {
+    var library = {};
+    var components = componentsFromGraph(fbpGraph);
+    components.forEach(function(c) {
+        library[c.name] = c;
+    });
+    return library;
+}
+
 module.exports = {
   mergeComponentDefinition: mergeComponentDefinition,
   componentsFromGraph: componentsFromGraph,
+  libraryFromGraph: libraryFromGraph,
 };
 
-},{}],29:[function(require,module,exports){
-module.exports.register = function (context) {
+},{}],38:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 
-  var TheGraph = context.TheGraph;
+var arcs = require('./arcs');
+var merge = require('./merge');
+var FONT_AWESOME = require('./font-awesome-unicode-map.js');
+var baseFactories = require('./factories');
 
-  TheGraph.config.menu = {
-    radius: 72,
-    positions: {
-      n4IconX: 0,
-      n4IconY: -52,
-      n4LabelX: 0,
-      n4LabelY: -35,
-      s4IconX: 0,
-      s4IconY: 52,
-      s4LabelX: 0,
-      s4LabelY: 35,
-      e4IconX: 45,
-      e4IconY: -5,
-      e4LabelX: 45,
-      e4LabelY: 15,
-      w4IconX: -45,
-      w4IconY: -5,
-      w4LabelX: -45,
-      w4LabelY: 15
-    },
-    container: {
-      className: "context-menu"
-    },
-    arcPath: {
-      className: "context-arc context-node-info-bg"
-    },
-    sliceIconText: {
-      className: "icon context-icon context-node-info-icon"
-    },
-    sliceLabelText: {
-      className: "context-arc-label"
-    },
-    sliceIconLabelText: {
-      className: "context-arc-icon-label"
-    },
-    circleXPath: {
-      className: "context-circle-x",
-      d: "M -51 -51 L 51 51 M -51 51 L 51 -51"
-    },
-    outlineCircle: {
-      className: "context-circle"
-    },
-    labelText: {
-      className: "context-node-label"
-    },
-    iconRect: {
-      className: "context-node-rect",
-      x: -24,
-      y: -24,
-      width: 48,
-      height: 48,
-      rx: TheGraph.config.nodeRadius,
-      ry: TheGraph.config.nodeRadius
+var config = {
+  radius: 72,
+  positions: {
+    n4IconX: 0,
+    n4IconY: -52,
+    n4LabelX: 0,
+    n4LabelY: -35,
+    s4IconX: 0,
+    s4IconY: 52,
+    s4LabelX: 0,
+    s4LabelY: 35,
+    e4IconX: 45,
+    e4IconY: -5,
+    e4LabelX: 45,
+    e4LabelY: 15,
+    w4IconX: -45,
+    w4IconY: -5,
+    w4LabelX: -45,
+    w4LabelY: 15
+  },
+  container: {
+    className: "context-menu"
+  },
+  arcPath: {
+    className: "context-arc context-node-info-bg"
+  },
+  sliceIconText: {
+    className: "icon context-icon context-node-info-icon"
+  },
+  sliceLabelText: {
+    className: "context-arc-label"
+  },
+  sliceIconLabelText: {
+    className: "context-arc-icon-label"
+  },
+  circleXPath: {
+    className: "context-circle-x",
+    d: "M -51 -51 L 51 51 M -51 51 L 51 -51"
+  },
+  outlineCircle: {
+    className: "context-circle"
+  },
+  labelText: {
+    className: "context-node-label"
+  },
+  iconRect: {
+    className: "context-node-rect",
+    x: -24,
+    y: -24,
+    width: 48,
+    height: 48,
+    rx: 8,
+    ry: 8,
+  }
+};
+
+var factories = {
+  createMenuGroup: baseFactories.createGroup,
+  createMenuSlice: createMenuSlice,
+  createMenuSliceArcPath: baseFactories.createPath,
+  createMenuSliceText: baseFactories.createText,
+  createMenuSliceIconText: baseFactories.createText,
+  createMenuSliceLabelText: baseFactories.createText,
+  createMenuSliceIconLabelText: baseFactories.createText,
+  createMenuCircleXPath: baseFactories.createPath,
+  createMenuOutlineCircle: baseFactories.createCircle,
+  createMenuLabelText: baseFactories.createText,
+  createMenuMiddleIconRect: baseFactories.createRect,
+  createMenuMiddleIconText: baseFactories.createText
+};
+
+function createMenuSlice(options) {
+  /*jshint validthis:true */
+  var direction = options.direction;
+  var arcPathOptions = merge(config.arcPath, { d: arcs[direction] });
+  var children = [
+    factories.createMenuSliceArcPath(arcPathOptions)
+  ];
+
+  if (this.props.menu[direction]) {
+    var slice = this.props.menu[direction];
+    if (slice.icon) {
+      var sliceIconTextOptions = {
+        x: config.positions[direction+"IconX"],
+        y: config.positions[direction+"IconY"],
+        children: FONT_AWESOME[ slice.icon ]
+      };
+      sliceIconTextOptions = merge(config.sliceIconText, sliceIconTextOptions);
+      children.push(factories.createMenuSliceIconText.call(this, sliceIconTextOptions));
     }
-  };
+    if (slice.label) {
+      var sliceLabelTextOptions = {
+        x: config.positions[direction+"IconX"],
+        y: config.positions[direction+"IconY"],
+        children: slice.label
+      };
+      sliceLabelTextOptions = merge(config.sliceLabelText, sliceLabelTextOptions);
+      children.push(factories.createMenuSliceLabelText.call(this, sliceLabelTextOptions));
+    }
+    if (slice.iconLabel) {
+      var sliceIconLabelTextOptions = {
+        x: config.positions[direction+"LabelX"],
+        y: config.positions[direction+"LabelY"],
+        children: slice.iconLabel
+      };
+      sliceIconLabelTextOptions = merge(config.sliceIconLabelText, sliceIconLabelTextOptions);
+      children.push(factories.createMenuSliceIconLabelText.call(this, sliceIconLabelTextOptions));
+    }
+  }
 
-  TheGraph.factories.menu = {
-    createMenuGroup: TheGraph.factories.createGroup,
-    createMenuSlice: createMenuSlice,
-    createMenuSliceArcPath: TheGraph.factories.createPath,
-    createMenuSliceText: TheGraph.factories.createText,
-    createMenuSliceIconText: TheGraph.factories.createText,
-    createMenuSliceLabelText: TheGraph.factories.createText,
-    createMenuSliceIconLabelText: TheGraph.factories.createText,
-    createMenuCircleXPath: TheGraph.factories.createPath,
-    createMenuOutlineCircle: TheGraph.factories.createCircle,
-    createMenuLabelText: TheGraph.factories.createText,
-    createMenuMiddleIconRect: TheGraph.factories.createRect,
-    createMenuMiddleIconText: TheGraph.factories.createText
+  var containerOptions = {
+    ref: direction,
+    className: "context-slice context-node-info" + (this.state[direction+"tappable"] ? " click" : ""),
+    children: children
   };
+  containerOptions = merge(config.container, containerOptions);
+  return factories.createMenuGroup.call(this, containerOptions);
+}
 
-  function createMenuSlice(options) {
-    /*jshint validthis:true */
-    var direction = options.direction;
-    var arcPathOptions = TheGraph.merge(TheGraph.config.menu.arcPath, { d: TheGraph.arcs[direction] });
+var Menu = React.createFactory( createReactClass({
+  displayName: "TheGraphMenu",
+  radius: config.radius,
+  getInitialState: function() {
+    // Use these in CSS for cursor and hover, and to attach listeners
+    return {
+      n4tappable: (this.props.menu.n4 && this.props.menu.n4.action),
+      s4tappable: (this.props.menu.s4 && this.props.menu.s4.action),
+      e4tappable: (this.props.menu.e4 && this.props.menu.e4.action),
+      w4tappable: (this.props.menu.w4 && this.props.menu.w4.action),
+    };
+  },
+  onTapN4: function () {
+    var options = this.props.options;
+    this.props.menu.n4.action(options.graph, options.itemKey, options.item);
+    this.props.triggerHideContext();
+  },
+  onTapS4: function () {
+    var options = this.props.options;
+    this.props.menu.s4.action(options.graph, options.itemKey, options.item);
+    this.props.triggerHideContext();
+  },
+  onTapE4: function () {
+    var options = this.props.options;
+    this.props.menu.e4.action(options.graph, options.itemKey, options.item);
+    this.props.triggerHideContext();
+  },
+  onTapW4: function () {
+    var options = this.props.options;
+    this.props.menu.w4.action(options.graph, options.itemKey, options.item);
+    this.props.triggerHideContext();
+  },
+  componentDidMount: function () {
+    if (this.state.n4tappable) {
+      this.refs.n4.addEventListener("tap", this.onTapN4);
+    }
+    if (this.state.s4tappable) {
+      this.refs.s4.addEventListener("tap", this.onTapS4);
+    }
+    if (this.state.e4tappable) {
+      this.refs.e4.addEventListener("tap", this.onTapE4);
+    }
+    if (this.state.w4tappable) {
+      this.refs.w4.addEventListener("tap", this.onTapW4);
+    }
+
+    // Prevent context menu
+    ReactDOM.findDOMNode(this).addEventListener("contextmenu", function (event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    }, false);
+  },
+  getPosition: function () {
+    return {
+      x: this.props.x !== undefined ? this.props.x : this.props.options.x || 0,
+      y: this.props.y !== undefined ? this.props.y : this.props.options.y || 0
+    };
+  },
+  render: function() {
+    var menu = this.props.menu;
+    var options = this.props.options;
+    var position = this.getPosition();
+
+    var circleXOptions = merge(config.circleXPath, {});
+    var outlineCircleOptions = merge(config.outlineCircle, {r: this.radius });
+
     var children = [
-      TheGraph.factories.menu.createMenuSliceArcPath(arcPathOptions)
+      // Directional slices
+      factories.createMenuSlice.call(this, { direction: "n4" }),
+      factories.createMenuSlice.call(this, { direction: "s4" }),
+      factories.createMenuSlice.call(this, { direction: "e4" }),
+      factories.createMenuSlice.call(this, { direction: "w4" }),
+      // Outline and X
+      factories.createMenuCircleXPath.call(this, circleXOptions),
+      factories.createMenuOutlineCircle.call(this, outlineCircleOptions)
     ];
+    // Menu label
+    if (this.props.label || menu.icon) {
 
-    if (this.props.menu[direction]) {
-      var slice = this.props.menu[direction];
-      if (slice.icon) {
-        var sliceIconTextOptions = {
-          x: TheGraph.config.menu.positions[direction+"IconX"],
-          y: TheGraph.config.menu.positions[direction+"IconY"],
-          children: TheGraph.FONT_AWESOME[ slice.icon ]
-        };
-        sliceIconTextOptions = TheGraph.merge(TheGraph.config.menu.sliceIconText, sliceIconTextOptions);
-        children.push(TheGraph.factories.menu.createMenuSliceIconText.call(this, sliceIconTextOptions));
+      var labelTextOptions = {
+        x: 0,
+        y: 0 - this.radius - 15,
+        children: (this.props.label ? this.props.label : menu.label)
+      };
+
+      labelTextOptions = merge(config.labelText, labelTextOptions);
+      children.push(factories.createMenuLabelText.call(this, labelTextOptions));
+    }
+    // Middle icon
+    if (this.props.icon || menu.icon) {
+      var iconColor = (this.props.iconColor!==undefined ? this.props.iconColor : menu.iconColor);
+      var iconStyle = "";
+      if (iconColor) {
+        iconStyle = " fill route"+iconColor;
       }
-      if (slice.label) {
-        var sliceLabelTextOptions = {
-          x: TheGraph.config.menu.positions[direction+"IconX"],
-          y: TheGraph.config.menu.positions[direction+"IconY"],
-          children: slice.label
-        };
-        sliceLabelTextOptions = TheGraph.merge(TheGraph.config.menu.sliceLabelText, sliceLabelTextOptions);
-        children.push(TheGraph.factories.menu.createMenuSliceLabelText.call(this, sliceLabelTextOptions));
-      }
-      if (slice.iconLabel) {
-        var sliceIconLabelTextOptions = {
-          x: TheGraph.config.menu.positions[direction+"LabelX"],
-          y: TheGraph.config.menu.positions[direction+"LabelY"],
-          children: slice.iconLabel
-        };
-        sliceIconLabelTextOptions = TheGraph.merge(TheGraph.config.menu.sliceIconLabelText, sliceIconLabelTextOptions);
-        children.push(TheGraph.factories.menu.createMenuSliceIconLabelText.call(this, sliceIconLabelTextOptions));
-      }
+
+      var middleIconRectOptions = merge(config.iconRect, {});
+      var middleIcon = factories.createMenuMiddleIconRect.call(this, middleIconRectOptions);
+
+      var middleIconTextOptions = {
+        className: "icon context-node-icon"+iconStyle,
+        children: FONT_AWESOME[ (this.props.icon ? this.props.icon : menu.icon) ]
+      };
+      middleIconTextOptions = merge(config.iconText, middleIconTextOptions);
+      var iconText = factories.createMenuMiddleIconText.call(this, middleIconTextOptions);
+
+      children.push(middleIcon, iconText);
     }
 
     var containerOptions = {
-      ref: direction,
-      className: "context-slice context-node-info" + (this.state[direction+"tappable"] ? " click" : ""),
+      transform: "translate("+position.x+","+position.y+")",
       children: children
     };
-    containerOptions = TheGraph.merge(TheGraph.config.menu.container, containerOptions);
-    return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
+
+    containerOptions = merge(config.container, containerOptions);
+    return factories.createMenuGroup.call(this, containerOptions);
+
   }
+}));
 
-  TheGraph.Menu = React.createFactory( React.createClass({
-    displayName: "TheGraphMenu",
-    radius: TheGraph.config.menu.radius,
-    getInitialState: function() {
-      // Use these in CSS for cursor and hover, and to attach listeners
-      return {
-        n4tappable: (this.props.menu.n4 && this.props.menu.n4.action),
-        s4tappable: (this.props.menu.s4 && this.props.menu.s4.action),
-        e4tappable: (this.props.menu.e4 && this.props.menu.e4.action),
-        w4tappable: (this.props.menu.w4 && this.props.menu.w4.action),
-      };
-    },
-    onTapN4: function () {
-      var options = this.props.options;
-      this.props.menu.n4.action(options.graph, options.itemKey, options.item);
-      this.props.triggerHideContext();
-    },
-    onTapS4: function () {
-      var options = this.props.options;
-      this.props.menu.s4.action(options.graph, options.itemKey, options.item);
-      this.props.triggerHideContext();
-    },
-    onTapE4: function () {
-      var options = this.props.options;
-      this.props.menu.e4.action(options.graph, options.itemKey, options.item);
-      this.props.triggerHideContext();
-    },
-    onTapW4: function () {
-      var options = this.props.options;
-      this.props.menu.w4.action(options.graph, options.itemKey, options.item);
-      this.props.triggerHideContext();
-    },
-    componentDidMount: function () {
-      if (this.state.n4tappable) {
-        this.refs.n4.addEventListener("up", this.onTapN4);
-      }
-      if (this.state.s4tappable) {
-        this.refs.s4.addEventListener("up", this.onTapS4);
-      }
-      if (this.state.e4tappable) {
-        this.refs.e4.addEventListener("up", this.onTapE4);
-      }
-      if (this.state.w4tappable) {
-        this.refs.w4.addEventListener("up", this.onTapW4);
-      }
-
-      // Prevent context menu
-      ReactDOM.findDOMNode(this).addEventListener("contextmenu", function (event) {
-        if (event) {
-          event.stopPropagation();
-          event.preventDefault();
-        }
-      }, false);
-    },
-    getPosition: function () {
-      return {
-        x: this.props.x !== undefined ? this.props.x : this.props.options.x || 0,
-        y: this.props.y !== undefined ? this.props.y : this.props.options.y || 0
-      };
-    },
-    render: function() {
-      var menu = this.props.menu;
-      var options = this.props.options;
-      var position = this.getPosition();
-
-      var circleXOptions = TheGraph.merge(TheGraph.config.menu.circleXPath, {});
-      var outlineCircleOptions = TheGraph.merge(TheGraph.config.menu.outlineCircle, {r: this.radius });
-
-      var children = [
-        // Directional slices
-        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "n4" }),
-        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "s4" }),
-        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "e4" }),
-        TheGraph.factories.menu.createMenuSlice.call(this, { direction: "w4" }),
-        // Outline and X
-        TheGraph.factories.menu.createMenuCircleXPath.call(this, circleXOptions),
-        TheGraph.factories.menu.createMenuOutlineCircle.call(this, outlineCircleOptions)
-      ];
-      // Menu label
-      if (this.props.label || menu.icon) {
-
-        var labelTextOptions = {
-          x: 0,
-          y: 0 - this.radius - 15,
-          children: (this.props.label ? this.props.label : menu.label)
-        };
-
-        labelTextOptions = TheGraph.merge(TheGraph.config.menu.labelText, labelTextOptions);
-        children.push(TheGraph.factories.menu.createMenuLabelText.call(this, labelTextOptions));
-      }
-      // Middle icon
-      if (this.props.icon || menu.icon) {
-        var iconColor = (this.props.iconColor!==undefined ? this.props.iconColor : menu.iconColor);
-        var iconStyle = "";
-        if (iconColor) {
-          iconStyle = " fill route"+iconColor;
-        }
-
-        var middleIconRectOptions = TheGraph.merge(TheGraph.config.menu.iconRect, {});
-        var middleIcon = TheGraph.factories.menu.createMenuMiddleIconRect.call(this, middleIconRectOptions);
-
-        var middleIconTextOptions = {
-          className: "icon context-node-icon"+iconStyle,
-          children: TheGraph.FONT_AWESOME[ (this.props.icon ? this.props.icon : menu.icon) ]
-        };
-        middleIconTextOptions = TheGraph.merge(TheGraph.config.menu.iconText, middleIconTextOptions);
-        var iconText = TheGraph.factories.menu.createMenuMiddleIconText.call(this, middleIconTextOptions);
-
-        children.push(middleIcon, iconText);
-      }
-
-      var containerOptions = {
-        transform: "translate("+position.x+","+position.y+")",
-        children: children
-      };
-
-      containerOptions = TheGraph.merge(TheGraph.config.menu.container, containerOptions);
-      return TheGraph.factories.menu.createMenuGroup.call(this, containerOptions);
-
-    }
-  }));
-
-  TheGraph.config.modalBG = {
-    container: {},
-    rect: {
-      ref: "rect",
-      className: "context-modal-bg"
-    }
-  };
-
-  TheGraph.factories.modalBG = {
-    createModalBackgroundGroup: TheGraph.factories.createGroup,
-    createModalBackgroundRect: TheGraph.factories.createRect
-  };
-
-
-  TheGraph.ModalBG = React.createFactory( React.createClass({
-    displayName: "TheGraphModalBG",
-    componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
-      var rectNode = this.refs.rect; 
-
-      // Right-click on another item will show its menu
-      domNode.addEventListener("down", function (event) {
-        // Only if outside of menu
-        if (event && event.target===rectNode) {
-          this.hideModal();
-        }
-      }.bind(this));
-    },
-    hideModal: function (event) {
-      this.props.triggerHideContext();
-    },
-    render: function () {
-
-
-      var rectOptions = {
-        width: this.props.width,
-        height: this.props.height
-      };
-
-      rectOptions = TheGraph.merge(TheGraph.config.modalBG.rect, rectOptions);
-      var rect = TheGraph.factories.modalBG.createModalBackgroundRect.call(this, rectOptions);
-
-      var containerContents = [rect, this.props.children];
-      var containerOptions = TheGraph.merge(TheGraph.config.modalBG.container, {});
-      return TheGraph.factories.modalBG.createModalBackgroundGroup.call(this, containerOptions, containerContents);
-    }
-  }));
-
-
+module.exports = {
+  Menu: Menu,
+  config: config,
+  factories: factories,
 };
 
-},{}],30:[function(require,module,exports){
+
+},{"./arcs":24,"./factories":25,"./font-awesome-unicode-map.js":26,"./merge":29,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],39:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var baseFactories = require('./factories');
+
+var config = {
+  container: {},
+  rect: {
+    ref: "rect",
+    className: "context-modal-bg"
+  }
+};
+
+var factories = {
+  createModalBackgroundGroup: baseFactories.createGroup,
+  createModalBackgroundRect: baseFactories.createRect
+};
+
+
+var ModalBG = React.createFactory( createReactClass({
+  displayName: "TheGraphModalBG",
+  componentDidMount: function () {
+    var domNode = ReactDOM.findDOMNode(this);
+    var rectNode = this.refs.rect; 
+
+
+    // Right-click on another item will show its menu
+    domNode.addEventListener("mousedown", function (event) {
+      // Only if outside of menu
+      if (event && event.target===rectNode) {
+        this.hideModal();
+      }
+    }.bind(this));
+  },
+  hideModal: function (event) {
+    this.props.triggerHideContext();
+  },
+  render: function () {
+    var rectOptions = {
+      width: this.props.width,
+      height: this.props.height
+    };
+
+    rectOptions = merge(config.rect, rectOptions);
+    var rect = factories.createModalBackgroundRect.call(this, rectOptions);
+
+    var containerContents = [rect, this.props.children];
+    var containerOptions = merge(config.container, {});
+    return factories.createModalBackgroundGroup.call(this, containerOptions, containerContents);
+  }
+}));
+
+module.exports = {
+  ModalBG: ModalBG,
+  config: config,
+  factories: factories,
+};
+
+},{"./factories":25,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],40:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -13531,10 +14868,10 @@ module.exports.register = function (context) {
   };
 
 
-  TheGraph.NodeMenuPort = React.createFactory( React.createClass({
+  TheGraph.NodeMenuPort = React.createFactory( createReactClass({
     displayName: "TheGraphNodeMenuPort",
     componentDidMount: function () {
-      ReactDOM.findDOMNode(this).addEventListener("up", this.edgeStart);
+      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
     },
     edgeStart: function (event) {
       // Don't tap graph
@@ -13602,7 +14939,10 @@ module.exports.register = function (context) {
 
 };
 
-},{}],31:[function(require,module,exports){
+},{"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],41:[function(require,module,exports){
+var React = require('react');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -13633,7 +14973,7 @@ module.exports.register = function (context) {
     return TheGraph.NodeMenuPort(options);
   }
 
-  TheGraph.NodeMenuPorts = React.createFactory( React.createClass({
+  TheGraph.NodeMenuPorts = React.createFactory( createReactClass({
     displayName: "TheGraphNodeMenuPorts",
     render: function() {
       var portViews = [];
@@ -13701,7 +15041,11 @@ module.exports.register = function (context) {
 
 };
 
-},{}],32:[function(require,module,exports){
+},{"create-react-class":"create-react-class","react":"react"}],42:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -13733,7 +15077,7 @@ module.exports.register = function (context) {
     return TheGraph.Menu(options);
   }
 
-  TheGraph.NodeMenu = React.createFactory( React.createClass({
+  TheGraph.NodeMenu = React.createFactory( createReactClass({
     displayName: "TheGraphNodeMenu",
     radius: 72,
     stopPropagation: function (event) {
@@ -13811,7 +15155,12 @@ module.exports.register = function (context) {
 
 };
 
-},{}],33:[function(require,module,exports){
+},{"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],43:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var TooltipMixin = require('./mixins').Tooltip;
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -13893,43 +15242,34 @@ module.exports.register = function (context) {
     return TheGraph.Port(options);
   }
 
-  // PolymerGestures monkeypatch
-  function patchGestures() {
-    PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
-      // hold
-      if (gesture.HOLD_DELAY) {
-        gesture.HOLD_DELAY = 500;
-      }
-      // track
-      if (gesture.WIGGLE_THRESHOLD) {
-        gesture.WIGGLE_THRESHOLD = 8;
-      }
-    });
-  }
-
-
   // Node view
-  TheGraph.Node = React.createFactory( React.createClass({
+  TheGraph.Node = React.createFactory( createReactClass({
     displayName: "TheGraphNode",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
+    getInitialState: function () {
+        return {
+          moving: false,
+          lastTrackX: null,
+          lastTrackY: null,
+        };
+    },
     componentDidMount: function () {
-      patchGestures();
       var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        domNode.addEventListener("tap", this.onNodeSelection, true);
+        domNode.addEventListener("tap", this.onNodeSelection);
       }
 
       // Context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
 
     },
@@ -13944,9 +15284,6 @@ module.exports.register = function (context) {
       // Don't drag graph
       event.stopPropagation();
 
-      // Don't change selection
-      event.preventTap();
-
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
 
@@ -13954,8 +15291,9 @@ module.exports.register = function (context) {
       if (this.props.app.pinching) { return; }
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
+      domNode.addEventListener("pancancel", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -13963,14 +15301,23 @@ module.exports.register = function (context) {
       } else {
         this.props.graph.startTransaction('movenode');
       }
+      this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
     },
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
+      this.setState({ lastTrackX: x , lastTrackY: y });
+
       var scale = this.props.app.state.scale;
-      var deltaX = Math.round( event.ddx / scale );
-      var deltaY = Math.round( event.ddy / scale );
+      var deltaX = Math.round( movementX / scale );
+      var deltaY = Math.round( movementY / scale );
 
       // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
@@ -13993,10 +15340,13 @@ module.exports.register = function (context) {
     onTrackEnd: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+      this.setState({ moving: false });
+      this.setState({ lastTrackX: null, lastTrackY: null});
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
+      domNode.removeEventListener("pancanel", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;
@@ -14037,8 +15387,15 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -14207,10 +15564,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Outports
       var outports = this.props.ports.outports;
@@ -14236,10 +15594,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Node Icon
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
@@ -14300,6 +15659,16 @@ module.exports.register = function (context) {
       var sublabelRect = TheGraph.factories.node.createNodeSublabelRect.call(this, sublabelRectOptions);
       var sublabelGroup = TheGraph.factories.node.createNodeSublabelGroup.call(this, TheGraph.config.node.sublabelBackground, [sublabelRect, sublabelText]);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var scale = this.props.app.state.scale;
+      var eventSize = this.props.width * 12 / scale;
+      var eventOptions = {
+        r: eventSize,
+        className: 'eventcatcher',
+      };
+      var eventRect = TheGraph.factories.createCircle(eventOptions);
+
       var nodeContents = [
         backgroundRect,
         borderRect,
@@ -14310,6 +15679,9 @@ module.exports.register = function (context) {
         labelGroup,
         sublabelGroup
       ];
+      if (this.state.moving) {
+        nodeContents.push(eventRect);
+      }
 
       var nodeOptions = {
         className: "node drag"+
@@ -14348,7 +15720,13 @@ module.exports.register = function (context) {
 
 };
 
-},{}],34:[function(require,module,exports){
+},{"./mixins":30,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],44:[function(require,module,exports){
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var TooltipMixin = require('./mixins').Tooltip;
+var arcs = require('./arcs.js');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -14383,23 +15761,28 @@ module.exports.register = function (context) {
 
   // Port view
 
-  TheGraph.Port = React.createFactory( React.createClass({
+  TheGraph.Port = React.createFactory( createReactClass({
     displayName: "TheGraphPort",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
+    defaultProps: {
+      allowEdgeStart: true,
+    },
     componentDidMount: function () {
+      var domNode = ReactDOM.findDOMNode(this);
+
       // Preview edge start
-      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
-      ReactDOM.findDOMNode(this).addEventListener("trackstart", this.edgeStart);
+      domNode.addEventListener("tap", this.edgeStart);
+      domNode.addEventListener("panstart", this.edgeStart);
       // Make edge
-      ReactDOM.findDOMNode(this).addEventListener("trackend", this.triggerDropOnTarget);
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-edge-drop", this.edgeStart);
+      domNode.addEventListener("panend", this.triggerDropOnTarget);
+      domNode.addEventListener("the-graph-edge-drop", this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
     },
     getTooltipTrigger: function () {
@@ -14424,12 +15807,19 @@ module.exports.register = function (context) {
       event.preventDefault();
 
       // Don't tap graph on hold event
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -14455,12 +15845,16 @@ module.exports.register = function (context) {
       if (this.props.isExport) {
         return;
       }
-      // Click on label, pass context menu to node
+      if (!this.props.allowEdgeStart) {
+        return;
+      }
+
+      // Click on label, allow node context menu
       if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
         return;
       }
       // Don't tap graph
-      event.stopPropagation();
+      if (event.stopPropagation) { event.stopPropagation(); }
 
       var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
@@ -14475,6 +15869,7 @@ module.exports.register = function (context) {
     },
     triggerDropOnTarget: function (event) {
       // If dropped on a child element will bubble up to port
+      // FIXME: broken, is never set, neither on event.srcEvent
       if (!event.relatedTarget) { return; }
       var dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,
@@ -14491,12 +15886,12 @@ module.exports.register = function (context) {
       var r = 4;
       // Highlight matching ports
       var highlightPort = this.props.highlightPort;
-      var inArc = TheGraph.arcs.inport;
-      var outArc = TheGraph.arcs.outport;
+      var inArc = arcs.inport;
+      var outArc = arcs.outport;
       if (highlightPort && highlightPort.isIn === this.props.isIn && (highlightPort.type === this.props.port.type || this.props.port.type === 'any')) {
         r = 6;
-        inArc = TheGraph.arcs.inportBig;
-        outArc = TheGraph.arcs.outportBig;
+        inArc = arcs.inportBig;
+        outArc = arcs.outportBig;
       }
 
       var backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
@@ -14537,495 +15932,63 @@ module.exports.register = function (context) {
 
 };
 
-},{}],35:[function(require,module,exports){
-module.exports.register = function (context) {
+},{"./arcs.js":24,"./mixins":30,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],45:[function(require,module,exports){
+var React = require('react');
+var createReactClass = require('create-react-class');
+var defaultFactories = require('./factories.js');
+var merge = require('./merge.js');
 
-  var TheGraph = context.TheGraph;
-
-  TheGraph.config.tooltip = {
-    container: {},
-    rect: {
-      className: "tooltip-bg",
-      x: 0,
-      y: -7,
-      rx: 3,
-      ry: 3,
-      height: 16
-    },
-    text: {
-      className: "tooltip-label",
-      ref: "label"
-    }
-  };
-
-  TheGraph.factories.tooltip = {
-    createTooltipGroup: TheGraph.factories.createGroup,
-    createTooltipRect: TheGraph.factories.createRect,
-    createTooltipText: TheGraph.factories.createText
-  };
-
-  // Port view
-
-  TheGraph.Tooltip = React.createFactory( React.createClass({
-    displayName: "TheGraphTooltip",
-    render: function() {
-
-      var rectOptions = TheGraph.merge(TheGraph.config.tooltip.rect, {width: this.props.label.length * 6});
-      var rect = TheGraph.factories.tooltip.createTooltipRect.call(this, rectOptions);
-
-      var textOptions = TheGraph.merge(TheGraph.config.tooltip.text, { children: this.props.label });
-      var text = TheGraph.factories.tooltip.createTooltipText.call(this, textOptions);
-
-      var containerContents = [rect, text];
-
-      var containerOptions = {
-        className: "tooltip" + (this.props.visible ? "" : " hidden"),
-        transform: "translate("+this.props.x+","+this.props.y+")",
-      };
-      containerOptions = TheGraph.merge(TheGraph.config.tooltip.container, containerOptions);
-      return TheGraph.factories.tooltip.createTooltipGroup.call(this, containerOptions, containerContents);
-
-    }
-  }));
-
-
-};
-
-},{}],36:[function(require,module,exports){
-module.exports.register = function (context) {
-
-  var defaultNodeSize = 72;
-  var defaultNodeRadius = 8;
-
-  // Dumb module setup
-  var TheGraph = context.TheGraph = {
-    // nodeSize and nodeRadius are deprecated, use TheGraph.config.(nodeSize/nodeRadius)
-    nodeSize: defaultNodeSize,
-    nodeRadius: defaultNodeRadius,
-    nodeSide: 56,
-    // Context menus
-    contextPortSize: 36,
-    // Zoom breakpoints
-    zbpBig: 1.2,
-    zbpNormal: 0.4,
-    zbpSmall: 0.01,
-    config: {
-      nodeSize: defaultNodeSize,
-      nodeWidth: defaultNodeSize,
-      nodeRadius: defaultNodeRadius,
-      nodeHeight: defaultNodeSize,
-      autoSizeNode: true,
-      maxPortCount: 9,
-      nodeHeightIncrement: 12,
-      focusAnimationDuration: 1500
-    },
-    factories: {}
-  };
-
-  if (typeof window !== 'undefined') {
-    // rAF shim
-    window.requestAnimationFrame = window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.msRequestAnimationFrame;
+var config = {
+  container: {},
+  rect: {
+    className: "tooltip-bg",
+    x: 0,
+    y: -7,
+    rx: 3,
+    ry: 3,
+    height: 16
+  },
+  text: {
+    className: "tooltip-label",
+    ref: "label"
   }
-
-  // Mixins to use throughout project
-  TheGraph.mixins = {};
-
-  // Show fake tooltip
-  // Class must have getTooltipTrigger (dom node) and shouldShowTooltip (boolean)
-  TheGraph.mixins.Tooltip = {
-    showTooltip: function (event) {
-      if ( !this.shouldShowTooltip() ) { return; }
-
-      var tooltipEvent = new CustomEvent('the-graph-tooltip', { 
-        detail: {
-          tooltip: this.props.label,
-          x: event.clientX,
-          y: event.clientY
-        }, 
-        bubbles: true
-      });
-      ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
-    },
-    hideTooltip: function (event) {
-      if ( !this.shouldShowTooltip() ) { return; }
-
-      var tooltipEvent = new CustomEvent('the-graph-tooltip-hide', { 
-        bubbles: true
-      });
-      if (this.isMounted()) {
-        ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
-      }
-    },
-    componentDidMount: function () {
-      if (navigator && navigator.userAgent.indexOf("Firefox") !== -1) {
-        // HACK Ff does native tooltips on svg elements
-        return;
-      }
-      var tooltipper = this.getTooltipTrigger();
-      tooltipper.addEventListener("tap", this.showTooltip);
-      tooltipper.addEventListener("mouseenter", this.showTooltip);
-      tooltipper.addEventListener("mouseleave", this.hideTooltip);
-    }
-  };
-
-  TheGraph.findMinMax = function (graph, nodes) {
-    var inports, outports;
-    if (nodes === undefined) {
-      nodes = graph.nodes.map( function (node) {
-        return node.id;
-      });
-      // Only look at exports when calculating the whole graph
-      inports = graph.inports;
-      outports = graph.outports;
-    }
-    if (nodes.length < 1) {
-      return undefined;
-    }
-    var minX = Infinity;
-    var minY = Infinity;
-    var maxX = -Infinity;
-    var maxY = -Infinity;
-
-    // Loop through nodes
-    var len = nodes.length;
-    for (var i=0; i<len; i++) {
-      var key = nodes[i];
-      var node = graph.getNode(key);
-      if (!node || !node.metadata) {
-        continue;
-      }
-      if (node.metadata.x < minX) { minX = node.metadata.x; }
-      if (node.metadata.y < minY) { minY = node.metadata.y; }
-      var x = node.metadata.x + node.metadata.width;
-      var y = node.metadata.y + node.metadata.height;
-      if (x > maxX) { maxX = x; }
-      if (y > maxY) { maxY = y; }
-    }
-    // Loop through exports
-    var keys, exp;
-    if (inports) {
-      keys = Object.keys(inports);
-      len = keys.length;
-      for (i=0; i<len; i++) {
-        exp = inports[keys[i]];
-        if (!exp.metadata) { continue; }
-        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
-        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
-        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
-        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
-      }
-    }
-    if (outports) {
-      keys = Object.keys(outports);
-      len = keys.length;
-      for (i=0; i<len; i++) {
-        exp = outports[keys[i]];
-        if (!exp.metadata) { continue; }
-        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
-        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
-        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
-        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
-      }
-    }
-
-    if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
-      return null;
-    }
-    return {
-      minX: minX,
-      minY: minY,
-      maxX: maxX,
-      maxY: maxY
-    };
-  };
-
-  TheGraph.findFit = function (graph, width, height) {
-    var limits = TheGraph.findMinMax(graph);
-    if (!limits) {
-      return {x:0, y:0, scale:1};
-    }
-    limits.minX -= TheGraph.config.nodeSize;
-    limits.minY -= TheGraph.config.nodeSize;
-    limits.maxX += TheGraph.config.nodeSize * 2;
-    limits.maxY += TheGraph.config.nodeSize * 2;
-
-    var gWidth = limits.maxX - limits.minX;
-    var gHeight = limits.maxY - limits.minY;
-
-    var scaleX = width / gWidth;
-    var scaleY = height / gHeight;
-
-    var scale, x, y;
-    if (scaleX < scaleY) {
-      scale = scaleX;
-      x = 0 - limits.minX * scale;
-      y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
-    } else {
-      scale = scaleY;
-      x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
-      y = 0 - limits.minY * scale;
-    }
-
-    return {
-      x: x,
-      y: y,
-      scale: scale
-    };
-  };
-
-  TheGraph.findAreaFit = function (point1, point2, width, height) {
-    var limits = {
-      minX: point1.x < point2.x ? point1.x : point2.x,
-      minY: point1.y < point2.y ? point1.y : point2.y,
-      maxX: point1.x > point2.x ? point1.x : point2.x,
-      maxY: point1.y > point2.y ? point1.y : point2.y
-    };
-
-    limits.minX -= TheGraph.config.nodeSize;
-    limits.minY -= TheGraph.config.nodeSize;
-    limits.maxX += TheGraph.config.nodeSize * 2;
-    limits.maxY += TheGraph.config.nodeSize * 2;
-
-    var gWidth = limits.maxX - limits.minX;
-    var gHeight = limits.maxY - limits.minY;
-
-    var scaleX = width / gWidth;
-    var scaleY = height / gHeight;
-
-    var scale, x, y;
-    if (scaleX < scaleY) {
-      scale = scaleX;
-      x = 0 - limits.minX * scale;
-      y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
-    } else {
-      scale = scaleY;
-      x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
-      y = 0 - limits.minY * scale;
-    }
-
-    return {
-      x: x,
-      y: y,
-      scale: scale
-    };
-  };
-
-  TheGraph.findNodeFit = function (node, width, height) {
-    var limits = {
-      minX: node.metadata.x - TheGraph.config.nodeSize,
-      minY: node.metadata.y - TheGraph.config.nodeSize,
-      maxX: node.metadata.x + TheGraph.config.nodeSize * 2,
-      maxY: node.metadata.y + TheGraph.config.nodeSize * 2
-    };
-
-    var gWidth = limits.maxX - limits.minX;
-    var gHeight = limits.maxY - limits.minY;
-
-    var scaleX = width / gWidth;
-    var scaleY = height / gHeight;
-
-    var scale, x, y;
-    if (scaleX < scaleY) {
-      scale = scaleX;
-      x = 0 - limits.minX * scale;
-      y = 0 - limits.minY * scale + (height-(gHeight*scale))/2;
-    } else {
-      scale = scaleY;
-      x = 0 - limits.minX * scale + (width-(gWidth*scale))/2;
-      y = 0 - limits.minY * scale;
-    }
-
-    return {
-      x: x,
-      y: y,
-      scale: scale
-    };
-  };
-
-  // SVG arc math
-  var angleToX = function (percent, radius) {
-    return radius * Math.cos(2*Math.PI * percent);
-  };
-  var angleToY = function (percent, radius) {
-    return radius * Math.sin(2*Math.PI * percent);
-  };
-  var makeArcPath = function (startPercent, endPercent, radius) {
-    return [ 
-      "M", angleToX(startPercent, radius), angleToY(startPercent, radius),
-      "A", radius, radius, 0, 0, 0, angleToX(endPercent, radius), angleToY(endPercent, radius)
-    ].join(" ");
-  };
-  TheGraph.arcs = {
-    n4: makeArcPath(7/8, 5/8, 36),
-    s4: makeArcPath(3/8, 1/8, 36),
-    e4: makeArcPath(1/8, -1/8, 36),
-    w4: makeArcPath(5/8, 3/8, 36),
-    inport: makeArcPath(-1/4, 1/4, 4),
-    outport: makeArcPath(1/4, -1/4, 4),
-    inportBig: makeArcPath(-1/4, 1/4, 6),
-    outportBig: makeArcPath(1/4, -1/4, 6),
-  };
-
-
-  // Reusable React classes
-  TheGraph.SVGImage = React.createFactory( React.createClass({
-    displayName: "TheGraphSVGImage",
-    render: function() {
-        var html = '<image ';
-        html = html +'xlink:href="'+ this.props.src + '"';
-        html = html +'x="' + this.props.x + '"';
-        html = html +'y="' + this.props.y + '"';
-        html = html +'width="' + this.props.width + '"';
-        html = html +'height="' + this.props.height + '"';
-        html = html +'/>';
-
-        return React.DOM.g({
-            className: this.props.className,
-            dangerouslySetInnerHTML:{__html: html}
-        });
-    }
-  }));
-
-  TheGraph.TextBG = React.createFactory( React.createClass({
-    displayName: "TheGraphTextBG",
-    render: function() {
-      var text = this.props.text;
-      if (!text) {
-        text = "";
-      }
-      var height = this.props.height;
-      var width = text.length * this.props.height * 2/3;
-      var radius = this.props.height/2;
-
-      var textAnchor = "start";
-      var dominantBaseline = "central";
-      var x = this.props.x;
-      var y = this.props.y - height/2;
-
-      if (this.props.halign === "center") {
-        x -= width/2;
-        textAnchor = "middle";
-      }
-      if (this.props.halign === "right") {
-        x -= width;
-        textAnchor = "end";
-      }
-
-      return React.DOM.g(
-        {
-          className: (this.props.className ? this.props.className : "text-bg"),
-        },
-        React.DOM.rect({
-          className: "text-bg-rect",
-          x: x,
-          y: y,
-          rx: radius,
-          ry: radius,
-          height: height * 1.1,
-          width: width
-        }),
-        React.DOM.text({
-          className: (this.props.textClassName ? this.props.textClassName : "text-bg-text"),
-          x: this.props.x,
-          y: this.props.y,
-          children: text
-        })
-      );
-    }
-  }));
-
-  // The `merge` function provides simple property merging.
-  TheGraph.merge = function(src, dest, overwrite) {
-    // Do nothing if neither are true objects.
-    if (Array.isArray(src) || Array.isArray(dest) || typeof src !== 'object' || typeof dest !== 'object')
-      return dest;
-
-    // Default overwriting of existing properties to false.
-    overwrite = overwrite || false;
-
-    for (var key in src) {
-      // Only copy properties, not functions.
-      if (typeof src[key] !== 'function' && (!dest[key] || overwrite))
-        dest[key] = src[key];
-    }
-
-    return dest;
-  };
-
-  TheGraph.factories.createGroup = function(options, content) {
-    var args = [options];
-
-    if (Array.isArray(content)) {
-      args = args.concat(content);
-    }
-
-    return React.DOM.g.apply(React.DOM.g, args);
-  };
-
-  TheGraph.factories.createRect = function(options) {
-    return React.DOM.rect(options);
-  };
-
-  TheGraph.factories.createText = function(options) {
-    return React.DOM.text(options);
-  };
-
-  TheGraph.factories.createCircle = function(options) {
-    return React.DOM.circle(options);
-  };
-
-  TheGraph.factories.createPath = function(options) {
-    return React.DOM.path(options);
-  };
-
-  TheGraph.factories.createPolygon = function(options) {
-    return React.DOM.polygon(options);
-  };
-
-  TheGraph.factories.createImg = function(options) {
-    return TheGraph.SVGImage(options);
-  };
-
-  TheGraph.factories.createCanvas = function(options) {
-    return React.DOM.canvas(options);
-  };
-
-  TheGraph.factories.createSvg = function(options, content) {
-
-    var args = [options];
-
-    if (Array.isArray(content)) {
-      args = args.concat(content);
-    }
-
-    return React.DOM.svg.apply(React.DOM.svg, args);
-  };
-  
-  TheGraph.getOffset = function(domNode){
-    var getElementOffset = function(element){
-      var offset = { top: 0, left: 0},
-          parentOffset;
-      if(!element){
-        return offset;
-      }
-      offset.top += (element.offsetTop || 0);
-      offset.left += (element.offsetLeft || 0);
-      parentOffset = getElementOffset(element.offsetParent);
-      offset.top += parentOffset.top;
-      offset.left += parentOffset.left;
-      return offset;
-    };
-    try{
-      return getElementOffset( domNode );
-    }catch(e){
-      return getElementOffset();
-    }
-  };
-
 };
 
-},{}]},{},[1])(1)
+
+var factories = {
+  createTooltipGroup: defaultFactories.createGroup,
+  createTooltipRect: defaultFactories.createRect,
+  createTooltipText: defaultFactories.createText
+};
+
+// Port view
+var Tooltip = React.createFactory( createReactClass({
+  displayName: "TheGraphTooltip",
+  render: function() {
+
+    var rectOptions = merge(config.rect, {width: this.props.label.length * 6});
+    var rect = factories.createTooltipRect.call(this, rectOptions);
+
+    var textOptions = merge(config.text, { children: this.props.label });
+    var text = factories.createTooltipText.call(this, textOptions);
+
+    var containerContents = [rect, text];
+
+    var containerOptions = {
+      className: "tooltip" + (this.props.visible ? "" : " hidden"),
+      transform: "translate("+this.props.x+","+this.props.y+")",
+    };
+    containerOptions = merge(config.container, containerOptions);
+    return factories.createTooltipGroup.call(this, containerOptions, containerContents);
+
+  }
+}));
+
+module.exports = {
+  config: config,
+  factories: factories,
+  Tooltip: Tooltip,
+};
+
+},{"./factories.js":25,"./merge.js":29,"create-react-class":"create-react-class","react":"react"}]},{},[1])(1)
 });
