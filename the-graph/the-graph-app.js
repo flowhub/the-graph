@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
 var Hammer = require('hammerjs');
 var hammerhacks = require('./hammer.js');
+var ModalBG = require('./the-graph-modalbg').ModalBG;
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
 var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
@@ -115,7 +116,7 @@ module.exports.register = function (context) {
   }
 
   function createAppModalBackground(options) {
-    return TheGraph.ModalBG(options);
+    return ModalBG(options);
   }
 
   var mixins = [];

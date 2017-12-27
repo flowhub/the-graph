@@ -30,6 +30,13 @@ require("./the-graph/the-graph-iip.js").register(g);
 require("./the-graph/the-graph-group.js").register(g);
 
 require("./the-graph/the-graph-menu.js").register(g);
+
+TheGraph.modalbg = require("./the-graph/the-graph-modalbg.js");
+// compat
+TheGraph.ModalBG = TheGraph.modalbg.ModalBG;
+TheGraph.config.ModalBG = TheGraph.config.factories;
+TheGraph.factories.ModalBG = TheGraph.modalbg.factories;
+
 TheGraph.FONT_AWESOME = require("./the-graph/font-awesome-unicode-map.js");
 
 
