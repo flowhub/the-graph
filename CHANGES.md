@@ -1,5 +1,17 @@
 ## dev
 
+## 0.11.0 (2017 December 27)
+
+Breaking changes
+
+* Upgraded from React 14 to React 15.6
+
+Internal changes
+
+* Tests are now using Jest instead of Mocha/Chai.
+They are ran locally against JsDom, which makes them also in Pull Requests which was not possible with Saucelabs.
+* More migration of code into proper CommonJS modules
+
 ## 0.10.2 (2017 August 23)
 
 Bugfixes
