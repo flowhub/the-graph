@@ -44,9 +44,9 @@ Clone the repo
     git clone https://github.com/flowhub/the-graph.git # or your own fork on Github
     cd the-graph
 
-Build and watch for changes
+Run tests, watch for changes
 
-    grunt dev
+    npm start
 
 Open [http://localhost:3000/spec/runner.html](http://localhost:3000/spec/runner.html) for the automated tests,
 or [http://localhost:3000/examples/demo-full.html](http://localhost:3000/examples/demo-full.html) for interactive demo.
