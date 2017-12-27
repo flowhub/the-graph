@@ -55,6 +55,9 @@ TheGraph.factories.tooltip = TheGraph.tooltip.factories;
 TheGraph.mixins = require("./the-graph/mixins.js");
 TheGraph.arcs = require('./the-graph/arcs.js');
 
+TheGraph.TextBG = require('./the-graph/TextBG.js');
+TheGraph.SVGImage = require('./the-graph/SVGImage.js');
+
 TheGraph.thumb = require('./the-graph-thumb/the-graph-thumb.js');
 
 TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');

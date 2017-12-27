@@ -1,6 +1,8 @@
 var React = require('react');
 var createReactClass = require('create-react-class');
 
+var TextBG = require('./TextBG');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -26,7 +28,7 @@ module.exports.register = function (context) {
   };
 
   function createIIPText(options) {
-    return TheGraph.TextBG(options);
+    return TextBG(options);
   }
 
   // Const
