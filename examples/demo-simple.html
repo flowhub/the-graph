@@ -166,7 +166,7 @@
         var newEdge = graph.addEdge(node1, port1, node2, port2, meta);
         return newEdge;
       };
-      document.getElementById("addedge").addEventListener("click", addedge);
+      document.getElementById("addedge").addEventListener("click", function(event) { addedge() });
 
       // Random graph button
       document.getElementById("random").addEventListener("click", function () {
