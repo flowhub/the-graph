@@ -3,8 +3,8 @@ node_js:
 - node
 before_script:
 - npm install -g grunt-cli
-script: grunt crossbrowser
 deploy:
+  skip_cleanup: true
   provider: npm
   email: jononor@gmail.com
   api_key:

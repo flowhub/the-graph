@@ -1,6 +1,109 @@
 ## dev
 
-## 0.7.0 (unreleased)
+## 0.11.0 (2017 December 27)
+
+Breaking changes
+
+* Upgraded from React 14 to React 15.
+It is no longer a dependency, so applications using the-graph can (and must) pull in an appropriate version.
+
+Internal changes
+
+* Tests are now using Jest instead of Mocha/Chai.
+They are ran locally against JsDom, which makes them also in Pull Requests which was not possible with Saucelabs.
+* More migration of code into proper CommonJS modules
+
+## 0.10.2 (2017 August 23)
+
+Bugfixes
+
+* Fixed unable to create edge from node context menu
+
+## 0.10.1 (2017 August 17)
+
+Bugfixes
+
+* Fixed compatibility with browsers only supporting `TouchEvent`, including Safari on iOS.
+* Fixed exception on long-press if no menu was defined
+
+UI changes
+
+* Movement threshold for starting panning reduced, making it a bit easier
+
+## 0.10.0 (2017 June 28)
+
+UI changes
+
+* Edges cannot be dropped on target port. Have to tap to complete edge connection.
+* Menu item cannot be opened by swiping and releasing. Have to tap to perform menu action.
+
+Breaking changes
+
+* Polymer element `the-graph-thumb` has been removed.
+Should instead use the JavaScript API `TheGraph.thumb.render()`,
+as shown in `examples/demo-thumbnail.html`.
+* Polymer element `the-graph-nav` has been removed.
+Should instead use the new React component `TheGraph.nav.Component`,
+as shown in `examples/demo-full.html`
+* Polymer element `the-graph` has been removed.
+Use React component `TheGraph.Graph` instead.
+* Polymer element `the-graph-editor` has been removed.
+Use React component `TheGraph.App` instead, as shown in `examples/demo-simple.html`
+
+Deprecated APIs, to be removed
+
+* `TheGraph.editor.getDefaultMenus()`, should be explicitly set by app.
+* `TheGraph.autolayout.applyAutolayout()`, should be included in app if wanted.
+* `TheGraph.App::updateIcon()`, should instead pass `nodeIcons` prop.
+* `TheGraph.App::getComponent()`, should instead use info from the passed in `library` prop.
+* Property `getMenuDef` of `TheGraph.App` is deprecated, should pass the data in `menus` prop instead.
+* All methods on React elements are planned to be deprecated in favor of passing props.
+
+Added APIs
+
+* `TheGraph.library.libraryFromGraph()`, returns component library from a `fbp-graph.Graph` instance
+in format compatible with the `library` prop.
+
+Bugfixes
+
+* Changing `graph` prop of React element should now correctly reset and follow new graph instance.
+
+Internal changes
+
+* Usage of PolymerGestures has been replaced by hammer.js
+* No longer depends on Polymer or webcomponents
+* All dependencies are installed via NPM, bower is no longer used
+* Some more modules have been converted to proper CommonJS
+
+## 0.9.0 (2017 May 6)
+
+New features
+
+* `the-graph-editor` Polymer element and `Graph` React component now support a `readonly` property.
+When set to true, destructive actions
+
+Internal changes
+
+* `menuCallback`: An empty object is considered falsy and will not show a menu.
+
+## 0.8.0 (2017 May 6)
+
+Additions
+
+* `fbp-graph` dependency is now exposed as `fbpGraph` on the top-level module.
+Ex: `TheGraph.fbpGraph` when including `dist/the-graph.js`.
+
+Breaking changes
+
+* Polymer element `the-graph-nav` no longer takes and directly manipulates `editor`.
+Instead it fires events like `panto`. And it expects `graph` and `view` attributes to be set.
+Tapping the element does not manipulate anything, only fires the `tap` event.
+See `examples/demo-full.html` for usage.
+* Polymer element `the-graph-editor` no longer accepts a JSON string as input for `graph` property.
+Instead the property must always be a `fbpGraph.Graph` instance.
+The event `graphInitialised`, which was used for this old async behavior has also been removed.
+
+## 0.7.0 (2017 March 2)
 
 Breaking changes
 

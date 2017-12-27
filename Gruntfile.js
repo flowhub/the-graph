@@ -2,33 +2,31 @@
   "use strict";
   module.exports = function() {
 
-    var banner = 
-      "/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today('yyyy-mm-dd') %> (<%= grunt.template.date('longTime') %>)\n"+
-      "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>; Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n";
-
     var sources = {
       scripts: ['Gruntfile.js', 'the-*/*.js', 'the-*/*.html', 'index.js'],
       // elements: ['the-*/*.html'],
       stylus: ['themes/*/*.styl'],
       css: ['themes/*.css'],
-      tests: ['spec/*.coffee', 'spec/runner.html']
+      tests: ['__tests__/*.js']
     };
+
+    var externals = [
+      'react',
+      'react-dom',
+      'create-react-class',
+      'hammerjs',
+      '@pleasetrythisathome/react.animate'
+    ];
 
     var glob = require('glob');
     var stylExpand = glob.sync('./themes/*.styl').join(' ');
 
     this.initConfig({
       pkg: this.file.readJSON('package.json'),
-      'bower-install-simple': {
-        deps: {
-          options: {
-            interactive: false,
-            forceLatest: false,
-            directory: 'bower_components'
-          }
-        }
-      },
       exec: {
+        jest: {
+          command: 'jest --verbose',
+        },
         build_stylus: {
           command: 'node ./node_modules/stylus/bin/stylus ' + stylExpand
         },
@@ -36,24 +34,21 @@
           command: 'node ./scripts/build-font-awesome-javascript.js'
         }
       },
-      coffee: {
-        specs: {
-          options: {
-            bare: true
-          },
-          expand: true,
-          cwd: 'spec',
-          src: ['**.coffee'],
-          dest: 'spec',
-          ext: '.js'
-        }
-      },
       browserify: {
+        vendor: {
+          files: {
+            'dist/vendor.js': ['./vendor.js'],
+          },
+          options: {
+            require: externals
+          }
+        },
         libs: {
           files: {
             'dist/the-graph.js': ['index.js'],
           },
           options: {
+            external: externals,
             transform: ['coffeeify'],
             browserifyOptions: {
               standalone: 'TheGraph'
@@ -88,7 +83,7 @@
       watch: {
         scripts: {
           files: sources.scripts,
-          tasks: ['jshint:force', 'browserify:libs'],
+          tasks: ['jshint:force', 'browserify:libs', 'exec:jest'],
           options: {
             livereload: true
           }
@@ -108,45 +103,23 @@
         },
         tests: {
           files: sources.tests,
-          tasks: ['coffee'],
+          tasks: ['exec:jest'],
           options: {
             livereload: false
           }
         },
       },
-      'saucelabs-mocha': {
-        all: {
-          options: {
-            urls: ['http://127.0.0.1:3000/spec/runner.html'],
-            browsers: [
-              {
-                browserName: 'googlechrome',
-                version: '39'
-              }
-            ],
-            build: process.env.TRAVIS_JOB_ID,
-            testname: 'the-graph browser tests',
-            tunnelTimeout: 5,
-            concurrency: 1,
-            detailedError: true
-          }
-        }
-      }
     });
 
-    this.loadNpmTasks('grunt-bower-install-simple');
     this.loadNpmTasks('grunt-exec');
-    this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-contrib-connect');
-    this.loadNpmTasks('grunt-contrib-coffee');
+    this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-browserify');
-    this.loadNpmTasks('grunt-saucelabs');
 
-    this.registerTask('dev', ['test', 'watch']);
-    this.registerTask('build', ['bower-install-simple', 'exec:build_stylus', 'exec:build_fa', 'browserify:libs']);
-    this.registerTask('test', ['jshint:all', 'build', 'coffee', 'connect:server']);
-    this.registerTask('crossbrowser', ['test', 'saucelabs-mocha']);
+    this.registerTask('dev', ['connect', 'test', 'watch']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor']);
+    this.registerTask('test', ['jshint:all', 'build', 'exec:jest']);
     this.registerTask('default', ['test']);
   };
 

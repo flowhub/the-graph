@@ -4,3 +4,5 @@ node_modules/
 /dist
 npm-debug.log
 /spec/*.js
+/coverage
+package-lock.json

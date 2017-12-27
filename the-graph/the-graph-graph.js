@@ -1,3 +1,9 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
+var geometryutils = require('./geometryutils');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -79,12 +85,21 @@ module.exports.register = function (context) {
 
   // Graph view
 
-  TheGraph.Graph = React.createFactory( React.createClass({
+  TheGraph.Graph = React.createFactory( createReactClass({
     displayName: "TheGraphGraph",
     mixins: [],
+    getDefaultProps: function () {
+        return {
+            library: {},
+            graph: null,
+            app: null,
+            offsetX: 0,
+            offsetY: 0,
+            nodeIcons: {}, // allows overriding icon of a node
+        };
+    },
     getInitialState: function() {
       return {
-        graph: this.props.graph,
         displaySelectionGroup: true,
         edgePreview: null,
         edgePreviewX: 0,
@@ -99,19 +114,42 @@ module.exports.register = function (context) {
       };
     },
     componentDidMount: function () {
-      // To change port colors
-      this.props.graph.on("addEdge", this.resetPortRoute);
-      this.props.graph.on("changeEdge", this.resetPortRoute);
-      this.props.graph.on("removeEdge", this.resetPortRoute);
-      this.props.graph.on("removeInitial", this.resetPortRoute);
+        this.mounted = true;
+        this.subscribeGraph(null, this.props.graph);
+        ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+    },
+    componentWillUnmount: function () {
+        this.mounted = false;
+    },
+    componentWillReceiveProps: function(nextProps) {
+      this.subscribeGraph(this.props.graph, nextProps.graph);
+      this.markDirty();
+    },
+    subscribeGraph: function(previous, next) {
+      if (previous) {
+        previous.removeListener("addEdge", this.resetPortRoute);
+        previous.removeListener("changeEdge", this.resetPortRoute);
+        previous.removeListener("removeEdge", this.resetPortRoute);
+        previous.removeListener("removeInitial", this.resetPortRoute);
 
-      // Listen to fbp-graph graph object's events
-      this.props.graph.on("changeNode", this.markDirty);
-      this.props.graph.on("changeInport", this.markDirty);
-      this.props.graph.on("changeOutport", this.markDirty);
-      this.props.graph.on("endTransaction", this.markDirty);
+        previous.removeListener("changeNode", this.markDirty);
+        previous.removeListener("changeInport", this.markDirty);
+        previous.removeListener("changeOutport", this.markDirty);
+        previous.removeListener("endTransaction", this.markDirty);
+      }
+      if (next) {
+        // To change port colors
+        next.on("addEdge", this.resetPortRoute);
+        next.on("changeEdge", this.resetPortRoute);
+        next.on("removeEdge", this.resetPortRoute);
+        next.on("removeInitial", this.resetPortRoute);
 
-      ReactDOM.findDOMNode(this).addEventListener("the-graph-node-remove", this.removeNode);
+        // Listen to fbp-graph graph object's events
+        next.on("changeNode", this.markDirty);
+        next.on("changeInport", this.markDirty);
+        next.on("changeOutport", this.markDirty);
+        next.on("endTransaction", this.markDirty);
+      }
     },
     edgePreview: null,
     edgeStart: function (event) {
@@ -146,7 +184,7 @@ module.exports.register = function (context) {
 
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.addEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.addEventListener("track", this.renderPreviewEdge);
+      appDomNode.addEventListener("panmove", this.renderPreviewEdge);
       // TODO tap to add new node here
       appDomNode.addEventListener("tap", this.cancelPreviewEdge);
 
@@ -155,7 +193,7 @@ module.exports.register = function (context) {
     cancelPreviewEdge: function (event) {
       var appDomNode = ReactDOM.findDOMNode(this.props.app);
       appDomNode.removeEventListener("mousemove", this.renderPreviewEdge);
-      appDomNode.removeEventListener("track", this.renderPreviewEdge);
+      appDomNode.removeEventListener("panmove", this.renderPreviewEdge);
       appDomNode.removeEventListener("tap", this.cancelPreviewEdge);
       if (this.state.edgePreview) {
         this.setState({edgePreview: null});
@@ -163,8 +201,17 @@ module.exports.register = function (context) {
       }
     },
     renderPreviewEdge: function (event) {
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
+
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
+
       x -= this.props.app.state.offsetX || 0;
       y -= this.props.app.state.offsetY || 0;
       var scale = this.props.app.state.scale;
@@ -175,10 +222,10 @@ module.exports.register = function (context) {
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      this.props.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
     },
     moveGroup: function (nodes, dx, dy) {
-      var graph = this.state.graph;
+      var graph = this.props.graph;
 
       // Move each group member
       var len = nodes.length;
@@ -202,6 +249,7 @@ module.exports.register = function (context) {
       }
     },
     getComponentInfo: function (componentName) {
+      console.error("DEPRECATED: getComponentInfo() will be removed in next version of the-graph. Use 'library' in props instead");
       return this.props.library[componentName];
     },
     portInfo: {},
@@ -214,7 +262,7 @@ module.exports.register = function (context) {
         var outports = {};
         if (componentName && this.props.library) {
           // Copy ports from library object
-          var component = this.getComponentInfo(componentName);
+          var component = this.props.library[componentName];
           if (!component) {
             return {
               inports: inports,
@@ -365,9 +413,10 @@ module.exports.register = function (context) {
       });
       this.markDirty();
     },
-    updatedIcons: {},
     updateIcon: function (nodeId, icon) {
-      this.updatedIcons[nodeId] = icon;
+      console.error("DEPRECATED: updateIcon() will be removed in next version of the-graph. Pass nodeIcons through props instead");
+      // FIXME: deprecated function, to be removed
+      this.props.nodeIcons[nodeId] = icon;
       this.markDirty();
     },
     dirty: false,
@@ -379,7 +428,7 @@ module.exports.register = function (context) {
       window.requestAnimationFrame(this.triggerRender);
     },
     triggerRender: function (time) {
-      if (!this.isMounted()) {
+      if (!this.mounted) {
         return;
       }
       if (this.dirty) {
@@ -396,7 +445,7 @@ module.exports.register = function (context) {
       this.dirty = false;
 
       var self = this;
-      var graph = this.state.graph;
+      var graph = this.props.graph;
       var library = this.props.library;
       var selectedIds = [];
 
@@ -417,7 +466,10 @@ module.exports.register = function (context) {
 
       // Nodes
       var nodes = graph.nodes.map(function (node) {
-        var componentInfo = self.getComponentInfo(node.component);
+        var componentInfo = self.props.library[node.component];
+        if (!componentInfo) {
+            throw new Error("Component " + node.component + " is not in library");
+        }
         var key = node.id;
         if (!node.metadata) {
           node.metadata = {};
@@ -445,8 +497,8 @@ module.exports.register = function (context) {
         }
         var icon = "cog";
         var iconsvg = "";
-        if (self.updatedIcons[key]) {
-          icon = self.updatedIcons[key];
+        if (self.props.nodeIcons[key]) {
+          icon = self.props.nodeIcons[key];
         } else if (componentInfo && componentInfo.icon) {
           icon = componentInfo.icon;
         } else if (componentInfo && componentInfo.iconsvg) {
@@ -477,7 +529,8 @@ module.exports.register = function (context) {
           selected: selected,
           error: (self.state.errorNodes[key] === true),
           showContext: self.props.showContext,
-          highlightPort: highlightPort
+          highlightPort: highlightPort,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
 
         nodeOptions = TheGraph.merge(TheGraph.config.graph.node, nodeOptions);
@@ -629,7 +682,8 @@ module.exports.register = function (context) {
           sY: expNode.y + TheGraph.config.nodeHeight / 2,
           tX: privateNode.metadata.x + privatePort.x,
           tY: privateNode.metadata.y + privatePort.y,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.inportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
@@ -704,7 +758,8 @@ module.exports.register = function (context) {
           sY: privateNode.metadata.y + privatePort.y,
           tX: expNode.x,
           tY: expNode.y + TheGraph.config.nodeHeight / 2,
-          showContext: self.props.showContext
+          showContext: self.props.showContext,
+          allowEdgeStart: self.props.allowEdgeStart,
         };
         expEdge = TheGraph.merge(TheGraph.config.graph.outportEdge, expEdge);
         edges.unshift(TheGraph.factories.graph.createGraphEdge.call(this, expEdge));
@@ -717,7 +772,7 @@ module.exports.register = function (context) {
         if (group.nodes.length < 1) {
           return;
         }
-        var limits = TheGraph.findMinMax(graph, group.nodes);
+        var limits = geometryutils.findMinMax(graph, group.nodes);
         if (!limits) {
           return;
         }
@@ -745,7 +800,7 @@ module.exports.register = function (context) {
       // Selection pseudo-group
       if (this.state.displaySelectionGroup &&
           selectedIds.length >= 2) {
-        var limits = TheGraph.findMinMax(graph, selectedIds);
+        var limits = geometryutils.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
             name: "selection",

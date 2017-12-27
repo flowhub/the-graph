@@ -1,3 +1,8 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var TooltipMixin = require('./mixins').Tooltip;
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -79,43 +84,34 @@ module.exports.register = function (context) {
     return TheGraph.Port(options);
   }
 
-  // PolymerGestures monkeypatch
-  function patchGestures() {
-    PolymerGestures.dispatcher.gestures.forEach( function (gesture) {
-      // hold
-      if (gesture.HOLD_DELAY) {
-        gesture.HOLD_DELAY = 500;
-      }
-      // track
-      if (gesture.WIGGLE_THRESHOLD) {
-        gesture.WIGGLE_THRESHOLD = 8;
-      }
-    });
-  }
-
-
   // Node view
-  TheGraph.Node = React.createFactory( React.createClass({
+  TheGraph.Node = React.createFactory( createReactClass({
     displayName: "TheGraphNode",
     mixins: [
-      TheGraph.mixins.Tooltip
+      TooltipMixin
     ],
+    getInitialState: function () {
+        return {
+          moving: false,
+          lastTrackX: null,
+          lastTrackY: null,
+        };
+    },
     componentDidMount: function () {
-      patchGestures();
       var domNode = ReactDOM.findDOMNode(this);
       
       // Dragging
-      domNode.addEventListener("trackstart", this.onTrackStart);
+      domNode.addEventListener("panstart", this.onTrackStart);
 
       // Tap to select
       if (this.props.onNodeSelection) {
-        domNode.addEventListener("tap", this.onNodeSelection, true);
+        domNode.addEventListener("tap", this.onNodeSelection);
       }
 
       // Context menu
       if (this.props.showContext) {
-        ReactDOM.findDOMNode(this).addEventListener("contextmenu", this.showContext);
-        ReactDOM.findDOMNode(this).addEventListener("hold", this.showContext);
+        domNode.addEventListener("contextmenu", this.showContext);
+        domNode.addEventListener("press", this.showContext);
       }
 
     },
@@ -130,9 +126,6 @@ module.exports.register = function (context) {
       // Don't drag graph
       event.stopPropagation();
 
-      // Don't change selection
-      event.preventTap();
-
       // Don't drag under menu
       if (this.props.app.menuShown) { return; }
 
@@ -140,8 +133,9 @@ module.exports.register = function (context) {
       if (this.props.app.pinching) { return; }
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("track", this.onTrack);
-      domNode.addEventListener("trackend", this.onTrackEnd);
+      domNode.addEventListener("panmove", this.onTrack);
+      domNode.addEventListener("panend", this.onTrackEnd);
+      domNode.addEventListener("pancancel", this.onTrackEnd);
 
       // Moving a node should only be a single transaction
       if (this.props.export) {
@@ -149,14 +143,23 @@ module.exports.register = function (context) {
       } else {
         this.props.graph.startTransaction('movenode');
       }
+      this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
     },
     onTrack: function (event) {
       // Don't fire on graph
       event.stopPropagation();
 
+      // Reconstruct relative motion since last event
+      var x = event.gesture.deltaX;
+      var y = event.gesture.deltaY;
+      var movementX = x - this.state.lastTrackX;
+      var movementY = y - this.state.lastTrackY;
+      this.setState({ lastTrackX: x , lastTrackY: y });
+
       var scale = this.props.app.state.scale;
-      var deltaX = Math.round( event.ddx / scale );
-      var deltaY = Math.round( event.ddy / scale );
+      var deltaX = Math.round( movementX / scale );
+      var deltaY = Math.round( movementY / scale );
 
       // Fires a change event on fbp-graph graph, which triggers redraw
       if (this.props.export) {
@@ -179,10 +182,13 @@ module.exports.register = function (context) {
     onTrackEnd: function (event) {
       // Don't fire on graph
       event.stopPropagation();
+      this.setState({ moving: false });
+      this.setState({ lastTrackX: null, lastTrackY: null});
 
       var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("track", this.onTrack);
-      domNode.removeEventListener("trackend", this.onTrackEnd);
+      domNode.removeEventListener("panmove", this.onTrack);
+      domNode.removeEventListener("panend", this.onTrackEnd);
+      domNode.removeEventListener("pancanel", this.onTrackEnd);
 
       // Snap to grid
       var snapToGrid = true;
@@ -223,8 +229,15 @@ module.exports.register = function (context) {
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
+      if (event.gesture) {
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+      }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
+      if (event.touches && event.touches.length) {
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+      }
 
       // App.showContext
       this.props.showContext({
@@ -393,10 +406,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Outports
       var outports = this.props.ports.outports;
@@ -422,10 +436,11 @@ module.exports.register = function (context) {
           port: {process:processKey, port:info.label, type:info.type},
           highlightPort: highlightPort,
           route: info.route,
-          showContext: showContext
+          showContext: showContext,
+          allowEdgeStart: this.props.allowEdgeStart,
         };
         return TheGraph.factories.node.createNodePort(props);
-      });
+      }.bind(this));
 
       // Node Icon
       var icon = TheGraph.FONT_AWESOME[ this.props.icon ];
@@ -486,6 +501,16 @@ module.exports.register = function (context) {
       var sublabelRect = TheGraph.factories.node.createNodeSublabelRect.call(this, sublabelRectOptions);
       var sublabelGroup = TheGraph.factories.node.createNodeSublabelGroup.call(this, TheGraph.config.node.sublabelBackground, [sublabelRect, sublabelText]);
 
+      // When moving, expand bounding box of element
+      // to catch events when pointer moves faster than we can move the element
+      var scale = this.props.app.state.scale;
+      var eventSize = this.props.width * 12 / scale;
+      var eventOptions = {
+        r: eventSize,
+        className: 'eventcatcher',
+      };
+      var eventRect = TheGraph.factories.createCircle(eventOptions);
+
       var nodeContents = [
         backgroundRect,
         borderRect,
@@ -496,6 +521,9 @@ module.exports.register = function (context) {
         labelGroup,
         sublabelGroup
       ];
+      if (this.state.moving) {
+        nodeContents.push(eventRect);
+      }
 
       var nodeOptions = {
         className: "node drag"+

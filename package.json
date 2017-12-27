@@ -1,43 +1,44 @@
 {
   "name": "the-graph",
-  "version": "0.7.0",
+  "version": "0.11.0",
   "description": "flow-based programming graph editing",
   "author": "Forrest Oliphant, the Grid",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "@pleasetrythisathome/react.animate": "0.0.4",
+    "create-react-class": "^15.6.2",
+    "ease-component": "^1.0.0",
     "fbp-graph": "^0.1.0",
     "font-awesome": "^4.6.3",
     "hammerjs": "^2.0.8",
     "klayjs-noflo": "^0.3.1",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "tv4": "^1.2.7",
-    "webcomponents.js": "^0.6.0"
+    "tv4": "^1.3.0"
   },
   "devDependencies": {
-    "bower": "^1.7.9",
-    "chai": "^3.5.0",
+    "canvas-prebuilt": "^1.6.5-prerelease.1",
     "coffee-script": "^1.12.2",
     "coffeeify": "^2.0.1",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-15": "^1.0.5",
     "glob": "^7.0.6",
     "grunt": "~1.0.1",
-    "grunt-bower-install-simple": "^1.2.3",
     "grunt-browserify": "~5.0.0",
-    "grunt-contrib-coffee": "^1.0.0",
     "grunt-contrib-connect": "^1.0.2",
-    "grunt-contrib-jshint": "~1.0.0",
+    "grunt-contrib-jshint": "~1.1.0",
     "grunt-contrib-watch": "~1.0.0",
-    "grunt-exec": "~1.0.1",
-    "grunt-saucelabs": "^9.0.0",
-    "mocha": "^3.2.0",
+    "grunt-exec": "~2.0.0",
+    "jest": "^21.2.1",
+    "jest-enzyme": "^4.0.1",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-test-renderer": "^15.6.2",
     "stylus": "~0.54.5"
   },
   "scripts": {
     "start": "grunt dev",
     "test": "grunt test",
     "build": "grunt build",
-    "postinstall": "bower install",
     "preversion": "grunt test",
     "postversion": "git push && git push --tags"
   },
@@ -47,5 +48,20 @@
   },
   "keywords": [
     "graph"
-  ]
+  ],
+  "peerDependencies": {
+    "react": "<16.0.0",
+    "react-dom": "<16.0.0"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/dist/",
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupTestFrameworkScriptFile": "jest-enzyme"
+  }
 }
