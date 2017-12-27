@@ -1,3 +1,6 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
 var TooltipMixin = require('./mixins').Tooltip;
 
 module.exports.register = function (context) {
@@ -71,7 +74,7 @@ module.exports.register = function (context) {
 
   // Edge view
 
-  TheGraph.Edge = React.createFactory( React.createClass({
+  TheGraph.Edge = React.createFactory( createReactClass({
     displayName: "TheGraphEdge",
     mixins: [
       TooltipMixin

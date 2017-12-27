@@ -1,3 +1,7 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+var Hammer = require('hammerjs');
 var hammerhacks = require('./hammer.js');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
@@ -93,13 +97,13 @@ module.exports.register = function (context) {
 
   // No need to promote DIV creation to TheGraph.js.
   function createAppContainer(options, content) {
-    var args = [options];
+    var args = ['div', options];
 
     if (Array.isArray(content)) {
       args = args.concat(content);
     }
 
-    return React.DOM.div.apply(React.DOM.div, args);
+    return React.createElement.apply(React, args);
   }
 
   function createAppGraph(options) {
@@ -115,7 +119,7 @@ module.exports.register = function (context) {
   }
 
   var mixins = [];
-  if (window.React.Animate) {
+  if (React.Animate) {
     mixins.push(React.Animate);
   }
 
@@ -131,7 +135,7 @@ module.exports.register = function (context) {
     return null;
   }
 
-  TheGraph.App = React.createFactory( React.createClass({
+  TheGraph.App = React.createFactory( createReactClass({
     displayName: "TheGraphApp",
     mixins: mixins,
     getDefaultProps: function() {
@@ -437,10 +441,10 @@ module.exports.register = function (context) {
       }
 
       // Wheel to zoom
-      if (domNode.onwheel!==undefined) {
+      if ('onwheel' in domNode) {
         // Chrome and Firefox
         domNode.addEventListener("wheel", this.onWheel);
-      } else if (domNode.onmousewheel!==undefined) {
+      } else if ('onmousewheel' in domNode) {
         // Safari
         domNode.addEventListener("mousewheel", this.onWheel);
       }

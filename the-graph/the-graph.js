@@ -1,3 +1,6 @@
+var React = require('react');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var defaultNodeSize = 72;
@@ -214,7 +217,7 @@ module.exports.register = function (context) {
   };
 
   // Reusable React classes
-  TheGraph.SVGImage = React.createFactory( React.createClass({
+  TheGraph.SVGImage = React.createFactory( createReactClass({
     displayName: "TheGraphSVGImage",
     render: function() {
         var html = '<image ';
@@ -225,14 +228,14 @@ module.exports.register = function (context) {
         html = html +'height="' + this.props.height + '"';
         html = html +'/>';
 
-        return React.DOM.g({
+        return React.createElement('g', {
             className: this.props.className,
             dangerouslySetInnerHTML:{__html: html}
         });
     }
   }));
 
-  TheGraph.TextBG = React.createFactory( React.createClass({
+  TheGraph.TextBG = React.createFactory( createReactClass({
     displayName: "TheGraphTextBG",
     render: function() {
       var text = this.props.text;
@@ -257,11 +260,12 @@ module.exports.register = function (context) {
         textAnchor = "end";
       }
 
-      return React.DOM.g(
+      return React.createElement(
+        'g',
         {
           className: (this.props.className ? this.props.className : "text-bg"),
         },
-        React.DOM.rect({
+        React.createElement('rect', {
           className: "text-bg-rect",
           x: x,
           y: y,
@@ -270,7 +274,7 @@ module.exports.register = function (context) {
           height: height * 1.1,
           width: width
         }),
-        React.DOM.text({
+        React.createElement('text', {
           className: (this.props.textClassName ? this.props.textClassName : "text-bg-text"),
           x: this.props.x,
           y: this.props.y,

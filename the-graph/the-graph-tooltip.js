@@ -1,3 +1,5 @@
+var React = require('react');
+var createReactClass = require('create-react-class');
 var defaultFactories = require('./factories.js');
 var merge = require('./merge.js');
 
@@ -25,7 +27,7 @@ var factories = {
 };
 
 // Port view
-var Tooltip = React.createFactory( React.createClass({
+var Tooltip = React.createFactory( createReactClass({
   displayName: "TheGraphTooltip",
   render: function() {
 

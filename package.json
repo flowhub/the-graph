@@ -7,19 +7,21 @@
   "main": "index.js",
   "dependencies": {
     "@pleasetrythisathome/react.animate": "0.0.4",
+    "create-react-class": "^15.6.2",
     "ease-component": "^1.0.0",
     "fbp-graph": "^0.1.0",
     "font-awesome": "^4.6.3",
     "hammerjs": "^2.0.8",
     "klayjs-noflo": "^0.3.1",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
     "tv4": "^1.3.0"
   },
   "devDependencies": {
+    "canvas-prebuilt": "^1.6.5-prerelease.1",
     "chai": "^4.0.0",
     "coffee-script": "^1.12.2",
     "coffeeify": "^2.0.1",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-15": "^1.0.5",
     "glob": "^7.0.6",
     "grunt": "~1.0.1",
     "grunt-browserify": "~5.0.0",
@@ -29,7 +31,12 @@
     "grunt-contrib-watch": "~1.0.0",
     "grunt-exec": "~2.0.0",
     "grunt-saucelabs": "^9.0.0",
+    "jest": "^21.2.1",
+    "jest-enzyme": "^4.0.1",
     "mocha": "^3.2.0",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-test-renderer": "^15.6.2",
     "stylus": "~0.54.5"
   },
   "scripts": {
@@ -45,5 +52,20 @@
   },
   "keywords": [
     "graph"
-  ]
+  ],
+  "peerDependencies": {
+    "react": "<16.0.0",
+    "react-dom": "<16.0.0"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/dist/",
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "setupTestFrameworkScriptFile": "jest-enzyme"
+  }
 }

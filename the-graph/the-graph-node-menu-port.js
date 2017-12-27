@@ -1,3 +1,7 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var createReactClass = require('create-react-class');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -23,7 +27,7 @@ module.exports.register = function (context) {
   };
 
 
-  TheGraph.NodeMenuPort = React.createFactory( React.createClass({
+  TheGraph.NodeMenuPort = React.createFactory( createReactClass({
     displayName: "TheGraphNodeMenuPort",
     componentDidMount: function () {
       ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
