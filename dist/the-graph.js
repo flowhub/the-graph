@@ -14783,7 +14783,9 @@ module.exports = {
 var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
+
 var baseFactories = require('./factories');
+var merge = require('./merge');
 
 var config = {
   container: {},
@@ -14838,7 +14840,7 @@ module.exports = {
   factories: factories,
 };
 
-},{"./factories":25,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],40:[function(require,module,exports){
+},{"./factories":25,"./merge":29,"create-react-class":"create-react-class","react":"react","react-dom":"react-dom"}],40:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
