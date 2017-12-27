@@ -2,6 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
 
+var geometryutils = require('./geometryutils');
+
 module.exports.register = function (context) {
 
   var TheGraph = context.TheGraph;
@@ -770,7 +772,7 @@ module.exports.register = function (context) {
         if (group.nodes.length < 1) {
           return;
         }
-        var limits = TheGraph.findMinMax(graph, group.nodes);
+        var limits = geometryutils.findMinMax(graph, group.nodes);
         if (!limits) {
           return;
         }
@@ -798,7 +800,7 @@ module.exports.register = function (context) {
       // Selection pseudo-group
       if (this.state.displaySelectionGroup &&
           selectedIds.length >= 2) {
-        var limits = TheGraph.findMinMax(graph, selectedIds);
+        var limits = geometryutils.findMinMax(graph, selectedIds);
         if (limits) {
           var pseudoGroup = {
             name: "selection",

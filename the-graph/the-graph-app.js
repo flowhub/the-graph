@@ -2,8 +2,10 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
 var Hammer = require('hammerjs');
+
 var hammerhacks = require('./hammer.js');
 var ModalBG = require('./the-graph-modalbg').ModalBG;
+var geometryutils = require('./geometryutils');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
 var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
@@ -158,7 +160,7 @@ module.exports.register = function (context) {
     },
     getInitialState: function() {
       // Autofit
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
 
       return {
         x: fit.x,
@@ -364,7 +366,7 @@ module.exports.register = function (context) {
       });
     },
     triggerFit: function (event) {
-      var fit = TheGraph.findFit(this.props.graph, this.props.width, this.props.height);
+      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
       this.setState({
         x: fit.x,
         y: fit.y,
@@ -373,7 +375,7 @@ module.exports.register = function (context) {
     },
     focusNode: function (node) {
       var duration = TheGraph.config.focusAnimationDuration;
-      var fit = TheGraph.findNodeFit(node, this.state.width, this.state.height);
+      var fit = geometryutils.findNodeFit(node, this.state.width, this.state.height, TheGraph.config.nodeSize);
       var start_point = {
         x: -(this.state.x - this.state.width / 2) / this.state.scale,
         y: -(this.state.y - this.state.height / 2) / this.state.scale,
@@ -381,7 +383,7 @@ module.exports.register = function (context) {
         x: node.metadata.x,
         y: node.metadata.y,
       };
-      var graphfit = TheGraph.findAreaFit(start_point, end_point, this.state.width, this.state.height);
+      var graphfit = geometryutils.findAreaFit(start_point, end_point, this.state.width, this.state.height, TheGraph.config.nodeSize);
       var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
       var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
       var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;

@@ -45,6 +45,11 @@ TheGraph.factories.ModalBG = TheGraph.modalbg.factories;
 
 TheGraph.FONT_AWESOME = require("./the-graph/font-awesome-unicode-map.js");
 
+var geometryutils = require('./the-graph/geometryutils');
+// compat
+TheGraph.findMinMax = geometryutils.findMinMax;
+TheGraph.findNodeFit = geometryutils.findNodeFit;
+TheGraph.findFit = geometryutils.findFit;
 
 TheGraph.tooltip = require("./the-graph/the-graph-tooltip.js");
 // compat
