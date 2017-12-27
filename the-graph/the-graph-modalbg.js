@@ -1,7 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var createReactClass = require('create-react-class');
+
 var baseFactories = require('./factories');
+var merge = require('./merge');
 
 var config = {
   container: {},
