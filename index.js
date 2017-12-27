@@ -29,7 +29,13 @@ require("./the-graph/the-graph-edge.js").register(g);
 require("./the-graph/the-graph-iip.js").register(g);
 require("./the-graph/the-graph-group.js").register(g);
 
-require("./the-graph/the-graph-menu.js").register(g);
+TheGraph.menu = require("./the-graph/the-graph-menu.js");
+// compat
+TheGraph.Menu = TheGraph.menu.Menu;
+TheGraph.factories.menu = TheGraph.menu.factories;
+TheGraph.config.menu = TheGraph.menu.config;
+TheGraph.config.menu.iconRect.rx = TheGraph.config.nodeRadius;
+TheGraph.config.menu.iconRect.ry = TheGraph.config.nodeRadius;
 
 TheGraph.modalbg = require("./the-graph/the-graph-modalbg.js");
 // compat
