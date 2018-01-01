@@ -190,17 +190,8 @@ function renderGraph(graph, options) {
     wrapper.width = props.width;
     wrapper.height = props.height;
 
-    // FIXME: bundle CSS and load from string
-    var cssElement = document.createElement('link');
-    cssElement.type = 'text/css';
-    cssElement.rel = 'stylesheet';
-    cssElement.href = '../themes/the-graph-dark.css';
-
     // FIXME: find a less intrusive way  
     var container = document.body;
-
-    removeAllChildren(document.head);
-    document.head.appendChild(cssElement);
     removeAllChildren(container);
     container.appendChild(wrapper);
 
@@ -212,7 +203,8 @@ function renderGraph(graph, options) {
 }
 
 function waitForStyleLoad(callback) {
-    setTimeout(callback, 500); // XXX: hacky
+    // FIXME: check properly, https://gist.github.com/cvan/8a188df72a95a35888b70e5fda80450d
+    setTimeout(callback, 500);
 }
 
 function testInteractive() {
@@ -245,6 +237,7 @@ window.jsJobRun = function(inputdata, options, callback) {
     var svgNode = renderGraph(testData.graph, { library: testData.library });
 
     waitForStyleLoad(function() {
+
         var options = {};
         renderImage(svgNode, options, function(err, imageUrl) {
             // FIXME: decode and unpack the data?
