@@ -104,10 +104,13 @@ function applyStyle(tree) {
 }
 
 
-function renderImage(svgNode, options, callback) {
+function renderImage(graphElement, options, callback) {
     if (!options) { options = {}; }
     options.format |= 'png';
+    if (typeof options.background === 'undefined') { options.background = true; }
 
+    var svgNode = graphElement.getElementsByTagName('svg')[0];
+    var bgCanvas = graphElement.getElementsByTagName('canvas')[0];
     console.log('ss', svgNode)
     if (svgNode.tagName.toLowerCase() != 'svg') {
         return callback(new Error('renderImage input must be SVG, got ' + svgNode.tagName));
@@ -119,6 +122,9 @@ function renderImage(svgNode, options, callback) {
     // Note: alternative to inlining style is to inject the CSS file into SVG file?
     // https://stackoverflow.com/questions/18434094/how-to-style-svg-with-external-css
     var withStyle = applyStyle(svgNode);
+
+    // TODO: include background in SVG file
+    // not that easy thougj, https://stackoverflow.com/questions/11293026/default-background-color-of-svg-root-element
 
     var serializer = new XMLSerializer();
     var svgData = serializer.serializeToString(withStyle);
@@ -141,6 +147,14 @@ function renderImage(svgNode, options, callback) {
     // TODO: allow resizing?
     // TODO: support background
     var ctx = canvas.getContext('2d');
+
+    if (options.background) {
+        var bgColor = getComputedStyle(graphElement)['background-color'];
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(bgCanvas, 0, 0);
+    }
+
     img.onerror = function(err) {
         return callback(err);
     }
@@ -170,8 +184,6 @@ function removeAllChildren(n) {
 function renderGraph(graph, options) {
     //options.library = libraryFromGraph(graph);
     options.theme = 'the-graph-dark';
-    
-    // FIXME: also load CSS stylesheet
 
     // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
     // TODO: allow to specify maxWidth/maxHeight
@@ -198,36 +210,13 @@ function renderGraph(graph, options) {
     var element = React.createElement(TheGraph.App, props);
     ReactDOM.render(element, wrapper);
 
-    var svgElement = wrapper.children[0].getElementsByTagName('svg')[0];
+    var svgElement = wrapper.children[0];
     return svgElement;
 }
 
 function waitForStyleLoad(callback) {
     // FIXME: check properly, https://gist.github.com/cvan/8a188df72a95a35888b70e5fda80450d
     setTimeout(callback, 500);
-}
-
-function testInteractive() {
-    // TEMP: testing
-    //var svgNode = document.getElementById('editor').children[0].getElementsByTagName('svg')[0];
-
-    var testData = getTestData();
-    var svgNode = renderGraph(testData.graph, { library: testData.library });
-
-    waitForStyleLoad(function() {
-        var options = {};
-        renderImage(svgNode, options, function(err, imageUrl) {
-            if (err) {
-                console.error('image render error', err);
-                return;
-            }
-            imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
-            window.location.href = imageUrl;
-        })
-    });
-}
-module.exports = {
-    testInteractive: testInteractive,
 }
 
 window.jsJobRun = function(inputdata, options, callback) {
