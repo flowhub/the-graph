@@ -40,10 +40,15 @@ function getTestData() {
           ]
         },
     };
-    var graph = new fbpGraph.Graph();
+    var graph = new TheGraph.fbpGraph.Graph();
     addNode(graph);
     addNode(graph);
     addNode(graph);
+    addNode(graph);
+    addNode(graph);
+    addEdge(graph);
+    addEdge(graph);
+    addEdge(graph);
     addEdge(graph);
     return { graph: graph, library: componentLibrary };
 }
@@ -85,9 +90,8 @@ function applyStyleManual(element) {
 function applyStyle(tree) {
     var all = tree.getElementsByTagName("*")
 
-    var ignoreStyle = calculateDefaultStyle();
     for (var i=0; i<all.length; i++) {
-        applyStyleManual(all[i], ignoreStyle);
+        applyStyleManual(all[i]);
     }
     return tree;
 }
@@ -150,6 +154,12 @@ function libraryFromGraph(graph) {
     return {}; // FIXME: implement
 }
 
+function removeAllChildren(n) {
+    while (n.firstChild) {
+        n.removeChild(n.firstChild);
+    }
+}
+
 function renderGraph(graph, options) {
     //options.library = libraryFromGraph(graph);
     options.theme = 'the-graph-dark';
@@ -172,11 +182,30 @@ function renderGraph(graph, options) {
     wrapper.className = options.theme;
     wrapper.width = props.width;
     wrapper.height = props.height;
+
+    // FIXME: bundle CSS and load from string
+    var cssElement = document.createElement('link');
+    cssElement.type = 'text/css';
+    cssElement.rel = 'stylesheet';
+    cssElement.href = '../themes/the-graph-dark.css';
+
+    // FIXME: find a less intrusive way  
+    var container = document.body;
+
+    removeAllChildren(document.head);
+    document.head.appendChild(cssElement);
+    removeAllChildren(container);
+    container.appendChild(wrapper);
+
     var element = React.createElement(TheGraph.App, props);
     ReactDOM.render(element, wrapper);
 
     var svgElement = wrapper.children[0].getElementsByTagName('svg')[0];
     return svgElement;
+}
+
+function waitForStyleLoad(callback) {
+    setTimeout(callback, 500); // XXX: hacky
 }
 
 function testInteractive() {
@@ -185,17 +214,18 @@ function testInteractive() {
 
     var testData = getTestData();
     var svgNode = renderGraph(testData.graph, { library: testData.library });
-    console.log(svgNode);
 
-    var options = {};
-    renderImage(svgNode, options, function(err, imageUrl) {
-        if (err) {
-            console.error('image render error', err);
-            return;
-        }
-        imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
-        window.location.href = imageUrl;
-    })
+    waitForStyleLoad(function() {
+        var options = {};
+        renderImage(svgNode, options, function(err, imageUrl) {
+            if (err) {
+                console.error('image render error', err);
+                return;
+            }
+            imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
+            window.location.href = imageUrl;
+        })
+    });
 }
 testInteractive();
 
