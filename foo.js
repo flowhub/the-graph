@@ -112,22 +112,19 @@ function renderImage(svgNode, options, callback) {
     var svgUrl = DOMURL.createObjectURL(svg);   
 
     var canvas = document.createElement('canvas');
-    canvas.width = 1000;
-    canvas.height = 1000;
+    canvas.width = svgNode.getAttribute('width');
+    canvas.height = svgNode.getAttribute('height');
+    console.log('s', canvas)
 
     // TODO: allow resizing?
     // TODO: support background
     var ctx = canvas.getContext('2d');
     img.onerror = function(err) {
         return callback(err);
-        console.error('load err', err);
     }
     img.onload = function() {
-        console.log('image loaded');
         ctx.drawImage(img, 0, 0);
         DOMURL.revokeObjectURL(svgUrl);
-
-        // TEMP
         return callback(null, canvas.toDataURL(options.format))
     }
     //console.log('loading image', svgUrl);
