@@ -62,6 +62,9 @@ left
 //    element.setAttribute('style', computedStyleStr);
 }
 
+// FIXME: background is missing
+// 
+// FIXME: icons are broken
 function applyStyle(tree) {
     var all = tree.getElementsByTagName("*")
     console.log('l', all.length);
@@ -83,18 +86,65 @@ function calculateDefaultStyle() {
 }
 
 
+
+function renderImage(svgNode, options, callback) {
+    if (!options) { options = {}; }
+    options.format |= 'png';
+
+    // FIXME: make copy
+    //svgNode = svgNode.cloneNode(true, true);
+
+    // Note: alternative to inlining style is to inject the CSS file into SVG file?
+    // https://stackoverflow.com/questions/18434094/how-to-style-svg-with-external-css
+    var withStyle = applyStyle(svgNode);
+
+    var serializer = new XMLSerializer();
+    var svgData = serializer.serializeToString(withStyle);
+
+    if (options.format == 'svg') {
+        return callback(null, svgData);
+    }
+
+    var DOMURL = window.URL || window.webkitURL || window;
+
+    var img = new Image();
+    var svg = new Blob([svgData], {type: 'image/svg+xml'});
+    var svgUrl = DOMURL.createObjectURL(svg);   
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 1000;
+    canvas.height = 1000;
+
+    // TODO: allow resizing?
+    // TODO: support background
+    var ctx = canvas.getContext('2d');
+    img.onerror = function(err) {
+        return callback(err);
+        console.error('load err', err);
+    }
+    img.onload = function() {
+        console.log('image loaded');
+        ctx.drawImage(img, 0, 0);
+        DOMURL.revokeObjectURL(svgUrl);
+
+        // TEMP
+        return callback(null, canvas.toDataURL(options.format))
+    }
+    //console.log('loading image', svgUrl);
+    img.src = svgUrl;
+
+    //document.body.appendChild(img)
+}
+
+
+// FIXME: render graph to DOM
+// FIXME: Set zoom-level, width,height so that whole graph shows with all info 
+
+// TEMP: testing
 var svgNode = document.getElementById('editor').children[0].getElementsByTagName('svg')[0];
-//svgNode = svgNode.cloneNode(true, true);
-var withStyle = applyStyle(svgNode); 
-// TODO: alternative is to inject the css file into SVG file?
-// https://stackoverflow.com/questions/18434094/how-to-style-svg-with-external-css
-
-// TODO: Draw to canvas, save as PNG/JPEG
-// https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Drawing_DOM_objects_into_a_canvas
-
-// TODO: use XmlSerializer?
-//withStyle.outerHTML
-
-//var ign = calculateDefaultStyle();
-//ign
+var options = {};
+renderImage(svgNode, options, function(err, imageUrl) {
+    imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
+    window.location.href = imageUrl;
+})
 
