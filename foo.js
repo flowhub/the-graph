@@ -1,31 +1,58 @@
 
-// https://stackoverflow.com/questions/15181452/how-to-save-export-inline-svg-styled-with-css-from-browser-to-image-file
-function applyComputedStyle(element, defaults) {
-    var style = getComputedStyle(element);
-    var computedStyleStr = "";
+// Generate some graph contents programatically
+function addNode(graph) {
+  var id = Math.round(Math.random()*100000).toString(36);
+  var component = Math.random() > 0.5 ? 'basic' : 'basic';
+  var metadata = {
+    label: component,
+    x: Math.round(Math.random()*800),
+    y: Math.round(Math.random()*600)
+  };
+  var newNode = graph.addNode(id, component, metadata);
+  return newNode;
+};
+function addEdge(graph, outNodeID) {
+  var nodes = graph.nodes;
+  var len = nodes.length;
+  if ( len<1 ) { return; }
+  var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
+  var node2 = nodes[Math.floor(Math.random()*len)].id;
+  var port1 = 'out' + Math.floor(Math.random()*3);
+  var port2 = 'in' + Math.floor(Math.random()*12);
+  var meta = { route: Math.floor(Math.random()*10) };
+  var newEdge = graph.addEdge(node1, port1, node2, port2, meta);
+  return newEdge;
+};
 
-    var ignoredNumber = 0;
-
-    for (var i=0; i<style.length; i++) {
-        var prop = style[i];
-        var value = style.getPropertyValue(prop);
-        var def = defaults.getPropertyValue(prop);
-        var attr = element.getAttribute(prop);
-        var include = !attr && prop.indexOf('-webkit') !== 0 && prop.indexOf('animation') !== 0 && prop.indexOf('transition') !== 0 && value !== "" && value !== def;
-        if (include) {
-            computedStyleStr += prop+":"+value+";";
-        } else {
-            ignoredNumber++;
-        }
-    }
-    console.log('ignored', ignoredNumber, style.length);
-    element.setAttribute('style', computedStyleStr);
+function getTestData() {
+    var componentLibrary = {
+        basic: {
+          name: 'basic',
+          description: 'basic demo component',
+          icon: 'eye',
+          inports: [
+            {'name': 'in0', 'type': 'all'},
+            {'name': 'in1', 'type': 'all'},
+            {'name': 'in2', 'type': 'all'}
+          ],
+          outports: [
+            {'name': 'out', 'type': 'all'}
+          ]
+        },
+    };
+    var graph = new fbpGraph.Graph();
+    addNode(graph);
+    addNode(graph);
+    addNode(graph);
+    addEdge(graph);
+    return { graph: graph, library: componentLibrary };
 }
+
+
+
 
 function applyStyleManual(element) {
     var style = getComputedStyle(element);
-    //var computedStyleStr = "";
-
     var transferToAttribute = [
 
     ]
@@ -39,11 +66,6 @@ function applyStyleManual(element) {
         'visibility',
     ]
 
-/*
-position
-top
-left
-*/
     transferToAttribute.forEach(function (name) {
         var s = style.getPropertyValue(name);
         if (s) {
@@ -56,18 +78,12 @@ left
             element.style[name] = s;
         }
     }); 
-
-
-
-//    element.setAttribute('style', computedStyleStr);
 }
 
 // FIXME: background is missing
-// 
 // FIXME: icons are broken
 function applyStyle(tree) {
     var all = tree.getElementsByTagName("*")
-    console.log('l', all.length);
 
     var ignoreStyle = calculateDefaultStyle();
     for (var i=0; i<all.length; i++) {
@@ -76,20 +92,15 @@ function applyStyle(tree) {
     return tree;
 }
 
-function calculateDefaultStyle() {
-    var emptySvg = document.createElement('svg');
-    document.body.appendChild(emptySvg);
-    emptySvg.outerHTML = '<svg id="emptysvg" xmlns="http://www.w3.org/2000/svg" version="1.1" height="2"><g ffs="bs"></g></svg>';
-    var s = getComputedStyle(emptySvg); 
-    //document.body.removeChild(emptySvg);
-    return s;
-}
-
-
 
 function renderImage(svgNode, options, callback) {
     if (!options) { options = {}; }
     options.format |= 'png';
+
+    console.log('ss', svgNode)
+    if (svgNode.tagName.toLowerCase() != 'svg') {
+        return callback(new Error('renderImage input must be SVG, got ' + svgNode.tagName));
+    }
 
     // FIXME: make copy
     //svgNode = svgNode.cloneNode(true, true);
@@ -134,14 +145,58 @@ function renderImage(svgNode, options, callback) {
 }
 
 
-// FIXME: render graph to DOM
-// FIXME: Set zoom-level, width,height so that whole graph shows with all info 
 
-// TEMP: testing
-var svgNode = document.getElementById('editor').children[0].getElementsByTagName('svg')[0];
-var options = {};
-renderImage(svgNode, options, function(err, imageUrl) {
-    imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
-    window.location.href = imageUrl;
-})
+function libraryFromGraph(graph) {
+    return {}; // FIXME: implement
+}
+
+function renderGraph(graph, options) {
+    //options.library = libraryFromGraph(graph);
+    options.theme = 'the-graph-dark';
+    
+    // FIXME: also load CSS stylesheet
+
+    // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
+    // TODO: allow to specify maxWidth/maxHeight
+
+    var props = {
+        readonly: true,
+        width: 1200,
+        height: 600,
+        graph: graph,
+        library: options.library,
+    };
+    //console.log('render', props);
+
+    var wrapper = document.createElement('div');
+    wrapper.className = options.theme;
+    wrapper.width = props.width;
+    wrapper.height = props.height;
+    var element = React.createElement(TheGraph.App, props);
+    ReactDOM.render(element, wrapper);
+
+    var svgElement = wrapper.children[0].getElementsByTagName('svg')[0];
+    return svgElement;
+}
+
+function testInteractive() {
+    // TEMP: testing
+    //var svgNode = document.getElementById('editor').children[0].getElementsByTagName('svg')[0];
+
+    var testData = getTestData();
+    var svgNode = renderGraph(testData.graph, { library: testData.library });
+    console.log(svgNode);
+
+    var options = {};
+    renderImage(svgNode, options, function(err, imageUrl) {
+        if (err) {
+            console.error('image render error', err);
+            return;
+        }
+        imageUrl = imageUrl.replace("image/png", "image/octet-stream"); // avoid browser complaining about unsupported
+        window.location.href = imageUrl;
+    })
+}
+testInteractive();
+
 
