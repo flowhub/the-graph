@@ -49,12 +49,11 @@ function applyStyle(tree) {
 
 function renderImage(graphElement, options, callback) {
     if (!options) { options = {}; }
-    options.format |= 'png';
+    if (!options.format) { options.format = 'png'; }
     if (typeof options.background === 'undefined') { options.background = true; }
 
     var svgNode = graphElement.getElementsByTagName('svg')[0];
     var bgCanvas = graphElement.getElementsByTagName('canvas')[0];
-    console.log('ss', svgNode)
     if (svgNode.tagName.toLowerCase() != 'svg') {
         return callback(new Error('renderImage input must be SVG, got ' + svgNode.tagName));
     }
@@ -68,7 +67,6 @@ function renderImage(graphElement, options, callback) {
 
     // TODO: include background in SVG file
     // not that easy thougj, https://stackoverflow.com/questions/11293026/default-background-color-of-svg-root-element
-
     var serializer = new XMLSerializer();
     var svgData = serializer.serializeToString(withStyle);
 
@@ -85,7 +83,6 @@ function renderImage(graphElement, options, callback) {
     var canvas = document.createElement('canvas');
     canvas.width = svgNode.getAttribute('width');
     canvas.height = svgNode.getAttribute('height');
-    console.log('s', canvas)
 
     // TODO: allow resizing?
     // TODO: support background
@@ -106,10 +103,7 @@ function renderImage(graphElement, options, callback) {
         DOMURL.revokeObjectURL(svgUrl);
         return callback(null, canvas.toDataURL(options.format))
     }
-    //console.log('loading image', svgUrl);
     img.src = svgUrl;
-
-    //document.body.appendChild(img)
 }
 
 
@@ -132,7 +126,6 @@ function libraryFromGraph(graph) {
 
     graph.edges.forEach(function(conn) {
         var tgt = processComponents[conn.to.node];
-        console.log('tgt', conn.to.node, tgt);
         components[tgt].inports.push({
             name: conn.to.port,
             type: 'all',
@@ -146,7 +139,6 @@ function libraryFromGraph(graph) {
         }
     });
 
-    console.log('l', components);
     return components;
 }
 
@@ -160,6 +152,7 @@ function renderGraph(graph, options) {
     if (!options.library) { options.library = libraryFromGraph(graph); } 
     options.theme = 'the-graph-dark';
 
+    // TODO support doing autolayout. Default to on if graph is missing x/y positions
     // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
     // TODO: allow to specify maxWidth/maxHeight
 
@@ -195,9 +188,6 @@ function waitForStyleLoad(callback) {
 }
 
 window.jsJobRun = function(inputdata, options, callback) {
-    // FIXME: respect input/options
-
-    console.log('f', inputdata);
 
     var loader = TheGraph.fbpGraph.graph.loadJSON;
     var graphData = inputdata;

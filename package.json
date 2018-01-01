@@ -5,6 +5,9 @@
   "author": "Forrest Oliphant, the Grid",
   "license": "MIT",
   "main": "index.js",
+  "bin": {
+    "the-graph-render": "./bin/the-graph-render"
+  },
   "dependencies": {
     "@pleasetrythisathome/react.animate": "0.0.4",
     "create-react-class": "^15.6.2",
@@ -13,7 +16,8 @@
     "font-awesome": "^4.6.3",
     "hammerjs": "^2.0.8",
     "klayjs-noflo": "^0.3.1",
-    "tv4": "^1.3.0"
+    "tv4": "^1.3.0",
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "browserify-css": "^0.14.0",
