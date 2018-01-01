@@ -6,63 +6,6 @@ var ReactDOM = require('react-dom');
 var darkTheme = require('./themes/the-graph-dark.css');
 var lightTheme = require('./themes/the-graph-light.css');
 
-// Generate some graph contents programatically
-function addNode(graph) {
-  var id = Math.round(Math.random()*100000).toString(36);
-  var component = Math.random() > 0.5 ? 'basic' : 'basic';
-  var metadata = {
-    label: component,
-    x: Math.round(Math.random()*800),
-    y: Math.round(Math.random()*600)
-  };
-  var newNode = graph.addNode(id, component, metadata);
-  return newNode;
-};
-function addEdge(graph, outNodeID) {
-  var nodes = graph.nodes;
-  var len = nodes.length;
-  if ( len<1 ) { return; }
-  var node1 = outNodeID || nodes[Math.floor(Math.random()*len)].id;
-  var node2 = nodes[Math.floor(Math.random()*len)].id;
-  var port1 = 'out' + Math.floor(Math.random()*3);
-  var port2 = 'in' + Math.floor(Math.random()*12);
-  var meta = { route: Math.floor(Math.random()*10) };
-  var newEdge = graph.addEdge(node1, port1, node2, port2, meta);
-  return newEdge;
-};
-
-function getTestData() {
-    var componentLibrary = {
-        basic: {
-          name: 'basic',
-          description: 'basic demo component',
-          icon: 'eye',
-          inports: [
-            {'name': 'in0', 'type': 'all'},
-            {'name': 'in1', 'type': 'all'},
-            {'name': 'in2', 'type': 'all'}
-          ],
-          outports: [
-            {'name': 'out', 'type': 'all'}
-          ]
-        },
-    };
-    var graph = new TheGraph.fbpGraph.Graph();
-    addNode(graph);
-    addNode(graph);
-    addNode(graph);
-    addNode(graph);
-    addNode(graph);
-    addEdge(graph);
-    addEdge(graph);
-    addEdge(graph);
-    addEdge(graph);
-    return { graph: graph, library: componentLibrary };
-}
-
-
-
-
 function applyStyleManual(element) {
     var style = getComputedStyle(element);
     var transferToAttribute = [
@@ -172,7 +115,39 @@ function renderImage(graphElement, options, callback) {
 
 
 function libraryFromGraph(graph) {
-    return {}; // FIXME: implement
+    var components = {};
+    var processComponents = {}; 
+
+    graph.nodes.forEach(function(process) {
+        var name = process.component;
+        processComponents[process.id] = name;
+        components[name] = {
+            name: name,
+            description: name,
+            icon: null,
+            inports: [],
+            outports: [],
+        };
+    });
+
+    graph.edges.forEach(function(conn) {
+        var tgt = processComponents[conn.to.node];
+        console.log('tgt', conn.to.node, tgt);
+        components[tgt].inports.push({
+            name: conn.to.port,
+            type: 'all',
+        })
+        if (conn.from) {
+            var src = processComponents[conn.from.node];
+            components[src].outports.push({
+                name: conn.from.port,
+                type: 'all',
+            })
+        }
+    });
+
+    console.log('l', components);
+    return components;
 }
 
 function removeAllChildren(n) {
@@ -182,7 +157,7 @@ function removeAllChildren(n) {
 }
 
 function renderGraph(graph, options) {
-    //options.library = libraryFromGraph(graph);
+    if (!options.library) { options.library = libraryFromGraph(graph); } 
     options.theme = 'the-graph-dark';
 
     // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
@@ -221,17 +196,30 @@ function waitForStyleLoad(callback) {
 
 window.jsJobRun = function(inputdata, options, callback) {
     // FIXME: respect input/options
-    
-    var testData = getTestData();
-    var svgNode = renderGraph(testData.graph, { library: testData.library });
 
-    waitForStyleLoad(function() {
+    console.log('f', inputdata);
 
-        var options = {};
-        renderImage(svgNode, options, function(err, imageUrl) {
-            // FIXME: decode and unpack the data?
-            return callback(err, imageUrl);
-        })
+    var loader = TheGraph.fbpGraph.graph.loadJSON;
+    var graphData = inputdata;
+    if (inputdata.fbp) {
+        graphData = inputdata.fbp;
+        loader = TheGraph.fbpGraph.graph.loadFBP;
+    }
+
+    loader(graphData, function(err, graph) {
+        if (err) { return callback(err); }
+        console.log('loaded graph');
+
+        var svgNode = renderGraph(graph, options);
+        console.log('rendered graph to DOM');
+        waitForStyleLoad(function() {
+            console.log('themes loaded');
+
+            renderImage(svgNode, options, function(err, imageUrl) {
+                return callback(err, imageUrl);
+            })
+        });
+
     });
 };
 
