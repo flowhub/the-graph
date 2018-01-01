@@ -54,6 +54,18 @@
               standalone: 'TheGraph'
             }
           }
+        },
+        render: {
+          files: {
+            'dist/the-graph-render.js': ['render.js'],
+          },
+          options: {
+            external: [],
+            transform: ['coffeeify'],
+            browserifyOptions: {
+              standalone: 'TheGraphRender'
+            }
+          }
         }
       },
       jshint: {
@@ -118,7 +130,7 @@
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['connect', 'test', 'watch']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor', 'browserify:render']);
     this.registerTask('test', ['jshint:all', 'build', 'exec:jest']);
     this.registerTask('default', ['test']);
   };

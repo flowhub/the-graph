@@ -1,4 +1,8 @@
 
+var TheGraph = require('./index');
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 // Generate some graph contents programatically
 function addNode(graph) {
   var id = Math.round(Math.random()*100000).toString(36);
@@ -227,6 +231,9 @@ function testInteractive() {
         })
     });
 }
-testInteractive();
+module.exports = {
+    testInteractive: testInteractive,
+}
+
 
 
