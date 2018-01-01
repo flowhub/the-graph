@@ -61,7 +61,7 @@
           },
           options: {
             external: [],
-            transform: ['coffeeify'],
+            transform: ['coffeeify', 'browserify-css'],
             browserifyOptions: {
               standalone: 'TheGraphRender'
             }

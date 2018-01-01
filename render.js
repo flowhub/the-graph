@@ -3,6 +3,9 @@ var TheGraph = require('./index');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var darkTheme = require('./themes/the-graph-dark.css');
+var lightTheme = require('./themes/the-graph-light.css');
+
 // Generate some graph contents programatically
 function addNode(graph) {
   var id = Math.round(Math.random()*100000).toString(36);
@@ -235,5 +238,18 @@ module.exports = {
     testInteractive: testInteractive,
 }
 
+window.jsJobRun = function(inputdata, options, callback) {
+    // FIXME: respect input/options
+    
+    var testData = getTestData();
+    var svgNode = renderGraph(testData.graph, { library: testData.library });
 
+    waitForStyleLoad(function() {
+        var options = {};
+        renderImage(svgNode, options, function(err, imageUrl) {
+            // FIXME: decode and unpack the data?
+            return callback(err, imageUrl);
+        })
+    });
+};
 
