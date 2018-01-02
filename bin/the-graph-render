@@ -10,9 +10,6 @@ const argv = require('yargs').argv
 const jsjob = require('jsjob');
 
 function unpackUrl(dataurl) { 
-    if (dataurl.indexOf('data:') != 0) {
-        throw new Error('Dataurl must start with data');
-    }
     var mimetype = dataurl.substring(dataurl.indexOf(':'), dataurl.indexOf(';'));
     var encoding = dataurl.substring(dataurl.indexOf(';')+1, dataurl.indexOf(',')); 
     if (encoding != 'base64') {
@@ -65,9 +62,11 @@ function render(graphPath, options, callback) {
         runRender(graphData, options, function (err, output, details) {
             if (err) { return callback(err); }
 
-            const imageData = unpackUrl(output);
+            if (output.indexOf('data:') == 0) {
+                output = unpackUrl(output);
+            }
 
-            fs.writeFile(options.output, imageData, function(err) {
+            fs.writeFile(options.output, output, function(err) {
                 return callback(err, options.output);
             });
         });
