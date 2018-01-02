@@ -150,16 +150,18 @@ function removeAllChildren(n) {
 
 function renderGraph(graph, options) {
     if (!options.library) { options.library = libraryFromGraph(graph); } 
-    options.theme = 'the-graph-dark';
+    if (!options.theme) { options.theme = 'the-graph-dark' };
+    if (!options.width) { options.width = 1200; }
+    if (!options.height) { options.height = options.width * 0.7; }
 
     // TODO support doing autolayout. Default to on if graph is missing x/y positions
     // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
-    // TODO: allow to specify maxWidth/maxHeight
+    // TODO: default height based on fitted aspect ratio
 
     var props = {
         readonly: true,
-        width: 1200,
-        height: 600,
+        width: options.width,
+        height: options.height,
         graph: graph,
         library: options.library,
     };

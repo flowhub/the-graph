@@ -26,7 +26,7 @@ function unpackUrl(dataurl) {
 
 function runRender(graphData, options, callback) {
     // FIXME: host it
-    var jobUrl = 'http://localhost:3000/dist/the-graph-render.js';
+    if (!options.job) { options.job = 'http://localhost:3000/dist/the-graph-render.js'; }
 
     var runnerConfig = {
         verbose: options.verbose,
@@ -35,7 +35,7 @@ function runRender(graphData, options, callback) {
     runner.start(function(err) {
         if (err) return callback(err)
 
-        runner.runJob(jobUrl, graphData, options, function(err, result, details) {
+        runner.runJob(options.job, graphData, options, function(err, result, details) {
             if (err) { return callback(err); }
 
             console.log('jsjob returned', err);
