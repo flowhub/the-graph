@@ -62,9 +62,8 @@ describe('the-graph-render', () => {
 
   before(() => {
     const tempDir = path.join(__dirname,'temp');
-    bluebird.promisify(fs.stat)(tempDir).then((stats) => {
-      if (stats.isDirectory()) return null
-      else return bluebird.promisify(fs.mkdir)(tempDir)
+    bluebird.promisify(fs.access)(tempDir).catch((stats) => {
+      return bluebird.promisify(fs.mkdir)(tempDir)
     });
   })
 
