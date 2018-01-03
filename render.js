@@ -51,6 +51,7 @@ function renderImage(graphElement, options, callback) {
     if (!options) { options = {}; }
     if (!options.format) { options.format = 'png'; }
     if (typeof options.background === 'undefined') { options.background = true; }
+    if (typeof options.quality === 'undefined') { options.quality = 0.9; }
 
     var svgNode = graphElement.getElementsByTagName('svg')[0];
     var bgCanvas = graphElement.getElementsByTagName('canvas')[0];
@@ -101,7 +102,8 @@ function renderImage(graphElement, options, callback) {
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
         DOMURL.revokeObjectURL(svgUrl);
-        return callback(null, canvas.toDataURL(options.format))
+        var out = canvas.toDataURL('image/'+options.format, options.quality);
+        return callback(null, out);
     }
     img.src = svgUrl;
 }
