@@ -15,7 +15,7 @@ function applyStyleManual(element) {
     var style = getComputedStyle(element);
     var transferToAttribute = [
 
-    ]
+    ];
     var transferToStyle = [
         'fill',
         'stroke',
@@ -24,7 +24,7 @@ function applyStyleManual(element) {
         'text-anchor',
         'font-size',
         'visibility',
-    ]
+    ];
 
     transferToAttribute.forEach(function (name) {
         var s = style.getPropertyValue(name);
@@ -42,8 +42,7 @@ function applyStyleManual(element) {
 
 // FIXME: icons are broken
 function applyStyle(tree) {
-    var all = tree.getElementsByTagName("*")
-
+    var all = tree.getElementsByTagName("*");
     for (var i=0; i<all.length; i++) {
         applyStyleManual(all[i]);
     }
@@ -101,13 +100,13 @@ function renderImage(graphElement, options, callback) {
 
     img.onerror = function(err) {
         return callback(err);
-    }
+    };
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
         DOMURL.revokeObjectURL(svgUrl);
         var out = canvas.toDataURL('image/'+options.format, options.quality);
         return callback(null, out);
-    }
+    };
     img.src = svgUrl;
 }
 
@@ -130,7 +129,7 @@ function libraryFromGraph(graph) {
     });
 
     function addIfMissing(ports, name) {
-        var found = ports.filter(function (p) { p.name == name; } );
+        var found = ports.filter(function (p) { return p.name == name; } );
         if (found.length == 0) {
             ports.push({ name: name, type: 'all' });
         }
@@ -167,7 +166,7 @@ function removeAllChildren(n) {
 
 function renderGraph(graph, options) {
     if (!options.library) { options.library = libraryFromGraph(graph); } 
-    if (!options.theme) { options.theme = 'the-graph-dark' };
+    if (!options.theme) { options.theme = 'the-graph-dark'; }
     if (!options.width) { options.width = 1200; }
     if (!options.margin) { options.margin = 72; }
 
