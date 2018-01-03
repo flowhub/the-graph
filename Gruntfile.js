@@ -121,9 +121,19 @@
           }
         },
       },
+      mochaTest: {
+        nodejs: {
+          src: ['spec/*.js'],
+          options: {
+            reporter: 'spec',
+            grep: process.env.TESTS,
+          },
+        }
+      },
     });
 
     this.loadNpmTasks('grunt-exec');
+    this.loadNpmTasks('grunt-mocha-test');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-contrib-connect');
     this.loadNpmTasks('grunt-contrib-watch');
@@ -131,7 +141,8 @@
 
     this.registerTask('dev', ['connect', 'test', 'watch']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor', 'browserify:render']);
-    this.registerTask('test', ['jshint:all', 'build', 'exec:jest']);
+    this.registerTask('test', ['jshint:all', 'build', 'exec:jest', 'mochaTest:nodejs']);
+
     this.registerTask('default', ['test']);
   };
 

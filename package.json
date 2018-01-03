@@ -20,8 +20,10 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
+    "bluebird": "^3.5.1",
     "browserify-css": "^0.14.0",
     "canvas-prebuilt": "^1.6.5-prerelease.1",
+    "chai": "^4.1.2",
     "coffee-script": "^1.12.2",
     "coffeeify": "^2.0.1",
     "enzyme": "^3.2.0",
@@ -33,9 +35,11 @@
     "grunt-contrib-jshint": "~1.1.0",
     "grunt-contrib-watch": "~1.0.0",
     "grunt-exec": "~2.0.0",
+    "grunt-mocha-test": "^0.13.3",
     "jest": "^21.2.1",
     "jest-enzyme": "^4.0.1",
     "jsjob": "^0.10.13",
+    "mocha": "^4.1.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-test-renderer": "^15.6.2",
