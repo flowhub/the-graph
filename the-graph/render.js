@@ -129,20 +129,32 @@ function libraryFromGraph(graph) {
         };
     });
 
+    function addIfMissing(ports, name) {
+        var found = ports.filter(function (p) { p.name == name; } );
+        if (found.length == 0) {
+            ports.push({ name: name, type: 'all' });
+        }
+    }
+
     graph.edges.forEach(function(conn) {
         var tgt = processComponents[conn.to.node];
-        components[tgt].inports.push({
-            name: conn.to.port,
-            type: 'all',
-        })
+        addIfMissing(components[tgt].inports, conn.to.port);
         if (conn.from) {
             var src = processComponents[conn.from.node];
-            components[src].outports.push({
-                name: conn.from.port,
-                type: 'all',
-            })
+            addIfMissing(components[src].outports, conn.from.port);
         }
     });
+
+    function componentsFromExports(exports, inports) {
+        Object.keys(exports).forEach(function (exportedName) {
+            var internal = exports[exportedName];
+            var comp = components[processComponents[internal.process]];
+            var ports = (inports) ? comp.inports : comp.outports;
+            addIfMissing(ports, internal.port);
+        });
+    }
+    componentsFromExports(graph.inports, true);
+    componentsFromExports(graph.outports, false);
 
     return components;
 }
