@@ -5,6 +5,7 @@
 const buffer = require('buffer');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 
 const argv = require('yargs').argv
 const jsjob = require('jsjob');
@@ -21,21 +22,38 @@ function unpackUrl(dataurl) {
     return raw;
 }
 
+function setupJobServer(jobData, options, callback) {
+    if (!options.port) { options.port = 9999; }
+    if (!options.path) { options.path = '/the-graph-render.js'; }
+
+    function onRequest(req, res) {
+        if (req.url == options.path) {
+            res.end(jobData);
+        } else {
+            res.writeHead(404);
+            res.end();
+        }
+    }
+
+    server = http.createServer(onRequest);
+    server.listen(options.port, function(err) {
+        return callback(err, server, options); 
+    });
+}
+
+
 function runRender(graphData, options, callback) {
-    // FIXME: host it
-    if (!options.job) { options.job = 'http://localhost:3000/dist/the-graph-render.js'; }
+    if (!options.job) { options.job = 'http://localhost:9999/the-graph-render.js'; }
 
     var runnerConfig = {
         verbose: options.verbose,
     };
     var runner = new jsjob.Runner(runnerConfig);
     runner.start(function(err) {
-        if (err) return callback(err)
+        if (err) return callback(err);
 
         runner.runJob(options.job, graphData, options, function(err, result, details) {
             if (err) { return callback(err); }
-
-            console.log('jsjob returned', err);
 
             runner.stop(function(err) { 
                 return callback(err, result);
@@ -51,6 +69,9 @@ function render(graphPath, options, callback) {
         options.output = graphPath.replace(path.extname(graphPath), '.'+options.format)
     }
 
+    const p = path.join(__dirname, '../dist/the-graph-render.js');
+    const defaultJobData = fs.readFileSync(p);
+
     fs.readFile(graphPath, 'utf-8', function(err, d) {
         if (err) { return callback(err) }
         try {
@@ -59,19 +80,22 @@ function render(graphPath, options, callback) {
             return callback(err);
         }
     
-        runRender(graphData, options, function (err, output, details) {
-            if (err) { return callback(err); }
+        setupJobServer(defaultJobData, {}, function(err, server) {
+            if (err) return callback(err);
 
-            if (output.indexOf('data:') == 0) {
-                output = unpackUrl(output);
-            }
+            runRender(graphData, options, function (err, output, details) {
+                if (err) { return callback(err); }
 
-            fs.writeFile(options.output, output, function(err) {
-                return callback(err, options.output);
+                if (output.indexOf('data:') == 0) {
+                    output = unpackUrl(output);
+                }
+
+                fs.writeFile(options.output, output, function(err) {
+                    return callback(err, options.output);
+                });
             });
         });
-
-    })
+    });
 
 }
 
@@ -85,7 +109,6 @@ function main() {
         console.log('Written to', out);
         process.exit(0);
     };
-    console.log('a', argv)
     render(argv._[0], argv, callback);
 }
 
