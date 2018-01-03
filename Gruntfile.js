@@ -57,7 +57,7 @@
         },
         render: {
           files: {
-            'dist/the-graph-render.js': ['render.js'],
+            'dist/the-graph-render.js': ['render.jsjob.js'],
           },
           options: {
             external: [],

@@ -1,10 +1,15 @@
 
-var TheGraph = require('./index');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var darkTheme = require('./themes/the-graph-dark.css');
-var lightTheme = require('./themes/the-graph-light.css');
+var geometryutils = require('./geometryutils.js');
+//var TheGraphApp = require('./the-graph-app.js');
+
+// XXX: hack, goes away when the-graph-app.js can be CommonJS loaded
+var TheGraphApp = null;
+function register(context) {
+    TheGraphApp = context.TheGraph.App;
+}
 
 function applyStyleManual(element) {
     var style = getComputedStyle(element);
@@ -35,7 +40,6 @@ function applyStyleManual(element) {
     }); 
 }
 
-// FIXME: background is missing
 // FIXME: icons are broken
 function applyStyle(tree) {
     var all = tree.getElementsByTagName("*")
@@ -86,7 +90,6 @@ function renderImage(graphElement, options, callback) {
     canvas.height = svgNode.getAttribute('height');
 
     // TODO: allow resizing?
-    // TODO: support background
     var ctx = canvas.getContext('2d');
 
     if (options.background) {
@@ -154,12 +157,13 @@ function renderGraph(graph, options) {
     if (!options.library) { options.library = libraryFromGraph(graph); } 
     if (!options.theme) { options.theme = 'the-graph-dark' };
     if (!options.width) { options.width = 1200; }
+    if (!options.margin) { options.margin = 72; }
 
     // TODO support doing autolayout. Default to on if graph is missing x/y positions
-    // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
+    // TODO: Set zoom-level, width,height so that whole graph shows with all info 
 
     // fit based on width constrained (height near infinite)
-    var fit = TheGraph.findFit(graph, options.width, options.width*100, TheGraph.config.nodeSize);
+    var fit = geometryutils.findFit(graph, options.width, options.width*100, options.margin);
     var aspectRatio = fit.graphWidth / fit.graphHeight;
     if (!options.height) {
         // calculate needed aspect ratio
@@ -186,41 +190,17 @@ function renderGraph(graph, options) {
     removeAllChildren(container);
     container.appendChild(wrapper);
 
-    var element = React.createElement(TheGraph.App, props);
+    var element = React.createElement(TheGraphApp, props);
     ReactDOM.render(element, wrapper);
 
     var svgElement = wrapper.children[0];
     return svgElement;
 }
 
-function waitForStyleLoad(callback) {
-    // FIXME: check properly, https://gist.github.com/cvan/8a188df72a95a35888b70e5fda80450d
-    setTimeout(callback, 500);
-}
-
-window.jsJobRun = function(inputdata, options, callback) {
-
-    var loader = TheGraph.fbpGraph.graph.loadJSON;
-    var graphData = inputdata;
-    if (inputdata.fbp) {
-        graphData = inputdata.fbp;
-        loader = TheGraph.fbpGraph.graph.loadFBP;
-    }
-
-    loader(graphData, function(err, graph) {
-        if (err) { return callback(err); }
-        console.log('loaded graph');
-
-        var svgNode = renderGraph(graph, options);
-        console.log('rendered graph to DOM');
-        waitForStyleLoad(function() {
-            console.log('themes loaded');
-
-            renderImage(svgNode, options, function(err, imageUrl) {
-                return callback(err, imageUrl);
-            })
-        });
-
-    });
+module.exports = {
+    graphToDOM: renderGraph,
+    exportImage: renderImage,
+    register: register,
 };
+
 
