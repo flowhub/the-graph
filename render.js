@@ -152,11 +152,18 @@ function renderGraph(graph, options) {
     if (!options.library) { options.library = libraryFromGraph(graph); } 
     if (!options.theme) { options.theme = 'the-graph-dark' };
     if (!options.width) { options.width = 1200; }
-    if (!options.height) { options.height = options.width * 0.7; }
 
     // TODO support doing autolayout. Default to on if graph is missing x/y positions
     // FIXME: Set zoom-level, width,height so that whole graph shows with all info 
-    // TODO: default height based on fitted aspect ratio
+
+    // fit based on width constrained (height near infinite)
+    var fit = TheGraph.findFit(graph, options.width, options.width*100, TheGraph.config.nodeSize);
+    var aspectRatio = fit.graphWidth / fit.graphHeight;
+    if (!options.height) {
+        // calculate needed aspect ratio
+        options.height = options.width / aspectRatio;
+    }
+    console.log('f', aspectRatio, options.height, JSON.stringify(fit));
 
     var props = {
         readonly: true,
