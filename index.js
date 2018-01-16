@@ -105,4 +105,7 @@ TheGraph.library = require('./the-graph/the-graph-library.js');
 TheGraph.clipboard = require("./the-graph-editor/clipboard.js");
 TheGraph.editor = require('./the-graph-editor/menus.js');
 
+TheGraph.render = require("./the-graph/render.js");
+TheGraph.render.register(g);
+
 module.exports = TheGraph;

@@ -67,11 +67,21 @@ module.exports.register = function (context) {
     },
     canvas: {
       ref: "canvas",
-      className: "app-canvas"
+      className: "app-canvas",
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      },
     },
     svg: {
       className: "app-svg",
       ref: 'svg',
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      },
     },
     svgGroup: {
       className: "view"

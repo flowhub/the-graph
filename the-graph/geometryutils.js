@@ -99,7 +99,9 @@ var findFit = function (graph, width, height, sizeLimit) {
   return {
     x: x,
     y: y,
-    scale: scale
+    scale: scale,
+    graphWidth: gWidth,
+    graphHeight: gHeight,
   };
 };
 

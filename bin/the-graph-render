@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+
+// Node.js CLI tool for rendering an image of the graph
+
+const buffer = require('buffer');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+
+const argv = require('yargs').argv
+const jsjob = require('jsjob');
+
+function unpackUrl(dataurl) { 
+    var mimetype = dataurl.substring(dataurl.indexOf(':'), dataurl.indexOf(';'));
+    var encoding = dataurl.substring(dataurl.indexOf(';')+1, dataurl.indexOf(',')); 
+    if (encoding != 'base64') {
+        throw new Error('Dataurl must have base64 encoding, got ' + encoding);
+    }
+    
+    var encoded = dataurl.substring(dataurl.indexOf(','), dataurl.length);
+    var raw = buffer.Buffer.from(encoded, 'base64');
+    return raw;
+}
+
+function setupJobServer(jobData, options, callback) {
+    if (!options.port) { options.port = 9999; }
+    if (!options.path) { options.path = '/the-graph-render.js'; }
+
+    function onRequest(req, res) {
+        if (req.url == options.path) {
+            res.end(jobData);
+        } else {
+            res.writeHead(404);
+            res.end();
+        }
+    }
+
+    server = http.createServer(onRequest);
+    server.listen(options.port, function(err) {
+        return callback(err, server, options); 
+    });
+}
+
+
+function runRender(graphData, options, callback) {
+    if (!options.job) { options.job = 'http://localhost:9999/the-graph-render.js'; }
+
+    var runnerConfig = {
+        verbose: options.verbose,
+    };
+    var runner = new jsjob.Runner(runnerConfig);
+    runner.start(function(err) {
+        if (err) return callback(err);
+
+        runner.runJob(options.job, graphData, options, function(err, result, details) {
+            if (err) { return callback(err); }
+
+            runner.stop(function(err) { 
+                return callback(err, result);
+            });
+        });
+    });
+
+}
+
+function render(graphPath, options, callback) {
+    if (!options.format) { options.format = 'png' }
+    if (!options.output) {
+        options.output = graphPath.replace(path.extname(graphPath), '.'+options.format)
+    }
+
+    const p = path.join(__dirname, '../dist/the-graph-render.js');
+    const defaultJobData = fs.readFileSync(p);
+
+    fs.readFile(graphPath, 'utf-8', function(err, d) {
+        if (err) { return callback(err) }
+        try {
+            graphData = JSON.parse(d);
+        } catch (err) {
+            return callback(err);
+        }
+    
+        setupJobServer(defaultJobData, {}, function(err, server) {
+            if (err) return callback(err);
+
+            runRender(graphData, options, function (err, output, details) {
+                if (err) { return callback(err); }
+
+                if (output.indexOf('data:') == 0) {
+                    output = unpackUrl(output);
+                }
+
+                fs.writeFile(options.output, output, function(err) {
+                    return callback(err, options.output);
+                });
+            });
+        });
+    });
+
+}
+
+function main() {
+    var callback = function(err, out) { 
+        if (err) {
+            console.error(err);
+            console.error(err.stack);
+            process.exit(1);
+        }
+        console.log('Written to', out);
+        process.exit(0);
+    };
+    render(argv._[0], argv, callback);
+}
+
+if (!module.parent) {
+    main();
+}

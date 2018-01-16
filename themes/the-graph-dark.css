@@ -2,12 +2,6 @@
   background-color: #000;
   position: relative;
 }
-.the-graph-dark .app-canvas,
-.the-graph-dark .app-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
 .the-graph-dark svg {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

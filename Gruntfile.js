@@ -54,6 +54,18 @@
               standalone: 'TheGraph'
             }
           }
+        },
+        render: {
+          files: {
+            'dist/the-graph-render.js': ['render.jsjob.js'],
+          },
+          options: {
+            external: [],
+            transform: ['coffeeify', 'browserify-css'],
+            browserifyOptions: {
+              standalone: 'TheGraphRender'
+            }
+          }
         }
       },
       jshint: {
@@ -109,17 +121,28 @@
           }
         },
       },
+      mochaTest: {
+        nodejs: {
+          src: ['spec/*.js'],
+          options: {
+            reporter: 'spec',
+            grep: process.env.TESTS,
+          },
+        }
+      },
     });
 
     this.loadNpmTasks('grunt-exec');
+    this.loadNpmTasks('grunt-mocha-test');
     this.loadNpmTasks('grunt-contrib-jshint');
     this.loadNpmTasks('grunt-contrib-connect');
     this.loadNpmTasks('grunt-contrib-watch');
     this.loadNpmTasks('grunt-browserify');
 
     this.registerTask('dev', ['connect', 'test', 'watch']);
-    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor']);
-    this.registerTask('test', ['jshint:all', 'build', 'exec:jest']);
+    this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor', 'browserify:render']);
+    this.registerTask('test', ['jshint:all', 'build', 'exec:jest', 'mochaTest:nodejs']);
+
     this.registerTask('default', ['test']);
   };
 
