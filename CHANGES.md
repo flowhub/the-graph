@@ -1,5 +1,14 @@
 ## dev
 
+## 0.12.0 (2018 February 19)
+
+New features
+
+* `the-graph-render`: CLI tool for a graph to PNG/JPEG/SVG output.
+This is especially useful for generating images for documentation purposes.
+Implemented by executing the-graph codebase in a browser using JsJob.
+Some of the rendering API is available experimentally under `TheGraph.render`, or one can execute the .jsjob programatically in Node.js.
+
 ## 0.11.1 (2017 December 27)
 
 Bugfixes
