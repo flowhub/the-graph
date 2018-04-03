@@ -1,5 +1,5 @@
 {
-  "name": "the-graph",
+  "name": "@carecloud/the-graph",
   "version": "0.12.0",
   "description": "flow-based programming graph editing",
   "author": "Forrest Oliphant, the Grid",
