@@ -34,7 +34,7 @@ exports.createPolygon = function(options) {
 };
 
 exports.createImg = function(options) {
-  return TheGraph.SVGImage(options);
+  return SVGImage(options);
 };
 
 exports.createCanvas = function(options) {
