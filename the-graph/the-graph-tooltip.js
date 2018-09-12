@@ -15,7 +15,6 @@ var config = {
   },
   text: {
     className: "tooltip-label",
-    ref: "label"
   }
 };
 

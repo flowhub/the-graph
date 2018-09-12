@@ -34,6 +34,8 @@ module.exports.register = function (context) {
   TheGraph.Group = React.createFactory( createReactClass({
     displayName: "TheGraphGroup",
     getInitialState: function () {
+        this.eventRef = React.createRef();
+
         return {
             moving: false,
             lastTrackX: null,
@@ -43,7 +45,7 @@ module.exports.register = function (context) {
     componentDidMount: function () {
 
       // Move group
-      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      var dragNode = this.eventRef.current;
       dragNode.addEventListener('panstart', this.onTrackStart);
 
       // Context menu
@@ -98,7 +100,7 @@ module.exports.register = function (context) {
       this.setState({ moving: true });
       this.setState({ lastTrackX: 0, lastTrackY: 0});
 
-      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      var dragNode = this.eventRef.current;
       dragNode.addEventListener("panmove", this.onTrack);
       dragNode.addEventListener("panend", this.onTrackEnd);
 
@@ -128,7 +130,7 @@ module.exports.register = function (context) {
       // Snap to grid
       this.props.triggerMoveGroup(this.props.item.nodes);
 
-      var dragNode = ReactDOM.findDOMNode(this.refs.events);
+      var dragNode = this.eventRef.current;
       dragNode.addEventListener("panmove", this.onTrack);
       dragNode.addEventListener("panend", this.onTrackEnd);
 
@@ -171,7 +173,7 @@ module.exports.register = function (context) {
       // to catch events when pointer moves faster than we can move the element
       var eventOptions = {
         className: 'eventcatcher drag',
-        ref: 'events',
+        ref: this.eventRef,
       };
       if (this.props.isSelectionGroup) {
         eventOptions.x = boxRectOptions.x;

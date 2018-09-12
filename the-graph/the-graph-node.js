@@ -27,7 +27,6 @@ module.exports.register = function (context) {
       ry: TheGraph.config.nodeRadius - 2
     },
     icon: {
-      ref: "icon",
       className: "icon node-icon drag"
     },
     iconsvg: {

@@ -16,12 +16,10 @@ module.exports.register = function (context) {
       className: "edge-bg"
     },
     foregroundPath: {
-      ref: "route",
       className: "edge-fg stroke route"
     },
     touchPath: {
       className: "edge-touch",
-      ref: "touch"
     }
   };
 
@@ -76,6 +74,10 @@ module.exports.register = function (context) {
 
   TheGraph.Edge = React.createFactory( createReactClass({
     displayName: "TheGraphEdge",
+    getInitialState: function() {
+        this.touchRef = React.createRef();
+        return {};
+    },
     mixins: [
       TooltipMixin
     ],
@@ -155,7 +157,7 @@ module.exports.register = function (context) {
       );
     },
     getTooltipTrigger: function () {
-      return ReactDOM.findDOMNode(this.refs.touch);
+      return this.touchRef.current;
     },
     shouldShowTooltip: function () {
       return true;
@@ -205,6 +207,7 @@ module.exports.register = function (context) {
 
       var touchPathOptions = TheGraph.merge(TheGraph.config.edge.touchPath, { d: path });
       var touchPath = TheGraph.factories.edge.createEdgeTouchPath(touchPathOptions);
+      touchPath.ref = this.touchRef;
 
       var containerOptions = {
         className: "edge"+

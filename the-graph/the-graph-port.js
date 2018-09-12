@@ -20,10 +20,8 @@ module.exports.register = function (context) {
       className: "port-arc"
     },
     innerCircle: {
-      ref: "circleSmall"
     },
     text: {
-      ref: "label",
       className: "port-label drag"
     }
   };
@@ -40,6 +38,10 @@ module.exports.register = function (context) {
 
   TheGraph.Port = React.createFactory( createReactClass({
     displayName: "TheGraphPort",
+    getInitialState: function () {
+        this.labelRef = React.createRef();
+        return {};
+    },
     mixins: [
       TooltipMixin
     ],
@@ -77,7 +79,7 @@ module.exports.register = function (context) {
         return;
       }
       // Click on label, pass context menu to node
-      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
+      if (event && (event.target === this.labelRef.current)) {
         return;
       }
       // Don't show native context menu
@@ -127,7 +129,7 @@ module.exports.register = function (context) {
       }
 
       // Click on label, allow node context menu
-      if (event && (event.target === ReactDOM.findDOMNode(this.refs.label))) {
+      if (event && (event.target === this.labelRef.current)) {
         return;
       }
       // Don't tap graph
@@ -191,6 +193,7 @@ module.exports.register = function (context) {
         children: this.props.label
       };
       labelTextOptions = TheGraph.merge(TheGraph.config.port.text, labelTextOptions);
+      labelTextOptions.ref = this.labelRef;
       var labelText = TheGraph.factories.port.createPortLabelText.call(this, labelTextOptions);
 
       var portContents = [

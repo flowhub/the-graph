@@ -8,7 +8,6 @@ var merge = require('./merge');
 var config = {
   container: {},
   rect: {
-    ref: "rect",
     className: "context-modal-bg"
   }
 };
@@ -21,10 +20,13 @@ var factories = {
 
 var ModalBG = React.createFactory( createReactClass({
   displayName: "TheGraphModalBG",
+  getInitialState: function() {
+    this.rectRef = React.createRef();
+    return {};
+  },
   componentDidMount: function () {
     var domNode = ReactDOM.findDOMNode(this);
-    var rectNode = this.refs.rect; 
-
+    var rectNode = this.rectRef.current;
 
     // Right-click on another item will show its menu
     domNode.addEventListener("mousedown", function (event) {
@@ -45,6 +47,7 @@ var ModalBG = React.createFactory( createReactClass({
 
     rectOptions = merge(config.rect, rectOptions);
     var rect = factories.createModalBackgroundRect.call(this, rectOptions);
+    rect.ref = this.rectRef;
 
     var containerContents = [rect, this.props.children];
     var containerOptions = merge(config.container, {});
