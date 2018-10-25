@@ -148,6 +148,8 @@ module.exports.register = function (context) {
         }
         this.props.graph.startTransaction('movenode');
       }
+      this.setState({ moving: true });
+      this.setState({ lastTrackX: 0, lastTrackY: 0});
     },
     onTrack: function (event) {
       // Don't fire on graph
