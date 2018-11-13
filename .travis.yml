@@ -1,6 +1,8 @@
 language: node_js
 before_script:
 - npm install -g grunt-cli
+- which phantomjs
+- phantomjs -v
 deploy:
   skip_cleanup: true
   provider: npm
@@ -12,5 +14,6 @@ deploy:
     repo: flowhub/the-graph
 env:
   global:
+  - DEBUG=jsjob*
   - secure: L+J5DJ4NL9pThNmt9L5QMy4YL3gvkUG9cyp7c+0PEaK+EoN8uFGgFIWpgFpTHoS7F9FD913EFjljoeOWWHhl6H3caQg4aYdNw5yqxQAitRmzY1i7NgO/gMo1KaC7tgTGh8/bWCxoYOzWf41o3T068hI6JR1V+IfM05oM97ZwU+o=
   - secure: SmafZtuZT2C+nbg+HnEG1jPKP48uKpD7HkcwE+96qc3lotsH4aKFvAoaK8xvf3cE+Yt+fnSWe5I9IY42wH/FRGTm8n2WsSaP4Yb8tpxlqNm9tVuLF4ohUChhzzX6eg9poikASDsaUQy6EazLDwchjwLVwa8wUCnP4U8660mzJJc=
