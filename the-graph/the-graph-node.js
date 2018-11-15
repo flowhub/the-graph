@@ -99,7 +99,7 @@ module.exports.register = function (context) {
     },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
-      
+
       // Dragging
       domNode.addEventListener("panstart", this.onTrackStart);
 
@@ -141,6 +141,11 @@ module.exports.register = function (context) {
       if (this.props.export) {
         this.props.graph.startTransaction('moveexport');
       } else {
+        if (this.state.moving === true) {
+          this.setState({ moving: false });
+          this.setState({ lastTrackX: null, lastTrackY: null });
+          this.props.graph.endTransaction("movenode");
+        }
         this.props.graph.startTransaction('movenode');
       }
       this.setState({ moving: true });
@@ -230,7 +235,7 @@ module.exports.register = function (context) {
 
       // Get mouse position
       if (event.gesture) {
-        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event
       }
       var x = event.x || event.clientX || 0;
       var y = event.y || event.clientY || 0;
@@ -343,7 +348,7 @@ module.exports.register = function (context) {
     shouldComponentUpdate: function (nextProps, nextState) {
       // Only rerender if changed
       return (
-        nextProps.x !== this.props.x || 
+        nextProps.x !== this.props.x ||
         nextProps.y !== this.props.y ||
         nextProps.icon !== this.props.icon ||
         nextProps.label !== this.props.label ||
@@ -471,7 +476,7 @@ module.exports.register = function (context) {
 
       var borderRectOptions = TheGraph.merge(TheGraph.config.node.border, { width: this.props.width, height: this.props.height });
       var borderRect = TheGraph.factories.node.createNodeBorderRect.call(this, borderRectOptions);
-      
+
       var innerRectOptions = TheGraph.merge(TheGraph.config.node.innerRect, { width: this.props.width - 6, height: this.props.height - 6 });
       var innerRect = TheGraph.factories.node.createNodeInnerRect.call(this, innerRectOptions);
 
