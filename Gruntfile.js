@@ -141,7 +141,7 @@
 
     this.registerTask('dev', ['connect', 'test', 'watch']);
     this.registerTask('build', ['exec:build_stylus', 'exec:build_fa', 'browserify:libs', 'browserify:vendor', 'browserify:render']);
-    this.registerTask('test', ['jshint:all', 'build', 'exec:jest', 'mochaTest:nodejs']);
+    this.registerTask('test', ['jshint:all', 'build', 'exec:jest']);
 
     this.registerTask('default', ['test']);
   };
