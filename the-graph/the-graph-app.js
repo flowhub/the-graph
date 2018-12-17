@@ -162,7 +162,7 @@ module.exports.register = function (context) {
         offsetX: 0.0,
         offsetY: 0.0,
         menus: null,
-        disableHotKeys: null,
+        enableHotKeys: false,
         getMenuDef: null,
         onPanScale: null,
         onNodeSelection: null,
@@ -523,7 +523,7 @@ module.exports.register = function (context) {
 
       var code = event.keyCode;
       var handler = hotKeys[code];
-      if (handler && !this.props.disableHotKeys) {
+      if (handler && this.props.enableHotKeys) {
         var readonly = this.props.readonly;
         if (!readonly || (readonly && readOnlyActions[code])) {
           handler(this);
@@ -652,7 +652,7 @@ module.exports.register = function (context) {
         nodeIcons: this.props.nodeIcons,
         onNodeSelection: this.props.onNodeSelection,
         onEdgeSelection: this.props.onEdgeSelection,
-        disableHotKeys: this.props.disableHotKeys,
+        enableHotKeys: this.props.enableHotKeys,
         showContext: this.showContext,
         allowEdgeStart: !this.props.readonly,
       };
