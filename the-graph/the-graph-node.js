@@ -97,6 +97,21 @@ module.exports.register = function (context) {
           lastTrackY: null,
         };
     },
+    componentDidUpdate: function (prevProps, prevState){
+      if(prevState.moving !== this.state.moving){
+          if(this.state.moving) {
+            document.getElementsByClassName("nodes")[0].childNodes.forEach(function (item) {
+              if(item !== ReactDOM.findDOMNode(this))
+                item.style.pointerEvents = "none";
+            });
+          }
+          else {
+            document.getElementsByClassName("nodes")[0].childNodes.forEach(function (item) {
+              item.style.pointerEvents = "auto";
+            });
+          }
+      }
+    },
     componentDidMount: function () {
       var domNode = ReactDOM.findDOMNode(this);
 
@@ -357,7 +372,8 @@ module.exports.register = function (context) {
         nextProps.selected !== this.props.selected ||
         nextProps.error !== this.props.error ||
         nextProps.highlightPort !== this.props.highlightPort ||
-        nextProps.ports.dirty === true
+        nextProps.ports.dirty === true ||
+        nextState.moving !== this.state.moving
       );
     },
     render: function() {
