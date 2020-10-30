@@ -1,4 +1,4 @@
-The Graph Editor [![Build Status](https://secure.travis-ci.org/flowhub/the-graph.png?branch=master)](http://travis-ci.org/flowhub/the-graph) [![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](#license)
+The Graph Editor [![MIT license](http://img.shields.io/badge/License-MIT-brightgreen.svg)](#license)
 ================
 
 This project provides a set [React](https://facebook.github.io/react) components for viewing and editing node-based graphs.
