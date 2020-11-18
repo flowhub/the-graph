@@ -545,10 +545,13 @@ module.exports.register = function (context) {
       this.refs.graph.markDirty();
     },
     componentDidUpdate: function (prevProps, prevState) {
-      this.renderCanvas(this.bgContext);
-      if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
-        this.onPanScale();
-      }
+      setTimeout(function () {
+        this.renderCanvas(this.bgContext);
+        if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
+          this.onPanScale();
+        }
+      }, 0);
+
     },
     renderCanvas: function (c) {
       // Comment this line to go plaid
