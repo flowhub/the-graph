@@ -53,6 +53,9 @@ const appState = {
   library: {},
   iconOverrides: {},
   theme: 'dark',
+  editorViewX: 0,
+  editorViewY: 0,
+  editorScale: 1,
 };
 
 // Attach nav
@@ -61,14 +64,8 @@ function fitGraphInView() {
 }
 
 function panEditorTo() {
+}
 
-}
-function editorPanChanged(x, y, scale) {
-  appState.editorViewX = -x;
-  appState.editorViewY = -y;
-  appState.editorScale = scale;
-  renderNav();
-}
 function renderNav() {
   const view = [
     appState.editorViewX, appState.editorViewY,
@@ -87,9 +84,15 @@ function renderNav() {
   const element = React.createElement(TheGraph.nav.Component, props);
   ReactDOM.render(element, document.getElementById('nav'));
 }
+function editorPanChanged(x, y, scale) {
+  appState.editorViewX = -x;
+  appState.editorViewY = -y;
+  appState.editorScale = scale;
+  renderNav();
+}
 
 function renderApp() {
-  var editor = document.getElementById('editor');
+  const editor = document.getElementById('editor');
   editor.className = `the-graph-${appState.theme}`;
 
   const props = {
@@ -102,9 +105,6 @@ function renderApp() {
     onPanScale: editorPanChanged,
   };
 
-  console.log('render', props);
-
-  var editor = document.getElementById('editor');
   editor.width = props.width;
   editor.height = props.height;
   const element = React.createElement(TheGraph.App, props);
@@ -146,7 +146,6 @@ window.setInterval(() => {
   if (nodes.length > 0) {
     const randomNodeId = nodes[Math.floor(Math.random() * nodes.length)].id;
     const randomIcon = iconKeys[Math.floor(Math.random() * iconKeys.length)];
-    console.log(randomIcon);
     appState.iconOverrides[randomNodeId] = randomIcon;
     renderApp();
   }
@@ -181,15 +180,15 @@ window.loadGraph = function (json) {
       loadingMessage.innerHTML = `error loading graph: ${err.toString()}`;
       return;
     }
+    // Remove loading message
+    const loading = document.getElementById('loading');
+    loading.parentNode.removeChild(loading);
     // Synthesize component library from graph
     appState.library = TheGraph.library.libraryFromGraph(graph);
     // Set loaded graph
     appState.graph = graph;
     appState.graph.on('endTransaction', renderApp); // graph changed
     renderApp();
-    // Remove loading message
-    const loading = document.getElementById('loading');
-    loading.parentNode.removeChild(loading);
 
     console.log('loaded', graph);
   });
