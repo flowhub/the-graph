@@ -1,3 +1,5 @@
 /build
 /bower_components
 *.tgz
+/dist/fonts
+/dist/demo-*
