@@ -1,31 +1,30 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var createReactClass = require('create-react-class');
-var TooltipMixin = require('./mixins').Tooltip;
-var arcs = require('./arcs.js');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const createReactClass = require('create-react-class');
+const TooltipMixin = require('./mixins').Tooltip;
+const arcs = require('./arcs.js');
 
 module.exports.register = function (context) {
-
-  var TheGraph = context.TheGraph;
+  const { TheGraph } = context;
 
   // Initialize configuration for the Port view.
   TheGraph.config.port = {
     container: {
-      className: "port arrow"
+      className: 'port arrow',
     },
     backgroundCircle: {
-      className: "port-circle-bg"
+      className: 'port-circle-bg',
     },
     arc: {
-      className: "port-arc"
+      className: 'port-arc',
     },
     innerCircle: {
-      ref: "circleSmall"
+      ref: 'circleSmall',
     },
     text: {
-      ref: "label",
-      className: "port-label drag"
-    }
+      ref: 'label',
+      className: 'port-label drag',
+    },
   };
 
   TheGraph.factories.port = {
@@ -33,42 +32,42 @@ module.exports.register = function (context) {
     createPortBackgroundCircle: TheGraph.factories.createCircle,
     createPortArc: TheGraph.factories.createPath,
     createPortInnerCircle: TheGraph.factories.createCircle,
-    createPortLabelText: TheGraph.factories.createText
+    createPortLabelText: TheGraph.factories.createText,
   };
 
   // Port view
 
-  TheGraph.Port = React.createFactory( createReactClass({
-    displayName: "TheGraphPort",
+  TheGraph.Port = React.createFactory(createReactClass({
+    displayName: 'TheGraphPort',
     mixins: [
-      TooltipMixin
+      TooltipMixin,
     ],
-    componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this);
+    componentDidMount() {
+      const domNode = ReactDOM.findDOMNode(this);
 
       // Preview edge start
-      domNode.addEventListener("tap", this.edgeStart);
-      domNode.addEventListener("panstart", this.edgeStart);
+      domNode.addEventListener('tap', this.edgeStart);
+      domNode.addEventListener('panstart', this.edgeStart);
       // Make edge
-      domNode.addEventListener("panend", this.triggerDropOnTarget);
-      domNode.addEventListener("the-graph-edge-drop", this.edgeStart);
+      domNode.addEventListener('panend', this.triggerDropOnTarget);
+      domNode.addEventListener('the-graph-edge-drop', this.edgeStart);
 
       // Show context menu
       if (this.props.showContext) {
-        domNode.addEventListener("contextmenu", this.showContext);
-        domNode.addEventListener("press", this.showContext);
+        domNode.addEventListener('contextmenu', this.showContext);
+        domNode.addEventListener('press', this.showContext);
       }
     },
-    getTooltipTrigger: function () {
+    getTooltipTrigger() {
       return ReactDOM.findDOMNode(this);
     },
-    shouldShowTooltip: function () {
+    shouldShowTooltip() {
       return (
-        this.props.app.state.scale < TheGraph.zbpBig ||
-        this.props.label.length > 8
+        this.props.app.state.scale < TheGraph.zbpBig
+        || this.props.label.length > 8
       );
     },
-    showContext: function (event) {
+    showContext(event) {
       // Don't show port menu on export node port
       if (this.props.isExport) {
         return;
@@ -86,10 +85,10 @@ module.exports.register = function (context) {
 
       // Get mouse position
       if (event.gesture) {
-        event = event.gesture.srcEvent; // unpack hammer.js gesture event 
+        event = event.gesture.srcEvent; // unpack hammer.js gesture event
       }
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      let x = event.x || event.clientX || 0;
+      let y = event.y || event.clientY || 0;
       if (event.touches && event.touches.length) {
         x = event.touches[0].clientX;
         y = event.touches[0].clientY;
@@ -98,23 +97,23 @@ module.exports.register = function (context) {
       // App.showContext
       this.props.showContext({
         element: this,
-        type: (this.props.isIn ? "nodeInport" : "nodeOutport"),
-        x: x,
-        y: y,
+        type: (this.props.isIn ? 'nodeInport' : 'nodeOutport'),
+        x,
+        y,
         graph: this.props.graph,
         itemKey: this.props.label,
-        item: this.props.port
+        item: this.props.port,
       });
     },
-    getContext: function (menu, options, hide) {
+    getContext(menu, options, hide) {
       return TheGraph.Menu({
-        menu: menu,
-        options: options,
+        menu,
+        options,
         label: this.props.label,
-        triggerHideContext: hide
+        triggerHideContext: hide,
       });
     },
-    edgeStart: function (event) {
+    edgeStart(event) {
       // Don't start edge on export node port
       if (this.props.isExport) {
         return;
@@ -130,81 +129,79 @@ module.exports.register = function (context) {
       // Don't tap graph
       if (event.stopPropagation) { event.stopPropagation(); }
 
-      var edgeStartEvent = new CustomEvent('the-graph-edge-start', {
+      const edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
           isIn: this.props.isIn,
           port: this.props.port,
           // process: this.props.processKey,
-          route: this.props.route
+          route: this.props.route,
         },
-        bubbles: true
+        bubbles: true,
       });
       ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
-    triggerDropOnTarget: function (event) {
+    triggerDropOnTarget(event) {
       // If dropped on a child element will bubble up to port
       // FIXME: broken, is never set, neither on event.srcEvent
       if (!event.relatedTarget) { return; }
-      var dropEvent = new CustomEvent('the-graph-edge-drop', {
+      const dropEvent = new CustomEvent('the-graph-edge-drop', {
         detail: null,
-        bubbles: true
+        bubbles: true,
       });
       event.relatedTarget.dispatchEvent(dropEvent);
     },
-    render: function() {
-      var style;
+    render() {
+      let style;
       if (this.props.label.length > 7) {
-        var fontSize = 6 * (30 / (4 * this.props.label.length));
-        style = { 'fontSize': fontSize+'px' };
+        const fontSize = 6 * (30 / (4 * this.props.label.length));
+        style = { fontSize: `${fontSize}px` };
       }
-      var r = 4;
+      let r = 4;
       // Highlight matching ports
-      var highlightPort = this.props.highlightPort;
-      var inArc = arcs.inport;
-      var outArc = arcs.outport;
+      const { highlightPort } = this.props;
+      let inArc = arcs.inport;
+      let outArc = arcs.outport;
       if (highlightPort && highlightPort.isIn === this.props.isIn && (highlightPort.type === this.props.port.type || this.props.port.type === 'any')) {
         r = 6;
         inArc = arcs.inportBig;
         outArc = arcs.outportBig;
       }
 
-      var backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
-      var backgroundCircle = TheGraph.factories.port.createPortBackgroundCircle.call(this, backgroundCircleOptions);
+      const backgroundCircleOptions = TheGraph.merge(TheGraph.config.port.backgroundCircle, { r: r + 1 });
+      const backgroundCircle = TheGraph.factories.port.createPortBackgroundCircle.call(this, backgroundCircleOptions);
 
-      var arcOptions = TheGraph.merge(TheGraph.config.port.arc, { d: (this.props.isIn ? inArc : outArc) });
-      var arc = TheGraph.factories.port.createPortArc.call(this, arcOptions);
+      const arcOptions = TheGraph.merge(TheGraph.config.port.arc, { d: (this.props.isIn ? inArc : outArc) });
+      const arc = TheGraph.factories.port.createPortArc.call(this, arcOptions);
 
-      var innerCircleOptions = {
-        className: "port-circle-small fill route"+this.props.route,
-        r: r - 1.5
+      let innerCircleOptions = {
+        className: `port-circle-small fill route${this.props.route}`,
+        r: r - 1.5,
       };
 
       innerCircleOptions = TheGraph.merge(TheGraph.config.port.innerCircle, innerCircleOptions);
-      var innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
+      const innerCircle = TheGraph.factories.port.createPortInnerCircle.call(this, innerCircleOptions);
 
-      var labelTextOptions = {
+      let labelTextOptions = {
         x: (this.props.isIn ? 5 : -5),
-        style: style,
-        children: this.props.label
+        style,
+        children: this.props.label,
       };
       labelTextOptions = TheGraph.merge(TheGraph.config.port.text, labelTextOptions);
-      var labelText = TheGraph.factories.port.createPortLabelText.call(this, labelTextOptions);
+      const labelText = TheGraph.factories.port.createPortLabelText.call(this, labelTextOptions);
 
-      var portContents = [
+      const portContents = [
         backgroundCircle,
         arc,
         innerCircle,
-        labelText
+        labelText,
       ];
 
-      var containerOptions = TheGraph.merge(TheGraph.config.port.container, { title: this.props.label, transform: "translate("+this.props.x+","+this.props.y+")" });
+      const containerOptions = TheGraph.merge(TheGraph.config.port.container, { title: this.props.label, transform: `translate(${this.props.x},${this.props.y})` });
       return TheGraph.factories.port.createPortGroup.call(this, containerOptions, portContents);
-
-    }
+    },
   }));
 
   TheGraph.Port.defaultProps = {
     allowEdgeStart: true,
   };
-
 };

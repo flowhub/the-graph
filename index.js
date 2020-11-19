@@ -1,20 +1,20 @@
-
 // Module object
-var TheGraph = {};
+const TheGraph = {};
 
 // Bundle and expose fbp-graph as public API
 TheGraph.fbpGraph = require('fbp-graph');
 
 // Pull in Ease from NPM, react.animate needs it as a global
 TheGraph.Ease = require('ease-component');
+
 if (typeof window !== 'undefined' && typeof window.Ease === 'undefined') {
-    window.Ease = TheGraph.Ease;
+  window.Ease = TheGraph.Ease;
 }
 
-var defaultNodeSize = 72;
-var defaultNodeRadius = 8;
+const defaultNodeSize = 72;
+const defaultNodeRadius = 8;
 
-var moduleVars = {
+const moduleVars = {
   // Context menus
   contextPortSize: 36,
   // Zoom breakpoints
@@ -29,39 +29,39 @@ var moduleVars = {
     autoSizeNode: true,
     maxPortCount: 9,
     nodeHeightIncrement: 12,
-    focusAnimationDuration: 1500
+    focusAnimationDuration: 1500,
   },
 };
-for (var key in moduleVars) {
+Object.keys(moduleVars).forEach((key) => {
   TheGraph[key] = moduleVars[key];
-}
+});
 
 if (typeof window !== 'undefined') {
   // rAF shim
-  window.requestAnimationFrame = window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.msRequestAnimationFrame;
+  window.requestAnimationFrame = window.requestAnimationFrame
+    || window.webkitRequestAnimationFrame
+    || window.mozRequestAnimationFrame
+    || window.msRequestAnimationFrame;
 }
 
 // HACK, goes away when everything is CommonJS compatible
-var g = { TheGraph: TheGraph };
+const g = { TheGraph };
 
 TheGraph.factories = require('./the-graph/factories.js');
 TheGraph.merge = require('./the-graph/merge.js');
 
-require("./the-graph/the-graph-app.js").register(g);
-require("./the-graph/the-graph-graph.js").register(g);
-require("./the-graph/the-graph-node.js").register(g);
-require("./the-graph/the-graph-node-menu.js").register(g);
-require("./the-graph/the-graph-node-menu-port.js").register(g);
-require("./the-graph/the-graph-node-menu-ports.js").register(g);
-require("./the-graph/the-graph-port.js").register(g);
-require("./the-graph/the-graph-edge.js").register(g);
-require("./the-graph/the-graph-iip.js").register(g);
-require("./the-graph/the-graph-group.js").register(g);
+require('./the-graph/the-graph-app.js').register(g);
+require('./the-graph/the-graph-graph.js').register(g);
+require('./the-graph/the-graph-node.js').register(g);
+require('./the-graph/the-graph-node-menu.js').register(g);
+require('./the-graph/the-graph-node-menu-port.js').register(g);
+require('./the-graph/the-graph-node-menu-ports.js').register(g);
+require('./the-graph/the-graph-port.js').register(g);
+require('./the-graph/the-graph-edge.js').register(g);
+require('./the-graph/the-graph-iip.js').register(g);
+require('./the-graph/the-graph-group.js').register(g);
 
-TheGraph.menu = require("./the-graph/the-graph-menu.js");
+TheGraph.menu = require('./the-graph/the-graph-menu.js');
 // compat
 TheGraph.Menu = TheGraph.menu.Menu;
 TheGraph.factories.menu = TheGraph.menu.factories;
@@ -69,27 +69,27 @@ TheGraph.config.menu = TheGraph.menu.config;
 TheGraph.config.menu.iconRect.rx = TheGraph.config.nodeRadius;
 TheGraph.config.menu.iconRect.ry = TheGraph.config.nodeRadius;
 
-TheGraph.modalbg = require("./the-graph/the-graph-modalbg.js");
+TheGraph.modalbg = require('./the-graph/the-graph-modalbg.js');
 // compat
 TheGraph.ModalBG = TheGraph.modalbg.ModalBG;
 TheGraph.config.ModalBG = TheGraph.config.factories;
 TheGraph.factories.ModalBG = TheGraph.modalbg.factories;
 
-TheGraph.FONT_AWESOME = require("./the-graph/font-awesome-unicode-map.js");
+TheGraph.FONT_AWESOME = require('./the-graph/font-awesome-unicode-map.js');
 
-var geometryutils = require('./the-graph/geometryutils');
+const geometryutils = require('./the-graph/geometryutils');
 // compat
 TheGraph.findMinMax = geometryutils.findMinMax;
 TheGraph.findNodeFit = geometryutils.findNodeFit;
 TheGraph.findFit = geometryutils.findFit;
 
-TheGraph.tooltip = require("./the-graph/the-graph-tooltip.js");
+TheGraph.tooltip = require('./the-graph/the-graph-tooltip.js');
 // compat
 TheGraph.Tooltip = TheGraph.tooltip.Tooltip;
 TheGraph.config.tooltip = TheGraph.tooltip.config;
-TheGraph.factories.tooltip = TheGraph.tooltip.factories; 
+TheGraph.factories.tooltip = TheGraph.tooltip.factories;
 
-TheGraph.mixins = require("./the-graph/mixins.js");
+TheGraph.mixins = require('./the-graph/mixins.js');
 TheGraph.arcs = require('./the-graph/arcs.js');
 
 TheGraph.TextBG = require('./the-graph/TextBG.js');
@@ -102,10 +102,10 @@ TheGraph.nav = require('./the-graph-nav/the-graph-nav.js');
 TheGraph.autolayout = require('./the-graph/the-graph-autolayout.js');
 TheGraph.library = require('./the-graph/the-graph-library.js');
 
-TheGraph.clipboard = require("./the-graph-editor/clipboard.js");
-TheGraph.editor = require('./the-graph-editor/menus.js');
+TheGraph.clipboard = require('./the-graph-editor/clipboard.js');
 
-TheGraph.render = require("./the-graph/render.js");
+TheGraph.render = require('./the-graph/render.js');
+
 TheGraph.render.register(g);
 
 module.exports = TheGraph;

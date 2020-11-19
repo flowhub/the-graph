@@ -1,59 +1,57 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var createReactClass = require('create-react-class');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const createReactClass = require('create-react-class');
 
-var baseFactories = require('./factories');
-var merge = require('./merge');
+const baseFactories = require('./factories');
+const merge = require('./merge');
 
-var config = {
+const config = {
   container: {},
   rect: {
-    ref: "rect",
-    className: "context-modal-bg"
-  }
+    ref: 'rect',
+    className: 'context-modal-bg',
+  },
 };
 
-var factories = {
+const factories = {
   createModalBackgroundGroup: baseFactories.createGroup,
-  createModalBackgroundRect: baseFactories.createRect
+  createModalBackgroundRect: baseFactories.createRect,
 };
 
-
-var ModalBG = React.createFactory( createReactClass({
-  displayName: "TheGraphModalBG",
-  componentDidMount: function () {
-    var domNode = ReactDOM.findDOMNode(this);
-    var rectNode = this.refs.rect; 
-
+const ModalBG = React.createFactory(createReactClass({
+  displayName: 'TheGraphModalBG',
+  componentDidMount() {
+    const domNode = ReactDOM.findDOMNode(this);
+    const rectNode = this.refs.rect;
 
     // Right-click on another item will show its menu
-    domNode.addEventListener("mousedown", function (event) {
+    domNode.addEventListener('mousedown', (event) => {
       // Only if outside of menu
-      if (event && event.target===rectNode) {
+      if (event && event.target === rectNode) {
         this.hideModal();
       }
-    }.bind(this));
+    });
   },
-  hideModal: function (event) {
+  hideModal(event) {
     this.props.triggerHideContext();
   },
-  render: function () {
-    var rectOptions = {
+  render() {
+    let rectOptions = {
       width: this.props.width,
-      height: this.props.height
+      height: this.props.height,
     };
 
     rectOptions = merge(config.rect, rectOptions);
-    var rect = factories.createModalBackgroundRect.call(this, rectOptions);
+    const rect = factories.createModalBackgroundRect.call(this, rectOptions);
 
-    var containerContents = [rect, this.props.children];
-    var containerOptions = merge(config.container, {});
+    const containerContents = [rect, this.props.children];
+    const containerOptions = merge(config.container, {});
     return factories.createModalBackgroundGroup.call(this, containerOptions, containerContents);
-  }
+  },
 }));
 
 module.exports = {
-  ModalBG: ModalBG,
-  config: config,
-  factories: factories,
+  ModalBG,
+  config,
+  factories,
 };

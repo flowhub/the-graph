@@ -60,7 +60,7 @@ module.exports = {
   ],
   resolve: {
     fallback: {
-      'events': require.resolve('events/'),
+      events: require.resolve('events/'),
       fs: false,
     },
   },

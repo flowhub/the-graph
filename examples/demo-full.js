@@ -1,20 +1,20 @@
 const fbpGraph = require('fbp-graph');
-const TheGraph = require('../index.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const TheGraph = require('../index.js');
 
 require('font-awesome/css/font-awesome.css');
 require('../themes/the-graph-dark.styl');
-require('../themes/the-graph-light.styl')
+require('../themes/the-graph-light.styl');
 
 // Context menu specification
 function deleteNode(graph, itemKey, item) {
-    graph.removeNode(itemKey);
+  graph.removeNode(itemKey);
 }
 function deleteEdge(graph, itemKey, item) {
   graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
 }
-var contextMenus = {
+const contextMenus = {
   main: null,
   selection: null,
   nodeInport: null,
@@ -22,33 +22,33 @@ var contextMenus = {
   graphInport: null,
   graphOutport: null,
   edge: {
-    icon: "long-arrow-right",
+    icon: 'long-arrow-right',
     s4: {
-      icon: "trash",
-      iconLabel: "delete",
-      action: deleteEdge
-    }
+      icon: 'trash',
+      iconLabel: 'delete',
+      action: deleteEdge,
+    },
   },
   node: {
     s4: {
-      icon: "trash",
-      iconLabel: "delete",
-      action: deleteNode
+      icon: 'trash',
+      iconLabel: 'delete',
+      action: deleteNode,
     },
   },
   group: {
-    icon: "th",
+    icon: 'th',
     s4: {
-      icon: "trash",
-      iconLabel: "ungroup",
-      action: function (graph, itemKey, item) {
+      icon: 'trash',
+      iconLabel: 'ungroup',
+      action(graph, itemKey, item) {
         graph.removeGroup(itemKey);
       },
     },
   },
 };
 
-var appState = {
+const appState = {
   graph: new fbpGraph.Graph(),
   library: {},
   iconOverrides: {},
@@ -70,30 +70,29 @@ function editorPanChanged(x, y, scale) {
   renderNav();
 }
 function renderNav() {
-
-  var view = [
-      appState.editorViewX, appState.editorViewY,
-      window.innerWidth, window.innerHeight,
+  const view = [
+    appState.editorViewX, appState.editorViewY,
+    window.innerWidth, window.innerHeight,
   ];
-  var props = {
-      height: 162,
-      width: 216,
-      graph: appState.graph,
-      onTap: fitGraphInView,
-      onPanTo: panEditorTo,
-      viewrectangle: view,
-      viewscale: appState.editorScale,
+  const props = {
+    height: 162,
+    width: 216,
+    graph: appState.graph,
+    onTap: fitGraphInView,
+    onPanTo: panEditorTo,
+    viewrectangle: view,
+    viewscale: appState.editorScale,
   };
 
-  var element = React.createElement(TheGraph.nav.Component, props);
+  const element = React.createElement(TheGraph.nav.Component, props);
   ReactDOM.render(element, document.getElementById('nav'));
 }
 
 function renderApp() {
   var editor = document.getElementById('editor');
-  editor.className = 'the-graph-' + appState.theme;
+  editor.className = `the-graph-${appState.theme}`;
 
-  var props = {
+  const props = {
     width: window.innerWidth,
     height: window.innerWidth,
     graph: appState.graph,
@@ -101,14 +100,14 @@ function renderApp() {
     menus: contextMenus,
     nodeIcons: appState.iconOverrides,
     onPanScale: editorPanChanged,
-  }
+  };
 
   console.log('render', props);
 
   var editor = document.getElementById('editor');
   editor.width = props.width;
   editor.height = props.height;
-  var element = React.createElement(TheGraph.App, props);
+  const element = React.createElement(TheGraph.App, props);
   ReactDOM.render(element, editor);
 
   renderNav();
@@ -116,37 +115,37 @@ function renderApp() {
 renderApp(); // initial
 
 // Follow changes in window size
-window.addEventListener("resize", renderApp);
+window.addEventListener('resize', renderApp);
 
 // Toggle theme
-var theme = "dark";
-document.getElementById("theme").addEventListener("click", function () {
-  theme = (theme==="dark" ? "light" : "dark");
+let theme = 'dark';
+document.getElementById('theme').addEventListener('click', () => {
+  theme = (theme === 'dark' ? 'light' : 'dark');
   appState.theme = theme;
   renderApp();
 });
 
 // Autolayout button
-document.getElementById("autolayout").addEventListener("click", function () {
+document.getElementById('autolayout').addEventListener('click', () => {
   // TODO: support via React props
   editor.triggerAutolayout();
 });
 
 // Focus a node
-document.getElementById("focus").addEventListener("click", function () {
+document.getElementById('focus').addEventListener('click', () => {
   // TODO: support via React props
-  var nodes = appState.graph.nodes;
-  var randomNode = nodes[Math.floor(Math.random()*nodes.length)];
+  const { nodes } = appState.graph;
+  const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
   editor.focusNode(randomNode);
 });
 
 // Simulate node icon updates
-var iconKeys = Object.keys(TheGraph.FONT_AWESOME);
-window.setInterval(function () {
-  var nodes = appState.graph.nodes;
-  if (nodes.length>0) {
-    var randomNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
-    var randomIcon = iconKeys[Math.floor(Math.random()*iconKeys.length)];
+const iconKeys = Object.keys(TheGraph.FONT_AWESOME);
+window.setInterval(() => {
+  const { nodes } = appState.graph;
+  if (nodes.length > 0) {
+    const randomNodeId = nodes[Math.floor(Math.random() * nodes.length)].id;
+    const randomIcon = iconKeys[Math.floor(Math.random() * iconKeys.length)];
     console.log(randomIcon);
     appState.iconOverrides[randomNodeId] = randomIcon;
     renderApp();
@@ -154,32 +153,32 @@ window.setInterval(function () {
 }, 1000);
 
 // Simulate un/triggering errors
-var errorNodeId = null;
-var makeRandomError = function () {
+let errorNodeId = null;
+const makeRandomError = function () {
   if (errorNodeId) {
     editor.removeErrorNode(errorNodeId);
   }
-  var nodes = appState.graph.nodes;
-  if (nodes.length>0) {
-    errorNodeId = nodes[Math.floor(Math.random()*nodes.length)].id;
+  const { nodes } = appState.graph;
+  if (nodes.length > 0) {
+    errorNodeId = nodes[Math.floor(Math.random() * nodes.length)].id;
     editor.addErrorNode(errorNodeId);
     editor.updateErrorNodes();
   }
 };
-//window.setInterval(makeRandomError, 3551); // TODO: support error nodes via React props
-//makeRandomError();
+// window.setInterval(makeRandomError, 3551); // TODO: support error nodes via React props
+// makeRandomError();
 
 // Load initial graph
-var loadingMessage = document.getElementById("loading-message");
+const loadingMessage = document.getElementById('loading-message');
 window.loadGraph = function (json) {
   // Load graph
-  loadingMessage.innerHTML = "loading graph data...";
+  loadingMessage.innerHTML = 'loading graph data...';
 
-  var graphData = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
+  const graphData = json.data ? JSON.parse(json.data.files['noflo.json'].content) : json;
 
-  fbpGraph.graph.loadJSON(JSON.stringify(graphData), function(err, graph){
+  fbpGraph.graph.loadJSON(JSON.stringify(graphData), (err, graph) => {
     if (err) {
-      loadingMessage.innerHTML = "error loading graph: " + err.toString();
+      loadingMessage.innerHTML = `error loading graph: ${err.toString()}`;
       return;
     }
     // Synthesize component library from graph
@@ -189,7 +188,7 @@ window.loadGraph = function (json) {
     appState.graph.on('endTransaction', renderApp); // graph changed
     renderApp();
     // Remove loading message
-    var loading = document.getElementById("loading");
+    const loading = document.getElementById('loading');
     loading.parentNode.removeChild(loading);
 
     console.log('loaded', graph);
