@@ -25,6 +25,7 @@
     "css-loader": "^5.0.1",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-15": "^1.0.5",
+    "events": "^3.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
     "http-server": "^0.12.3",
