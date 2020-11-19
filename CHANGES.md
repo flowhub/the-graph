@@ -3,6 +3,7 @@
 Changes:
 
 * the-graph CSS themes are now in the `dist/` folder instead of `theme/` folder
+* `editor.getDefaultMenus` method has now been removed
 
 Internal changes:
 
