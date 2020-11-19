@@ -1,8 +1,0 @@
-node_modules/
-/.idea
-/build
-/dist
-npm-debug.log
-/spec/*.js
-/coverage
-package-lock.json

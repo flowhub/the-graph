@@ -1,0 +1,25 @@
+<!doctype html><html><head><title>Graph Editor</title><meta charset="utf-8"><link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400" rel="stylesheet"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/><style>html, body {
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        background-color: hsl(189, 47%, 6%);
+        font-family: "SourceCodePro",Helvetica,Arial,sans-serif;
+        overflow: hidden;
+      }
+      #editor {
+        background-color: transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      #nav {
+        position: absolute; 
+        right: 0px; 
+        bottom: 0px;
+      }
+      #testing {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }</style></head><body><div id="editor"></div><div id="nav"></div><div id="testing"><button id="theme" style=""><i class="fa fa-adjust"></i> theme</button> <button id="autolayout" style="display: none">autolayout</button> <button id="focus" style="display: none">focus</button></div><div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;"><div id="loading-message">loading custom elements...</div></div><script src="demo-full.js"></script></body></html>
