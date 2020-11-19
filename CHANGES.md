@@ -1,4 +1,12 @@
-## dev
+## 0.14.0 (git master)
+
+Changes:
+
+* the-graph CSS themes are now in the `dist/` folder instead of `theme/` folder
+
+Internal changes:
+
+* Now using WebPack for the builds
 
 ## 0.12.0 (2018 February 19)
 
