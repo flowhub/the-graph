@@ -23,7 +23,7 @@ function generateFile(err, data) {
     }
   });
 
-  const output = `// This file is generated via \`npm run fontawesome\`\nmodule.exports.FONT_AWESOME = ${JSON.stringify(icons, null, 2).replace(/"/g, '\'')};`;
+  const output = `// This file is generated via \`npm run fontawesome\`\nmodule.exports = ${JSON.stringify(icons, null, 2).replace(/"/g, '\'')};`;
 
   fs.writeFile(`${__dirname}/../the-graph/font-awesome-unicode-map.js`, output, (writeErr) => {
     if (writeErr) {
