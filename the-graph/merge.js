@@ -6,10 +6,12 @@ module.exports = function (src, dest, overwrite) {
   // Default overwriting of existing properties to false.
   overwrite = overwrite || false;
 
-  for (const key in src) {
+  Object.keys(src).forEach((key) => {
     // Only copy properties, not functions.
-    if (typeof src[key] !== 'function' && (!dest[key] || overwrite)) dest[key] = src[key];
-  }
+    if (typeof src[key] !== 'function' && (!dest[key] || overwrite)) {
+      dest[key] = src[key];
+    }
+  });
 
   return dest;
 };

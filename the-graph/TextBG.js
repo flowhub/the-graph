@@ -9,21 +9,17 @@ const TextBG = React.createFactory(createReactClass({
       text = '';
     }
     const { height } = this.props;
-    const width = text.length * this.props.height * 2 / 3;
+    const width = (text.length * this.props.height * 2) / 3;
     const radius = this.props.height / 2;
 
-    let textAnchor = 'start';
-    const dominantBaseline = 'central';
     let { x } = this.props;
     const y = this.props.y - height / 2;
 
     if (this.props.halign === 'center') {
       x -= width / 2;
-      textAnchor = 'middle';
     }
     if (this.props.halign === 'right') {
       x -= width;
-      textAnchor = 'end';
     }
 
     return React.createElement(

@@ -8,7 +8,7 @@ const { ModalBG } = require('./the-graph-modalbg');
 const geometryutils = require('./geometryutils');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
-const unwrap = (window.unwrap) ? window.unwrap : function (e) { return e; };
+const unwrap = (window.unwrap) ? window.unwrap : (e) => e;
 
 const hotKeys = {
   // Escape
@@ -25,13 +25,11 @@ const hotKeys = {
     const { selectedEdges } = app.refs.graph.state;
     const { menus } = app.props;
 
-    for (const nodeKey in selectedNodes) {
-      if (selectedNodes.hasOwnProperty(nodeKey)) {
-        const node = graph.getNode(nodeKey);
-        menus.node.actions.delete(graph, nodeKey, node);
-      }
-    }
-    selectedEdges.map((edge) => {
+    Object.keys(selectedNodes).forEach((nodeKey) => {
+      const node = graph.getNode(nodeKey);
+      menus.node.actions.delete(graph, nodeKey, node);
+    });
+    selectedEdges.forEach((edge) => {
       menus.edge.actions.delete(graph, null, edge);
     });
   },
@@ -44,13 +42,10 @@ const hotKeys = {
     const { graph } = app.refs.graph.props;
     const { selectedNodes } = app.refs.graph.state;
 
-    for (const nodeKey in selectedNodes) {
-      if (selectedNodes.hasOwnProperty(nodeKey)) {
-        const node = graph.getNode(nodeKey);
-        app.focusNode(node);
-        break;
-      }
-    }
+    Object.keys(selectedNodes).forEach((nodeKey) => {
+      const node = graph.getNode(nodeKey);
+      app.focusNode(node);
+    });
   },
 };
 // these don't change state, so also allowed when readonly
@@ -115,7 +110,7 @@ module.exports.register = function (context) {
       args = args.concat(content);
     }
 
-    return React.createElement.apply(React, args);
+    return React.createElement(...args);
   }
 
   function createAppGraph(options) {
@@ -133,18 +128,6 @@ module.exports.register = function (context) {
   const mixins = [];
   if (React.Animate) {
     mixins.push(React.Animate);
-  }
-
-  function defaultGetMenu(options) {
-    // Options: type, graph, itemKey, item
-    if (options.type && this.menus[options.type]) {
-      const defaultMenu = this.menus[options.type];
-      if (defaultMenu.callback) {
-        return defaultMenu.callback(defaultMenu, options);
-      }
-      return defaultMenu;
-    }
-    return null;
   }
 
   TheGraph.App = React.createFactory(createReactClass({
@@ -170,7 +153,12 @@ module.exports.register = function (context) {
     },
     getInitialState() {
       // Autofit
-      const fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
+      const fit = geometryutils.findFit(
+        this.props.graph,
+        this.props.width,
+        this.props.height,
+        TheGraph.config.nodeSize,
+      );
 
       return {
         x: fit.x,
@@ -186,10 +174,6 @@ module.exports.register = function (context) {
         tooltipX: 0,
         tooltipY: 0,
         tooltipVisible: false,
-        contextElement: null,
-        contextType: null,
-        offsetY: this.props.offsetY,
-        offsetX: this.props.offsetX,
       };
     },
     zoomFactor: 0,
@@ -210,7 +194,7 @@ module.exports.register = function (context) {
       requestAnimationFrame(this.scheduleWheelZoom);
     },
     scheduleWheelZoom() {
-      if (isNaN(this.zoomFactor)) { return; }
+      if (Number.isNaN(this.zoomFactor)) { return; }
 
       // Speed limit
       let zoomFactor = this.zoomFactor / -500;
@@ -298,7 +282,7 @@ module.exports.register = function (context) {
       // Hammer.js
       this.pinching = false;
     },
-    onTrackStart(event) {
+    onTrackStart() {
       const domNode = ReactDOM.findDOMNode(this);
       domNode.addEventListener('panmove', this.onTrack);
       domNode.addEventListener('panend', this.onTrackEnd);

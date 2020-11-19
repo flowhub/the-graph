@@ -42,7 +42,7 @@ function applyStyleManual(element) {
 // FIXME: icons are broken
 function applyStyle(tree) {
   const all = tree.getElementsByTagName('*');
-  for (let i = 0; i < all.length; i++) {
+  for (let i = 0; i < all.length; i += 1) {
     applyStyleManual(all[i]);
   }
   return tree;
@@ -56,8 +56,9 @@ function renderImage(graphElement, options, callback) {
 
   const svgNode = graphElement.getElementsByTagName('svg')[0];
   const bgCanvas = graphElement.getElementsByTagName('canvas')[0];
-  if (svgNode.tagName.toLowerCase() != 'svg') {
-    return callback(new Error(`renderImage input must be SVG, got ${svgNode.tagName}`));
+  if (svgNode.tagName.toLowerCase() !== 'svg') {
+    callback(new Error(`renderImage input must be SVG, got ${svgNode.tagName}`));
+    return;
   }
 
   // FIXME: make copy
@@ -72,8 +73,9 @@ function renderImage(graphElement, options, callback) {
   const serializer = new XMLSerializer();
   const svgData = serializer.serializeToString(withStyle);
 
-  if (options.format == 'svg') {
-    return callback(null, svgData);
+  if (options.format === 'svg') {
+    callback(null, svgData);
+    return;
   }
 
   const DOMURL = window.URL || window.webkitURL || window;
@@ -96,14 +98,14 @@ function renderImage(graphElement, options, callback) {
     ctx.drawImage(bgCanvas, 0, 0);
   }
 
-  img.onerror = function (err) {
-    return callback(err);
+  img.onerror = (err) => {
+    callback(err);
   };
-  img.onload = function () {
+  img.onload = () => {
     ctx.drawImage(img, 0, 0);
     DOMURL.revokeObjectURL(svgUrl);
     const out = canvas.toDataURL(`image/${options.format}`, options.quality);
-    return callback(null, out);
+    callback(null, out);
   };
   img.src = svgUrl;
 }
@@ -125,8 +127,8 @@ function libraryFromGraph(graph) {
   });
 
   function addIfMissing(ports, name) {
-    const found = ports.filter((p) => p.name == name);
-    if (found.length == 0) {
+    const found = ports.filter((p) => p.name === name);
+    if (found.length === 0) {
       ports.push({ name, type: 'all' });
     }
   }

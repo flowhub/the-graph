@@ -10,7 +10,7 @@ exports.createGroup = function (options, content) {
     args = args.concat(content);
   }
 
-  return React.createElement.apply(React, args);
+  return React.createElement(...args);
 };
 
 exports.createRect = function (options) {
@@ -48,5 +48,5 @@ exports.createSvg = function (options, content) {
     args = args.concat(content);
   }
 
-  return React.createElement.apply(React, args);
+  return React.createElement(...args);
 };

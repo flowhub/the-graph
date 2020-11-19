@@ -1,4 +1,4 @@
-const findMinMax = function (graph, nodes) {
+function findMinMax(graph, nodes) {
   let inports; let
     outports;
   if (nodes === undefined) {
@@ -17,18 +17,17 @@ const findMinMax = function (graph, nodes) {
 
   // Loop through nodes
   let len = nodes.length;
-  for (var i = 0; i < len; i++) {
+  for (let i = 0; i < len; i += 1) {
     const key = nodes[i];
     const node = graph.getNode(key);
-    if (!node || !node.metadata) {
-      continue;
+    if (node && node.metadata) {
+      if (node.metadata.x < minX) { minX = node.metadata.x; }
+      if (node.metadata.y < minY) { minY = node.metadata.y; }
+      const x = node.metadata.x + node.metadata.width;
+      const y = node.metadata.y + node.metadata.height;
+      if (x > maxX) { maxX = x; }
+      if (y > maxY) { maxY = y; }
     }
-    if (node.metadata.x < minX) { minX = node.metadata.x; }
-    if (node.metadata.y < minY) { minY = node.metadata.y; }
-    const x = node.metadata.x + node.metadata.width;
-    const y = node.metadata.y + node.metadata.height;
-    if (x > maxX) { maxX = x; }
-    if (y > maxY) { maxY = y; }
   }
   // Loop through exports
   let keys; let
@@ -36,29 +35,34 @@ const findMinMax = function (graph, nodes) {
   if (inports) {
     keys = Object.keys(inports);
     len = keys.length;
-    for (i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       exp = inports[keys[i]];
-      if (!exp.metadata) { continue; }
-      if (exp.metadata.x < minX) { minX = exp.metadata.x; }
-      if (exp.metadata.y < minY) { minY = exp.metadata.y; }
-      if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
-      if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      if (exp.metadata) {
+        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      }
     }
   }
   if (outports) {
     keys = Object.keys(outports);
     len = keys.length;
-    for (i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       exp = outports[keys[i]];
-      if (!exp.metadata) { continue; }
-      if (exp.metadata.x < minX) { minX = exp.metadata.x; }
-      if (exp.metadata.y < minY) { minY = exp.metadata.y; }
-      if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
-      if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      if (exp.metadata) {
+        if (exp.metadata.x < minX) { minX = exp.metadata.x; }
+        if (exp.metadata.y < minY) { minY = exp.metadata.y; }
+        if (exp.metadata.x > maxX) { maxX = exp.metadata.x; }
+        if (exp.metadata.y > maxY) { maxY = exp.metadata.y; }
+      }
     }
   }
 
-  if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+  if (!Number.isFinite(minX)
+    || !Number.isFinite(minY)
+    || !Number.isFinite(maxX)
+    || !Number.isFinite(maxY)) {
     return null;
   }
   return {
@@ -67,9 +71,9 @@ const findMinMax = function (graph, nodes) {
     maxX,
     maxY,
   };
-};
+}
 
-const findFit = function (graph, width, height, sizeLimit) {
+function findFit(graph, width, height, sizeLimit) {
   const limits = findMinMax(graph);
   if (!limits) {
     return { x: 0, y: 0, scale: 1 };
@@ -104,9 +108,9 @@ const findFit = function (graph, width, height, sizeLimit) {
     graphWidth: gWidth,
     graphHeight: gHeight,
   };
-};
+}
 
-const findAreaFit = function (point1, point2, width, height, sizeLimit) {
+function findAreaFit(point1, point2, width, height, sizeLimit) {
   const limits = {
     minX: point1.x < point2.x ? point1.x : point2.x,
     minY: point1.y < point2.y ? point1.y : point2.y,
@@ -142,9 +146,9 @@ const findAreaFit = function (point1, point2, width, height, sizeLimit) {
     y,
     scale,
   };
-};
+}
 
-const findNodeFit = function (node, width, height, sizeLimit) {
+function findNodeFit(node, width, height, sizeLimit) {
   const limits = {
     minX: node.metadata.x - sizeLimit,
     minY: node.metadata.y - sizeLimit,
@@ -175,10 +179,11 @@ const findNodeFit = function (node, width, height, sizeLimit) {
     y,
     scale,
   };
-};
+}
 
 module.exports = {
   findMinMax,
   findNodeFit,
+  findAreaFit,
   findFit,
 };

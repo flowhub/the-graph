@@ -22,7 +22,7 @@ function prefixed(obj, property) {
     if (prop in obj) {
       return prop;
     }
-    i++;
+    i += 1;
   }
   return undefined;
 }
@@ -41,13 +41,14 @@ if (window.MSPointerEvent && !window.PointerEvent) {
   POINTER_WINDOW_EVENTS = 'MSPointerMove MSPointerUp MSPointerCancel';
 }
 
-function PointerInput() {
+function PointerInput(...args) {
   // OVERRIDE: listen for all event on the element, not on window
   // This is needed for event propagation to get the right targets
   this.evEl = `${POINTER_ELEMENT_EVENTS} ${POINTER_WINDOW_EVENTS}`;
   this.evWin = '';
-  Hammer.Input.apply(this, arguments);
-  this.store = (this.manager.session.pointerEvents = []);
+  Hammer.Input.apply(this, args);
+  this.manager.session.pointerEvents = [];
+  this.store = this.manager.session.pointerEvents;
 }
 Hammer.inherit(PointerInput, Hammer.PointerEventInput, {});
 PointerInput.prototype.constructor = function () { }; // STUB, avoids init() being called too early
@@ -55,20 +56,21 @@ PointerInput.prototype.constructor = function () { }; // STUB, avoids init() bei
 const MOUSE_ELEMENT_EVENTS = 'mousedown';
 const MOUSE_WINDOW_EVENTS = 'mousemove mouseup';
 
-function MouseInput() {
+function MouseInput(...args) {
   // OVERRIDE: listen for all event on the element, not on window
   // This is needed for event propagation to get the right targets
   this.evEl = `${MOUSE_ELEMENT_EVENTS} ${MOUSE_WINDOW_EVENTS}`;
   this.evWin = '';
 
   this.pressed = false; // mousedown state
-  Hammer.Input.apply(this, arguments);
+  Hammer.Input.apply(this, args);
 }
 Hammer.inherit(MouseInput, Hammer.MouseInput, {});
-MouseInput.prototype.constructor = function () { }; // STUB, avoids overridden constructor being called
+// STUB, avoids overridden constructor being called
+MouseInput.prototype.constructor = function () { };
 
-function TouchMouseInput() {
-  Hammer.Input.apply(this, arguments);
+function TouchMouseInput(...args) {
+  Hammer.Input.apply(this, args);
 
   const handler = this.handler.bind(this);
   this.touch = new Hammer.TouchInput(this.manager, handler);
@@ -78,7 +80,8 @@ function TouchMouseInput() {
   this.lastTouches = [];
 }
 Hammer.inherit(TouchMouseInput, Hammer.TouchMouseInput, {});
-TouchMouseInput.prototype.constructor = function () { }; // STUB, avoids overridden constructor being called
+// STUB, avoids overridden constructor being called
+TouchMouseInput.prototype.constructor = function () { };
 
 let Input = null;
 if (SUPPORT_POINTER_EVENTS) {

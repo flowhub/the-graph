@@ -17,7 +17,7 @@ const Tooltip = {
     });
     ReactDOM.findDOMNode(this).dispatchEvent(tooltipEvent);
   },
-  hideTooltip(event) {
+  hideTooltip() {
     if (!this.shouldShowTooltip()) { return; }
 
     const tooltipEvent = new CustomEvent('the-graph-tooltip-hide', {
