@@ -1,52 +1,52 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var createReactClass = require('create-react-class');
-var Hammer = require('hammerjs');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const createReactClass = require('create-react-class');
+const Hammer = require('hammerjs');
 
-var hammerhacks = require('./hammer.js');
-var ModalBG = require('./the-graph-modalbg').ModalBG;
-var geometryutils = require('./geometryutils');
+const hammerhacks = require('./hammer.js');
+const { ModalBG } = require('./the-graph-modalbg');
+const geometryutils = require('./geometryutils');
 
 // Trivial polyfill for Polymer/webcomponents/shadowDOM element unwrapping
-var unwrap = (window.unwrap) ? window.unwrap : function(e) { return e; };
+const unwrap = (window.unwrap) ? window.unwrap : function (e) { return e; };
 
-var hotKeys = {
+const hotKeys = {
   // Escape
-  27: function(app) {
+  27(app) {
     if (!app.refs.graph) {
       return;
     }
     app.refs.graph.cancelPreviewEdge();
   },
   // Delete
-  46: function (app) {
-    var graph = app.refs.graph.props.graph;
-    var selectedNodes = app.refs.graph.state.selectedNodes;
-    var selectedEdges = app.refs.graph.state.selectedEdges;
-    var menus = app.props.menus;
+  46(app) {
+    const { graph } = app.refs.graph.props;
+    const { selectedNodes } = app.refs.graph.state;
+    const { selectedEdges } = app.refs.graph.state;
+    const { menus } = app.props;
 
-    for (var nodeKey in selectedNodes) {
+    for (const nodeKey in selectedNodes) {
       if (selectedNodes.hasOwnProperty(nodeKey)) {
-        var node = graph.getNode(nodeKey);
+        const node = graph.getNode(nodeKey);
         menus.node.actions.delete(graph, nodeKey, node);
       }
     }
-    selectedEdges.map(function (edge) {
+    selectedEdges.map((edge) => {
       menus.edge.actions.delete(graph, null, edge);
     });
   },
   // f for fit
-  70: function (app) {
+  70(app) {
     app.triggerFit();
   },
   // s for selected
-  83: function (app) {
-    var graph = app.refs.graph.props.graph;
-    var selectedNodes = app.refs.graph.state.selectedNodes;
+  83(app) {
+    const { graph } = app.refs.graph.props;
+    const { selectedNodes } = app.refs.graph.state;
 
-    for (var nodeKey in selectedNodes) {
+    for (const nodeKey in selectedNodes) {
       if (selectedNodes.hasOwnProperty(nodeKey)) {
-        var node = graph.getNode(nodeKey);
+        const node = graph.getNode(nodeKey);
         app.focusNode(node);
         break;
       }
@@ -54,20 +54,19 @@ var hotKeys = {
   },
 };
 // these don't change state, so also allowed when readonly
-var readOnlyActions = [70, 83, 27];
+const readOnlyActions = [70, 83, 27];
 
 module.exports.register = function (context) {
-
-  var TheGraph = context.TheGraph;
+  const { TheGraph } = context;
 
   TheGraph.config.app = {
     container: {
-      className: "the-graph-app",
-      name: "app"
+      className: 'the-graph-app',
+      name: 'app',
     },
     canvas: {
-      ref: "canvas",
-      className: "app-canvas",
+      ref: 'canvas',
+      className: 'app-canvas',
       style: {
         position: 'absolute',
         top: 0,
@@ -75,7 +74,7 @@ module.exports.register = function (context) {
       },
     },
     svg: {
-      className: "app-svg",
+      className: 'app-svg',
       ref: 'svg',
       style: {
         position: 'absolute',
@@ -84,33 +83,33 @@ module.exports.register = function (context) {
       },
     },
     svgGroup: {
-      className: "view"
+      className: 'view',
     },
     graph: {
-      ref: "graph"
+      ref: 'graph',
     },
     tooltip: {
-      ref: "tooltip"
+      ref: 'tooltip',
     },
     modal: {
-      className: "context"
-    }
+      className: 'context',
+    },
   };
 
   TheGraph.factories.app = {
-    createAppContainer: createAppContainer,
+    createAppContainer,
     createAppCanvas: TheGraph.factories.createCanvas,
     createAppSvg: TheGraph.factories.createSvg,
     createAppSvgGroup: TheGraph.factories.createGroup,
-    createAppGraph: createAppGraph,
-    createAppTooltip: createAppTooltip,
+    createAppGraph,
+    createAppTooltip,
     createAppModalGroup: TheGraph.factories.createGroup,
-    createAppModalBackground: createAppModalBackground
+    createAppModalBackground,
   };
 
   // No need to promote DIV creation to TheGraph.js.
   function createAppContainer(options, content) {
-    var args = ['div', options];
+    let args = ['div', options];
 
     if (Array.isArray(content)) {
       args = args.concat(content);
@@ -131,7 +130,7 @@ module.exports.register = function (context) {
     return ModalBG(options);
   }
 
-  var mixins = [];
+  const mixins = [];
   if (React.Animate) {
     mixins.push(React.Animate);
   }
@@ -139,7 +138,7 @@ module.exports.register = function (context) {
   function defaultGetMenu(options) {
     // Options: type, graph, itemKey, item
     if (options.type && this.menus[options.type]) {
-      var defaultMenu = this.menus[options.type];
+      const defaultMenu = this.menus[options.type];
       if (defaultMenu.callback) {
         return defaultMenu.callback(defaultMenu, options);
       }
@@ -148,10 +147,10 @@ module.exports.register = function (context) {
     return null;
   }
 
-  TheGraph.App = React.createFactory( createReactClass({
-    displayName: "TheGraphApp",
-    mixins: mixins,
-    getDefaultProps: function() {
+  TheGraph.App = React.createFactory(createReactClass({
+    displayName: 'TheGraphApp',
+    mixins,
+    getDefaultProps() {
       return {
         width: null,
         height: null,
@@ -169,9 +168,9 @@ module.exports.register = function (context) {
         onEdgeSelection: null,
       };
     },
-    getInitialState: function() {
+    getInitialState() {
       // Autofit
-      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
+      const fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
 
       return {
         x: fit.x,
@@ -183,7 +182,7 @@ module.exports.register = function (context) {
         maxZoom: this.props.maxZoom,
         trackStartX: null,
         trackStartY: null,
-        tooltip: "",
+        tooltip: '',
         tooltipX: 0,
         tooltipY: 0,
         tooltipVisible: false,
@@ -196,7 +195,7 @@ module.exports.register = function (context) {
     zoomFactor: 0,
     zoomX: 0,
     zoomY: 0,
-    onWheel: function (event) {
+    onWheel(event) {
       // Don't bounce
       event.preventDefault();
 
@@ -205,49 +204,48 @@ module.exports.register = function (context) {
       }
 
       // Safari is wheelDeltaY
-      this.zoomFactor += event.deltaY ? event.deltaY : 0-event.wheelDeltaY;
+      this.zoomFactor += event.deltaY ? event.deltaY : 0 - event.wheelDeltaY;
       this.zoomX = event.clientX;
       this.zoomY = event.clientY;
       requestAnimationFrame(this.scheduleWheelZoom);
     },
-    scheduleWheelZoom: function () {
+    scheduleWheelZoom() {
       if (isNaN(this.zoomFactor)) { return; }
 
       // Speed limit
-      var zoomFactor = this.zoomFactor/-500;
+      let zoomFactor = this.zoomFactor / -500;
       zoomFactor = Math.min(0.5, Math.max(-0.5, zoomFactor));
-      var scale = this.state.scale + (this.state.scale * zoomFactor);
+      let scale = this.state.scale + (this.state.scale * zoomFactor);
       this.zoomFactor = 0;
 
       if (scale < this.state.minZoom) {
         scale = this.state.minZoom;
-      }
-      else if (scale > this.state.maxZoom) {
+      } else if (scale > this.state.maxZoom) {
         scale = this.state.maxZoom;
       }
       if (scale === this.state.scale) { return; }
 
       // Zoom and pan transform-origin equivalent
-      var scaleD = scale / this.state.scale;
-      var currentX = this.state.x;
-      var currentY = this.state.y;
-      var oX = this.zoomX;
-      var oY = this.zoomY;
-      var x = scaleD * (currentX - oX) + oX;
-      var y = scaleD * (currentY - oY) + oY;
+      const scaleD = scale / this.state.scale;
+      const currentX = this.state.x;
+      const currentY = this.state.y;
+      const oX = this.zoomX;
+      const oY = this.zoomY;
+      const x = scaleD * (currentX - oX) + oX;
+      const y = scaleD * (currentY - oY) + oY;
 
       this.setState({
-        scale: scale,
-        x: x,
-        y: y,
-        tooltipVisible: false
+        scale,
+        x,
+        y,
+        tooltipVisible: false,
       });
     },
     lastScale: 1,
     lastX: 0,
     lastY: 0,
     pinching: false,
-    onTransformStart: function (event) {
+    onTransformStart(event) {
       // Don't drag nodes
       event.srcEvent.stopPropagation();
       event.srcEvent.stopImmediatePropagation();
@@ -258,41 +256,41 @@ module.exports.register = function (context) {
       this.lastY = event.center.y;
       this.pinching = true;
     },
-    onTransform: function (event) {
+    onTransform(event) {
       // Don't drag nodes
       event.srcEvent.stopPropagation();
       event.srcEvent.stopImmediatePropagation();
 
       // Hammer.js
-      var currentScale = this.state.scale;
-      var currentX = this.state.x;
-      var currentY = this.state.y;
+      const currentScale = this.state.scale;
+      const currentX = this.state.x;
+      const currentY = this.state.y;
 
-      var scaleEvent = event.scale;
-      var scaleDelta = 1 + (scaleEvent - this.lastScale);
+      const scaleEvent = event.scale;
+      const scaleDelta = 1 + (scaleEvent - this.lastScale);
       this.lastScale = scaleEvent;
-      var scale = scaleDelta * currentScale;
+      let scale = scaleDelta * currentScale;
       scale = Math.max(scale, this.props.minZoom);
 
       // Zoom and pan transform-origin equivalent
-      var oX = event.center.x;
-      var oY = event.center.y;
-      var deltaX = oX - this.lastX;
-      var deltaY = oY - this.lastY;
-      var x = scaleDelta * (currentX - oX) + oX + deltaX;
-      var y = scaleDelta * (currentY - oY) + oY + deltaY;
+      const oX = event.center.x;
+      const oY = event.center.y;
+      const deltaX = oX - this.lastX;
+      const deltaY = oY - this.lastY;
+      const x = scaleDelta * (currentX - oX) + oX + deltaX;
+      const y = scaleDelta * (currentY - oY) + oY + deltaY;
 
       this.lastX = oX;
       this.lastY = oY;
 
       this.setState({
-        scale: scale,
-        x: x,
-        y: y,
-        tooltipVisible: false
+        scale,
+        x,
+        y,
+        tooltipVisible: false,
       });
     },
-    onTransformEnd: function (event) {
+    onTransformEnd(event) {
       // Don't drag nodes
       event.srcEvent.stopPropagation();
       event.srcEvent.stopImmediatePropagation();
@@ -300,41 +298,41 @@ module.exports.register = function (context) {
       // Hammer.js
       this.pinching = false;
     },
-    onTrackStart: function (event) {
-      var domNode = ReactDOM.findDOMNode(this);
-      domNode.addEventListener("panmove", this.onTrack);
-      domNode.addEventListener("panend", this.onTrackEnd);
+    onTrackStart(event) {
+      const domNode = ReactDOM.findDOMNode(this);
+      domNode.addEventListener('panmove', this.onTrack);
+      domNode.addEventListener('panend', this.onTrackEnd);
 
       this.setState({ trackStartX: this.state.x, trackStartY: this.state.y });
     },
-    onTrack: function (event) {
-      if ( this.pinching ) { return; }
-      if ( this.menuShown ) { return; }
+    onTrack(event) {
+      if (this.pinching) { return; }
+      if (this.menuShown) { return; }
       this.setState({
         x: this.state.trackStartX + event.gesture.deltaX,
         y: this.state.trackStartY + event.gesture.deltaY,
       });
     },
-    onTrackEnd: function (event) {
+    onTrackEnd(event) {
       // Don't click app (unselect)
       event.stopPropagation();
 
-      var domNode = ReactDOM.findDOMNode(this);
-      domNode.removeEventListener("panmove", this.onTrack);
-      domNode.removeEventListener("panend", this.onTrackEnd);
+      const domNode = ReactDOM.findDOMNode(this);
+      domNode.removeEventListener('panmove', this.onTrack);
+      domNode.removeEventListener('panend', this.onTrackEnd);
 
       this.setState({ trackStartX: null, trackStartY: null });
     },
-    onPanScale: function () {
+    onPanScale() {
       // Pass pan/scale out to the-graph
       if (this.props.onPanScale) {
         this.props.onPanScale(this.state.x, this.state.y, this.state.scale);
       }
     },
-    defaultGetMenuDef: function(options) {
+    defaultGetMenuDef(options) {
       // Options: type, graph, itemKey, item
       if (options.type && this.props.menus && this.props.menus[options.type]) {
-        var defaultMenu = this.props.menus[options.type];
+        const defaultMenu = this.props.menus[options.type];
         if (defaultMenu.callback) {
           return defaultMenu.callback(defaultMenu, options);
         }
@@ -342,62 +340,63 @@ module.exports.register = function (context) {
       }
       return null;
     },
-    showContext: function (options) {
+    showContext(options) {
       this.setState({
         contextMenu: options,
-        tooltipVisible: false
+        tooltipVisible: false,
       });
     },
-    hideContext: function (event) {
+    hideContext(event) {
       this.setState({
-        contextMenu: null
+        contextMenu: null,
       });
     },
-    changeTooltip: function (event) {
-      var tooltip = event.detail.tooltip;
+    changeTooltip(event) {
+      const { tooltip } = event.detail;
 
       // Don't go over right edge
-      var x = event.detail.x + 10;
-      var width = tooltip.length*6;
+      let x = event.detail.x + 10;
+      const width = tooltip.length * 6;
       if (x + width > this.props.width) {
         x = event.detail.x - width - 10;
       }
 
       this.setState({
-        tooltip: tooltip,
+        tooltip,
         tooltipVisible: true,
         tooltipX: x,
-        tooltipY: event.detail.y + 20
+        tooltipY: event.detail.y + 20,
       });
     },
-    hideTooltip: function (event) {
+    hideTooltip(event) {
       this.setState({
-        tooltip: "",
-        tooltipVisible: false
+        tooltip: '',
+        tooltipVisible: false,
       });
     },
-    triggerFit: function (event) {
-      var fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
+    triggerFit(event) {
+      const fit = geometryutils.findFit(this.props.graph, this.props.width, this.props.height, TheGraph.config.nodeSize);
       this.setState({
         x: fit.x,
         y: fit.y,
-        scale: fit.scale
+        scale: fit.scale,
       });
     },
-    focusNode: function (node) {
-      var duration = TheGraph.config.focusAnimationDuration;
-      var fit = geometryutils.findNodeFit(node, this.state.width, this.state.height, TheGraph.config.nodeSize);
-      var start_point = {
+    focusNode(node) {
+      const duration = TheGraph.config.focusAnimationDuration;
+      const fit = geometryutils.findNodeFit(node, this.state.width, this.state.height, TheGraph.config.nodeSize);
+      const start_point = {
         x: -(this.state.x - this.state.width / 2) / this.state.scale,
         y: -(this.state.y - this.state.height / 2) / this.state.scale,
-      }, end_point = {
-        x: node.metadata.x,
-        y: node.metadata.y,
-      };
-      var graphfit = geometryutils.findAreaFit(start_point, end_point, this.state.width, this.state.height, TheGraph.config.nodeSize);
-      var scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
-      var scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
-      var scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
+      }; const
+        end_point = {
+          x: node.metadata.x,
+          y: node.metadata.y,
+        };
+      const graphfit = geometryutils.findAreaFit(start_point, end_point, this.state.width, this.state.height, TheGraph.config.nodeSize);
+      const scale_ratio_1 = Math.abs(graphfit.scale - this.state.scale);
+      const scale_ratio_2 = Math.abs(fit.scale - graphfit.scale);
+      const scale_ratio_diff = scale_ratio_1 + scale_ratio_2;
 
       // Animation not available, jump right there
       if (!this.animate) {
@@ -410,71 +409,71 @@ module.exports.register = function (context) {
         x: graphfit.x,
         y: graphfit.y,
         scale: graphfit.scale,
-      }, duration * (scale_ratio_1 / scale_ratio_diff), 'in-quint', function() {
+      }, duration * (scale_ratio_1 / scale_ratio_diff), 'in-quint', () => {
         this.animate({
           x: fit.x,
           y: fit.y,
           scale: fit.scale,
         }, duration * (scale_ratio_2 / scale_ratio_diff), 'out-quint');
-      }.bind(this));
+      });
     },
-    edgeStart: function (event) {
+    edgeStart(event) {
       // Listened from PortMenu.edgeStart() and Port.edgeStart()
       this.refs.graph.edgeStart(event);
       this.hideContext();
     },
-    componentDidMount: function () {
-      var domNode = ReactDOM.findDOMNode(this.refs.svg);
+    componentDidMount() {
+      const domNode = ReactDOM.findDOMNode(this.refs.svg);
 
       // Unselect edges and nodes
       if (this.props.onNodeSelection) {
-        domNode.addEventListener("tap", this.unselectAll);
+        domNode.addEventListener('tap', this.unselectAll);
       }
 
       // Setup Hammer.js events for this and all children
       // The events are injected into the DOM to follow regular propagation rules
-      var hammertime = new Hammer.Manager(domNode, {
+      const hammertime = new Hammer.Manager(domNode, {
         domEvents: true,
         inputClass: hammerhacks.Input,
         recognizers: [
-          [ Hammer.Tap, { } ],
-          [ Hammer.Press, { time: 500 } ],
-          [ Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 } ],
-          [ Hammer.Pinch, { } ],
+          [Hammer.Tap, { }],
+          [Hammer.Press, { time: 500 }],
+          [Hammer.Pan, { direction: Hammer.DIRECTION_ALL, threshold: 5 }],
+          [Hammer.Pinch, { }],
         ],
       });
 
       // Gesture event for pan
-      domNode.addEventListener("panstart", this.onTrackStart);
+      domNode.addEventListener('panstart', this.onTrackStart);
 
-      var isTouchDevice = 'ontouchstart' in document.documentElement;
-      if( isTouchDevice && hammertime ){
-        hammertime.on("pinchstart", this.onTransformStart);
-        hammertime.on("pinch", this.onTransform);
-        hammertime.on("pinchend", this.onTransformEnd);
+      const isTouchDevice = 'ontouchstart' in document.documentElement;
+      if (isTouchDevice && hammertime) {
+        hammertime.on('pinchstart', this.onTransformStart);
+        hammertime.on('pinch', this.onTransform);
+        hammertime.on('pinchend', this.onTransformEnd);
       }
 
       // Wheel to zoom
       if ('onwheel' in domNode) {
         // Chrome and Firefox
-        domNode.addEventListener("wheel", this.onWheel);
+        domNode.addEventListener('wheel', this.onWheel);
       } else if ('onmousewheel' in domNode) {
         // Safari
-        domNode.addEventListener("mousewheel", this.onWheel);
+        domNode.addEventListener('mousewheel', this.onWheel);
       }
 
       // Tooltip listener
-      domNode.addEventListener("the-graph-tooltip", this.changeTooltip);
-      domNode.addEventListener("the-graph-tooltip-hide", this.hideTooltip);
+      domNode.addEventListener('the-graph-tooltip', this.changeTooltip);
+      domNode.addEventListener('the-graph-tooltip-hide', this.hideTooltip);
 
       // Edge preview
-      domNode.addEventListener("the-graph-edge-start", this.edgeStart);
+      domNode.addEventListener('the-graph-edge-start', this.edgeStart);
 
-      domNode.addEventListener("contextmenu",this.onShowContext);
+      domNode.addEventListener('contextmenu', this.onShowContext);
 
       // Start zoom from middle if zoom before mouse move
-      this.mouseX = Math.floor( this.props.width/2 );
-      this.mouseY = Math.floor( this.props.height/2 );
+      this.mouseX = Math.floor(this.props.width / 2);
+      this.mouseY = Math.floor(this.props.height / 2);
 
       // FIXME: instead access the shiftKey of event instead of keeping metaKey
       document.addEventListener('keydown', this.keyDown);
@@ -485,20 +484,19 @@ module.exports.register = function (context) {
       this.bgContext = unwrap(bgCanvas.getContext('2d'));
       this.componentDidUpdate();
 
-
       // Rerender graph once to fix edges
-      setTimeout(function () {
+      setTimeout(() => {
         this.renderGraph();
-      }.bind(this), 500);
+      }, 500);
     },
-    onShowContext: function (event) {
+    onShowContext(event) {
       event.preventDefault();
       event.stopPropagation();
       if (event.preventTap) { event.preventTap(); }
 
       // Get mouse position
-      var x = event.x || event.clientX || 0;
-      var y = event.y || event.clientY || 0;
+      let x = event.x || event.clientX || 0;
+      let y = event.y || event.clientY || 0;
       if (event.touches && event.touches.length) {
         x = event.touches[0].clientX;
         y = event.touches[0].clientY;
@@ -507,147 +505,144 @@ module.exports.register = function (context) {
       // App.showContext
       this.showContext({
         element: this,
-        type: "main",
-        x: x,
-        y: y,
+        type: 'main',
+        x,
+        y,
         graph: this.props.graph,
         itemKey: 'graph',
-        item: this.props.graph
+        item: this.props.graph,
       });
     },
-    keyDown: function (event) {
+    keyDown(event) {
       // HACK metaKey global for taps
       if (event.metaKey || event.ctrlKey) {
         TheGraph.metaKeyPressed = true;
       }
 
-      var code = event.keyCode;
-      var handler = hotKeys[code];
+      const code = event.keyCode;
+      const handler = hotKeys[code];
       if (handler && this.props.enableHotKeys) {
-        var readonly = this.props.readonly;
+        const { readonly } = this.props;
         if (!readonly || (readonly && readOnlyActions[code])) {
           handler(this);
         }
       }
     },
-    keyUp: function (event) {
+    keyUp(event) {
       // HACK metaKey global for taps
       if (TheGraph.metaKeyPressed) {
         TheGraph.metaKeyPressed = false;
       }
     },
-    unselectAll: function (event) {
+    unselectAll(event) {
       // No arguments = clear selection
       this.props.onNodeSelection();
       this.props.onEdgeSelection();
     },
-    renderGraph: function () {
+    renderGraph() {
       this.refs.graph.markDirty();
     },
-    componentDidUpdate: function (prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
       setTimeout(() => {
         this.renderCanvas(this.bgContext);
-        if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
+        if (!prevState || prevState.x !== this.state.x || prevState.y !== this.state.y || prevState.scale !== this.state.scale) {
           this.onPanScale();
         }
       }, 0);
-
     },
-    renderCanvas: function (c) {
+    renderCanvas(c) {
       // Comment this line to go plaid
       c.clearRect(0, 0, this.state.width, this.state.height);
 
       // Background grid pattern
-      var scale = this.state.scale;
-      var g = TheGraph.config.nodeSize * scale;
+      const { scale } = this.state;
+      const g = TheGraph.config.nodeSize * scale;
 
-      var dx = this.state.x % g;
-      var dy = this.state.y % g;
-      var cols = Math.floor(this.state.width / g) + 1;
-      var row = Math.floor(this.state.height / g) + 1;
+      const dx = this.state.x % g;
+      const dy = this.state.y % g;
+      const cols = Math.floor(this.state.width / g) + 1;
+      let row = Math.floor(this.state.height / g) + 1;
       // Origin row/col index
-      var oc = Math.floor(this.state.x / g) + (this.state.x<0 ? 1 : 0);
-      var or = Math.floor(this.state.y / g) + (this.state.y<0 ? 1 : 0);
+      const oc = Math.floor(this.state.x / g) + (this.state.x < 0 ? 1 : 0);
+      const or = Math.floor(this.state.y / g) + (this.state.y < 0 ? 1 : 0);
 
       while (row--) {
-        var col = cols;
+        let col = cols;
         while (col--) {
-          var x = Math.round(col*g+dx);
-          var y = Math.round(row*g+dy);
-          if ((oc-col)%3===0 && (or-row)%3===0) {
+          const x = Math.round(col * g + dx);
+          const y = Math.round(row * g + dy);
+          if ((oc - col) % 3 === 0 && (or - row) % 3 === 0) {
             // 3x grid
-            c.fillStyle = "white";
+            c.fillStyle = 'white';
             c.fillRect(x, y, 1, 1);
           } else if (scale > 0.5) {
             // 1x grid
-            c.fillStyle = "grey";
+            c.fillStyle = 'grey';
             c.fillRect(x, y, 1, 1);
           }
         }
       }
-
     },
 
-    getContext: function (menu, options, hide) {
-        return TheGraph.Menu({
-            menu: menu,
-            options: options,
-            triggerHideContext: hide,
-            label: "Hello",
-            graph: this.props.graph,
-            node: this,
-            ports: [],
-            process: [],
-            processKey: null,
-            x: options.x,
-            y: options.y,
-            nodeWidth: this.props.width,
-            nodeHeight: this.props.height,
-            deltaX: 0,
-            deltaY: 0,
-            highlightPort: false
-        });
+    getContext(menu, options, hide) {
+      return TheGraph.Menu({
+        menu,
+        options,
+        triggerHideContext: hide,
+        label: 'Hello',
+        graph: this.props.graph,
+        node: this,
+        ports: [],
+        process: [],
+        processKey: null,
+        x: options.x,
+        y: options.y,
+        nodeWidth: this.props.width,
+        nodeHeight: this.props.height,
+        deltaX: 0,
+        deltaY: 0,
+        highlightPort: false,
+      });
     },
-    render: function() {
+    render() {
       // console.timeEnd("App.render");
       // console.time("App.render");
 
       // pan and zoom
-      var sc = this.state.scale;
-      var x = this.state.x;
-      var y = this.state.y;
-      var transform = "matrix("+sc+",0,0,"+sc+","+x+","+y+")";
+      const sc = this.state.scale;
+      const { x } = this.state;
+      const { y } = this.state;
+      const transform = `matrix(${sc},0,0,${sc},${x},${y})`;
 
-      var scaleClass = sc > TheGraph.zbpBig ? "big" : ( sc > TheGraph.zbpNormal ? "normal" : "small");
+      const scaleClass = sc > TheGraph.zbpBig ? 'big' : (sc > TheGraph.zbpNormal ? 'normal' : 'small');
 
-      var contextMenu = null;
-      var getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
-      if ( this.state.contextMenu ) {
-        var options = this.state.contextMenu;
-        var menu = getMenuDef(options);
+      let contextMenu = null;
+      const getMenuDef = this.props.getMenuDef || this.defaultGetMenuDef;
+      if (this.state.contextMenu) {
+        const options = this.state.contextMenu;
+        const menu = getMenuDef(options);
         if (menu && Object.keys(menu).length) {
           contextMenu = options.element.getContext(menu, options, this.hideContext);
         }
       }
-      var contextModal = null;
+      let contextModal = null;
       if (contextMenu) {
-
-        var modalBGOptions ={
+        const modalBGOptions = {
           width: this.state.width,
           height: this.state.height,
           triggerHideContext: this.hideContext,
-          children: contextMenu
+          children: contextMenu,
         };
 
         contextModal = [
-          TheGraph.factories.app.createAppModalBackground(modalBGOptions)
+          TheGraph.factories.app.createAppModalBackground(modalBGOptions),
         ];
         this.menuShown = true;
       } else {
         this.menuShown = false;
       }
 
-      var graphElementOptions = {
+      let graphElementOptions = {
         graph: this.props.graph,
         scale: this.state.scale,
         app: this,
@@ -660,45 +655,43 @@ module.exports.register = function (context) {
         allowEdgeStart: !this.props.readonly,
       };
       graphElementOptions = TheGraph.merge(TheGraph.config.app.graph, graphElementOptions);
-      var graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
+      const graphElement = TheGraph.factories.app.createAppGraph.call(this, graphElementOptions);
 
-      var svgGroupOptions = TheGraph.merge(TheGraph.config.app.svgGroup, { transform: transform });
-      var svgGroup = TheGraph.factories.app.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
+      const svgGroupOptions = TheGraph.merge(TheGraph.config.app.svgGroup, { transform });
+      const svgGroup = TheGraph.factories.app.createAppSvgGroup.call(this, svgGroupOptions, [graphElement]);
 
-      var tooltipOptions = {
+      let tooltipOptions = {
         x: this.state.tooltipX,
         y: this.state.tooltipY,
         visible: this.state.tooltipVisible,
-        label: this.state.tooltip
+        label: this.state.tooltip,
       };
 
       tooltipOptions = TheGraph.merge(TheGraph.config.app.tooltip, tooltipOptions);
-      var tooltip = TheGraph.factories.app.createAppTooltip.call(this, tooltipOptions);
+      const tooltip = TheGraph.factories.app.createAppTooltip.call(this, tooltipOptions);
 
-      var modalGroupOptions = TheGraph.merge(TheGraph.config.app.modal, { children: contextModal });
-      var modalGroup = TheGraph.factories.app.createAppModalGroup.call(this, modalGroupOptions);
+      const modalGroupOptions = TheGraph.merge(TheGraph.config.app.modal, { children: contextModal });
+      const modalGroup = TheGraph.factories.app.createAppModalGroup.call(this, modalGroupOptions);
 
-      var svgContents = [
+      const svgContents = [
         svgGroup,
         tooltip,
-        modalGroup
+        modalGroup,
       ];
 
-      var svgOptions = TheGraph.merge(TheGraph.config.app.svg, { width: this.state.width, height: this.state.height });
-      var svg = TheGraph.factories.app.createAppSvg.call(this, svgOptions, svgContents);
+      const svgOptions = TheGraph.merge(TheGraph.config.app.svg, { width: this.state.width, height: this.state.height });
+      const svg = TheGraph.factories.app.createAppSvg.call(this, svgOptions, svgContents);
 
-      var canvasOptions = TheGraph.merge(TheGraph.config.app.canvas, { width: this.state.width, height: this.state.height });
-      var canvas = TheGraph.factories.app.createAppCanvas.call(this, canvasOptions);
+      const canvasOptions = TheGraph.merge(TheGraph.config.app.canvas, { width: this.state.width, height: this.state.height });
+      const canvas = TheGraph.factories.app.createAppCanvas.call(this, canvasOptions);
 
-      var appContents = [
+      const appContents = [
         canvas,
-        svg
+        svg,
       ];
-      var containerOptions = TheGraph.merge(TheGraph.config.app.container, { style: { width: this.state.width, height: this.state.height } });
-      containerOptions.className += " " + scaleClass;
+      const containerOptions = TheGraph.merge(TheGraph.config.app.container, { style: { width: this.state.width, height: this.state.height } });
+      containerOptions.className += ` ${scaleClass}`;
       return TheGraph.factories.app.createAppContainer.call(this, containerOptions, appContents);
-    }
+    },
   }));
-
-
 };

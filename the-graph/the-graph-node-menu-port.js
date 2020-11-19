@@ -1,99 +1,94 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var createReactClass = require('create-react-class');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const createReactClass = require('create-react-class');
 
 module.exports.register = function (context) {
-
-  var TheGraph = context.TheGraph;
+  const { TheGraph } = context;
 
   TheGraph.config.nodeMenuPort = {
     container: {},
     backgroundRect: {
       rx: TheGraph.config.nodeRadius,
       ry: TheGraph.config.nodeRadius,
-      height: TheGraph.contextPortSize - 1
+      height: TheGraph.contextPortSize - 1,
     },
     circle: {
-      r: 10
+      r: 10,
     },
-    text: {}
+    text: {},
   };
 
   TheGraph.factories.nodeMenuPort = {
     createNodeMenuPortGroup: TheGraph.factories.createGroup,
     createNodeMenuBackgroundRect: TheGraph.factories.createRect,
     createNodeMenuPortCircle: TheGraph.factories.createCircle,
-    createNodeMenuPortText: TheGraph.factories.createText
+    createNodeMenuPortText: TheGraph.factories.createText,
   };
 
-
-  TheGraph.NodeMenuPort = React.createFactory( createReactClass({
-    displayName: "TheGraphNodeMenuPort",
-    componentDidMount: function () {
-      ReactDOM.findDOMNode(this).addEventListener("tap", this.edgeStart);
+  TheGraph.NodeMenuPort = React.createFactory(createReactClass({
+    displayName: 'TheGraphNodeMenuPort',
+    componentDidMount() {
+      ReactDOM.findDOMNode(this).addEventListener('tap', this.edgeStart);
     },
-    edgeStart: function (event) {
+    edgeStart(event) {
       // Don't tap graph
       event.stopPropagation();
 
-      var port = {
+      const port = {
         process: this.props.processKey,
         port: this.props.label,
-        type: this.props.port.type
+        type: this.props.port.type,
       };
 
-      var edgeStartEvent = new CustomEvent('the-graph-edge-start', { 
+      const edgeStartEvent = new CustomEvent('the-graph-edge-start', {
         detail: {
           isIn: this.props.isIn,
-          port: port,
-          route: this.props.route
+          port,
+          route: this.props.route,
         },
-        bubbles: true
+        bubbles: true,
       });
       ReactDOM.findDOMNode(this).dispatchEvent(edgeStartEvent);
     },
-    render: function() {
-      var labelLen = this.props.label.length;
-      var bgWidth = (labelLen>12 ? labelLen*8+40 : 120);
+    render() {
+      const labelLen = this.props.label.length;
+      const bgWidth = (labelLen > 12 ? labelLen * 8 + 40 : 120);
       // Highlight compatible port
-      var highlightPort = this.props.highlightPort;
-      var highlight = (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type);
+      const { highlightPort } = this.props;
+      const highlight = (highlightPort && highlightPort.isIn === this.props.isIn && highlightPort.type === this.props.port.type);
 
-      var rectOptions = {
-        className: "context-port-bg"+(highlight ? " highlight" : ""),
+      let rectOptions = {
+        className: `context-port-bg${highlight ? ' highlight' : ''}`,
         x: this.props.x + (this.props.isIn ? -bgWidth : 0),
-        y: this.props.y - TheGraph.contextPortSize/2,
-        width: bgWidth
+        y: this.props.y - TheGraph.contextPortSize / 2,
+        width: bgWidth,
       };
 
       rectOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.backgroundRect, rectOptions);
-      var rect = TheGraph.factories.nodeMenuPort.createNodeMenuBackgroundRect.call(this, rectOptions);
+      const rect = TheGraph.factories.nodeMenuPort.createNodeMenuBackgroundRect.call(this, rectOptions);
 
-      var circleOptions = {
-        className: "context-port-hole stroke route"+this.props.route,
+      let circleOptions = {
+        className: `context-port-hole stroke route${this.props.route}`,
         cx: this.props.x,
         cy: this.props.y,
       };
       circleOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.circle, circleOptions);
-      var circle = TheGraph.factories.nodeMenuPort.createNodeMenuPortCircle.call(this, circleOptions);
+      const circle = TheGraph.factories.nodeMenuPort.createNodeMenuPortCircle.call(this, circleOptions);
 
-      var textOptions = {
-        className: "context-port-label fill route"+this.props.route,
+      let textOptions = {
+        className: `context-port-label fill route${this.props.route}`,
         x: this.props.x + (this.props.isIn ? -20 : 20),
         y: this.props.y,
-        children: this.props.label.replace(/(.*)\/(.*)(_.*)\.(.*)/, '$2.$4')
+        children: this.props.label.replace(/(.*)\/(.*)(_.*)\.(.*)/, '$2.$4'),
       };
 
       textOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.text, textOptions);
-      var text = TheGraph.factories.nodeMenuPort.createNodeMenuPortText.call(this, textOptions);
+      const text = TheGraph.factories.nodeMenuPort.createNodeMenuPortText.call(this, textOptions);
 
-      var containerContents = [rect, circle, text];
+      const containerContents = [rect, circle, text];
 
-      var containerOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.container, { className: "context-port click context-port-"+(this.props.isIn ? "in" : "out") });
+      const containerOptions = TheGraph.merge(TheGraph.config.nodeMenuPort.container, { className: `context-port click context-port-${this.props.isIn ? 'in' : 'out'}` });
       return TheGraph.factories.nodeMenuPort.createNodeMenuPortGroup.call(this, containerOptions, containerContents);
-
-    }
+    },
   }));
-
-
 };

@@ -6,16 +6,17 @@ function mergeComponentDefinition(component, definition) {
   if (component === definition) {
     return definition;
   }
-  var _i, _j, _len, _len1, exists;
-  var cInports = component.inports;
-  var dInports = definition.inports;
+  let _i; let _j; let _len; let _len1; let
+    exists;
+  const cInports = component.inports;
+  const dInports = definition.inports;
 
   if (cInports !== dInports) {
     for (_i = 0, _len = cInports.length; _i < _len; _i++) {
-      var cInport = cInports[_i];
+      const cInport = cInports[_i];
       exists = false;
       for (_j = 0, _len1 = dInports.length; _j < _len1; _j++) {
-        var dInport = dInports[_j];
+        const dInport = dInports[_j];
         if (cInport.name === dInport.name) {
           exists = true;
         }
@@ -26,15 +27,15 @@ function mergeComponentDefinition(component, definition) {
     }
   }
 
-  var cOutports = component.outports;
-  var dOutports = definition.outports;
+  const cOutports = component.outports;
+  const dOutports = definition.outports;
 
   if (cOutports !== dOutports) {
     for (_i = 0, _len = cOutports.length; _i < _len; _i++) {
-      var cOutport = cOutports[_i];
+      const cOutport = cOutports[_i];
       exists = false;
       for (_j = 0, _len1 = dOutports.length; _j < _len1; _j++) {
-        var dOutport = dOutports[_j];
+        const dOutport = dOutports[_j];
         if (cOutport.name === dOutport.name) {
           exists = true;
         }
@@ -59,61 +60,61 @@ function mergeComponentDefinition(component, definition) {
 }
 
 function componentsFromGraph(fbpGraph) {
-  var components = [];
+  const components = [];
 
-  fbpGraph.nodes.forEach(function (node) {
-    var component = {
+  fbpGraph.nodes.forEach((node) => {
+    const component = {
       name: node.component,
       icon: 'cog',
       description: '',
       inports: [],
-      outports: []
+      outports: [],
     };
 
-    Object.keys(fbpGraph.inports).forEach(function (pub) {
-      var exported = fbpGraph.inports[pub];
+    Object.keys(fbpGraph.inports).forEach((pub) => {
+      const exported = fbpGraph.inports[pub];
       if (exported.process === node.id) {
-        for (var i = 0; i < component.inports.length; i++) {
+        for (let i = 0; i < component.inports.length; i++) {
           if (component.inports[i].name === exported.port) {
             return;
           }
         }
         component.inports.push({
           name: exported.port,
-          type: 'all'
+          type: 'all',
         });
       }
     });
-    Object.keys(fbpGraph.outports).forEach(function (pub) {
-      var exported = fbpGraph.outports[pub];
+    Object.keys(fbpGraph.outports).forEach((pub) => {
+      const exported = fbpGraph.outports[pub];
       if (exported.process === node.id) {
-        for (var i = 0; i < component.outports.length; i++) {
+        for (let i = 0; i < component.outports.length; i++) {
           if (component.outports[i].name === exported.port) {
             return;
           }
         }
         component.outports.push({
           name: exported.port,
-          type: 'all'
+          type: 'all',
         });
       }
     });
-    fbpGraph.initializers.forEach(function (iip) {
+    fbpGraph.initializers.forEach((iip) => {
       if (iip.to.node === node.id) {
-        for (var i = 0; i < component.inports.length; i++) {
+        for (let i = 0; i < component.inports.length; i++) {
           if (component.inports[i].name === iip.to.port) {
             return;
           }
         }
         component.inports.push({
           name: iip.to.port,
-          type: 'all'
+          type: 'all',
         });
       }
     });
 
-    fbpGraph.edges.forEach(function (edge) {
-      var i;
+    fbpGraph.edges.forEach((edge) => {
+      let i;
       if (edge.from.node === node.id) {
         for (i = 0; i < component.outports.length; i++) {
           if (component.outports[i].name === edge.from.port) {
@@ -122,7 +123,7 @@ function componentsFromGraph(fbpGraph) {
         }
         component.outports.push({
           name: edge.from.port,
-          type: 'all'
+          type: 'all',
         });
       }
       if (edge.to.node === node.id) {
@@ -133,7 +134,7 @@ function componentsFromGraph(fbpGraph) {
         }
         component.inports.push({
           name: edge.to.port,
-          type: 'all'
+          type: 'all',
         });
       }
     });
@@ -143,16 +144,16 @@ function componentsFromGraph(fbpGraph) {
 }
 
 function libraryFromGraph(fbpGraph) {
-    var library = {};
-    var components = componentsFromGraph(fbpGraph);
-    components.forEach(function(c) {
-        library[c.name] = c;
-    });
-    return library;
+  const library = {};
+  const components = componentsFromGraph(fbpGraph);
+  components.forEach((c) => {
+    library[c.name] = c;
+  });
+  return library;
 }
 
 module.exports = {
-  mergeComponentDefinition: mergeComponentDefinition,
-  componentsFromGraph: componentsFromGraph,
-  libraryFromGraph: libraryFromGraph,
+  mergeComponentDefinition,
+  componentsFromGraph,
+  libraryFromGraph,
 };

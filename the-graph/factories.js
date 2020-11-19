@@ -1,10 +1,10 @@
-var React = require('react');
+const React = require('react');
 
-var SVGImage = require('./SVGImage'); 
+const SVGImage = require('./SVGImage');
 
 // Standard functions for creating SVG/HTML elements
-exports.createGroup = function(options, content) {
-  var args = ['g', options];
+exports.createGroup = function (options, content) {
+  let args = ['g', options];
 
   if (Array.isArray(content)) {
     args = args.concat(content);
@@ -13,37 +13,36 @@ exports.createGroup = function(options, content) {
   return React.createElement.apply(React, args);
 };
 
-exports.createRect = function(options) {
+exports.createRect = function (options) {
   return React.createElement('rect', options);
 };
 
-exports.createText = function(options) {
+exports.createText = function (options) {
   return React.createElement('text', options);
 };
 
-exports.createCircle = function(options) {
+exports.createCircle = function (options) {
   return React.createElement('circle', options);
 };
 
-exports.createPath = function(options) {
+exports.createPath = function (options) {
   return React.createElement('path', options);
 };
 
-exports.createPolygon = function(options) {
+exports.createPolygon = function (options) {
   return React.createElement('polygon', options);
 };
 
-exports.createImg = function(options) {
+exports.createImg = function (options) {
   return SVGImage(options);
 };
 
-exports.createCanvas = function(options) {
+exports.createCanvas = function (options) {
   return React.createElement('canvas', options);
 };
 
-exports.createSvg = function(options, content) {
-
-  var args = ['svg', options];
+exports.createSvg = function (options, content) {
+  let args = ['svg', options];
 
   if (Array.isArray(content)) {
     args = args.concat(content);
