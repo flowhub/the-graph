@@ -1,4 +1,5 @@
 const React = require('react');
+const createReactClass = require('create-react-class');
 const Hammer = require('hammerjs');
 const thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
@@ -24,9 +25,9 @@ function renderViewRectangle(context, viewrect, props) {
 
   // Scaled view rectangle
   let x = Math.round((props.viewrectangle[0] / props.scale - props.thumbrectangle[0])
-      * props.thumbscale);
+    * props.thumbscale);
   let y = Math.round((props.viewrectangle[1] / props.scale - props.thumbrectangle[1])
-      * props.thumbscale);
+    * props.thumbscale);
   let w = Math.round((props.viewrectangle[2] * props.thumbscale) / props.scale);
   let h = Math.round((props.viewrectangle[3] * props.thumbscale) / props.scale);
 
@@ -112,7 +113,9 @@ function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
 }
 
 // https://toddmotto.com/react-create-class-versus-component/
-class Component extends React.Component {
+const Component = createReactClass({
+  propTypes: {
+  },
   getDefaultProps() {
     return {
       width: 200,
@@ -129,55 +132,45 @@ class Component extends React.Component {
       viewBoxBorderStyle: 'dotted',
       graph: null, // NOTE: should not attach to events, that is responsibility of outer code
     };
-  }
-
+  },
   getInitialState() {
     return {
       thumbscale: 1.0,
       currentPan: [0.0, 0.0],
     };
-  }
-
+  },
   componentDidMount() {
     this._updatePan();
     this._renderElements();
     this._setupEvents();
-  }
-
+  },
   componentDidUpdate() {
     this._updatePan();
     this._renderElements();
-  }
-
+  },
   _refThumbCanvas(canvas) {
     this._thumbContext = canvas.getContext('2d');
-  }
-
+  },
   _refViewboxCanvas(canvas) {
     this._viewboxContext = canvas.getContext('2d');
-  }
-
+  },
   _refViewboxElement(el) {
     this._viewboxElement = el;
-  }
-
+  },
   _refTopElement(el) {
     this._topElement = el;
-  }
-
+  },
   _renderElements() {
     const t = renderThumbnailFromProps(this._thumbContext, this.props);
     // this.state.thumbscale = t.scale;
     renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
-  }
-
+  },
   _updatePan() {
     this.state.currentPan = [
       -(this.props.viewrectangle[0]),
       -(this.props.viewrectangle[1]),
     ];
-  }
-
+  },
   _setupEvents() {
     this.hammer = new Hammer.Manager(this._topElement, {
       recognizers: [
@@ -206,8 +199,7 @@ class Component extends React.Component {
         this.props.onPanTo(panTo, event);
       }
     }));
-  }
-
+  },
   render() {
     const p = this.props;
     const thumbStyle = {
@@ -256,8 +248,8 @@ class Component extends React.Component {
       React.createElement('canvas', viewboxCanvas),
       React.createElement('canvas', thumbProps),
     ]);
-  }
-}
+  },
+});
 
 module.exports = {
   render: renderViewRectangle,
