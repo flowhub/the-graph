@@ -2,8 +2,8 @@
 
 var TheGraph = require('./index');
 
-var darkTheme = require('./themes/the-graph-dark.css');
-var lightTheme = require('./themes/the-graph-light.css');
+var darkTheme = require('./themes/the-graph-dark.styl');
+var lightTheme = require('./themes/the-graph-light.styl');
 
 function waitForStyleLoad(callback) {
     // FIXME: check properly, https://gist.github.com/cvan/8a188df72a95a35888b70e5fda80450d

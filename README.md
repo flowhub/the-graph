@@ -12,12 +12,12 @@ You can optionally use [klayjs-noflo](https://github.com/noflo/klayjs-noflo) for
 
 ## Examples
 
-* Basic demo. [code](./examples/demo-simple.html) |
-[Run](https://flowhub.github.io/the-graph/examples/demo-simple.html)
-* Stresstest. [code](./examples/demo-full.html) |
-[Run](https://flowhub.github.io/the-graph/examples/demo-full.html)
-* Thumbnail. [code](./examples/demo-thumbnail.html) |
-[Run](https://flowhub.github.io/the-graph/examples/demo-thumbnail.html)
+* Basic demo. [code](./examples/demo-simple.js) |
+[Run](https://flowhub.github.io/the-graph/demo-simple.html)
+* Stresstest. [code](./examples/demo-full.js) |
+[Run](https://flowhub.github.io/the-graph/demo-full.html)
+* Thumbnail. [code](./examples/demo-thumbnail.js) |
+[Run](https://flowhub.github.io/the-graph/demo-thumbnail.html)
 
 ## Using
 

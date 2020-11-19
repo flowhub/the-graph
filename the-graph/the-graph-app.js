@@ -545,7 +545,7 @@ module.exports.register = function (context) {
       this.refs.graph.markDirty();
     },
     componentDidUpdate: function (prevProps, prevState) {
-      setTimeout(function () {
+      setTimeout(() => {
         this.renderCanvas(this.bgContext);
         if (!prevState || prevState.x!==this.state.x || prevState.y!==this.state.y || prevState.scale!==this.state.scale) {
           this.onPanScale();
