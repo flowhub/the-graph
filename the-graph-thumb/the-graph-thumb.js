@@ -1,7 +1,7 @@
 function drawEdge(context, scale, source, target, route, properties) {
   // Draw path
   try {
-    context.strokeStyle = properties.edgeColors[0];
+    [context.strokeStyle] = properties.edgeColors;
     if (route) {
       // Color if route defined
       context.strokeStyle = properties.edgeColors[route];
@@ -76,7 +76,9 @@ function renderThumbnail(context, graph, properties) {
 
   // Process nodes
   graph.nodes.forEach((process) => {
-    if (process.metadata && !isNaN(process.metadata.x) && !isNaN(process.metadata.y)) {
+    if (process.metadata
+      && !Number.isNaN(process.metadata.x)
+      && !Number.isNaN(process.metadata.y)) {
       toDraw.push(process);
       nodes[process.id] = process;
       minX = Math.min(minX, process.metadata.x);
@@ -90,7 +92,7 @@ function renderThumbnail(context, graph, properties) {
   if (graph.inports) {
     Object.keys(graph.inports).forEach((key) => {
       const exp = graph.inports[key];
-      if (exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y)) {
+      if (exp.metadata && !Number.isNaN(exp.metadata.x) && !Number.isNaN(exp.metadata.y)) {
         toDraw.push(exp);
         minX = Math.min(minX, exp.metadata.x);
         minY = Math.min(minY, exp.metadata.y);
@@ -102,7 +104,7 @@ function renderThumbnail(context, graph, properties) {
   if (graph.outports) {
     Object.keys(graph.outports).forEach((key) => {
       const exp = graph.outports[key];
-      if (exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y)) {
+      if (exp.metadata && !Number.isNaN(exp.metadata.x) && !Number.isNaN(exp.metadata.y)) {
         toDraw.push(exp);
         minX = Math.min(minX, exp.metadata.x);
         minY = Math.min(minY, exp.metadata.y);
@@ -118,7 +120,10 @@ function renderThumbnail(context, graph, properties) {
   }
 
   // Sanity check graph size
-  if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+  if (!Number.isFinite(minX)
+    || !Number.isFinite(minY)
+    || !Number.isFinite(maxX)
+    || !Number.isFinite(maxY)) {
     throw new Error('the-graph-thumb: Invalid space spanned');
   }
 
@@ -146,7 +151,7 @@ function renderThumbnail(context, graph, properties) {
   if (graph.inports) {
     Object.keys(graph.inports).forEach((key) => {
       const exp = graph.inports[key];
-      if (exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y)) {
+      if (exp.metadata && !Number.isNaN(exp.metadata.x) && !Number.isNaN(exp.metadata.y)) {
         const target = nodes[exp.process];
         if (!target) {
           return;
@@ -159,7 +164,7 @@ function renderThumbnail(context, graph, properties) {
   if (graph.outports) {
     Object.keys(graph.outports).forEach((key) => {
       const exp = graph.outports[key];
-      if (exp.metadata && !isNaN(exp.metadata.x) && !isNaN(exp.metadata.y)) {
+      if (exp.metadata && !Number.isNaN(exp.metadata.x) && !Number.isNaN(exp.metadata.y)) {
         const source = nodes[exp.process];
         if (!source) {
           return;

@@ -3,6 +3,12 @@
   "env": {
     "browser": true
   },
+  "rules": {
+    "no-param-reassign": 1,
+    "no-underscore-dangle": 0,
+    "react/destructuring-assignment": 1,
+    "react/prop-types": 1
+  },
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true

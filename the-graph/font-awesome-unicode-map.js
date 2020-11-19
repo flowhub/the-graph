@@ -1,8 +1,5 @@
-/*
-  this file is generated via `grunt build`
-*/
-
-FONT_AWESOME = {
+// This file is generated via `npm run fontawesome`
+module.exports.FONT_AWESOME = {
   '500px': '',
   'address-book': '',
   'address-book-o': '',
@@ -790,5 +787,3 @@ FONT_AWESOME = {
   'youtube-play': '',
   'youtube-square': '',
 };
-
-module.exports = FONT_AWESOME;

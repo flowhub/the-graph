@@ -1,5 +1,4 @@
 const React = require('react');
-const createReactClass = require('create-react-class');
 const Hammer = require('hammerjs');
 const thumb = require('../the-graph-thumb/the-graph-thumb.js');
 
@@ -24,10 +23,12 @@ function renderViewRectangle(context, viewrect, props) {
   context.fillStyle = props.outsideFill;
 
   // Scaled view rectangle
-  let x = Math.round((props.viewrectangle[0] / props.scale - props.thumbrectangle[0]) * props.thumbscale);
-  let y = Math.round((props.viewrectangle[1] / props.scale - props.thumbrectangle[1]) * props.thumbscale);
-  let w = Math.round(props.viewrectangle[2] * props.thumbscale / props.scale);
-  let h = Math.round(props.viewrectangle[3] * props.thumbscale / props.scale);
+  let x = Math.round((props.viewrectangle[0] / props.scale - props.thumbrectangle[0])
+      * props.thumbscale);
+  let y = Math.round((props.viewrectangle[1] / props.scale - props.thumbrectangle[1])
+      * props.thumbscale);
+  let w = Math.round((props.viewrectangle[2] * props.thumbscale) / props.scale);
+  let h = Math.round((props.viewrectangle[3] * props.thumbscale) / props.scale);
 
   let hide = false;
   if (x < 0 && y < 0 && w > props.width - x && h > props.height - y) {
@@ -88,20 +89,18 @@ function renderViewRectangle(context, viewrect, props) {
 }
 
 function renderThumbnailFromProps(context, props) {
-  const style = {};
-  for (const name in props) {
-    style[name] = props[name];
-  }
+  const style = {
+    ...props,
+  };
   style.graph = null;
   style.lineWidth = props.nodeLineWidth;
   const info = thumb.render(context, props.graph, style);
   return info;
 }
 function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
-  const style = {};
-  for (const name in props) {
-    style[name] = props[name];
-  }
+  const style = {
+    ...props,
+  };
   style.graph = null;
   style.scale = props.viewscale;
   const thumbW = thumbInfo.rectangle[2];
@@ -113,9 +112,7 @@ function renderViewboxFromProps(context, viewbox, thumbInfo, props) {
 }
 
 // https://toddmotto.com/react-create-class-versus-component/
-const Component = createReactClass({
-  propTypes: {
-  },
+class Component extends React.Component {
   getDefaultProps() {
     return {
       width: 200,
@@ -132,13 +129,74 @@ const Component = createReactClass({
       viewBoxBorderStyle: 'dotted',
       graph: null, // NOTE: should not attach to events, that is responsibility of outer code
     };
-  },
+  }
   getInitialState() {
     return {
       thumbscale: 1.0,
       currentPan: [0.0, 0.0],
     };
-  },
+  }
+  componentDidMount() {
+    this._updatePan();
+    this._renderElements();
+    this._setupEvents();
+  }
+  componentDidUpdate() {
+    this._updatePan();
+    this._renderElements();
+  }
+  _refThumbCanvas(canvas) {
+    this._thumbContext = canvas.getContext('2d');
+  }
+  _refViewboxCanvas(canvas) {
+    this._viewboxContext = canvas.getContext('2d');
+  }
+  _refViewboxElement(el) {
+    this._viewboxElement = el;
+  }
+  _refTopElement(el) {
+    this._topElement = el;
+  }
+  _renderElements() {
+    const t = renderThumbnailFromProps(this._thumbContext, this.props);
+    // this.state.thumbscale = t.scale;
+    renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
+  }
+  _updatePan() {
+    this.state.currentPan = [
+      -(this.props.viewrectangle[0]),
+      -(this.props.viewrectangle[1]),
+    ];
+  }
+  _setupEvents() {
+    this.hammer = new Hammer.Manager(this._topElement, {
+      recognizers: [
+        [Hammer.Tap],
+        [Hammer.Pan, { direction: Hammer.DIRECTION_ALL }],
+      ],
+    });
+    this.hammer.on('tap', ((event) => {
+      if (this.props.onTap) {
+        this.props.onTap(null, event);
+      }
+    }));
+    this.hammer.on('panmove', ((event) => {
+      if (this.props.onPanTo) {
+        // Calculate where event pans to, in editor coordinates
+        let x = this.state.currentPan[0];
+        let y = this.state.currentPan[1];
+        const panscale = this.state.thumbscale / this.props.viewscale;
+        x -= event.deltaX / panscale;
+        y -= event.deltaY / panscale;
+        const panTo = { x: Math.round(x), y: Math.round(y) };
+        // keep track of the current pan, because prop/component update
+        // may be delayed, or never arrive.
+        this.state.currentPan[0] = panTo.x;
+        this.state.currentPan[1] = panTo.y;
+        this.props.onPanTo(panTo, event);
+      }
+    }));
+  }
   render() {
     const p = this.props;
     const thumbStyle = {
@@ -187,69 +245,8 @@ const Component = createReactClass({
       React.createElement('canvas', viewboxCanvas),
       React.createElement('canvas', thumbProps),
     ]);
-  },
-  componentDidUpdate() {
-    this._updatePan();
-    this._renderElements();
-  },
-  componentDidMount() {
-    this._updatePan();
-    this._renderElements();
-    this._setupEvents();
-  },
-  _refThumbCanvas(canvas) {
-    this._thumbContext = canvas.getContext('2d');
-  },
-  _refViewboxCanvas(canvas) {
-    this._viewboxContext = canvas.getContext('2d');
-  },
-  _refViewboxElement(el) {
-    this._viewboxElement = el;
-  },
-  _refTopElement(el) {
-    this._topElement = el;
-  },
-  _renderElements() {
-    const t = renderThumbnailFromProps(this._thumbContext, this.props);
-    // this.state.thumbscale = t.scale;
-    renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
-  },
-  _updatePan() {
-    this.state.currentPan = [
-      -(this.props.viewrectangle[0]),
-      -(this.props.viewrectangle[1]),
-    ];
-  },
-  _setupEvents() {
-    this.hammer = new Hammer.Manager(this._topElement, {
-      recognizers: [
-        [Hammer.Tap],
-        [Hammer.Pan, { direction: Hammer.DIRECTION_ALL }],
-      ],
-    });
-    this.hammer.on('tap', ((event) => {
-      if (this.props.onTap) {
-        this.props.onTap(null, event);
-      }
-    }));
-    this.hammer.on('panmove', ((event) => {
-      if (this.props.onPanTo) {
-        // Calculate where event pans to, in editor coordinates
-        let x = this.state.currentPan[0];
-        let y = this.state.currentPan[1];
-        const panscale = this.state.thumbscale / this.props.viewscale;
-        x -= event.deltaX / panscale;
-        y -= event.deltaY / panscale;
-        const panTo = { x: Math.round(x), y: Math.round(y) };
-        // keep track of the current pan, because prop/component update
-        // may be delayed, or never arrive.
-        this.state.currentPan[0] = panTo.x;
-        this.state.currentPan[1] = panTo.y;
-        this.props.onPanTo(panTo, event);
-      }
-    }));
-  },
-});
+  }
+}
 
 module.exports = {
   render: renderViewRectangle,

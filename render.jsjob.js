@@ -10,7 +10,7 @@ function waitForStyleLoad(callback) {
   setTimeout(callback, 500);
 }
 
-window.jsJobRun = function (inputdata, options, callback) {
+window.jsJobRun = function jsJobRun(inputdata, options, callback) {
   let loader = TheGraph.fbpGraph.graph.loadJSON;
   let graphData = inputdata;
   if (inputdata.fbp) {
@@ -19,16 +19,21 @@ window.jsJobRun = function (inputdata, options, callback) {
   }
 
   loader(graphData, (err, graph) => {
-    if (err) { return callback(err); }
+    if (err) {
+      callback(err);
+      return;
+    }
     console.log('loaded graph');
 
     waitForStyleLoad(() => {
+      let node;
       try {
-        var node = TheGraph.render.graphToDOM(graph, options);
+        node = TheGraph.render.graphToDOM(graph, options);
       } catch (e) {
-        return callback(e);
+        callback(e);
+        return;
       }
-      TheGraph.render.exportImage(node, options, (err, imageUrl) => callback(err, imageUrl));
+      TheGraph.render.exportImage(node, options, callback);
     });
   });
 };
