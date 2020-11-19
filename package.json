@@ -49,13 +49,13 @@
     "webpack-cli": "^4.2.0"
   },
   "scripts": {
-    "lint": "eslint --fix index.js render.jsjob.js the-graph the-graph-thumb the-graph-nav the-graph-editor examples",
+    "lint": "eslint --fix index.js render.jsjob.js the-graph-thumb the-graph-nav the-graph-editor",
     "fontawesome": "node scripts/build-font-awesome-javascript.js",
     "stylus": "stylus -c -o dist -m themes/*.styl",
     "prebuild": "npm run fontawesome",
     "build": "webpack",
     "postbuild": "npm run stylus",
-    "pretest": "npm run build",
+    "pretest": "npm run lint && npm run build",
     "test": "jest",
     "start": "http-server dist/ -p 3000 -s -c-1"
   },

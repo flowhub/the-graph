@@ -130,44 +130,54 @@ class Component extends React.Component {
       graph: null, // NOTE: should not attach to events, that is responsibility of outer code
     };
   }
+
   getInitialState() {
     return {
       thumbscale: 1.0,
       currentPan: [0.0, 0.0],
     };
   }
+
   componentDidMount() {
     this._updatePan();
     this._renderElements();
     this._setupEvents();
   }
+
   componentDidUpdate() {
     this._updatePan();
     this._renderElements();
   }
+
   _refThumbCanvas(canvas) {
     this._thumbContext = canvas.getContext('2d');
   }
+
   _refViewboxCanvas(canvas) {
     this._viewboxContext = canvas.getContext('2d');
   }
+
   _refViewboxElement(el) {
     this._viewboxElement = el;
   }
+
   _refTopElement(el) {
     this._topElement = el;
   }
+
   _renderElements() {
     const t = renderThumbnailFromProps(this._thumbContext, this.props);
     // this.state.thumbscale = t.scale;
     renderViewboxFromProps(this._viewboxContext, this._viewboxElement, t, this.props);
   }
+
   _updatePan() {
     this.state.currentPan = [
       -(this.props.viewrectangle[0]),
       -(this.props.viewrectangle[1]),
     ];
   }
+
   _setupEvents() {
     this.hammer = new Hammer.Manager(this._topElement, {
       recognizers: [
@@ -197,6 +207,7 @@ class Component extends React.Component {
       }
     }));
   }
+
   render() {
     const p = this.props;
     const thumbStyle = {
