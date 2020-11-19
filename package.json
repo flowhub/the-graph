@@ -25,6 +25,11 @@
     "css-loader": "^5.0.1",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-15": "^1.0.5",
+    "eslint": "^7.13.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
     "events": "^3.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
@@ -44,6 +49,7 @@
     "webpack-cli": "^4.2.0"
   },
   "scripts": {
+    "lint": "eslint --fix index.js the-graph the-graph-thumb the-graph-nav the-graph-editor examples",
     "fontawesome": "node scripts/build-font-awesome-javascript.js",
     "stylus": "stylus -c -o dist -m themes/*.styl",
     "prebuild": "npm run fontawesome",
