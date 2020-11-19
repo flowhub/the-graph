@@ -8,7 +8,7 @@ The graph structure is stored by [fbp-graph](https://github.com/flowbased/fbp-gr
 
 You can optionally use [klayjs-noflo](https://github.com/noflo/klayjs-noflo) for automatic layout of graphs.
 
-`the-graph` is used as the editor in the [Flowhub IDE](https://flowhub.io).
+`the-graph` is used as the editor in the [Flowhub IDE](https://app.flowhub.io).
 
 ## Examples
 
@@ -32,10 +32,7 @@ See the examples for how to include the `.js` and `.css` files, and API usage.
 [The MIT License](./LICENSE-MIT.txt)
 
 ## Support
-[![Flowhub logo](https://flowhub.io/assets/banner-github.png)](https://flowhub.io)
-
-the-graph is a part of [Flowhub](https://flowhub.io), a platform for building robust [IoT systems](https://flowhub.io/iot) and web services.<br>
-We offer an [Integrated Development Environment](https://app.flowhub.io) and [consulting services](https://flowhub.io/consulting).
+Please refer to <https://noflojs.org/support/>.
 
 ## Developing
 
@@ -44,11 +41,15 @@ Clone the repo
     git clone https://github.com/flowhub/the-graph.git # or your own fork on Github
     cd the-graph
 
-Run tests, watch for changes
+Install dependencies and build
+
+    npm install
+    npm run build
+
+Run the demo server
 
     npm start
 
-Open [http://localhost:3000/spec/runner.html](http://localhost:3000/spec/runner.html) for the automated tests,
-or [http://localhost:3000/examples/demo-full.html](http://localhost:3000/examples/demo-full.html) for interactive demo.
+or <http://localhost:3000/examples/demo-full.html> for interactive demo.
 
 Send pull requests on Github!

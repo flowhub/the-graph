@@ -51,7 +51,7 @@
     "postbuild": "npm run stylus",
     "pretest": "npm run build",
     "test": "jest",
-    "start": "http-server dist/ -p 9999 -s -c-1"
+    "start": "http-server dist/ -p 3000 -s -c-1"
   },
   "repository": {
     "type": "git",
