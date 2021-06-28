@@ -34,7 +34,7 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.0.0",
     "http-server": "^0.12.3",
-    "jest": "^21.2.1",
+    "jest": "^27.0.6",
     "jest-enzyme": "^4.0.1",
     "jsjob": "^0.10.13",
     "mocha": "^8.2.1",
